@@ -12,6 +12,10 @@ return [
         'logout' => 'Logout',
         'login' => 'Login',
     ],
+    'forms' => [
+        'title' => 'Forms',
+        'content' => '',
+    ],
     'home' => [
         'title' => 'Home',
         'content' => '',
