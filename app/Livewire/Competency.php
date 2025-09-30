@@ -2,180 +2,97 @@
 
 namespace App\Livewire;
 
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use App\Models\Form;
+use App\Models\UserDataOption;
+use App\Services\UserDataEntry;
+use App\Traits\CompetenciesTrait;
+use App\Traits\FormFieldValidationRulesTrait;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
-use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Livewire\WithPagination;
 use Symfony\Component\Yaml\Yaml;
+
+use function Psy\debug;
 
 class Competency extends Component implements HasSchemas
 {
     use InteractsWithSchemas;
+    use FormFieldValidationRulesTrait;
+    use CompetenciesTrait;
+    use WithPagination;
 
+    public ?int $formId;
+    public ?int $groupId;
     public ?array $data = [];
-    public ?array $components = [];
 
     public function mount(): void
     {
-        $options = [
-            1 => 'Strongly disagree',
-            2 => 'Disagree',
-            3 => 'Neutral',
-            4 => 'Agree',
-            5 => 'Strongly agree',
-        ];
+        $this->formId = 1;
 
-        $this->components = [
-            'Competency1' => [
-//                [
-//                    'element' => 'input',
-//                    'type' => 'text'
-//                    'name' => 'first_name',
-//                    'label' => 'First name',
-//                    'hint' => null,
-//                    'minLength' => null,
-//                    'maxLength' => 255,
-//                    'required' => true,
-//                ],
-//                [
-//                    'element' => 'input',
-//                    'type' => 'text'
-//                    'name' => 'last_name',
-//                    'label' => 'Last name',
-//                    'hint' => null,
-//                    'minLength' => null,
-//                    'maxLength' => 255,
-//                    'required' => true,
-//                ],
-//                [
-//                    'element' => 'checkbox',
-//                    'name' => 'terms',
-//                    'label' => 'Terms and conditions',
-//                    'hint' => null,
-//                    'minLength' => null,
-//                    'maxLength' => null,
-//                    'required' => true,
-//                ],
-                [
-                    'element' => 'radio',
-                    'name' => 'management',
-                    'default' => [1],
-                    'label' => 'Management is easy',
-                    'options' => $options,
-                    'hint' => null,
-                    'minLength' => null,
-                    'maxLength' => null,
-                    'required' => true,
-                ],
-                [
-                    'element' => 'checkbox',
-                    'name' => 'leadership',
-                    'default' => [2],
-                    'label' => 'Leadership is easy',
-                    'options' => $options,
-                    'hint' => null,
-                    'minLength' => null,
-                    'maxLength' => null,
-                    'required' => true,
-                ],
-                [
-                    'element' => 'dropdown',
-                    'name' => 'excellence',
-                    'default' => [4],
-                    'label' => 'Excellence is easy',
-                    'options' => $options,
-                    'hint' => null,
-                    'minLength' => null,
-                    'maxLength' => null,
-                    'required' => true,
-                ],
-            ],
-        ];
-        //dd( Yaml::dump($this->components) );
+        /**
+         * Pre-populate forms with defaults
+         */
+        if (empty($this->data)) {
+            foreach ($this->formFields as $formField) {
+                $this->data[$formField['name']] = array_keys($formField['defaults'] ?? []);
+            }
+        }
+        //$this->createYml();
+    }
 
-        $this->form->fill();
+    public function rules()
+    {
+        foreach ($this->formFields as $field) {
+            $rules['data.' . $field['name']] = $this->getRulesForType($field);
+        }
+
+        return $rules ?? [];
     }
 
     #[Computed]
-    public function components() {
-        return $this->components;
-
-//        return Yaml::parse(
-//            Storage::disk('local')->get('competencies.yml')
-//        );
-    }
-
-    protected function form(Schema $schema): Schema
+    public function formFields()
     {
-        $components = [];
-//        $components = Yaml::parse(
-//            Storage::disk('local')->get('competencies.yml')
-//        );
+        $form = Form::find($this->formId);
 
-        foreach ($components as $areaName => $competencies) {
-            foreach ($competencies as $competency) {
-                $componentsArray[] = match ($competency['element']) {
-                    'input' => TextInput::make($competency['name'])
-                                            ->label($competency['label'] ?? $competency['name'])
-                                            ->maxLength($competency['maxLength'] ?? null)
-                                            ->extraInputAttributes(['class' => 'nhsuk-input'])
-                                            ->default($competency['default'] ?? null)
-                                            //->fieldWrapperView('forms.components.field-wrapper')
-                                            ->required($competency['required'] ?? false),
-
-                    'checkbox' => CheckboxList::make($competency['name'])
-                                                  ->label($competency['label'] ?? $competency['name'])
-                                                  ->options($competency['options'] ?? [1 => $competency['name']])
-                                                  ->default($competency['default'] ?? null)
-                                                  ->extraFieldWrapperAttributes(['class' => 'nhsuk-form-group'])
-                                                  ->extraAttributes(['class' => 'nhsuk-checkboxes'])
-                                                  ->extraInputAttributes(['class' => 'nhsuk-checkboxes__input'])
-                                                  //->fieldWrapperView('forms.components.field-wrapper')
-                                                  ->required($competency['required'] ?? false),
-
-                    'radio' => Radio::make($competency['name'])
-                                          ->label($competency['label'] ?? $competency['name'])
-                        //->inlineLabel($competency['label'] ?? $competency['name'])
-                        //->extraInputAttributes(['class' => 'nhsuk-checkboxes__input'])
-                                            ->hint($competency['label'])
-                                            ->options($competency['options'] ?? [1 => $competency['name']])
-                                          ->default($competency['default'] ?? null)
-                                          ->extraFieldWrapperAttributes(['class' => 'nhsuk-radios'])
-                                          ->required($competency['required'] ?? false),
-
-                    'markdown' => MarkdownEditor::make($competency['name'])
-                                                      ->label($competency['label'] ?? $competency['name'])
-                                                      ->maxLength($competency['maxLength'] ?? null)
-                                                      ->default($competency['default'] ?? null)
-                                                      ->extraAttributes(['class' => 'nhsuk-textarea'])
-                                                      ->required($competency['required'] ?? false),
-
-                    'textarea' => Textarea::make($competency['name'])
-                                          ->label($competency['label'] ?? $competency['name'])
-                                          ->maxLength($competency['maxLength'] ?? null)
-                                          ->default($competency['default'] ?? null)
-                                          ->extraAttributes(['class' => 'nhsuk-textarea'])
-                                          ->required($competency['required'] ?? false),
-
-                    default => null,
-                };
-            }
+        if (!empty($this->groupId)) {
+            return $form->formFields()->where('group_id', $this->groupId)->get();
         }
 
-        return $schema->components($componentsArray ?? []);
+        return $form->formFields()->paginate($form->perPage ?? 1);
     }
 
     public function store()
     {
-        $state = $this->form->getState();
-        //dd($state);
+        $this->validate();
+        $formFields = $this->formFields?->keyBy('name');
+//        var_export([
+//            $this->data,
+//            $formFields,
+//        ]);
+
+        foreach ($this->data as $name => $values) {
+            if (isset($formFields[$name])) {
+                UserDataEntry::updateOrCreate($values, $formFields[$name]);
+            }
+        }
+
+        $output = [];
+        $form = Form::find($this->formId);
+
+        foreach ($this->formFields as $formField) {
+            $userDataOptions = UserDataOption::where('form_field_id', $formField->id)->with('formFieldOption')->get();
+            foreach ($userDataOptions as $userDataOption) {
+                $output[$form->name][$formField['label']][] = [
+                    $userDataOption['form_field_option_id'] => $userDataOption->formFieldOption['value']
+                ];
+            }
+        }
+
+        $this->groupId++;
+
+        return $this->redirect(route('forms', $this->groupId));
     }
 
     public function render()
