@@ -2,17 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
-
 Route::group([
     'middleware' => [
         'auth',
         //'can:users:manage',
     ]
 ], function () {
-    // Route::get('competencies', \App\Livewire\Competency::class)->name('competencies');
+    //Route::get('stage/{stageId?}', \App\Livewire\Assessments::class)->name('stage');
+    Route::get('/{stageId?}', \App\Livewire\Assessments::class)->name('stages');
+    Route::get('/assessments/{assessmentId?}', \App\Livewire\FormsView::class)->name('assessments');
+    Route::get('/form/{formId?}', \App\Livewire\FormView::class)->name('form');
 });
 
 require __DIR__.'/auth.php';

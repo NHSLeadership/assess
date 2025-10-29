@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
  */
-class FormFactory extends Factory
+class StageFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,9 +17,6 @@ class FormFactory extends Factory
     public function definition(): array
     {
         return [
-            'assessment_id' => $this->faker->randomElement([1, 2]),
-            'form_area_id' => $this->faker->randomElement([1, 3]),
-            'slug' => $this->faker->slug(),
             'name' => $this->faker->sentence(1),
             'description' => $this->faker->sentence(3),
         ];
