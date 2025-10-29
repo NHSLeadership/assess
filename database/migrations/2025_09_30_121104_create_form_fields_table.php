@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('form_fields', function (Blueprint $table) {
             $table->id();
             $table->foreignId('form_id')->constrained()->onDelete('cascade');
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->unsignedBigInteger('group_id')->nullable();
             $table->enum('element', [
                 'button',
                 'color',

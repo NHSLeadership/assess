@@ -10,7 +10,7 @@
             </a>
         </div>
 
-        @if (\Illuminate\Support\Facades\App::environment('local') || \Illuminate\Support\Facades\App::environment('develop'))
+        @if (!\Illuminate\Support\Facades\App::environment('production'))
             <div class="nhsuk-corner-ribbon top-right sticky nhsuk-tag">{{ strtoupper(config('app.env')) }}</div>
         @endif
 

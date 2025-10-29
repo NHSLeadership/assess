@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\FormArea;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,7 +13,10 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            //Forms::class,
+            Stages::class,
+            FormAreaSeeder::class,
+            AssessmentSeeder::class,
+            Forms::class,
             FormFields::class,
             FormFieldOptions::class,
         ]);

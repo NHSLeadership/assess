@@ -8,20 +8,24 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'generic' => [
-        'logout' => 'Logout',
-        'login' => 'Login',
+    'assessments' => [
+        'title' => 'Assessments',
+        'content' => '',
+    ],
+    'competencies' => [
+        'title' => 'Competencies',
+        'content' => '',
     ],
     'forms' => [
         'title' => 'Forms',
         'content' => '',
     ],
+    'generic' => [
+        'logout' => 'Logout',
+        'login' => 'Login',
+    ],
     'home' => [
         'title' => 'Home',
-        'content' => '',
-    ],
-    'competencies' => [
-        'title' => 'Competencies',
         'content' => '',
     ],
 ];
