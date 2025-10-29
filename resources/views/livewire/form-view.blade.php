@@ -1,14 +1,10 @@
 <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
     <div class="nhsuk-grid-column-full">
-        <h1>{{ __('pages.competencies.title') }}</h1>
+        <h1>{{ $this->form->name ?? '' }}</h1>
 
-        @if (!empty($this->formFields))
-            @if ($this->groupId)
-            <h3>Group {{ $this->groupId }}</h3>
-            @endif
-
+        @if (!empty($formFields))
             <form wire:submit.prevent="store()">
-                @foreach ( $this->formFields as $field )
+                @foreach ($formFields as $field)
                     {{-- Render each component based on type and it's properties --}}
                     @component('components.form.' . $field['element'], [
                         'name' => 'data.' . $field['name'] ?? null,
@@ -20,19 +16,23 @@
                             {{ $field['hint'] ?? null }}
                         @endslot
                         @slot('label')
-                            {{ $field['label'] ?? null }}
+                            <span class="nhsuk-u-visually-hidden">Competency {{$field->id}}</span>{{ $field['label'] ?? null }}
                         @endslot
                     @endcomponent
                 @endforeach
 
                 <button class="nhsuk-button" type="submit">Continue</button>
 
-{{--                {{ $this->formFields->links() ?? '' }}--}}
-{{--                    @dd($this->getPage())--}}
+                @if (!empty($formFields->previousPageUrl()))
+                    <a class="nhsuk-back-link" wire:click.prevent="backPage()" href="#">Step back</a>
+                @endif
+
+                {{--{{ $this->formFields->links() ?? '' }}--}}
 
             </form>
         @else
             <p>No form available</p>
         @endif
+
     </div>
 </div>

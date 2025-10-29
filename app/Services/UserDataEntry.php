@@ -3,13 +3,14 @@
 namespace App\Services;
 
 use App\Models\FormField;
+use App\Models\User;
 use App\Models\UserDataOption;
 use App\Models\UserDataText;
 use Illuminate\Support\Facades\Log;
 
 class UserDataEntry
 {
-    public static function updateOrCreate(mixed $values, FormField $formField): void
+    public static function updateOrCreate(mixed $values, FormField $formField, User $user): void
     {
         if (!is_array($values)) {
             $values = [$values];
@@ -27,7 +28,7 @@ class UserDataEntry
                         'textarea' => UserDataText::updateOrCreate([
                             'form_id'       => $formField->form_id,
                             'form_field_id' => $formField->id,
-                            'user_id'       => auth()->id() ?? 0,
+                            'user_id'       => $user->id,
                         ],[
                             'value'         => $value,
                             'updated_at'    => now(),
@@ -37,7 +38,7 @@ class UserDataEntry
                         'select' => UserDataOption::updateOrCreate([
                             'form_id'              => $formField->form_id,
                             'form_field_id'        => $formField->id,
-                            'user_id'              => auth()->id() ?? 0,
+                            'user_id'              => $user->id,
                         ],[
                             'form_field_option_id' => $value,
                             'updated_at'           => now(),

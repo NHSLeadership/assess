@@ -20,8 +20,6 @@ class FormFieldFactory extends Factory
 
         return [
             'form_id' => \App\Models\Form::factory(),
-            'parent_id' => null,
-            'group_id' => 1,
             'element' => $this->faker->randomElement(['text', 'textarea', 'select', 'radio', 'checkbox']),
             'name' => $name,
             'label' => $name,

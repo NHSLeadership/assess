@@ -8,20 +8,20 @@
         @else
             <li class="nhsuk-header__navigation-item">
         @endif
-                <a class="nhsuk-header__navigation-link" href="{{ route('home') }}">
-                    {{ __('pages.home.title') }}
+                <a class="nhsuk-header__navigation-link" href="{{ route('assessments') }}">
+                    {{ __('pages.assessments.title') }}
                 </a>
             </li>
 
-        @if (Route::is('forms'))
-            <li class="nhsuk-header__navigation-item nhsuk-header__navigation-item__item--current" aria-current="page">
-        @else
-            <li class="nhsuk-header__navigation-item">
-                @endif
-                <a class="nhsuk-header__navigation-link" href="{{ route('forms') }}">
-                    {{ __('pages.forms.title') }}
-                </a>
-            </li>
+{{--        @if (Route::is('forms'))--}}
+{{--            <li class="nhsuk-header__navigation-item nhsuk-header__navigation-item__item--current" aria-current="page">--}}
+{{--        @else--}}
+{{--            <li class="nhsuk-header__navigation-item">--}}
+{{--                @endif--}}
+{{--                <a class="nhsuk-header__navigation-link" href="{{ route('forms') }}">--}}
+{{--                    {{ __('pages.forms.title') }}--}}
+{{--                </a>--}}
+{{--            </li>--}}
 
         @if (Auth::check())
             <li class="nhsuk-header__navigation-item">
