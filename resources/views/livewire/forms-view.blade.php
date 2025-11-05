@@ -27,7 +27,7 @@
                        aria-describedby="{{ $form->slug }}-hint"
                        class="nhsuk-link nhsuk-task-list__link">{{$form->name}}</a>
                     <div class="nhsuk-task-list__hint">
-                        <span class="nhsuk-tag nhsuk-tag--no-border nhsuk-tag--{{ $form->formArea->colour ?? 'blue' }}">{{$form->formArea->name}}</span>
+                        <span class="nhsuk-tag nhsuk-tag--no-border nhsuk-tag--{{ $form->area->colour ?? 'blue' }}">{{$form->area->name}}</span>
                     </div>
                 </div>
 
