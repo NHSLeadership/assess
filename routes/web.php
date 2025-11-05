@@ -7,9 +7,9 @@ Route::get('/', function () {
 })->name('home');
 
 Route::group([
-    //'middleware' => ['auth']
+    // 'middleware' => ['auth']
 ], function () {
-    //Route::get('competencies', \App\Livewire\Competency::class)->name('competencies');
+    // Route::get('competencies', \App\Livewire\Competency::class)->name('competencies');
 });
 
 require __DIR__.'/auth.php';
