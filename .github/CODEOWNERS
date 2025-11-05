@@ -1,0 +1,8 @@
+# Default ownership lands with Development team
+* @NHSLeadership/developers
+
+# Infrastructure falls under DevOps
+/.github/ @NHSLeadership/devops
+/devops/  @NHSLeadership/devops
+/docker/  @NHSLeadership/devops
+/helm/    @NHSLeadership/devops
