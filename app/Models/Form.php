@@ -16,18 +16,13 @@ class Form extends Model
         return $this->hasMany(FormField::class);
     }
 
-    public function formArea(): BelongsTo
+    public function area(): BelongsTo
     {
-        return $this->belongsTo(FormArea::class);
+        return $this->belongsTo(Area::class);
     }
 
     public function assessment(): BelongsTo
     {
         return $this->belongsTo(Assessment::class);
-    }
-
-    public function stage(): BelongsTo
-    {
-        return $this->belongsTo(Stage::class);
     }
 }
