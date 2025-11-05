@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('forms', function (Blueprint $table) {
             $table->id();
             $table->foreignId('assessment_id')->constrained();
-            $table->foreignId('form_area_id')->constrained();
+            $table->foreignId('area_id')->constrained();
             $table->string('slug')->unique();
             $table->string('name');
             $table->text('description')->nullable();

@@ -18,7 +18,7 @@ class FormFactory extends Factory
     {
         return [
             'assessment_id' => $this->faker->randomElement([1, 2]),
-            'form_area_id' => $this->faker->randomElement([1, 3]),
+            'area_id' => $this->faker->randomElement([1, 3]),
             'slug' => $this->faker->slug(),
             'name' => $this->faker->sentence(1),
             'description' => $this->faker->sentence(3),

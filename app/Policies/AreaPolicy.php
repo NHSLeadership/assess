@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\FormArea;
+use App\Models\Area;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class FormAreaPolicy
+class AreaPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,7 +19,7 @@ class FormAreaPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, FormArea $formArea): bool
+    public function view(User $user, Area $area): bool
     {
         return false;
     }
@@ -35,7 +35,7 @@ class FormAreaPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, FormArea $formArea): bool
+    public function update(User $user, Area $area): bool
     {
         return false;
     }
@@ -43,7 +43,7 @@ class FormAreaPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, FormArea $formArea): bool
+    public function delete(User $user, Area $area): bool
     {
         return false;
     }
@@ -51,7 +51,7 @@ class FormAreaPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, FormArea $formArea): bool
+    public function restore(User $user, Area $area): bool
     {
         return false;
     }
@@ -59,7 +59,7 @@ class FormAreaPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, FormArea $formArea): bool
+    public function forceDelete(User $user, Area $area): bool
     {
         return false;
     }

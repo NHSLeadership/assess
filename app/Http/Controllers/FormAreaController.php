@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreFormAreaRequest;
-use App\Http\Requests\UpdateFormAreaRequest;
-use App\Models\FormArea;
+use App\Http\Requests\StoreAreaRequest;
+use App\Http\Requests\UpdateAreaRequest;
+use App\Models\Area;
 
-class FormAreaController extends Controller
+class AreaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class FormAreaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreFormAreaRequest $request)
+    public function store(StoreAreaRequest $request)
     {
         //
     }
@@ -35,7 +35,7 @@ class FormAreaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(FormArea $formArea)
+    public function show(Area $area)
     {
         //
     }
@@ -43,7 +43,7 @@ class FormAreaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(FormArea $formArea)
+    public function edit(Area $area)
     {
         //
     }
@@ -51,7 +51,7 @@ class FormAreaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFormAreaRequest $request, FormArea $formArea)
+    public function update(UpdateAreaRequest $request, Area $area)
     {
         //
     }
@@ -59,7 +59,7 @@ class FormAreaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(FormArea $formArea)
+    public function destroy(Area $area)
     {
         //
     }
