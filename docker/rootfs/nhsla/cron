@@ -1,0 +1,1 @@
+* * * * * cd /app-shared && /usr/bin/php artisan schedule:run 1>/dev/stdout 2>/dev/stderr
