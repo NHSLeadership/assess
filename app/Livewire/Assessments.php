@@ -3,24 +3,26 @@
 namespace App\Livewire;
 
 use App\Models\Assessment;
-use App\Models\Stage;
-use Illuminate\Support\Collection;
+use App\Traits\CompetenciesTrait;
+use App\Traits\FormFieldValidationRulesTrait;
+use App\Traits\UserTrait;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Illuminate\Support\Collection;
+use Livewire\WithPagination;
 
 class Assessments extends Component
 {
-    public ?string $stageId;
+    use FormFieldValidationRulesTrait;
+    use CompetenciesTrait;
+    use WithPagination;
+    use UserTrait;
 
-    #[Computed]
-    public function assessments(): Collection
-    {
-        if (empty($this->stageId) || !is_numeric($this->stageId)) {
-            return Assessment::all();
-        }
+    public $assessmentId;
 
-        return Assessment::where('stage_id', $this->stageId)->get();
-    }
+    protected $perPage = 1;
+    protected $pageName = 'assessmentId';
+    protected $simplePagination = true;
 
     #[Computed]
     public function assessment(): ?Assessment
@@ -33,17 +35,51 @@ class Assessments extends Component
     }
 
     #[Computed]
-    public function stage(): ?Stage
+    public function areas()
     {
-        if (empty($this->stageId)) {
+        if (empty($this->assessment)) {
             return null;
         }
 
-        return Stage::find($this->stageId);
+        return $this->assessment?->framework?->areas()->whereNotNull('parent_id')->orderBy('parent_id')->orderBy('id');
+    }
+
+    #[Computed]
+    public function startedAreas(): ?Collection
+    {
+        if (empty($this->assessment)) {
+            return null;
+        }
+
+        return $this->assessment?->framework?->areas()->whereHas('fields')->get();
+    }
+
+    #[Computed]
+    public function data()
+    {
+        if (empty($this->assessmentId)) {
+            return null;
+        }
+
+        return $this->user?->data?->where('assessment_id', $this->assessmentId)->get();
+    }
+
+    public function backPage()
+    {
+        $this->previousPage();
+    }
+
+    #[Computed]
+    public function userData(): Collection
+    {
+        return $this->user->assessments()->where('id', $this->assessmentId)->get();
+        //return $this->user->assessments()->where('framework_id', $this->assessment->frameworkId)->get();
     }
 
     public function render()
     {
-        return view('livewire.assessments');
+        return view('livewire.assessments', [
+            'paginatedAreas' => $this->areas()?->paginate($this->perPage, pageName: $this->pageName),
+        ]);
     }
 }

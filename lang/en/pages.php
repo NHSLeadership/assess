@@ -8,8 +8,12 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'assessments' => [
-        'title' => 'Assessments',
+    'login' => 'Login',
+    'logout' => 'Logout',
+    'signin' => 'Sign in',
+    'signout' => 'Sign out',
+    'frameworks' => [
+        'title' => 'Frameworks',
         'content' => '',
     ],
     'competencies' => [
@@ -20,12 +24,12 @@ return [
         'title' => 'Forms',
         'content' => '',
     ],
-    'generic' => [
-        'logout' => 'Logout',
-        'login' => 'Login',
-    ],
     'home' => [
         'title' => 'Home',
+        'content' => '',
+    ],
+    'stages' => [
+        'title' => 'Stages',
         'content' => '',
     ],
 ];

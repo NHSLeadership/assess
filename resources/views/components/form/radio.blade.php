@@ -48,8 +48,9 @@
                         tabindex="{{ $tabindex }}"
                     @endif
                     value="{{$param_value}}"
+                    type="radio" {{$selected}}
                     class="nhsuk-radios__input"
-                    type="radio" {{$selected}}>
+                    autocomplete="off">
                 <label class="nhsuk-label nhsuk-radios__label" for="{{ $name }}[{{ $param_value }}]">
                     <span>{{ $param_name ?? '' }}</span>
                 </label>

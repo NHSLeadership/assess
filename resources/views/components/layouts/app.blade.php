@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex">
-    <title>@yield('title', 'Leadership Academy Profile')</title>
+    <title>@yield('title', 'Self Assessment Tools - ' . ($title ?? 'Home') )</title>
 
     <link rel="shortcut icon" href="{{ asset('media/favicons/favicon.ico', !\Illuminate\Support\Facades\App::environment('local')) }}" type="image/x-icon">
     <link rel="apple-touch-icon" href="{{ asset('media/favicons/apple-touch-icon-180x180.png', !\Illuminate\Support\Facades\App::environment('local')) }}">
@@ -31,10 +31,11 @@
         @include('elements.banner')
     @endif
 
+    {{ Breadcrumbs::render(Route::currentRouteName() ?? 'home') }}
+
     <div class="nhsuk-width-container ">
         <main class="nhsuk-main-wrapper " id="maincontent" role="main">
-            @yield('content')
-            {{ $slot ?? '' }}
+            @yield('content', $slot ?? '')
         </main>
     </div>
 

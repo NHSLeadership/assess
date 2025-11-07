@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('areas', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('framework_id')->constrained();
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->string('slug')->unique();
             $table->string('name');
-            $table->enum('colour', ['green', 'orange', 'blue'])->default('blue');
             $table->text('description')->nullable();
+            $table->enum('colour', ['green', 'orange', 'blue'])->default('blue');
             $table->timestamps();
         });
     }

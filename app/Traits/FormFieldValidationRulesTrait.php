@@ -7,9 +7,9 @@ trait FormFieldValidationRulesTrait
         'date' => ['date'],
         'email' => ['email', 'rfc,dns', 'max:255'],
         'number' => ['numeric'],
-        'radio' => ['sometimes'],
+        'radio' => ['numeric'],
         'checkbox' => ['sometimes', 'array'],
-        'select' => ['sometimes'],
+        'select' => ['numeric'],
         'text' => ['sometimes', 'max:255'],
         'textarea' => ['sometimes', 'max:255'],
     ];
