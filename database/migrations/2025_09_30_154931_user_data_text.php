@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('user_data_texts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('form_id')->constrained();
+            $table->foreignId('assessment_id')->constrained();
             $table->foreignId('form_field_id')->constrained();
-            $table->unsignedBigInteger('user_id');
             $table->string('value')->nullable();
             $table->timestamps();
 

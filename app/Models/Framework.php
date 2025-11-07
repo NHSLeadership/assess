@@ -27,4 +27,9 @@ class Framework extends Model
     {
         return $this->hasMany(FrameworkVariantAttribute::class)->orderBy('order');
     }
+
+//    public function stage(): BelongsTo
+//    {
+//        return $this->hasMany(FrameworkVariantAttribute::class)->where('label', 'stage');
+//    }
 }

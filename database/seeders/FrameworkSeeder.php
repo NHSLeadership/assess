@@ -12,12 +12,12 @@ class FrameworkSeeder extends Seeder
      */
     public function run(): void
     {
-        Framework::firstOrCreate(
+        Framework::factory()->createManyQuietly([
             [
                 'name'        => 'Management and Leadership framework',
                 'slug'        => 'management-and-leadership-framework',
                 'description' => 'NHS Management and Leadership framework.',
             ]
-        );
+        ]);
     }
 }

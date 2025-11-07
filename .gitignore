@@ -13,7 +13,6 @@
 .DS_Store
 .idea
 .env
-.env.*
 .phpunit.result.cache
 .phpunit.cache
 .scribe

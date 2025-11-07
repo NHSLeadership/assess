@@ -8,16 +8,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class UserDataOption extends Model
 {
     protected $fillable = [
-        'form_id',
+        'assessment_id',
         'form_field_id',
         'form_field_option_id',
         'user_id',
         'updated_at'
     ];
 
-    public function form(): BelongsTo
+    public function assessment(): BelongsTo
     {
-        return $this->belongsTo(Form::class);
+        return $this->belongsTo(Assessment::class);
     }
 
     public function formField(): BelongsTo
