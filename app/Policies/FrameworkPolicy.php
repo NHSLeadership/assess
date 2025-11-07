@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Form;
+use App\Models\Framework;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class FormPolicy
+class FrameworkPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -19,7 +19,7 @@ class FormPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Form $assessment): bool
+    public function view(User $user, Framework $framework): bool
     {
         return false;
     }
@@ -35,7 +35,7 @@ class FormPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Form $assessment): bool
+    public function update(User $user, Framework $framework): bool
     {
         return false;
     }
@@ -43,7 +43,7 @@ class FormPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Form $assessment): bool
+    public function delete(User $user, Framework $framework): bool
     {
         return false;
     }
@@ -51,7 +51,7 @@ class FormPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Form $assessment): bool
+    public function restore(User $user, Framework $framework): bool
     {
         return false;
     }
@@ -59,7 +59,7 @@ class FormPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Form $assessment): bool
+    public function forceDelete(User $user, Framework $framework): bool
     {
         return false;
     }

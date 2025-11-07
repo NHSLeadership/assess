@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('forms', function (Blueprint $table) {
+        Schema::create('assessments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('assessment_id')->constrained();
-            $table->foreignId('area_id')->constrained();
-            $table->string('slug')->unique();
-            $table->string('name');
-            $table->text('description')->nullable();
+            $table->foreignId('framework_id')->constrained();
+            $table->unsignedBigInteger('user_id');
             $table->timestamp('completed_at')->nullable();
             $table->timestamps();
         });
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('forms');
+        Schema::dropIfExists('assessments');
     }
 };

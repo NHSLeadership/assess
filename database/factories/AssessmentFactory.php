@@ -17,9 +17,8 @@ class AssessmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'stage_id' => $this->faker->randomElement([1, 2]),
-            'name' => $this->faker->sentence(1),
-            'description' => $this->faker->sentence(3),
+            'framework_id' => \App\Models\Framework::factory(),
+            'user_id' => \App\Models\User::factory(),
         ];
     }
 }

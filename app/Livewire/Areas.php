@@ -3,21 +3,33 @@
 namespace App\Livewire;
 
 use App\Models\Assessment;
-use App\Models\Form;
+use App\Models\Framework;
+use App\Models\Area;
 use App\Models\Stage;
 use App\Models\User;
-use App\Models\UserDataOption;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
-class FormsView extends Component
+class Areas extends Component
 {
-    public $assessmentId = 1;
+    public $frameworkId;
+    public $assessmentId;
 
-    public function mount(): void
+    #[Computed]
+    public function framework(): ?Framework
     {
-        //
+        if (empty($this->frameworkId)) {
+            return null;
+        }
+
+        return Framework::find($this->frameworkId);
+    }
+
+    #[Computed]
+    public function frameworks(): Collection
+    {
+        return Framework::all();
     }
 
     #[Computed]
@@ -31,27 +43,29 @@ class FormsView extends Component
     }
 
     #[Computed]
-    public function assessments(): Collection
+    public function areas(): ?Collection
     {
-        return Assessment::all();
+        return Area::where('framework_id', $this->frameworkId)->whereHas('fields')->get();
     }
 
     #[Computed]
-    public function forms(): ?Collection
+    public function startedAreas(): ?Collection
     {
-        return Form::with('assessment')->whereHas('assessment', function ($query) {
-            $query->where('id', $this->assessmentId);
-        })->get();
+        if (empty($this->assessment)) {
+            return null;
+        }
+
+        return $this->assessment?->framework?->areas()->whereHas('fields')->get();
     }
 
     #[Computed]
     public function stage(): ?Stage
     {
-        if (empty($this->assessmentId)) {
+        if (empty($this->frameworkId)) {
             return null;
         }
 
-        return $this->assessment()->stage;
+        return $this->framework()->stage;
     }
 
     #[Computed]
@@ -75,13 +89,13 @@ class FormsView extends Component
     #[Computed]
     public function userData(): Collection
     {
-        return UserDataOption::where('user_id', $this->user->id)
-            ->whereIn('form_id', $this->forms->pluck('id'))
-            ->get();
+        return Assessment::where('id', $this->assessmentId)->first()->userDataOptions()->get();
     }
 
     public function render()
     {
-        return view('livewire.forms-view');
+        return view('livewire.areas', [
+            'title' => 'Areas'
+        ]);
     }
 }

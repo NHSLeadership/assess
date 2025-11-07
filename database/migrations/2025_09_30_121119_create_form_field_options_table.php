@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('form_field_options', function (Blueprint $table) {
             $table->id();
             $table->foreignId('form_field_id')->constrained()->onDelete('cascade');
-            $table->string('value');
-            $table->string('weight')->default(0);
+            $table->integer('value');
+            $table->float('weight')->default(0);
             $table->timestamps();
         });
     }

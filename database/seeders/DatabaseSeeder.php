@@ -14,11 +14,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             Stages::class,
+            FrameworkSeeder::class,
             AreaSeeder::class,
-            AssessmentSeeder::class,
-            Forms::class,
-            FormFields::class,
-            FormFieldOptions::class,
+            FormFieldsSeeder::class,
+            FormFieldOptionsSeeder::class,
         ]);
     }
 }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('form_fields', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('form_id')->constrained()->onDelete('cascade');
+            $table->foreignId('area_id')->constrained();
             $table->enum('element', [
                 'button',
                 'color',

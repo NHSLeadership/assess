@@ -6,7 +6,7 @@ use App\Models\FormField;
 use App\Models\FormFieldOption;
 use Illuminate\Database\Seeder;
 
-class FormFieldOptions extends Seeder
+class FormFieldOptionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.

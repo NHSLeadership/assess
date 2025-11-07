@@ -11,9 +11,9 @@ class FormField extends Model
 {
     use HasFactory;
 
-    public function form(): BelongsTo
+    public function area(): BelongsTo
     {
-        return $this->belongsTo(Form::class);
+        return $this->belongsTo(Area::class);
     }
 
     public function formFieldOptions(): HasMany

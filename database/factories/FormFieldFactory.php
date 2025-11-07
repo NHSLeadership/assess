@@ -19,7 +19,7 @@ class FormFieldFactory extends Factory
         $name = $this->faker->sentence(1);
 
         return [
-            'form_id' => \App\Models\Form::factory(),
+            'area_id' => \App\Models\Area::factory(),
             'element' => $this->faker->randomElement(['text', 'textarea', 'select', 'radio', 'checkbox']),
             'name' => $name,
             'label' => $name,
