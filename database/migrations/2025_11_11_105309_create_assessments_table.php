@@ -19,6 +19,7 @@ return new class extends Migration
             $table->timestamp('submitted_at')->nullable();
             $table->timestamp('target_completion_date')->nullable();
             $table->text('notes')->nullable();
+            $table->boolean('locked')->default(false);
             $table->timestamps();
             $table->index(['framework_id', 'subject_user_id']);
         });
