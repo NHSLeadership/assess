@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('node_id')
                 ->constrained('nodes')
                 ->cascadeOnDelete();
+            $table->string('title');
             $table->string('text');
             $table->string('slug');
             $table->enum('response_type', [

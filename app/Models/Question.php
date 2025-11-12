@@ -19,6 +19,7 @@ class Question extends Model
 
     protected $fillable = [
         'node_id',
+        'title',
         'text',
         'slug',
         'response_type',
