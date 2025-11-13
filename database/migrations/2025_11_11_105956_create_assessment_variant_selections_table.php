@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('assessment_variant_selection', function (Blueprint $table) {
+        Schema::create('assessment_variant_selections', function (Blueprint $table) {
             $table->id();
             $table->foreignId('assessment_id')->constrained()->cascadeOnDelete();
             $table->foreignId('framework_variant_attribute_id')
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('assessment_variant_selection');
+        Schema::dropIfExists('assessment_variant_selections');
     }
 };
