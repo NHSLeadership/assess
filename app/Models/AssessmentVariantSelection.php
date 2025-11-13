@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class AssessmentVariantSelection extends Pivot
 {
+    protected $table = 'assessment_variant_selections';
+
     protected $fillable = [
         'assessment_id',
         'framework_variant_attribute_id',
