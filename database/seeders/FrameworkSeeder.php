@@ -13,10 +13,10 @@ class FrameworkSeeder extends Seeder
     public function run(): void
     {
         \App\Models\Framework::factory()->createManyQuietly([
-            ['stage_id' => 2, 'slug' => 'self-framework-s1', 'name' => 'Self assessment S1', 'description' => ''],
-            ['stage_id' => 2, 'slug' => '360-framework-s1', 'name' => '360 framework S1', 'description' => ''],
-            ['stage_id' => 3, 'slug' => 'self-framework-s2', 'name' => 'Self assessment S2', 'description' => ''],
-            ['stage_id' => 3, 'slug' => '360-framework-s2', 'name' => '360 framework S2', 'description' => ''],
+            ['stage_id' => 2, 'slug' => 'self-framework-s1', 'name' => 'Self Assessment S1', 'description' => ''],
+            ['stage_id' => 2, 'slug' => '360-framework-s1', 'name' => '360 Feedback S1', 'description' => ''],
+            ['stage_id' => 3, 'slug' => 'self-framework-s2', 'name' => 'Self Assessment S2', 'description' => ''],
+            ['stage_id' => 3, 'slug' => '360-framework-s2', 'name' => '360 Feedback S2', 'description' => ''],
         ]);
     }
 }

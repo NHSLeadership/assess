@@ -21,7 +21,7 @@ Breadcrumbs::for('assessments', function ($trail) {
 // Home > Frameworks
 Breadcrumbs::for('frameworks', function ($trail) {
     $trail->parent('stages');
-    $trail->push('Frameworks', route('stages'));
+    $trail->push('Frameworks', route('frameworks'));
 });
 
 // Home > Stages
