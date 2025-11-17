@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('form_field_id')->constrained()->onDelete('cascade');
             $table->integer('value');
+            $table->string('name');
             $table->float('weight')->default(0);
             $table->timestamps();
         });

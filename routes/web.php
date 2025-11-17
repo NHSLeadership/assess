@@ -2,14 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', function () {
+    return view('home');
+})->name('home');
+
 Route::group([
-    //'middleware' => ['auth']
+    // 'middleware' => ['auth']
 ], function () {
     Route::get('/', \App\Livewire\Stages::class)->name('home');
     Route::get('/frameworks/{frameworkId?}', \App\Livewire\Frameworks::class)->name('frameworks');
     Route::get('/stages/{stageId?}', \App\Livewire\Stages::class)->name('stages');
     Route::get('/areas/{frameworkId?}', \App\Livewire\Areas::class)->name('areas');
-    Route::get('/assessments/{assessmentId?}/{questionId?}', \App\Livewire\Assessments::class)->name('assessments');
+    Route::get('/assessments/{assessmentId?}', \App\Livewire\Assessments::class)->name('assessments');
 
     /**
      * Request review
