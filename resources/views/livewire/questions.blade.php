@@ -8,7 +8,7 @@
                     @component('components.form.' . $field['element'], [
                         'name' => 'data.' . $field['name'] ?? null,
                         'class' => $field['class'] ?? null,
-                        'options_list' => $field->formFieldOptions->pluck('value', 'id')?->toArray() ?? [],
+                        'options_list' => $field->formFieldOptions->pluck('name', 'id')?->toArray() ?? [],
                         'type' => $field['type'] ?? null,
                     ])
                         @slot('hint')
@@ -18,6 +18,7 @@
                             <span class="nhsuk-u-visually-hidden">Competency {{$field->id}}</span>{{ $field['label'] ?? null }}
                         @endslot
                     @endcomponent
+                    <hr>
                 @endforeach
 
                 {{-- Submit button continues to next page instead of pagination links --}}

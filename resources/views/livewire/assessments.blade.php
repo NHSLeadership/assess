@@ -20,7 +20,10 @@
         @if ($this->areas?->count())
 
             @foreach ($paginatedAreas as $area)
-                <h2 class="nhsuk-heading-m">{{ $area->name ?? '' }}</h2>
+                <h2 class="nhsuk-heading-m">
+                    <span class="nhsuk-tag--{{ $area->parent->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">
+                        {{ $area->parent->name ?? '' }} - {{ $area->name ?? '' }}</span>
+                </h2>
 
                 @if (!empty($area->description))
                     <p>{!! $area->description !!}</p>
@@ -28,7 +31,7 @@
 
                 <p>Please review the questions in the code and each of the competency areas below to complete your 360. You can work through the competency areas in any order.</p>
 
-                @livewire('questions', ['assessmentId' => $this->assessmentId, 'areaId' => $area->id])
+                @livewire('questions', ['assessmentId' => $this->assessmentId])
             @endforeach
 
             <hr>

@@ -14,11 +14,11 @@ class FormFieldOptionsSeeder extends Seeder
     public function run(): void
     {
         foreach (FormField::all() as $formField) {
-            FormFieldOption::factory()->create(['form_field_id' => $formField->id, 'value' => 'Insufficient']);
-            FormFieldOption::factory()->create(['form_field_id' => $formField->id, 'value' => 'Essential']);
-            FormFieldOption::factory()->create(['form_field_id' => $formField->id, 'value' => 'Proficient']);
-            FormFieldOption::factory()->create(['form_field_id' => $formField->id, 'value' => 'Strong']);
-            FormFieldOption::factory()->create(['form_field_id' => $formField->id, 'value' => 'Exemplary']);
+            FormFieldOption::factory()->create(['form_field_id' => $formField->id, 'name' => 'Insufficient', 'value' => 1]);
+            FormFieldOption::factory()->create(['form_field_id' => $formField->id, 'name' => 'Essential', 'value' => 2]);
+            FormFieldOption::factory()->create(['form_field_id' => $formField->id, 'name' => 'Proficient', 'value' => 3]);
+            FormFieldOption::factory()->create(['form_field_id' => $formField->id, 'name' => 'Strong', 'value' => 4]);
+            FormFieldOption::factory()->create(['form_field_id' => $formField->id, 'name' => 'Exemplary', 'value' => 5]);
         }
     }
 }
