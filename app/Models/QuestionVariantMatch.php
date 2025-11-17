@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class QuestionVariantMatch extends Model
 {
-    protected $fillable = ['question_variant_id', 'framework_variant_attribute_id', 'framework_variant_option_id'];
+    protected $fillable = [
+        'question_variant_id',
+        'framework_variant_attribute_id',
+        'framework_variant_option_id'
+    ];
 
     public function variant(): BelongsTo
     {
