@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('assessments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('subject_user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('framework_id')->constrained()->cascadeOnDelete();
             $table->timestamp('submitted_at')->nullable();
             $table->timestamp('target_completion_date')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
-            $table->index(['framework_id', 'subject_user_id']);
+            $table->index(['framework_id', 'user_id']);
         });
     }
 

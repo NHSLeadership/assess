@@ -13,7 +13,7 @@ class Assessment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'subject_user_id',
+        'user_id',
         'framework_id',
         'submitted_at',
         'target_completion_date',
@@ -27,7 +27,7 @@ class Assessment extends Model
 
     public function subject(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'subject_user_id');
+        return $this->belongsTo(User::class);
     }
 
     public function framework(): BelongsTo
@@ -46,5 +46,9 @@ class Assessment extends Model
             ->using(AssessmentRater::class)
             ->withPivot(['role','is_self'])
             ->withTimestamps();
+    }
+    public function variantSelections(): HasMany
+    {
+        return $this->hasMany(AssessmentVariantSelection::class);
     }
 }
