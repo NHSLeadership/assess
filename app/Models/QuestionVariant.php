@@ -29,4 +29,23 @@ class QuestionVariant extends Model
     {
         return $this->hasMany(QuestionVariantMatch::class);
     }
+
+    public function conditionPairs(): array
+    {
+        $matches = $this->relationLoaded('matches')
+            ? $this->matches
+            : $this->matches()->with(['attribute', 'option'])->get();
+
+        return $matches
+            ->sortBy(fn ($m) => $m->attribute->order ?? 0)
+            ->map(fn ($m) => "{$m->attribute->key}={$m->option->value}")
+            ->values()
+            ->all();
+    }
+
+    public function getConditionsSummaryAttribute(): string
+    {
+        $pairs = $this->conditionPairs();
+        return empty($pairs) ? '—' : implode('; ', $pairs);
+    }
 }
