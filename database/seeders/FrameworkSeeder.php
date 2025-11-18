@@ -13,12 +13,10 @@ class FrameworkSeeder extends Seeder
     public function run(): void
     {
         Framework::firstOrCreate(
-            ['slug' => 'hlm'],
             [
                 'name'        => 'Management and Leadership framework',
                 'slug'        => 'management-and-leadership-framework',
-                'description' => 'The NHS Management and Leadership framework.',
-                'active'      => true,
+                'description' => 'NHS Management and Leadership framework.',
             ]
         );
     }
