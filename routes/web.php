@@ -8,10 +8,10 @@ Route::group([
         //'can:users:manage',
     ]
 ], function () {
-    Route::get('/', \App\Livewire\Stages::class)->name('home');
+    Route::get('/', \App\Livewire\Frameworks::class)->name('home');
     Route::get('/frameworks/{frameworkId?}', \App\Livewire\Frameworks::class)->name('frameworks');
-    Route::get('/stages/{stageId?}', \App\Livewire\Stages::class)->name('stages');
-    Route::get('/areas/{frameworkId?}', \App\Livewire\Areas::class)->name('areas');
+    Route::get('/standards/{frameworkId?}/{stageId?}', \App\Livewire\Stages::class)->name('standards');
+    Route::get('/nodes/{frameworkId?}/{assessmentId?}', \App\Livewire\Areas::class)->name('areas');
     Route::get('/assessments/{assessmentId?}', \App\Livewire\Assessments::class)->name('assessments');
 
     /**

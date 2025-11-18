@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\FormField;
+use App\Models\Question;
 use App\Models\User;
 use App\Models\UserDataOption;
 use App\Models\UserDataText;
@@ -10,16 +10,16 @@ use Illuminate\Support\Facades\Log;
 
 class UserDataEntry
 {
-    public static function updateOrCreate(mixed $values, FormField $formField, int $assessmentId, User $user): void
+    public static function updateOrCreate(mixed $values, Question $question, int $assessmentId, User $user): void
     {
         if (!is_array($values)) {
             $values = [$values];
         }
 
-        if (isset($formField->element)) {
+        if (isset($question->component)) {
             foreach ($values as $value) {
                 try {
-                    match ($formField->element) {
+                    match ($question->component) {
                         'date',
                         'email',
                         'file',
@@ -27,8 +27,8 @@ class UserDataEntry
                         'text',
                         'textarea' => UserDataText::updateOrCreate([
                             'assessment_id' => $assessmentId,
-                            'form_field_id' => $formField->id,
-                            //'user_id'       => $user->id,
+                            'question_id'   => $question->id,
+                            'user_id'       => $user->id,
                         ],[
                             'value'         => $value,
                             'updated_at'    => now(),
@@ -37,10 +37,10 @@ class UserDataEntry
                         'radio',
                         'select' => UserDataOption::updateOrCreate([
                             'assessment_id'        => $assessmentId,
-                            'form_field_id'        => $formField->id,
-                            //'user_id'              => $user->id,
+                            'question_id'          => $question->id,
+                            'user_id'              => $user->id,
                         ],[
-                            'form_field_option_id' => $value,
+                            'scale_option_id'      => $value,
                             'updated_at'           => now(),
                         ]),
 
@@ -50,7 +50,7 @@ class UserDataEntry
                     };
                 } catch (\Throwable $e) {
                     Log::error('Error saving form field {field_id}. {details}', [
-                        'field_id' => $formField->id,
+                        'question_id' => $question->id,
                         'details' => $e->getMessage()
                     ]);
                 }

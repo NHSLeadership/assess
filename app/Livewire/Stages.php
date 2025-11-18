@@ -3,6 +3,8 @@
 namespace App\Livewire;
 
 use App\Models\Framework;
+use App\Models\FrameworkVariantAttribute;
+use App\Models\FrameworkVariantOption;
 use App\Models\Stage;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -10,33 +12,40 @@ use Livewire\Component;
 
 class Stages extends Component
 {
-    public ?string $stageId;
+    public ?int $frameworkId;
+    public ?int $stageId;
 
     #[Computed]
-    public function frameworks(): Collection
+    public function framework(): ?Framework
     {
-        if (empty($this->stageId) || ! is_numeric($this->stageId)) {
-            return Framework::all();
+        if (empty($this->frameworkId)) {
+            $framework = Framework::first();
+            $this->frameworkId = $framework->id;
+
+            return $framework;
         }
 
-        return Framework::where('stage_id', $this->stageId)->get();
+        return Framework::find($this->frameworkId);
     }
 
     #[Computed]
-    public function stages(): Collection
+    public function stages(): ?Collection
     {
-        //return Stage::all();
-        return Framework::find(1)->variantAttributes()->where('key', 'stage')->first()->options()->get();
+        if (empty($this->frameworkId) || ! is_numeric($this->frameworkId)) {
+            return null;
+        }
+
+        return Framework::find($this->frameworkId)->stages()->first()->options()->get();
     }
 
     #[Computed]
-    public function stage(): ?Stage
+    public function stage(): ?FrameworkVariantOption
     {
         if (empty($this->stageId)) {
             return null;
         }
 
-        return Stage::find($this->stageId);
+        return Framework::find($this->frameworkId)->stages()->first()->options()->where('id', $this->stageId)->first();
     }
 
     public function render()

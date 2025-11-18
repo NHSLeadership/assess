@@ -12,7 +12,9 @@ class UserDataOption extends Model
         'form_field_id',
         'form_field_option_id',
         'user_id',
-        'updated_at'
+        'updated_at',
+        'scale_option_id',
+        'question_id'
     ];
 
     public function assessment(): BelongsTo
@@ -20,13 +22,13 @@ class UserDataOption extends Model
         return $this->belongsTo(Assessment::class);
     }
 
-    public function formField(): BelongsTo
+    public function question(): BelongsTo
     {
-        return $this->belongsTo(FormField::class);
+        return $this->belongsTo(Question::class);
     }
 
-    public function formFieldOption(): BelongsTo
+    public function option(): BelongsTo
     {
-        return $this->belongsTo(FormFieldOption::class);
+        return $this->belongsTo(ScaleOption::class);
     }
 }

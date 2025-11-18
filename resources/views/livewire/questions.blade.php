@@ -1,21 +1,21 @@
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
 
-        @if (!empty($fields))
+        @if (!empty($questions))
             <form wire:submit="store()">
-                @foreach ($fields as $field)
+                @foreach ($questions as $question)
                     {{-- Render each component based on type and it's properties --}}
-                    @component('components.form.' . $field['element'], [
-                        'name' => 'data.' . $field['name'] ?? null,
-                        'class' => $field['class'] ?? null,
-                        'options_list' => $field->formFieldOptions->pluck('name', 'id')?->toArray() ?? [],
-                        'type' => $field['type'] ?? null,
+                    @component('components.form.' . $question['component'], [
+                        'name' => 'data.' . $question['name'] ?? null,
+                        'class' => $question['class'] ?? null,
+                        'options_list' => $question->scale->options()->pluck('label', 'id')?->toArray() ?? [],
+                        'type' => $question['type'] ?? null,
                     ])
                         @slot('hint')
-                            {{ $field['hint'] ?? null }}
+                            {{ $question['hint'] ?? null }}
                         @endslot
                         @slot('label')
-                            <span class="nhsuk-u-visually-hidden">Competency {{$field->id}}</span>{{ $field['label'] ?? null }}
+                            <span class="nhsuk-u-visually-hidden">Competency {{$question->id}}</span>{{ $question['title'] ?? null }}
                         @endslot
                     @endcomponent
                     <hr>
@@ -25,7 +25,7 @@
                 <button class="nhsuk-button" type="submit">Continue</button>
             </form>
 
-            @if (!empty($fields->previousPageUrl()))
+            @if (!empty($questions->previousPageUrl()))
                 <div class="nhsuk-back-link">
                     <a class="nhsuk-back-link__link" wire:click.prevent="backPage()" href="#">
                         <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">

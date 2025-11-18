@@ -20,12 +20,12 @@ Breadcrumbs::for('assessments', function ($trail) {
 
 // Home > Frameworks
 Breadcrumbs::for('frameworks', function ($trail) {
-    $trail->parent('stages');
+    $trail->parent('home');
     $trail->push('Frameworks', route('frameworks'));
 });
 
 // Home > Stages
 Breadcrumbs::for('stages', function ($trail) {
     $trail->parent('home');
-    $trail->push('Standard and Competencies', route('stages'));
+    $trail->push('Standard and Competencies', route('standards'));
 });

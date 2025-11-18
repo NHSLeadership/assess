@@ -20,7 +20,10 @@ class Frameworks extends Component
     public function framework(): ?Framework
     {
         if (empty($this->frameworkId)) {
-            return null;
+            $framework = Framework::first();
+            $this->frameworkId = $framework->id;
+
+            return $framework;
         }
 
         return Framework::find($this->frameworkId);

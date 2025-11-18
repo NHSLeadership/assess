@@ -2,10 +2,9 @@
 
 namespace App\Livewire;
 
-use App\Models\Area;
+use App\Models\Node;
 use App\Models\Assessment;
 use App\Services\UserDataEntry;
-use App\Traits\CompetenciesTrait;
 use App\Traits\FormFieldValidationRulesTrait;
 use App\Traits\UserTrait;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -18,7 +17,6 @@ use Livewire\WithPagination;
 class Questions extends Component
 {
     use FormFieldValidationRulesTrait;
-    use CompetenciesTrait;
     use WithPagination;
     use WithoutUrlPagination;
     use UserTrait;
@@ -30,7 +28,7 @@ class Questions extends Component
     protected $parentPageName = 'assessmentId';
 
     public ?array $data;
-    public ?int $areaId;
+    public ?int $nodeId;
 
     public function mount(): void
     {
@@ -39,50 +37,59 @@ class Questions extends Component
          */
         $this->data = $this->userData()->toArray();
 
-        if (empty($this->data) && $this->allFields()) {
-            foreach ($this->allFields() as $field) {
-                $defaults = unserialize($field['defaults']) ?? null;
-                $this->data[$field['name']] = $defaults;
+        if (empty($this->data) && $this->allQuestions()) {
+            foreach ($this->allQuestions() as $question) {
+                $defaults = unserialize($question['defaults']) ?? null;
+                $this->data[$question['name']] = $defaults;
             }
         }
     }
 
-    public function allFields()
+    public function allQuestions(): Collection
     {
-        return $this->area()?->fields()->get();
+        return $this->node()?->questions()->get();
     }
 
-    protected function messages()
+    protected function messages(): array
     {
-        foreach ($this->allFields() as $field) {
-            $messages['data.' . $field['name'] . '.numeric'] = 'Select one of the following options';
-            $messages['data.' . $field['name'] . '.required'] = 'Select one of the following options';
+        foreach ($this->allQuestions() as $question) {
+            $messages['data.' . $question['name'] . '.numeric'] = 'Select one of the following options';
+            $messages['data.' . $question['name'] . '.required'] = 'Select one of the following options';
         }
 
         return $messages ?? [];
     }
 
-    public function area(): ?Area
+    public function node(): ?Node
     {
-        return $this->areas->current();
+        return $this->nodes()->current();
     }
 
     #[Computed]
-    public function areas()
+    public function nodes(): ?\ArrayIterator
     {
         if (empty($this->assessment)) {
             return null;
         }
 
-        $areas = $this->assessment?->framework?->areas()->whereNotNull('parent_id')->orderBy('parent_id')->orderBy('id')->get();
-        $areasIterator = $areas->getIterator();
+        /**
+         * Take all nodes with questions only
+         */
+        $nodes = $this->assessment?->framework?->nodes()
+                                              ->whereHas('questions')
+                                              ->orderBy('parent_id')->orderBy('order')->orderBy('id')
+                                              ->get();
+        /**
+         * Convert collection to iterator
+         */
+        $nodesIterator = $nodes->getIterator();
 
-        if (empty($this->areaId)) {
-            $this->areaId = $areasIterator->key() ?? 0;
+        if (empty($this->nodeId)) {
+            $this->nodeId = $nodesIterator->key() ?? 0;
         }
-        $areasIterator->seek($this->areaId);
+        $nodesIterator->seek($this->nodeId);
 
-        return $areasIterator;
+        return $nodesIterator;
     }
 
     #[Computed]
@@ -106,8 +113,8 @@ class Questions extends Component
     public function getRules(): array
     {
         $rules = [];
-        foreach ($this->paginatedFields() as $field) {
-            $rules['data.' . $field['name']] = $this->getRulesForType($field);
+        foreach ($this->paginatedQuestions() as $question) {
+            $rules['data.' . $question['name']] = $this->getRulesForType($question);
         }
 
         return $rules ?? [];
@@ -120,31 +127,32 @@ class Questions extends Component
             $this->validate($rules);
         }
 
-        $fields = $this->allFields()?->keyBy('name');
+        $questions = $this->allQuestions()?->keyBy('name');
         foreach ($this->data as $name => $values) {
-            if (isset($fields[$name])) {
-                UserDataEntry::updateOrCreate($values, $fields[$name], $this->assessmentId, $this->user);
+            if (isset($questions[$name])) {
+                UserDataEntry::updateOrCreate($values, $questions[$name], $this->assessmentId, $this->user);
             }
         }
 
-        if ($this->paginatedFields()->hasMorePages()) {
+        if ($this->paginatedQuestions()->hasMorePages()) {
             $this->nextPage(pageName: $this->pageName);
         } else {
+            //TODO: Check if all questions are answered and go to assessment summary (to be done)
             $this->resetPage(pageName: $this->pageName);
-            $this->areas->next();
-            $this->areaId = $this->areas->key();
+            $this->nodes->next();
+            $this->nodeId = $this->nodes->key();
         }
     }
 
-    protected function paginatedFields(): ?LengthAwarePaginator
+    protected function paginatedQuestions(): ?LengthAwarePaginator
     {
-        return $this->area()?->fields()?->paginate($this->perPage, pageName: $this->pageName);
+        return $this->node()?->questions()?->paginate($this->perPage, pageName: $this->pageName);
     }
 
     public function render()
     {
         return view('livewire.questions', [
-            'fields' => $this->paginatedFields(),
+            'questions' => $this->paginatedQuestions(),
         ]);
     }
 }

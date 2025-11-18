@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Assessment;
 use App\Models\Framework;
-use App\Models\Area;
+use App\Models\Node;
 use App\Models\Stage;
 use App\Models\User;
 use Illuminate\Support\Collection;
@@ -43,9 +43,9 @@ class Areas extends Component
     }
 
     #[Computed]
-    public function areas(): ?Collection
+    public function nodes(): ?Collection
     {
-        return Area::where('framework_id', $this->frameworkId)->whereHas('fields')->get();
+        return Node::where('framework_id', $this->frameworkId)->whereHas('questions')->get();
     }
 
     #[Computed]
@@ -55,23 +55,23 @@ class Areas extends Component
             return null;
         }
 
-        return $this->assessment?->framework?->areas()->whereHas('fields')->get();
+        return $this->assessment?->framework?->nodes()->whereHas('questions')->get();
     }
 
     #[Computed]
     public function stage(): ?Stage
     {
-        if (empty($this->frameworkId)) {
+        if (empty($this->frameworkId) || ! is_numeric($this->frameworkId)) {
             return null;
         }
 
-        return $this->framework()->stage;
+        return Framework::find($this->frameworkId)->stages()->first()->options()->get();
     }
 
     #[Computed]
     public function stages(): Collection
     {
-        return Stage::all();
+        return Framework::find($this->frameworkId)->stages()->options()->get();
     }
 
     #[Computed]

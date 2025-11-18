@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\Assessment;
-use App\Traits\CompetenciesTrait;
 use App\Traits\FormFieldValidationRulesTrait;
 use App\Traits\UserTrait;
 use Livewire\Attributes\Computed;
@@ -14,7 +13,6 @@ use Livewire\WithPagination;
 class Assessments extends Component
 {
     use FormFieldValidationRulesTrait;
-    use CompetenciesTrait;
     use WithPagination;
     use UserTrait;
 
@@ -35,13 +33,13 @@ class Assessments extends Component
     }
 
     #[Computed]
-    public function areas()
+    public function nodes()
     {
         if (empty($this->assessment)) {
             return null;
         }
 
-        return $this->assessment?->framework?->areas()->whereNotNull('parent_id')->orderBy('parent_id')->orderBy('id');
+        return $this->assessment?->framework?->nodes()->whereNotNull('parent_id')->orderBy('parent_id')->orderBy('id');
     }
 
     #[Computed]
@@ -51,7 +49,7 @@ class Assessments extends Component
             return null;
         }
 
-        return $this->assessment?->framework?->areas()->whereHas('fields')->get();
+        return $this->assessment?->framework?->nodes()->whereHas('questions')->get();
     }
 
     #[Computed]
@@ -79,7 +77,7 @@ class Assessments extends Component
     public function render()
     {
         return view('livewire.assessments', [
-            'paginatedAreas' => $this->areas()?->paginate($this->perPage, pageName: $this->pageName),
+            'paginatedAreas' => $this->nodes()?->paginate($this->perPage, pageName: $this->pageName),
         ]);
     }
 }
