@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ResponseType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,12 +11,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Question extends Model
 {
     use HasFactory;
-
-    public const string TYPE_SINGLE_CHOICE = 'single_choice';
-    public const string TYPE_MULTI_CHOICE  = 'multi_choice';
-    public const string TYPE_SCALE         = 'scale';
-    public const string TYPE_BOOLEAN       = 'boolean';
-    public const string TYPE_FREE_TEXT     = 'free_text';
 
     protected $fillable = [
         'node_id',
@@ -34,6 +29,18 @@ class Question extends Model
         'required' => 'boolean',
         'active'   => 'boolean',
     ];
+
+    public function getComponentAttribute(): string
+    {
+        $type = ResponseType::tryFrom($this->attributes['response_type']);
+
+        return $type->component() ?? 'text';
+    }
+
+    public function getNameAttribute(): string
+    {
+        return 'question_'.$this->attributes['id'];
+    }
 
     public function node(): BelongsTo
     {

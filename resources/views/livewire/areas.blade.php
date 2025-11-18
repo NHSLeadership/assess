@@ -11,19 +11,19 @@
         @endif
 
         <ul class="nhsuk-task-list">
-        @foreach ($this->areas as $area)
+        @foreach ($this->nodes as $node)
             <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link nhsuk-u-padding-left-2">
                 <div class="nhsuk-task-list__name-and-hint">
-                    {{ $area->name }}
-                    @if ($area->parent)
+                    {{ $node->name }}
+                    @if ($node->parent)
                     <div class="nhsuk-task-list__hint">
-                        <span class="nhsuk-tag nhsuk-tag--no-border nhsuk-tag--{{ $area->parent->colour ?? 'blue' }}">{{ $area->parent->name ?? '' }}</span>
+                        <span class="nhsuk-tag nhsuk-tag--no-border nhsuk-tag--{{ $node->parent->colour ?? 'blue' }}">{{ $node->parent->name ?? '' }}</span>
                     </div>
                     @endif
                 </div>
 
-                @if ($this->userData?->where('formField.area_id', $area->id)->count())
-                    @if ($this->userData?->where('formField.area_id', $area->id)->count() === $area->fields?->where('required', 1)->count())
+                @if ($this->userData?->where('question.node_id', $node->id)->count())
+                    @if ($this->userData?->where('question.node_id', $node->id)->count() === $node->questions?->where('required', 1)->count())
                         <div class="nhsuk-task-list__status nhsuk-task-list__status--completed">
                             <strong class="nhsuk-tag nhsuk-tag--transparent nhsuk-tag--no-border">
                                 {{ __('Completed') }}

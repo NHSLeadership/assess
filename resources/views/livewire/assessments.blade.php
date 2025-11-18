@@ -17,7 +17,7 @@
 {{--            </div>--}}
         @endif
 
-        @if ($this->areas?->count())
+        @if ($this->nodes?->count())
 
             @foreach ($paginatedAreas as $area)
                 <h2 class="nhsuk-heading-m">

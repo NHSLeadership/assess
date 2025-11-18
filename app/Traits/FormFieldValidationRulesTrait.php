@@ -14,17 +14,17 @@ trait FormFieldValidationRulesTrait
         'textarea' => ['sometimes', 'max:255'],
     ];
 
-    public function getRulesForType($field = null): array
+    public function getRulesForType($question = null): array
     {
-        $rules = self::$typeRules[$field['element'] ?? null] ?? [];
+        $rules = self::$typeRules[$question['component'] ?? null] ?? [];
 
-        if (!empty($field['minLength'])) {
-            $rules[] = 'min:' . $field['minLength'];
+        if (!empty($question['minLength'])) {
+            $rules[] = 'min:' . $question['minLength'];
         }
-        if (!empty($field['maxLength'])) {
-            $rules[] = 'max:' . $field['maxLength'];
+        if (!empty($question['maxLength'])) {
+            $rules[] = 'max:' . $question['maxLength'];
         }
-        if (!empty($field['required'])) {
+        if (!empty($question['required'])) {
             $rules[] = 'required';
         } else {
             $rules[] = 'nullable';

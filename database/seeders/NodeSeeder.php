@@ -19,6 +19,7 @@ class NodeSeeder extends Seeder
                 'node_type_id' => 1,  // Area
                 'name' => 'Developing self',
                 'description' => 'Developing self',
+                'colour' => 'orange',
                 'order' => 1,
             ],
                 [
@@ -67,12 +68,14 @@ class NodeSeeder extends Seeder
                 'node_type_id' => 1,  // Area
                 'name' => 'Managing people and resources',
                 'description' => 'Managing people and resources',
+                'colour' => 'green',
                 'order' => 7,
             ],
                 [
                     'framework_id' => 1,
                     'parent_id' => 7,
                     'node_type_id' => 2,  // Standard
+                    'colour' => 'orange',
                     'name' => 'Building teams',
                     'description' => 'Building teams',
                     'order' => 8,
@@ -99,6 +102,7 @@ class NodeSeeder extends Seeder
                 'node_type_id' => 1,  // Area
                 'name' => 'Delivering across health and care',
                 'description' => 'Delivering across health and care',
+                'colour' => 'orange',
                 'order' => 11,
             ],
                 [

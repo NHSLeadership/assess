@@ -32,4 +32,8 @@ return [
         'title' => 'Stages',
         'content' => '',
     ],
+    'standards' => [
+        'title' => 'Standards',
+        'content' => '',
+    ],
 ];

@@ -9,8 +9,9 @@ class UserDataText extends Model
 {
     protected $fillable = [
         'assessment_id',
-        'form_field_id',
         'user_id',
+        'question_id',
+        'scale_option_id',
         'value',
         'updated_at',
     ];
@@ -20,9 +21,9 @@ class UserDataText extends Model
         return $this->belongsTo(Assessment::class);
     }
 
-    public function formField(): BelongsTo
+    public function question(): BelongsTo
     {
-        return $this->belongsTo(FormField::class);
+        return $this->belongsTo(Question::class);
     }
 }
 

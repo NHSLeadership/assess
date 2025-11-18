@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('framework_id')->constrained()->cascadeOnDelete();
             $table->foreignId('parent_id')->nullable()->constrained('nodes')->cascadeOnDelete();
             $table->foreignId('node_type_id')->constrained();
+            $table->enum('colour', ['blue', 'green', 'grey', 'aqua-green', 'orange', 'purple', 'pink', 'red', 'white', 'yellow'])->default('blue');
             $table->string('name');
             $table->text('description');
             $table->unsignedInteger('order')->default(0);

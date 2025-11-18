@@ -23,7 +23,7 @@ class AreaFactory extends Factory
             'slug' => $this->faker->unique()->slug(),
             'name' => $this->faker->sentence(1),
             'description' => $this->faker->sentence(3),
-            'colour' => $this->faker->randomElement(['blue', 'green', 'orange']),
+            'colour' => $this->faker->randomElement(['blue', 'green', 'grey', 'aqua-green', 'orange', 'purple', 'pink', 'red', 'white', 'yellow']),
         ];
     }
 }

@@ -17,7 +17,7 @@ return new class extends Migration
                 ->constrained('nodes')
                 ->cascadeOnDelete();
             $table->string('title');
-            $table->string('text');
+            $table->text('text');
             $table->string('hint')->nullable();
             $table->string('placeholder')->nullable();
             $table->enum('response_type', [
