@@ -3,8 +3,7 @@
 
         @if (!empty($this->stage))
 
-            <h1 class="nhsuk-heading-xl">{{ $this->stage->name }}</h1>
-            {{--<h2 class="nhsuk-heading-xs">Standards and Competencies</h2>--}}
+            <h1 class="nhsuk-heading-xl">{{ $this->stage->name ?? $this->stage->label }}</h1>
 
             <p>
                 {{ $this->stage->description }}
@@ -18,7 +17,7 @@
                         <div class="nhsuk-task-list__name-and-hint">
                             <a href="{{ route('frameworks', ['frameworkId' => $framework->id]) }}"
                                aria-describedby="{{ $framework->slug }}-hint"
-                               class="nhsuk-link nhsuk-task-list__link">{{ $framework->name }}</a>
+                               class="nhsuk-link nhsuk-task-list__link">{{ $framework->name ?? $item->label }}</a>
                         </div>
                         <div class="nhsuk-task-list__status nhsuk-task-list__status--completed">
                             @if ($framework->areas?->where('completed_at', null)?->count())
@@ -59,13 +58,13 @@
                             <div class="nhsuk-card__content nhsuk-card__content--primary">
                                 <h2 class="nhsuk-card__heading nhsuk-heading-m">
                                     @if ($item->frameworks()->exists())
-                                        <a href="{{ route('stages', ['stageId' => $item->id]) }}" class="nhsuk-card__link">{{ $item->name }}</a>
+                                        <a href="{{ route('stages', ['stageId' => $item->id]) }}" class="nhsuk-card__link">{{ $item->name ?? $item->label }}</a>
                                     @else
-                                        {{ $item->name }}
+                                        {{ $item->name ?? $item->label }}
                                     @endif
                                 </h2>
                                 <p class="nhsuk-card__description">
-                                    {{ $item->description }}
+                                    {{ $item->description ?? '' }}
                                 </p>
                                 @if ($item->frameworks()->exists())
                                     <svg class="nhsuk-icon nhsuk-icon--chevron-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false" aria-hidden="true">

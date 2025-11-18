@@ -25,7 +25,8 @@ class Stages extends Component
     #[Computed]
     public function stages(): Collection
     {
-        return Stage::all();
+        //return Stage::all();
+        return Framework::find(1)->variantAttributes()->where('key', 'stage')->first()->options()->get();
     }
 
     #[Computed]
