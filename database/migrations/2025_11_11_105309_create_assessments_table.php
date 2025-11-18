@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('assessments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->unsignedInteger('user_id');
             $table->foreignId('framework_id')->constrained()->cascadeOnDelete();
             $table->timestamp('submitted_at')->nullable();
             $table->timestamp('target_completion_date')->nullable();
