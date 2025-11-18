@@ -15,12 +15,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('assessment_id')->constrained()->cascadeOnDelete();
             $table->foreignId('framework_variant_attribute_id')
-                ->constrained('framework_variant_attributes')->cascadeOnDelete();
+                ->constrained('framework_variant_attributes', null, 'avs_fva_id_foreign')
+                ->cascadeOnDelete();
             $table->foreignId('framework_variant_option_id')
-                ->constrained('framework_variant_options')->cascadeOnDelete();
+                ->constrained('framework_variant_options', null, 'avs_fvo_id_foreign')
+                ->cascadeOnDelete();
             $table->timestamps();
-            $table->unique(['assessment_id', 'framework_variant_attribute_id'],
-                'assessment_variant_unique_attr');
+            $table->unique(['assessment_id', 'framework_variant_attribute_id'], 'assessment_variant_unique_attr');
             $table->index(['assessment_id']);
         });
     }

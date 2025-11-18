@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('label');
             $table->unsignedInteger('order')->default(0);
             $table->timestamps();
-            $table->unique(['framework_variant_attribute_id', 'value']);
+            $table->unique(['framework_variant_attribute_id', 'value'], 'fvo_fva_id_value_unique');
         });
     }
 

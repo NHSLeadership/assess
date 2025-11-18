@@ -23,7 +23,7 @@ return new class extends Migration
                 ->constrained('framework_variant_options')
                 ->cascadeOnDelete();
             $table->timestamps();
-            $table->unique(['question_variant_id', 'framework_variant_attribute_id']);
+            $table->unique(['question_variant_id', 'framework_variant_attribute_id'], 'qvm_qv_id_fva_id_unique');
         });
     }
 
