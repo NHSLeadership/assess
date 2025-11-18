@@ -17,11 +17,9 @@ return new class extends Migration
             $table->foreignId('parent_id')->nullable()->constrained('nodes')->cascadeOnDelete();
             $table->foreignId('node_type_id')->constrained();
             $table->string('name');
-            $table->string('slug');
             $table->text('description');
             $table->unsignedInteger('order')->default(0);
             $table->timestamps();
-            $table->unique(['framework_id', 'parent_id', 'slug']);
             $table->index(['framework_id', 'parent_id', 'order']);
         });
     }

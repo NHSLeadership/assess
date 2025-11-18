@@ -14,7 +14,7 @@ class ScaleSeeder extends Seeder
     {
         $scale = Scale::firstOrCreate(
             ['name' => 'Behaviour likert 1-4'],
-            ['description' => 'Insufficient -> Exemplary', 'min_value' => 1, 'max_value' => 4]
+            ['description' => 'Insufficient -> Exemplary']
         );
 
         $options = [

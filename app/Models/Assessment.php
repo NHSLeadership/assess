@@ -15,18 +15,14 @@ class Assessment extends Model
     protected $fillable = [
         'subject_user_id',
         'framework_id',
-        'started_at',
         'submitted_at',
         'target_completion_date',
         'notes',
-        'locked',
     ];
 
     protected $casts = [
-        'started_at'   => 'datetime',
         'submitted_at' => 'datetime',
         'target_completion_date' => 'date',
-        'locked' => 'boolean',
     ];
 
     public function subject(): BelongsTo

@@ -18,7 +18,8 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->string('title');
             $table->string('text');
-            $table->string('slug');
+            $table->string('hint')->nullable();
+            $table->string('placeholder')->nullable();
             $table->enum('response_type', [
                 'single_choice',
                 'multi_choice',
@@ -34,7 +35,6 @@ return new class extends Migration
             $table->unsignedInteger('order')->default(0);
             $table->boolean('active')->default(true);
             $table->timestamps();
-            $table->unique(['node_id', 'slug']);
             $table->index(['node_id', 'order']);
             $table->index('scale_id');
         });

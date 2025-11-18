@@ -13,15 +13,6 @@ class Scale extends Model
     protected $fillable = [
         'name',
         'description',
-        'min_value',
-        'max_value',
-        'neutral_value',
-    ];
-
-    protected $casts = [
-        'min_value'     => 'integer',
-        'max_value'     => 'integer',
-        'neutral_value' => 'integer',
     ];
 
     public function options(): HasMany

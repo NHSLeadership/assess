@@ -15,9 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->integer('min_value');
-            $table->integer('max_value');
-            $table->integer('neutral_value')->nullable();
             $table->timestamps();
         });
     }
