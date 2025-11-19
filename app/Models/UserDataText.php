@@ -13,6 +13,7 @@ class UserDataText extends Model
         'user_id',
         'value',
         'updated_at',
+        'framework_id',
     ];
 
     public function assessment(): BelongsTo

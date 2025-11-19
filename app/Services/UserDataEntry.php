@@ -28,7 +28,7 @@ class UserDataEntry
                         'textarea' => UserDataText::updateOrCreate([
                             'assessment_id' => $assessmentId,
                             'form_field_id' => $formField->id,
-                            //'user_id'       => $user->id,
+                            'user_id'       => $user->id,
                         ],[
                             'value'         => $value,
                             'updated_at'    => now(),
@@ -36,9 +36,9 @@ class UserDataEntry
                         'checkbox',
                         'radio',
                         'select' => UserDataOption::updateOrCreate([
-                            'assessment_id'        => $assessmentId,
-                            'form_field_id'        => $formField->id,
-                            //'user_id'              => $user->id,
+                            'assessment_id' => $assessmentId,
+                            'form_field_id' => $formField->id,
+                            'user_id'       => $user->id,
                         ],[
                             'form_field_option_id' => $value,
                             'updated_at'           => now(),

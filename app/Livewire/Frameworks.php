@@ -20,7 +20,10 @@ class Frameworks extends Component
     public function framework(): ?Framework
     {
         if (empty($this->frameworkId)) {
-            return null;
+            $framework = Framework::first();
+            $this->frameworkId = $framework->id;
+
+            return $framework;
         }
 
         return Framework::find($this->frameworkId);
@@ -45,7 +48,7 @@ class Frameworks extends Component
     public function newAssessment(): void
     {
         $assessment = new Assessment([
-            'framework_id' => $this->frameworkId ?? null,
+            'framework_id' => $this->frameworkId,
             'user_id' => $this->user->id,
         ]);
         $assessment->save();

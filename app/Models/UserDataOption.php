@@ -12,7 +12,8 @@ class UserDataOption extends Model
         'form_field_id',
         'form_field_option_id',
         'user_id',
-        'updated_at'
+        'updated_at',
+        'framework_id'
     ];
 
     public function assessment(): BelongsTo
