@@ -4,7 +4,8 @@ namespace App\Livewire;
 
 use App\Models\Node;
 use App\Models\Assessment;
-use App\Services\UserDataEntry;
+use App\Models\User;
+use App\Services\UserResponseService;
 use App\Traits\FormFieldValidationRulesTrait;
 use App\Traits\UserTrait;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -35,24 +36,24 @@ class Questions extends Component
         /**
          * Pre-populate forms with defaults
          */
-        $this->data = $this->userData()->toArray();
+        $this->data = $this->UserResponses()->toArray();
 
-        if (empty($this->data) && $this->allQuestions()) {
-            foreach ($this->allQuestions() as $question) {
+        if (empty($this->data) && $this->nodeQuestions()) {
+            foreach ($this->nodeQuestions() as $question) {
                 $defaults = unserialize($question['defaults']) ?? null;
                 $this->data[$question['name']] = $defaults;
             }
         }
     }
 
-    public function allQuestions(): Collection
+    public function nodeQuestions(): Collection
     {
         return $this->node()?->questions()->get();
     }
 
     protected function messages(): array
     {
-        foreach ($this->allQuestions() as $question) {
+        foreach ($this->nodeQuestions() as $question) {
             $messages['data.' . $question['name'] . '.numeric'] = 'Select one of the following options';
             $messages['data.' . $question['name'] . '.required'] = 'Select one of the following options';
         }
@@ -99,10 +100,10 @@ class Questions extends Component
     }
 
     #[Computed]
-    public function userData(): Collection
+    public function UserResponses(): Collection
     {
         return $this->user->assessments()->where('id', $this->assessmentId)->first()
-            ->userDataOptions->pluck('form_field_option_id', 'formField.name');
+            ->userResponses->pluck('scale_option_id', 'question.name');
     }
 
     public function backPage(): void
@@ -127,17 +128,16 @@ class Questions extends Component
             $this->validate($rules);
         }
 
-        $questions = $this->allQuestions()?->keyBy('name');
+        $questions = $this->nodeQuestions()?->keyBy('name');
         foreach ($this->data as $name => $values) {
             if (isset($questions[$name])) {
-                UserDataEntry::updateOrCreate($values, $questions[$name], $this->assessmentId, $this->user);
+                UserResponseService::updateOrCreate($values, $questions[$name], $this->assessmentId, $this->user);
             }
         }
 
         if ($this->paginatedQuestions()->hasMorePages()) {
             $this->nextPage(pageName: $this->pageName);
         } else {
-            //TODO: Check if all questions are answered and go to assessment summary (to be done)
             $this->resetPage(pageName: $this->pageName);
             $this->nodes->next();
             $this->nodeId = $this->nodes->key();

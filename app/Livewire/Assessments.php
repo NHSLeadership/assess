@@ -68,7 +68,7 @@ class Assessments extends Component
     }
 
     #[Computed]
-    public function userData(): Collection
+    public function userResponses(): Collection
     {
         return $this->user->assessments()->where('id', $this->assessmentId)->get();
         //return $this->user->assessments()->where('framework_id', $this->assessment->frameworkId)->get();
@@ -77,7 +77,7 @@ class Assessments extends Component
     public function render()
     {
         return view('livewire.assessments', [
-            'paginatedAreas' => $this->nodes()?->paginate($this->perPage, pageName: $this->pageName),
+            'paginatedNodes' => $this->nodes()?->paginate($this->perPage, pageName: $this->pageName),
         ]);
     }
 }

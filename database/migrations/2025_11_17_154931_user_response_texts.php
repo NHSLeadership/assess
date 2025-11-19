@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_data_texts', function (Blueprint $table) {
+        Schema::create('user_response_texts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('assessment_id')
                   ->constrained()
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignId('question_id')
                   ->constrained()
                   ->cascadeOnDelete();
-            $table->text('value')->nullable();
+            $table->text('text')->nullable();
             $table->timestamps();
             $table->unique(
                 ['assessment_id', 'question_id', 'user_id'],
@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_data_text');
+        Schema::dropIfExists('user_response_texts');
     }
 };

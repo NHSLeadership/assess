@@ -5,16 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UserDataOption extends Model
+class UserResponseText extends Model
 {
     protected $fillable = [
         'assessment_id',
-        'form_field_id',
-        'form_field_option_id',
         'user_id',
-        'updated_at',
+        'question_id',
         'scale_option_id',
-        'question_id'
+        'value',
+        'updated_at',
     ];
 
     public function assessment(): BelongsTo
@@ -26,9 +25,5 @@ class UserDataOption extends Model
     {
         return $this->belongsTo(Question::class);
     }
-
-    public function option(): BelongsTo
-    {
-        return $this->belongsTo(ScaleOption::class);
-    }
 }
+

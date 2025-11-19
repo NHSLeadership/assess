@@ -40,14 +40,14 @@ class Assessment extends Model
         return $this->hasMany(Response::class);
     }
 
-    public function userDataOptions(): HasMany
+    public function userResponses(): HasMany
     {
-        return $this->hasMany(UserDataOption::class);
+        return $this->hasMany(UserResponse::class);
     }
 
-    public function userDataTexts(): HasMany
+    public function userResponseTexts(): HasMany
     {
-        return $this->hasMany(UserDataText::class);
+        return $this->hasMany(UserResponseText::class);
     }
 
     public function raters(): BelongsToMany

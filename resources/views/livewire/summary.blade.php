@@ -22,8 +22,8 @@
                     @endif
                 </div>
 
-                @if ($this->userData?->where('question.node_id', $node->id)->count())
-                    @if ($this->userData?->where('question.node_id', $node->id)->count() === $node->questions?->where('required', 1)->count())
+                @if ($this->userResponses?->where('question.node_id', $node->id)->count())
+                    @if ($this->userResponses?->where('question.node_id', $node->id)->count() === $node->questions?->where('required', 1)->count())
                         <div class="nhsuk-task-list__status nhsuk-task-list__status--completed">
                             <strong class="nhsuk-tag nhsuk-tag--transparent nhsuk-tag--no-border">
                                 {{ __('Completed') }}

@@ -2,17 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
-
 Route::group([
     // 'middleware' => ['auth']
 ], function () {
     Route::get('/', \App\Livewire\Frameworks::class)->name('home');
     Route::get('/frameworks/{frameworkId?}', \App\Livewire\Frameworks::class)->name('frameworks');
     Route::get('/standards/{frameworkId?}/{stageId?}', \App\Livewire\Stages::class)->name('standards');
-    Route::get('/nodes/{frameworkId?}/{assessmentId?}', \App\Livewire\Areas::class)->name('areas');
+    Route::get('/summary/{frameworkId?}/{assessmentId?}', \App\Livewire\Summary::class)->name('summary');
     Route::get('/assessments/{assessmentId?}', \App\Livewire\Assessments::class)->name('assessments');
 
     /**
