@@ -6,10 +6,10 @@ Breadcrumbs::for('home', function ($trail) {
     $trail->push('Home', route('home'));
 });
 
-// Home > Areas
-Breadcrumbs::for('areas', function ($trail) {
+// Home > Summary
+Breadcrumbs::for('summary', function ($trail) {
     $trail->parent('frameworks');
-    $trail->push('Areas', route('areas'));
+    $trail->push('Summary', route('summary'));
 });
 
 // Home > Assessments

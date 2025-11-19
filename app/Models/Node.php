@@ -17,6 +17,7 @@ class Node extends Model
         'node_type_id',
         'name',
         'description',
+        'colour',
         'order',
     ];
 

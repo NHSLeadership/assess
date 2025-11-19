@@ -11,7 +11,7 @@ use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
-class Areas extends Component
+class Summary extends Component
 {
     public $frameworkId;
     public $assessmentId;
@@ -87,14 +87,14 @@ class Areas extends Component
     }
 
     #[Computed]
-    public function userData(): Collection
+    public function userResponses(): Collection
     {
-        return Assessment::where('id', $this->assessmentId)->first()->userDataOptions()->get();
+        return $this->assessment->userResponses()->get();
     }
 
     public function render()
     {
-        return view('livewire.areas', [
+        return view('livewire.summary', [
             'title' => 'Areas'
         ]);
     }

@@ -12,7 +12,7 @@
                         'type' => $question['type'] ?? null,
                     ])
                         @slot('hint')
-                            {{ $question['hint'] ?? null }}
+                            {{ $question['text'] ?? $question['hint'] }}
                         @endslot
                         @slot('label')
                             <span class="nhsuk-u-visually-hidden">Competency {{$question->id}}</span>{{ $question['title'] ?? null }}
@@ -21,8 +21,20 @@
                     <hr>
                 @endforeach
 
-                {{-- Submit button continues to next page instead of pagination links --}}
-                <button class="nhsuk-button" type="submit">Continue</button>
+                @if ($this->userResponses?->count())
+                    <div class="nhsuk-inset-text">
+                        <span class="nhsuk-u-visually-hidden">Information: </span>
+                        <p>You completed all required fields, you can still navigate and change your answers or finish the assessment to receive a report.</p>
+                    </div>
+                    {{-- Submit button continues to next page instead of pagination links --}}
+                    <button class="nhsuk-button nhsuk-button--reverse nhsuk-u-margin-right-3" type="submit">Continue</button>
+                    @if ($this->userResponses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count())
+                        <a class="nhsuk-button" href="{{ route('summary', ['frameworkId' => $this->assessment?->framework->id, 'assessmentId' => $this->assessmentId]) }}">Finish assessment</a>
+                    @endif
+                @else
+                    {{-- Submit button continues to next page instead of pagination links --}}
+                    <button class="nhsuk-button" type="submit">Continue</button>
+                @endif
             </form>
 
             @if (!empty($questions->previousPageUrl()))
@@ -36,7 +48,8 @@
 
         @else
             <p>Questions not found.</p>
-            <a class="nhsuk-back-link" wire:click.prevent="backPage()" href="{{ route('areas', $this->assessment->framework->id) }}">Step back</a>
+
+            <a class="nhsuk-back-link" wire:click.prevent="backPage()" href="{{ route('frameworks', $this->assessment->framework->id) }}">Step back</a>
         @endif
 
     </div>

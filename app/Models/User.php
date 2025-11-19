@@ -62,7 +62,7 @@ class User extends Authenticatable
     public function assessments(): HasMany
     {
         return $this->hasMany(Assessment::class)
-                    ->with('userDataOptions')
-                    ->with('userDataTexts');
+                    ->with('userResponses')
+                    ->with('userResponseTexts');
     }
 }

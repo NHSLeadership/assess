@@ -19,7 +19,6 @@ class NodeSeeder extends Seeder
                 'node_type_id' => 1,  // Area
                 'name' => 'Developing self',
                 'description' => 'Developing self',
-                'colour' => 'orange',
                 'order' => 1,
             ],
                 [
@@ -28,6 +27,7 @@ class NodeSeeder extends Seeder
                     'node_type_id' => 2,  // Standard
                     'name' => 'Personal productivity and wellbeing',
                     'description' => 'Personal productivity and wellbeing',
+                    'colour' => 'green',
                     'order' => 2,
                 ],
                     [
@@ -133,12 +133,13 @@ class NodeSeeder extends Seeder
         foreach ($nodes as $node) {
             Node::firstOrCreate(
                 [
-                'framework_id' => $node['framework_id'],
-                'parent_id' => $node['parent_id'],
-                'node_type_id' => $node['node_type_id'],
-                'name' => $node['name'],
-                'description' => $node['description'],
-                'order' => $node['order'],
+                    'framework_id' => $node['framework_id'],
+                    'parent_id' => $node['parent_id'],
+                    'node_type_id' => $node['node_type_id'],
+                    'name' => $node['name'],
+                    'description' => $node['description'],
+                    'colour' => $node['colour'] ?? 'blue',
+                    'order' => $node['order'],
                 ],
             );
         }

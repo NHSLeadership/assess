@@ -4,11 +4,11 @@ namespace App\Services;
 
 use App\Models\Question;
 use App\Models\User;
-use App\Models\UserDataOption;
-use App\Models\UserDataText;
+use App\Models\UserResponse;
+use App\Models\UserResponseText;
 use Illuminate\Support\Facades\Log;
 
-class UserDataEntry
+class UserResponseService
 {
     public static function updateOrCreate(mixed $values, Question $question, int $assessmentId, User $user): void
     {
@@ -25,7 +25,7 @@ class UserDataEntry
                         'file',
                         'number',
                         'text',
-                        'textarea' => UserDataText::updateOrCreate([
+                        'textarea' => UserResponseText::updateOrCreate([
                             'assessment_id' => $assessmentId,
                             'question_id'   => $question->id,
                             'user_id'       => $user->id,
@@ -35,7 +35,7 @@ class UserDataEntry
                         ]),
                         'checkbox',
                         'radio',
-                        'select' => UserDataOption::updateOrCreate([
+                        'select' => UserResponse::updateOrCreate([
                             'assessment_id'        => $assessmentId,
                             'question_id'          => $question->id,
                             'user_id'              => $user->id,

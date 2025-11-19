@@ -19,14 +19,14 @@
 
         @if ($this->nodes?->count())
 
-            @foreach ($paginatedAreas as $area)
+            @foreach ($paginatedNodes as $node)
                 <h2 class="nhsuk-heading-m">
-                    <span class="nhsuk-tag--{{ $area->parent->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">
-                        {{ $area->parent->name ?? '' }} - {{ $area->name ?? '' }}</span>
+                    <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">
+                        {{ $node->parent->name ?? '' }} - {{ $node->name ?? '' }}</span>
                 </h2>
 
-                @if (!empty($area->description))
-                    <p>{!! $area->description !!}</p>
+                @if (!empty($node->description))
+                    <p>{!! $node->description !!}</p>
                 @endif
 
                 <p>Please review the questions in the code and each of the competency areas below to complete your 360. You can work through the competency areas in any order.</p>
@@ -36,7 +36,7 @@
 
             <hr>
 
-            @livewire('areas', ['frameworkId' => $this->assessment->framework->id, 'assessmentId' => $this->assessmentId])
+        {{--@livewire('summary', ['frameworkId' => $this->assessment->framework->id, 'assessmentId' => $this->assessmentId])--}}
 
         @else
             <p>{{ __('Assessment not found or has been removed.') }}</p>

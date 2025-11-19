@@ -5,14 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UserDataText extends Model
+class UserResponse extends Model
 {
     protected $fillable = [
         'assessment_id',
         'user_id',
         'question_id',
         'scale_option_id',
-        'value',
         'updated_at',
     ];
 
@@ -25,5 +24,9 @@ class UserDataText extends Model
     {
         return $this->belongsTo(Question::class);
     }
-}
 
+    public function option(): BelongsTo
+    {
+        return $this->belongsTo(ScaleOption::class);
+    }
+}
