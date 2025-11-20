@@ -44,4 +44,9 @@ class Node extends Model
     {
         return $this->hasMany(Question::class)->orderBy('order');
     }
+
+    public function signposts(): HasMany
+    {
+        return $this->hasMany(Signpost::class);
+    }
 }
