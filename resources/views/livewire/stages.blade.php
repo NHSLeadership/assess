@@ -20,9 +20,9 @@
                                 <div class="nhsuk-card__content nhsuk-card__content--primary">
                                     <h2 class="nhsuk-card__heading nhsuk-heading-m">
                                         @if ($item->frameworks()->exists())
-                                            <a href="{{ route('standards', ['frameworkId' => $this->frameworkId, 'stageId' => $item->id]) }}" class="nhsuk-card__link">{{ $item->label }}</a>
+                                            <a href="{{ route('frameworks', ['frameworkId' => $this->frameworkId, 'stageId' => $item->id]) }}" class="nhsuk-card__link">{{ $item->label }}</a>
                                         @else
-                                            {{ $item->label }}...
+                                            {{ $item->label }}
                                         @endif
                                     </h2>
                                     <p class="nhsuk-card__description">

@@ -3,17 +3,15 @@
 namespace App\Livewire;
 
 use App\Models\Framework;
-use App\Models\FrameworkVariantAttribute;
 use App\Models\FrameworkVariantOption;
-use App\Models\Stage;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class Stages extends Component
 {
-    public ?int $frameworkId;
-    public ?int $stageId;
+    public ?string $frameworkId;
+    public ?string $stageId;
 
     #[Computed]
     public function framework(): ?Framework

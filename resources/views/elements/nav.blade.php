@@ -3,6 +3,17 @@
 
         <ul class="nhsuk-header__navigation-list">
 
+
+        @if (Route::is('frameworks'))
+            <li class="nhsuk-header__navigation-item nhsuk-header__navigation-item__item--current" aria-current="page">
+        @else
+            <li class="nhsuk-header__navigation-item">
+                @endif
+                <a class="nhsuk-header__navigation-link" href="{{ route('home') }}">
+                    {{ __('Home') }}
+                </a>
+            </li>
+
         @if (Route::is('frameworks'))
             <li class="nhsuk-header__navigation-item nhsuk-header__navigation-item__item--current" aria-current="page">
         @else
