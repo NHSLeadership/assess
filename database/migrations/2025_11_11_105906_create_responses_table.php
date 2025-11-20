@@ -26,9 +26,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained()
                 ->nullOnDelete();
-            $table->smallInteger('numeric_value')->nullable();
             $table->text('free_text')->nullable();
-            $table->timestamp('answered_at')->nullable();
             $table->timestamps();
             $table->unique(
                 ['assessment_id', 'question_id', 'rater_id'],

@@ -15,14 +15,7 @@ class Response extends Model
         'rater_id',
         'question_id',
         'scale_option_id',
-        'numeric_value',
         'free_text',
-        'answered_at',
-    ];
-
-    protected $casts = [
-        'numeric_value' => 'integer',
-        'answered_at'   => 'datetime',
     ];
 
     public function assessment(): BelongsTo
