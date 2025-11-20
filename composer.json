@@ -13,6 +13,7 @@
         "auth0/login": "^7.19",
         "filament/forms": "4.0",
         "davejamesmiller/laravel-breadcrumbs": "5.x",
+        "diglactic/laravel-breadcrumbs": "*",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "livewire/volt": "^1.7.0",
