@@ -4,12 +4,14 @@ namespace App\Livewire;
 
 use App\Models\Node;
 use App\Models\Assessment;
-use App\Models\User;
+use App\Models\Rater;
+use App\Models\Response;
 use App\Services\UserResponseService;
 use App\Traits\FormFieldValidationRulesTrait;
 use App\Traits\UserTrait;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
@@ -36,7 +38,7 @@ class Questions extends Component
         /**
          * Pre-populate forms with defaults
          */
-        $this->data = $this->UserResponses()->toArray();
+        $this->data = $this->responses()->toArray();
 
         if (empty($this->data) && $this->nodeQuestions()) {
             foreach ($this->nodeQuestions() as $question) {
@@ -100,10 +102,10 @@ class Questions extends Component
     }
 
     #[Computed]
-    public function UserResponses(): Collection
+    public function responses(): Collection
     {
         return $this->user->assessments()->where('id', $this->assessmentId)->first()
-            ->userResponses->pluck('scale_option_id', 'question.name');
+            ->responses->pluck('scale_option_id', 'question.name');
     }
 
     public function backPage(): void
@@ -129,9 +131,14 @@ class Questions extends Component
         }
 
         $questions = $this->nodeQuestions()?->keyBy('name');
+        $rater = Rater::firstOrCreate([
+            'user_id' => $this->user->id,
+            'name' => '',
+        ]);
+
         foreach ($this->data as $name => $values) {
             if (isset($questions[$name])) {
-                UserResponseService::updateOrCreate($values, $questions[$name], $this->assessmentId, $this->user);
+                UserResponseService::updateOrCreate($values, $questions[$name], $this->assessmentId, $rater->id);
             }
         }
 

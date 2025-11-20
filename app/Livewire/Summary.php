@@ -4,8 +4,8 @@ namespace App\Livewire;
 
 use App\Models\Assessment;
 use App\Models\Framework;
+use App\Models\FrameworkVariantAttribute;
 use App\Models\Node;
-use App\Models\Stage;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -45,7 +45,8 @@ class Summary extends Component
     #[Computed]
     public function nodes(): ?Collection
     {
-        return Node::where('framework_id', $this->frameworkId)->whereHas('questions')->get();
+        return Node::where('framework_id', $this->frameworkId)->orderBy('order')->orderBy('id')->get();
+        //return Node::where('framework_id', $this->frameworkId)->orderByRaw('coalesce(parent_id, id), `order`')->orderBy('order')->get();
     }
 
     #[Computed]
@@ -59,7 +60,7 @@ class Summary extends Component
     }
 
     #[Computed]
-    public function stage(): ?Stage
+    public function stage(): ?FrameworkVariantAttribute
     {
         if (empty($this->frameworkId) || ! is_numeric($this->frameworkId)) {
             return null;
@@ -87,9 +88,9 @@ class Summary extends Component
     }
 
     #[Computed]
-    public function userResponses(): Collection
+    public function responses(): ?Collection
     {
-        return $this->assessment->userResponses()->get();
+        return $this->assessment?->responses()?->get();
     }
 
     public function render()

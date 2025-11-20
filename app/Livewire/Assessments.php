@@ -68,10 +68,9 @@ class Assessments extends Component
     }
 
     #[Computed]
-    public function userResponses(): Collection
+    public function responses(): Collection
     {
         return $this->user->assessments()->where('id', $this->assessmentId)->get();
-        //return $this->user->assessments()->where('framework_id', $this->assessment->frameworkId)->get();
     }
 
     public function render()
