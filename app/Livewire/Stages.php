@@ -27,7 +27,7 @@ class Stages extends Component
     }
 
     #[Computed]
-    public function stages(): ?Collection
+    public function options(): ?Collection
     {
         if (empty($this->frameworkId) || ! is_numeric($this->frameworkId)) {
             return null;

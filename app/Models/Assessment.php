@@ -25,6 +25,11 @@ class Assessment extends Model
         'target_completion_date' => 'date',
     ];
 
+    public function subject(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -38,16 +43,6 @@ class Assessment extends Model
     public function responses(): HasMany
     {
         return $this->hasMany(Response::class);
-    }
-
-    public function userResponses(): HasMany
-    {
-        return $this->hasMany(UserResponse::class);
-    }
-
-    public function userResponseTexts(): HasMany
-    {
-        return $this->hasMany(UserResponseText::class);
     }
 
     public function raters(): BelongsToMany

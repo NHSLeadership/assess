@@ -3,14 +3,12 @@
 namespace App\Services;
 
 use App\Models\Question;
-use App\Models\User;
-use App\Models\UserResponse;
-use App\Models\UserResponseText;
+use App\Models\Response;
 use Illuminate\Support\Facades\Log;
 
 class UserResponseService
 {
-    public static function updateOrCreate(mixed $values, Question $question, int $assessmentId, User $user): void
+    public static function updateOrCreate(mixed $values, Question $question, int $assessmentId, int $raterId): void
     {
         if (!is_array($values)) {
             $values = [$values];
@@ -25,23 +23,23 @@ class UserResponseService
                         'file',
                         'number',
                         'text',
-                        'textarea' => UserResponseText::updateOrCreate([
+                        'textarea' => Response::updateOrCreate([
                             'assessment_id' => $assessmentId,
                             'question_id'   => $question->id,
-                            'user_id'       => $user->id,
+                            'rater_id'      => $raterId,
                         ],[
-                            'value'         => $value,
+                            'free_text'     => $value,
                             'updated_at'    => now(),
                         ]),
                         'checkbox',
                         'radio',
-                        'select' => UserResponse::updateOrCreate([
-                            'assessment_id'        => $assessmentId,
-                            'question_id'          => $question->id,
-                            'user_id'              => $user->id,
+                        'select' => Response::updateOrCreate([
+                            'assessment_id'   => $assessmentId,
+                            'question_id'     => $question->id,
+                            'rater_id'        => $raterId,
                         ],[
-                            'scale_option_id'      => $value,
-                            'updated_at'           => now(),
+                            'scale_option_id' => $value,
+                            'updated_at'      => now(),
                         ]),
 
                         default => throw new \InvalidArgumentException(

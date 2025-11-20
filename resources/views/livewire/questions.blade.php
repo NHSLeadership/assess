@@ -21,14 +21,14 @@
                     <hr>
                 @endforeach
 
-                @if ($this->userResponses?->count())
+                @if ($this->responses?->count())
                     <div class="nhsuk-inset-text">
                         <span class="nhsuk-u-visually-hidden">Information: </span>
                         <p>You completed all required fields, you can still navigate and change your answers or finish the assessment to receive a report.</p>
                     </div>
                     {{-- Submit button continues to next page instead of pagination links --}}
                     <button class="nhsuk-button nhsuk-button--reverse nhsuk-u-margin-right-3" type="submit">Continue</button>
-                    @if ($this->userResponses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count())
+                    @if ($this->responses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count())
                         <a class="nhsuk-button" href="{{ route('summary', ['frameworkId' => $this->assessment?->framework->id, 'assessmentId' => $this->assessmentId]) }}">Finish assessment</a>
                     @endif
                 @else
