@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Framework;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class FrameworkPolicy
 {
@@ -13,7 +12,7 @@ class FrameworkPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +20,7 @@ class FrameworkPolicy
      */
     public function view(User $user, Framework $framework): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +28,7 @@ class FrameworkPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +36,7 @@ class FrameworkPolicy
      */
     public function update(User $user, Framework $framework): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -45,7 +44,7 @@ class FrameworkPolicy
      */
     public function delete(User $user, Framework $framework): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -53,7 +52,7 @@ class FrameworkPolicy
      */
     public function restore(User $user, Framework $framework): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -61,6 +60,6 @@ class FrameworkPolicy
      */
     public function forceDelete(User $user, Framework $framework): bool
     {
-        return false;
+        return true;
     }
 }

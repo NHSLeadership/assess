@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Rater;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class RaterPolicy
 {
@@ -13,7 +12,7 @@ class RaterPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +20,7 @@ class RaterPolicy
      */
     public function view(User $user, Rater $rater): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +28,7 @@ class RaterPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +36,7 @@ class RaterPolicy
      */
     public function update(User $user, Rater $rater): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -45,7 +44,7 @@ class RaterPolicy
      */
     public function delete(User $user, Rater $rater): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -53,7 +52,7 @@ class RaterPolicy
      */
     public function restore(User $user, Rater $rater): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -61,6 +60,6 @@ class RaterPolicy
      */
     public function forceDelete(User $user, Rater $rater): bool
     {
-        return false;
+        return true;
     }
 }

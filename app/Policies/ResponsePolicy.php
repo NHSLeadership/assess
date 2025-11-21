@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Response;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ResponsePolicy
 {
@@ -13,7 +12,7 @@ class ResponsePolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +20,7 @@ class ResponsePolicy
      */
     public function view(User $user, Response $response): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +28,7 @@ class ResponsePolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +36,7 @@ class ResponsePolicy
      */
     public function update(User $user, Response $response): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -45,7 +44,7 @@ class ResponsePolicy
      */
     public function delete(User $user, Response $response): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -53,7 +52,7 @@ class ResponsePolicy
      */
     public function restore(User $user, Response $response): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -61,6 +60,6 @@ class ResponsePolicy
      */
     public function forceDelete(User $user, Response $response): bool
     {
-        return false;
+        return true;
     }
 }

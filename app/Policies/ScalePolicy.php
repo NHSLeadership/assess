@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Scale;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ScalePolicy
 {
@@ -13,7 +12,7 @@ class ScalePolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +20,7 @@ class ScalePolicy
      */
     public function view(User $user, Scale $scale): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +28,7 @@ class ScalePolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +36,7 @@ class ScalePolicy
      */
     public function update(User $user, Scale $scale): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -45,7 +44,7 @@ class ScalePolicy
      */
     public function delete(User $user, Scale $scale): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -53,7 +52,7 @@ class ScalePolicy
      */
     public function restore(User $user, Scale $scale): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -61,6 +60,6 @@ class ScalePolicy
      */
     public function forceDelete(User $user, Scale $scale): bool
     {
-        return false;
+        return true;
     }
 }

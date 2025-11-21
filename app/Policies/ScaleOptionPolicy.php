@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\ScaleOption;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class ScaleOptionPolicy
 {
@@ -13,7 +12,7 @@ class ScaleOptionPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +20,7 @@ class ScaleOptionPolicy
      */
     public function view(User $user, ScaleOption $scaleOption): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +28,7 @@ class ScaleOptionPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +36,7 @@ class ScaleOptionPolicy
      */
     public function update(User $user, ScaleOption $scaleOption): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -45,7 +44,7 @@ class ScaleOptionPolicy
      */
     public function delete(User $user, ScaleOption $scaleOption): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -53,7 +52,7 @@ class ScaleOptionPolicy
      */
     public function restore(User $user, ScaleOption $scaleOption): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -61,6 +60,6 @@ class ScaleOptionPolicy
      */
     public function forceDelete(User $user, ScaleOption $scaleOption): bool
     {
-        return false;
+        return true;
     }
 }

@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Signpost;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class SignpostPolicy
 {
@@ -13,7 +12,7 @@ class SignpostPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +20,7 @@ class SignpostPolicy
      */
     public function view(User $user, Signpost $signpost): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +28,7 @@ class SignpostPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +36,7 @@ class SignpostPolicy
      */
     public function update(User $user, Signpost $signpost): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -45,7 +44,7 @@ class SignpostPolicy
      */
     public function delete(User $user, Signpost $signpost): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -53,7 +52,7 @@ class SignpostPolicy
      */
     public function restore(User $user, Signpost $signpost): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -61,6 +60,6 @@ class SignpostPolicy
      */
     public function forceDelete(User $user, Signpost $signpost): bool
     {
-        return false;
+        return true;
     }
 }
