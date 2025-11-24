@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
-class Stages extends Component
+class Variants extends Component
 {
     use UserTrait;
     public ?string $frameworkId;
