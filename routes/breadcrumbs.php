@@ -3,7 +3,7 @@ use Diglactic\Breadcrumbs\Breadcrumbs;
 
 // Home
 Breadcrumbs::for('home', function ($trail) {
-    $trail->push('Home', route('home'));
+    //$trail->push('Home', route('home'));
 });
 
 // Home > Summary
