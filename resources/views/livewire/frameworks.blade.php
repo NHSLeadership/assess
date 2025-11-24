@@ -49,9 +49,9 @@
                 @foreach ($this->assessments() as $assessment)
                     <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
                         <div class="nhsuk-task-list__name-and-hint">
-{{--                            <a href="{{ route('assessments', ['assessmentId' => $assessment->id]) }}"--}}
-{{--                               aria-describedby="{{ $assessment->slug }}-hint"--}}
-{{--                               class="nhsuk-link nhsuk-task-list__link">{{ $assessment->framework?->name }}</a>--}}
+                            <a href="{{ route('assessments', ['assessmentId' => $assessment->id]) }}"
+                               aria-describedby="{{ $assessment->slug }}-hint"
+                               class="nhsuk-link nhsuk-task-list__link">{{ $assessment->framework?->name }}</a>
                                - {{$assessment->created_at}}
                         </div>
                         <div class="nhsuk-task-list__status nhsuk-task-list__status--completed">
