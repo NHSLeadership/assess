@@ -23,27 +23,27 @@
 
 <body class="js-enabled">
 
-    <a class="nhsuk-skip-link" href="#maincontent">Skip to main content</a>
+<a class="nhsuk-skip-link" href="#maincontent">Skip to main content</a>
 
-    @include('elements.header')
+@include('elements.header')
 
-    @if (Config::get('app.alert_banner_on',false) && (Route::is('home') || Route::is('register')))
-        @include('elements.banner')
-    @endif
+@if (Config::get('app.alert_banner_on',false) && (Route::is('home') || Route::is('register')))
+    @include('elements.banner')
+@endif
 
+<div class="nhsuk-width-container">
     {{ Breadcrumbs::render(Route::currentRouteName() ?? 'home') }}
 
-    <div class="nhsuk-width-container ">
-        <main class="nhsuk-main-wrapper " id="maincontent" role="main">
-            @yield('content', $slot ?? '')
-        </main>
-    </div>
+    <main class="nhsuk-main-wrapper " id="maincontent" role="main">
+        @yield('content', $slot ?? '')
+    </main>
+</div>
 
-    @include('elements.footer')
+@include('elements.footer')
 
-    <script>
-        document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
-    </script>
+<script>
+    document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
+</script>
 </body>
 
 </html>
