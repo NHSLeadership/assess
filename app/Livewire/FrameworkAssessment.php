@@ -4,16 +4,18 @@ namespace App\Livewire;
 
 use App\Models\Assessment;
 use App\Models\Framework;
-use App\Models\FrameworkVariantOption;
 use App\Traits\UserTrait;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Livewire\Attributes\Title;
 
-class Stages extends Component
+class FrameworkAssessment extends Component
 {
     use UserTrait;
+
     public ?string $frameworkId;
+
     public ?string $stageId;
 
     #[Computed]
@@ -30,26 +32,22 @@ class Stages extends Component
     }
 
     #[Computed]
-    public function options(): ?Collection
+    public function frameworks(): ?Collection
     {
-        if (empty($this->frameworkId) || ! is_numeric($this->frameworkId)) {
-            return null;
-        }
-
-        return Framework::find($this->frameworkId)->stages()->first()->options()->get();
+        return Framework::all();
     }
 
     #[Computed]
-    public function stage(): ?FrameworkVariantOption
+    public function assessments(): ?Collection
     {
-        if (empty($this->stageId)) {
-            return null;
+        if (empty($this->frameworkId)) {
+            return $this->user->assessments;
         }
 
-        return Framework::find($this->frameworkId)->stages()->first()->options()->where('id', $this->stageId)->first();
+        return $this->user->assessments?->where('framework_id', $this->frameworkId);
     }
 
-    public function newAssessment(): void
+    public function newAssessment1(): void
     {
         $assessment = new Assessment([
             'framework_id' => $this->frameworkId ?? null,
@@ -63,8 +61,10 @@ class Stages extends Component
             session()->flash('message', __('Could not initialise new assessment. Please try again later.'));
         }
     }
+
+    #[Title('Frameworks')]
     public function render()
     {
-        return view('livewire.stages');
+        return view('livewire.framework-assessment');
     }
 }

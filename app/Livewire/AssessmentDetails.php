@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Livewire;
+
+use App\Models\Assessment;
+use App\Traits\FormFieldValidationRulesTrait;
+use App\Traits\UserTrait;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
+use Illuminate\Support\Collection;
+use Livewire\WithPagination;
+
+class AssessmentDetails extends Component
+{
+    use FormFieldValidationRulesTrait;
+    use WithPagination;
+    use UserTrait;
+
+    public $assessmentId;
+
+    protected $perPage = 1;
+    protected $pageName = 'assessmentId';
+    protected $simplePagination = true;
+
+    #[Computed]
+    public function assessment(): ?Assessment
+    {
+        if (empty($this->assessmentId)) {
+            return null;
+        }
+
+        return Assessment::find($this->assessmentId);
+    }
+
+    #[Computed]
+    public function nodes()
+    {
+        if (empty($this->assessment)) {
+            return null;
+        }
+
+        return $this->assessment?->framework?->nodes()->whereNotNull('parent_id')->orderBy('order')->orderBy('parent_id');
+    }
+
+    #[Computed]
+    public function startedAreas(): ?Collection
+    {
+        if (empty($this->assessment)) {
+            return null;
+        }
+
+        return $this->assessment?->framework?->nodes()->whereHas('questions')->get();
+    }
+
+    #[Computed]
+    public function data()
+    {
+        if (empty($this->assessmentId)) {
+            return null;
+        }
+
+        return $this->user?->data?->where('assessment_id', $this->assessmentId)->get();
+    }
+
+    public function backPage()
+    {
+        $this->previousPage();
+    }
+
+    #[Computed]
+    public function responses(): Collection
+    {
+        return $this->user->assessments()->where('id', $this->assessmentId)->get();
+    }
+
+    public function render()
+    {
+        return view('livewire.assessment-details', [
+            'paginatedNodes' => $this->nodes()?->paginate($this->perPage, pageName: $this->pageName),
+        ]);
+    }
+}

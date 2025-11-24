@@ -7,7 +7,7 @@
 
             <p>{{ $this->framework->description }}</p>
 
-            <h2 class="nhsuk-heading-l">Standards and Competencies</h2>
+            <h2 class="nhsuk-heading-l">Select stage</h2>
 
             {{-- Show all options--}}
             @if ($this->options())
@@ -20,7 +20,8 @@
                                 <div class="nhsuk-card__content nhsuk-card__content--primary">
                                     <h2 class="nhsuk-card__heading nhsuk-heading-m">
                                         @if ($item->framework()->exists())
-                                            <a href="{{ route('frameworks', ['frameworkId' => $this->frameworkId, 'stageId' => $item->id]) }}" class="nhsuk-card__link">{{ $item->label }}</a>
+{{--                                            <a href="{{ route('variant-assessment', ['frameworkId' => $this->frameworkId, 'stageId' => $item->id]) }}" class="nhsuk-card__link">{{ $item->label }}</a>--}}
+                                            <a href="#" wire:click.prevent="newAssessment()" class="nhsuk-card__link">{{ $item->label }}</a>
                                         @else
                                             {{ $item->label }}
                                         @endif
