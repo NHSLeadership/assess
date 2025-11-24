@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Frameworks\Resources\Nodes\Resources\Questions\Schemas;
 
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -16,7 +17,7 @@ class QuestionForm
             ->components([
                 TextInput::make('title')
                     ->required(),
-                TextInput::make('text')
+                RichEditor::make('text')
                     ->columnSpanFull()
                     ->required(),
                 TextInput::make('hint')
