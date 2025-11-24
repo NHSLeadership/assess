@@ -31,9 +31,9 @@
         @include('elements.banner')
     @endif
 
-    {{ Breadcrumbs::render(Route::currentRouteName() ?? 'home') }}
+    <div class="nhsuk-width-container">
+        {{ Breadcrumbs::render(Route::currentRouteName() ?? 'home') }}
 
-    <div class="nhsuk-width-container ">
         <main class="nhsuk-main-wrapper " id="maincontent" role="main">
             @yield('content', $slot ?? '')
         </main>
