@@ -10,8 +10,7 @@
 
 .inline-flex {
   display: inline-flex;
-
-  &.nhsuk-label {
+  &.nhsuk-label  {
     padding-right: 10px;
     line-height: 1.899;
   }
@@ -55,7 +54,6 @@
 
   &.disabled {
     color: $color_nhsuk-red;
-
     &:before {
       color: $color_nhsuk-red;
       width: 21px;
@@ -96,24 +94,24 @@
 
 /* Custom styles */
 
-.nhsuk-corner-ribbon.sticky {
+.nhsuk-corner-ribbon.sticky{
   position: fixed;
 }
 
-.nhsuk-corner-ribbon.shadow {
-  box-shadow: 0 0 3px rgba(0, 0, 0, .3);
+.nhsuk-corner-ribbon.shadow{
+  box-shadow: 0 0 3px rgba(0,0,0,.3);
 }
 
 /* Different positions */
 
-.nhsuk-corner-ribbon.top-left {
+.nhsuk-corner-ribbon.top-left{
   top: 25px;
   left: -56px;
   transform: rotate(-45deg);
   -webkit-transform: rotate(-45deg);
 }
 
-.nhsuk-corner-ribbon.top-right {
+.nhsuk-corner-ribbon.top-right{
   top: 25px;
   right: -56px;
   left: auto;
@@ -121,7 +119,7 @@
   -webkit-transform: rotate(45deg);
 }
 
-.nhsuk-corner-ribbon.bottom-left {
+.nhsuk-corner-ribbon.bottom-left{
   top: auto;
   bottom: 25px;
   left: -50px;
@@ -129,7 +127,7 @@
   -webkit-transform: rotate(45deg);
 }
 
-.nhsuk-corner-ribbon.bottom-right {
+.nhsuk-corner-ribbon.bottom-right{
   top: auto;
   right: -50px;
   bottom: 25px;
@@ -138,7 +136,7 @@
   -webkit-transform: rotate(-45deg);
 }
 
-.nhsuk-corner-ribbon.blue {
+.nhsuk-corner-ribbon.blue{
   background: $color_nhsuk-blue;
   color: $color_nhsuk-white;
 }
@@ -184,7 +182,6 @@
 
 .nhsuk-form-group__relative {
   position: relative;
-
   #search-lookup-spinner {
     position: absolute;
     right: 7px;
