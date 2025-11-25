@@ -6,13 +6,14 @@ use App\Models\Assessment;
 use App\Models\Framework;
 use App\Models\FrameworkVariantAttribute;
 use App\Models\Node;
-use App\Models\User;
+use App\Traits\UserTrait;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class Summary extends Component
 {
+    use UserTrait;
     public $frameworkId;
     public $assessmentId;
 
@@ -73,18 +74,6 @@ class Summary extends Component
     public function stages(): Collection
     {
         return Framework::find($this->frameworkId)->stages()->options()->get();
-    }
-
-    #[Computed]
-    public function user(): ?User
-    {
-        $user = new User([
-            'name' => 'Marcin Calka',
-            'email' => 'marcin.calka@nhs.net',
-        ]);
-        $user->id = 1;
-
-        return $user;
     }
 
     #[Computed]

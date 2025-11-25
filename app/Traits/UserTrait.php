@@ -8,12 +8,9 @@ trait UserTrait
     #[Computed]
     public function user(): ?User
     {
-        $user = new User([
-            'name' => 'Marcin Calka',
-            'email' => 'marcin.calka@nhs.net',
-        ]);
-        $user->id = 1;
+        $authUser = auth()->user();
+        $authUser->id = $authUser->preferred_username;
 
-        return $user;
+        return new User($authUser->getAttributes());
     }
 }

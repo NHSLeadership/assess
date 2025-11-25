@@ -36,7 +36,7 @@
         @if (Auth::check())
             <li class="nhsuk-header__navigation-item">
                 <a class="nhsuk-header__navigation-link" href="{{ url('/logout') }}">
-                    {{ __('pages.generic.logout') }}
+                    {{ __('pages.logout') }}
                 </a>
             </li>
         @else
