@@ -4,11 +4,11 @@
         <div class="nhsuk-grid-row">
             <div class="nhsuk-grid-column-three-quarters">
 
-                <h1 class="nhsuk-heading-xl">Academy Assessment System</h1>
+                <h1 class="nhsuk-heading-xl">{{ config('app.description') }}</h1>
 
                 @if (Auth::check())
                     <p>Welcome back, {{ Auth::user()->name }}!</p>
-                    <p>You are now logged in to the Academy Assessment System.
+                    <p>You are now logged in to the {{ config('app.name') }}.
                         From here you can continue your assessments, review your progress.</p>
                     <div class="nhsuk-action-link">
                         <a class="nhsuk-action-link__link" href="{{ route('assessment-home') }}">

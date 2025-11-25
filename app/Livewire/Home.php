@@ -31,37 +31,6 @@ class Home extends Component
         return Framework::find($this->frameworkId);
     }
 
-    #[Computed]
-    public function frameworks(): ?Collection
-    {
-        return Framework::all();
-    }
-
-    #[Computed]
-    public function assessments(): ?Collection
-    {
-        if (empty($this->frameworkId)) {
-            return $this->user->assessments;
-        }
-
-        return $this->user->assessments?->where('framework_id', $this->frameworkId);
-    }
-
-    public function newAssessment(): void
-    {
-        $assessment = new Assessment([
-            'framework_id' => $this->frameworkId ?? null,
-            'user_id' => $this->user->id,
-        ]);
-        $assessment->save();
-
-        if ($assessment->exists) {
-            $this->redirect(route('assessments', $assessment->id));
-        } else {
-            session()->flash('message', __('Could not initialise new assessment. Please try again later.'));
-        }
-    }
-
     #[Title('Frameworks')]
     public function render()
     {

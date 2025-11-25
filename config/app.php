@@ -123,4 +123,11 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Additional settings
+    |--------------------------------------------------------------------------
+    */
+
+    'description'  => env('APP_DESCRIPTION', 'NHS Leadership Self Assessment Tools')
 ];
