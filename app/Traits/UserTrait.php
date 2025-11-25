@@ -8,14 +8,9 @@ trait UserTrait
     #[Computed]
     public function user(): ?User
     {
-        $user = User::firstOrCreate(
-            ['email' => 'mahesh.muralipoovampilly@nhs.net'],
-            [
-                'name'     => 'Mahesh Murali Poovampilly',
-                'password' => bcrypt(str()->password()), // always hash passwords
-            ]
-        );
+        $authUser = auth()->user();
+        $authUser->id = $authUser->preferred_username;
 
-        return $user;
+        return new User($authUser->getAttributes());
     }
 }
