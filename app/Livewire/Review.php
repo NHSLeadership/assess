@@ -4,10 +4,12 @@ namespace App\Livewire;
 
 use Livewire\Component;
 
-class Competency extends Component
+class Review extends Component
 {
+    public string $hashId;
+
     public function render()
     {
-        return view('livewire.competency');
+        return view('livewire.review');
     }
 }

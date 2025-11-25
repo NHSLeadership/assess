@@ -8,16 +8,32 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'generic' => [
-        'logout' => 'Logout',
-        'login' => 'Login',
+    'login' => 'Login',
+    'logout' => 'Logout',
+    'signin' => 'Sign in',
+    'signout' => 'Sign out',
+    'frameworks' => [
+        'title' => 'Frameworks',
+        'content' => '',
+    ],
+    'competencies' => [
+        'title' => 'Competencies',
+        'content' => '',
+    ],
+    'forms' => [
+        'title' => 'Forms',
+        'content' => '',
     ],
     'home' => [
         'title' => 'Home',
         'content' => '',
     ],
-    'competencies' => [
-        'title' => 'Competencies',
+    'stages' => [
+        'title' => 'Stages',
+        'content' => '',
+    ],
+    'standards' => [
+        'title' => 'Standards',
         'content' => '',
     ],
 ];

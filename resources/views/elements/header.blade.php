@@ -21,12 +21,12 @@
                     </li>
                     <li class="nhsuk-header__account-item">
                         <a class="nhsuk-header__account-link" href="{{ url('/logout') }}">
-                            {{ __('pages.generic.logout') }}</a>
+                            {{ __('pages.logout') }}</a>
                     </li>
                 @else
                     <li class="nhsuk-header__account-item">
                         <a class="nhsuk-header__account-link" href="{{ url('/login') }}">
-                            {!! __('pages.generic.login') !!}</a>
+                            {!! __('pages.login') !!}</a>
                     </li>
                 @endif
             </ul>

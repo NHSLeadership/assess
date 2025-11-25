@@ -24,4 +24,9 @@ class FrameworkVariantOption extends Model
     {
         return $this->hasMany(Signpost::class);
     }
+
+    public function framework(): BelongsTo
+    {
+        return $this->attribute->belongsTo(Framework::class);
+    }
 }

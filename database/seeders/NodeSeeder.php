@@ -27,6 +27,7 @@ class NodeSeeder extends Seeder
                     'node_type_id' => 2,  // Standard
                     'name' => 'Personal productivity and wellbeing',
                     'description' => 'Personal productivity and wellbeing',
+                    'colour' => 'green',
                     'order' => 2,
                 ],
                     [
@@ -67,12 +68,14 @@ class NodeSeeder extends Seeder
                 'node_type_id' => 1,  // Area
                 'name' => 'Managing people and resources',
                 'description' => 'Managing people and resources',
+                'colour' => 'green',
                 'order' => 7,
             ],
                 [
                     'framework_id' => 1,
                     'parent_id' => 7,
                     'node_type_id' => 2,  // Standard
+                    'colour' => 'orange',
                     'name' => 'Building teams',
                     'description' => 'Building teams',
                     'order' => 8,
@@ -99,6 +102,7 @@ class NodeSeeder extends Seeder
                 'node_type_id' => 1,  // Area
                 'name' => 'Delivering across health and care',
                 'description' => 'Delivering across health and care',
+                'colour' => 'orange',
                 'order' => 11,
             ],
                 [
@@ -129,12 +133,13 @@ class NodeSeeder extends Seeder
         foreach ($nodes as $node) {
             Node::firstOrCreate(
                 [
-                'framework_id' => $node['framework_id'],
-                'parent_id' => $node['parent_id'],
-                'node_type_id' => $node['node_type_id'],
-                'name' => $node['name'],
-                'description' => $node['description'],
-                'order' => $node['order'],
+                    'framework_id' => $node['framework_id'],
+                    'parent_id' => $node['parent_id'],
+                    'node_type_id' => $node['node_type_id'],
+                    'name' => $node['name'],
+                    'description' => $node['description'],
+                    'colour' => $node['colour'] ?? 'blue',
+                    'order' => $node['order'],
                 ],
             );
         }
