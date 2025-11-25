@@ -7,6 +7,9 @@
 /public/hot
 /public/storage
 /public/build
+public/css/
+public/fonts/
+public/js/
 /storage/*.key
 /storage/framework/views
 /vendor

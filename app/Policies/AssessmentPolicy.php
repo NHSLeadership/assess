@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Assessment;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class AssessmentPolicy
 {
@@ -13,7 +12,7 @@ class AssessmentPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +20,7 @@ class AssessmentPolicy
      */
     public function view(User $user, Assessment $assessment): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +28,7 @@ class AssessmentPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +36,7 @@ class AssessmentPolicy
      */
     public function update(User $user, Assessment $assessment): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -45,7 +44,7 @@ class AssessmentPolicy
      */
     public function delete(User $user, Assessment $assessment): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -53,7 +52,7 @@ class AssessmentPolicy
      */
     public function restore(User $user, Assessment $assessment): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -61,6 +60,6 @@ class AssessmentPolicy
      */
     public function forceDelete(User $user, Assessment $assessment): bool
     {
-        return false;
+        return true;
     }
 }

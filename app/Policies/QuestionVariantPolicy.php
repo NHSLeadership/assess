@@ -13,7 +13,7 @@ class QuestionVariantPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class QuestionVariantPolicy
      */
     public function view(User $user, QuestionVariant $questionVariant): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -29,7 +29,7 @@ class QuestionVariantPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -37,7 +37,7 @@ class QuestionVariantPolicy
      */
     public function update(User $user, QuestionVariant $questionVariant): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -45,7 +45,7 @@ class QuestionVariantPolicy
      */
     public function delete(User $user, QuestionVariant $questionVariant): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -53,7 +53,7 @@ class QuestionVariantPolicy
      */
     public function restore(User $user, QuestionVariant $questionVariant): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -61,6 +61,6 @@ class QuestionVariantPolicy
      */
     public function forceDelete(User $user, QuestionVariant $questionVariant): bool
     {
-        return false;
+        return true;
     }
 }
