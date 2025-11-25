@@ -47,20 +47,20 @@ class Frameworks extends Component
         return $this->user->assessments?->where('framework_id', $this->frameworkId);
     }
 
-    public function newAssessment(): void
-    {
-        $assessment = new Assessment([
-            'framework_id' => $this->frameworkId ?? null,
-            'user_id' => $this->user->id,
-        ]);
-        $assessment->save();
-
-        if ($assessment->exists) {
-            $this->redirect(route('assessments', $assessment->id));
-        } else {
-            session()->flash('message', __('Could not initialise new assessment. Please try again later.'));
-        }
-    }
+//    public function newAssessment(): void
+//    {
+//        $assessment = new Assessment([
+//            'framework_id' => $this->frameworkId ?? null,
+//            'user_id' => $this->user->id,
+//        ]);
+//        $assessment->save();
+//
+//        if ($assessment->exists) {
+//            $this->redirect(route('assessments', $assessment->id));
+//        } else {
+//            session()->flash('message', __('Could not initialise new assessment. Please try again later.'));
+//        }
+//    }
 
     #[Title('Frameworks')]
     public function render()
