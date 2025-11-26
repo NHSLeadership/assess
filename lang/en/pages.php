@@ -12,6 +12,7 @@ return [
     'logout' => 'Logout',
     'signin' => 'Sign in',
     'signout' => 'Sign out',
+    'admin' => 'Admin',
     'frameworks' => [
         'title' => 'Frameworks',
         'content' => '',

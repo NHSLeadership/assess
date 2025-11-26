@@ -13,27 +13,32 @@
                 </a>
             </li>
 
-        @if (Route::is('frameworks'))
-            <li class="nhsuk-header__navigation-item nhsuk-header__navigation-item__item--current" aria-current="page">
-        @else
-            <li class="nhsuk-header__navigation-item">
-        @endif
-                <a class="nhsuk-header__navigation-link" href="{{ route('frameworks') }}">
-                    {{ __('pages.frameworks.title') }}
-                </a>
-            </li>
+{{--        @if (Route::is('frameworks'))--}}
+{{--            <li class="nhsuk-header__navigation-item nhsuk-header__navigation-item__item--current" aria-current="page">--}}
+{{--        @else--}}
+{{--            <li class="nhsuk-header__navigation-item">--}}
+{{--        @endif--}}
+{{--                <a class="nhsuk-header__navigation-link" href="{{ route('frameworks') }}">--}}
+{{--                    {{ __('pages.frameworks.title') }}--}}
+{{--                </a>--}}
+{{--            </li>--}}
 
-        @if (Route::is('standards'))
-            <li class="nhsuk-header__navigation-item nhsuk-header__navigation-item__item--current" aria-current="page">
-        @else
-            <li class="nhsuk-header__navigation-item">
-        @endif
-                <a class="nhsuk-header__navigation-link" href="{{ route('standards') }}">
-                    {{ __('pages.standards.title') }}
-                </a>
-            </li>
+{{--        @if (Route::is('standards'))--}}
+{{--            <li class="nhsuk-header__navigation-item nhsuk-header__navigation-item__item--current" aria-current="page">--}}
+{{--        @else--}}
+{{--            <li class="nhsuk-header__navigation-item">--}}
+{{--        @endif--}}
+{{--                <a class="nhsuk-header__navigation-link" href="{{ route('standards') }}">--}}
+{{--                    {{ __('pages.standards.title') }}--}}
+{{--                </a>--}}
+{{--            </li>--}}
 
         @if (Auth::check())
+            <li class="nhsuk-header__navigation-item">
+                <a class="nhsuk-header__navigation-link" href="{{ url('/admin') }}">
+                    {{ __('pages.admin') }}
+                </a>
+            </li>
             <li class="nhsuk-header__navigation-item">
                 <a class="nhsuk-header__navigation-link" href="{{ url('/logout') }}">
                     {{ __('pages.logout') }}
