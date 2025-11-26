@@ -107,9 +107,6 @@ class User extends Model implements
 
     public function permissions()
     {
-        /**
-         * @var Auth0 $sdk Using SDK still returns only first 50 permissions
-         */
         $sdk = app('auth0');
         $options = (new RequestOptions)->setPagination(
             new PaginatedRequest(0, 100)
