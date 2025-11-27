@@ -1,0 +1,91 @@
+name: build-develop-master-image
+
+on:
+  push:
+    branches:
+        - main
+        - develop
+
+env:
+  PROJECT: assess
+  ECR_URI: ${{ secrets.AWS_ECR_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    outputs:
+      buildsha: ${{ steps.docker-tag.outputs.buildsha }}
+      buildref: ${{ steps.docker-tag.outputs.buildref }}
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: get branch
+        run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4.0.2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2.0.1
+
+      - name: Set Docker tag
+        id: docker-tag
+        env:
+          REF_TAG: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          echo "buildsha=$(echo $REF_TAG)" >> $GITHUB_OUTPUT
+          echo "buildref="$(echo $GITHUB_REF | tr '[:upper:]' '[:lower:]' | awk '{split($0,a,"/"); print a[3]}') >> $GITHUB_OUTPUT
+
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v5.3.0
+        with:
+          context: .
+          file: devops/docker/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ECR_URI }}/${{ env.PROJECT}}:${{ steps.docker-tag.outputs.buildref }}-${{ steps.docker-tag.outputs.buildsha }}
+  
+  deploy-develop-to-staging:
+    runs-on: ubuntu-latest
+    needs: build-and-publish
+    if: success() && github.ref == 'refs/heads/develop'
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2.0.6
+        with:
+          app-id: ${{ secrets.CICD_APP_ID }}
+          private-key: ${{ secrets.CICD_APP_PKEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: "argocd"
+
+      - name: Checkout ArgoCD repo
+        uses: actions/checkout@v4
+        with:
+          repository: nhsleadership/argocd
+          token: ${{ steps.app-token.outputs.token }}
+      
+      - name: update image tag
+        uses: mikefarah/yq@v4.42.1
+        with:
+          cmd: yq e -i '.spec.sources.0.helm.valuesObject.image.tag = "${{ needs.build-and-publish.outputs.buildref }}-${{ needs.build-and-publish.outputs.buildsha }}"' charts/staging-apps/templates/assess/develop.yaml
+
+      - name: Update ArgoCD app in GitHub
+        run: |
+          git config --global user.email "${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com"
+          git config --global user.name "${{ steps.app-token.outputs.app-slug }}[bot]"
+          git commit -am 'assess: deploying ${{ github.sha }} to staging/develop'
+          git push
