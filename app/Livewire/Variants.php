@@ -7,18 +7,25 @@ use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\FrameworkVariantOption;
 use App\Models\Rater;
+use App\Services\UserAssessmentVariantSelectionService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use App\Traits\UserTrait;
 
-class Stages extends Component
+class Variants extends Component
 {
     use UserTrait;
     public ?string $frameworkId;
     public ?string $stageId;
+    public ?string $assessmentId;
+    public ?array $data;
 
+    public function mount()
+    {
+        $this->data = $this->variantSelections()->toArray();
+    }
     #[Computed]
     public function framework(): ?Framework
     {
@@ -33,19 +40,19 @@ class Stages extends Component
     }
 
     #[Computed]
-    public function options(): ?Collection
+    public function attributes(): ?Collection
     {
         if (empty($this->frameworkId) || ! is_numeric($this->frameworkId)) {
             return null;
         }
 
-        return Framework::find($this->frameworkId)->stages()->first()->options()->get();
+        return Framework::find($this->frameworkId)->variantAttributes()->get();
     }
 
     #[Computed]
-    public function stage(): ?FrameworkVariantOption
+    public function variant(): ?FrameworkVariantOption
     {
-        if (empty($this->stageId)) {
+        if (empty($this->frameworkId)) {
             return null;
         }
 
@@ -58,33 +65,33 @@ class Stages extends Component
         return Framework::with(['variantAttributes.options'])->find($this->frameworkId);
     }
 
+    #[Computed]
+    public function variantSelections(): Collection
+    {
+        return $this->user()->assessments()->where('id', $this->assessmentId)->first()
+            ->variantSelections->pluck('framework_variant_option_id', 'attribute.key');
+    }
+
     public function store(): void
     {
-        $rules = $this->getRules();
-        if (!empty($rules)) {
-            $this->validate($rules);
-        }
 
-        $questions = $this->nodeQuestions()?->keyBy('name');
-        // TODO - Remove users table and the constrain in the raters table. Have user_id should be sso user id.
-        $rater = Rater::firstOrCreate([
-            'user_id' => 1,
-            'name' => '',
-        ]);
+          $attributes = $this->attributes()?->keyBy('key');
+//          dd($attributes);
+//        $questions = $this->nodeQuestions()?->keyBy('name');
 
-        foreach ($this->data as $name => $values) {
-            if (isset($questions[$name])) {
-                UserResponseService::updateOrCreate($values, $questions[$name], $this->assessmentId, $rater->id);
+        foreach ($this->data as $key => $value) {
+            if (isset($attributes[$key])) {
+                UserAssessmentVariantSelectionService::updateOrCreate($value, $attributes[$key], $this->assessmentId);
             }
         }
-
-        if ($this->paginatedQuestions()->hasMorePages()) {
-            $this->nextPage(pageName: $this->pageName);
-        } else {
-            $this->resetPage(pageName: $this->pageName);
-            $this->nodes->next();
-            $this->nodeId = $this->nodes->key();
-        }
+        $this->redirect(route('questions', $this->assessmentId));
+//        if ($this->paginatedQuestions()->hasMorePages()) {
+//            $this->nextPage(pageName: $this->pageName);
+//        } else {
+//            $this->resetPage(pageName: $this->pageName);
+//            $this->nodes->next();
+//            $this->nodeId = $this->nodes->key();
+//        }
     }
 
 //    public function newAssessment(): void
@@ -124,6 +131,6 @@ class Stages extends Component
 
     public function render()
     {
-        return view('livewire.stages');
+        return view('livewire.variants');
     }
 }

@@ -44,10 +44,10 @@ class Frameworks extends Component
     public function assessments(): ?Collection
     {
         if (empty($this->frameworkId)) {
-            return $this->user->assessments;
+            return $this->user()->assessments;
         }
 
-        return $this->user->assessments?->where('framework_id', $this->frameworkId);
+        return $this->user()->assessments?->where('framework_id', $this->frameworkId);
     }
 
     public function newAssessment(): void
