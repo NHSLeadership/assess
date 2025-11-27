@@ -50,7 +50,7 @@ jobs:
         uses: docker/build-push-action@v5.3.0
         with:
           context: .
-          file: devops/docker/Dockerfile
+          file: docker/Dockerfile
           push: true
           tags: |
             ${{ env.ECR_URI }}/${{ env.PROJECT}}:${{ steps.docker-tag.outputs.buildref }}-${{ steps.docker-tag.outputs.buildsha }}
