@@ -4,6 +4,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', \App\Livewire\Home::class)->name('home');
 
+Route::any('/admin/logout', function () {
+    return redirect('/logout');
+})->name('filament.admin.logout');
+Route::any('/admin/login', function () {
+    return redirect('/login');
+})->name('filament.admin.login');
+
 Route::group([
     'middleware' => [
         'auth',
