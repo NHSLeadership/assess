@@ -3,9 +3,12 @@
 namespace App\Livewire;
 
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\FrameworkVariantOption;
+use App\Models\Rater;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use App\Traits\UserTrait;
@@ -49,20 +52,75 @@ class Stages extends Component
         return Framework::find($this->frameworkId)->stages()->first()->options()->where('id', $this->stageId)->first();
     }
 
-    public function newAssessment(): void
+    #[Computed]
+    public function frameworks(): \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|Framework|null
     {
-        $assessment = new Assessment([
-            'framework_id' => $this->frameworkId ?? null,
-            'user_id' => $this->user->id,
-        ]);
-        $assessment->save();
+        return Framework::with(['variantAttributes.options'])->find($this->frameworkId);
+    }
 
-        if ($assessment->exists) {
-            $this->redirect(route('assessments', $assessment->id));
+    public function store(): void
+    {
+        $rules = $this->getRules();
+        if (!empty($rules)) {
+            $this->validate($rules);
+        }
+
+        $questions = $this->nodeQuestions()?->keyBy('name');
+        // TODO - Remove users table and the constrain in the raters table. Have user_id should be sso user id.
+        $rater = Rater::firstOrCreate([
+            'user_id' => 1,
+            'name' => '',
+        ]);
+
+        foreach ($this->data as $name => $values) {
+            if (isset($questions[$name])) {
+                UserResponseService::updateOrCreate($values, $questions[$name], $this->assessmentId, $rater->id);
+            }
+        }
+
+        if ($this->paginatedQuestions()->hasMorePages()) {
+            $this->nextPage(pageName: $this->pageName);
         } else {
-            session()->flash('message', __('Could not initialise new assessment. Please try again later.'));
+            $this->resetPage(pageName: $this->pageName);
+            $this->nodes->next();
+            $this->nodeId = $this->nodes->key();
         }
     }
+
+//    public function newAssessment(): void
+//    {
+//        try {
+//            DB::transaction(function () {
+//                // Create the assessment
+//                $assessment = Assessment::create([
+//                    'framework_id' => $this->frameworkId ?? null,
+//                    'user_id'      => $this->user()->user_id,
+//                ]);
+//
+//                // Ensure rater record exists (no duplicates)
+//                $rater = Rater::firstOrCreate(
+//                    ['user_id' => $this->user()->user_id],
+//                    ['created_at' => now()] // optional defaults
+//                );
+//
+//                // Link rater to this assessment (avoid duplicates too)
+//                AssessmentRater::firstOrCreate([
+//                    'assessment_id' => $assessment->id,
+//                    'rater_id'      => $rater->id,
+//                ]);
+//
+//                // Redirect only after transaction succeeds
+//                $this->redirect(route('assessments', $assessment->id));
+//            }, 3); // retry count for deadlocks.
+//        } catch (\Throwable $e) {
+//            report($e); // log the error for debugging
+//            $this->dispatch(
+//                'alert',
+//                type: 'error',
+//                message: __('alerts.errors.assessment-initialise'),
+//            );
+//        }
+//    }
 
     public function render()
     {

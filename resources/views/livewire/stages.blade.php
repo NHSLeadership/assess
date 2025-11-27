@@ -7,39 +7,67 @@
 
             <p>{{ $this->framework->description }}</p>
 
-{{--            <h2 class="nhsuk-heading-l">Standards and Competencies</h2>--}}
+            <livewire:alerts />
+
             <h2 class="nhsuk-heading-l">Select stage</h2>
 
             {{-- Show all options--}}
-            @if ($this->options())
-                <ul class="nhsuk-grid-row nhsuk-card-group">
-                    @foreach ($this->options() as $item)
-                        <li class="nhsuk-card-group__item
-                            @if ($loop->first) nhsuk-grid-column-full @else nhsuk-grid-column-one-half @endif
-                        ">
-                            <div class="nhsuk-card @if ($item->framework()->exists()) nhsuk-card--clickable @endif">
-                                <div class="nhsuk-card__content nhsuk-card__content--primary">
-                                    <h2 class="nhsuk-card__heading nhsuk-heading-m">
-                                        @if ($item->framework()->exists())
+{{--            @if ($this->options())--}}
+{{--                <ul class="nhsuk-grid-row nhsuk-card-group">--}}
+{{--                    @foreach ($this->options() as $item)--}}
+{{--                        <li class="nhsuk-card-group__item--}}
+{{--                            @if ($loop->first) nhsuk-grid-column-full @else nhsuk-grid-column-one-half @endif--}}
+{{--                        ">--}}
+{{--                            <div class="nhsuk-card @if ($item->framework()->exists()) nhsuk-card--clickable @endif">--}}
+{{--                                <div class="nhsuk-card__content nhsuk-card__content--primary">--}}
+{{--                                    <h2 class="nhsuk-card__heading nhsuk-heading-m">--}}
+{{--                                        @if ($item->framework()->exists())--}}
 {{--                                            <a href="{{ route('frameworks', ['frameworkId' => $this->frameworkId, 'stageId' => $item->id]) }}" class="nhsuk-card__link">{{ $item->label }}</a>--}}
-                                            <a href="#" wire:click.prevent="newAssessment()" class="nhsuk-card__link">{{ $item->label }}</a>
-                                        @else
-                                            {{ $item->label }}
-                                        @endif
-                                    </h2>
-                                    <p class="nhsuk-card__description">
-                                        {{ $item->description ?? '' }}
-                                    </p>
-                                    @if ($item->framework()->exists())
-                                        <svg class="nhsuk-icon nhsuk-icon--chevron-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false" aria-hidden="true">
-                                            <path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm-.3 5.8a1 1 0 1 0-1.5 1.4l2.9 2.8-2.9 2.8a1 1 0 0 0 1.5 1.4l3.5-3.5c.4-.4.4-1 0-1.4Z" />
-                                        </svg>
-                                    @endif
-                                </div>
-                            </div>
-                        </li>
+{{--                                            <a href="#" wire:click.prevent="newAssessment()" class="nhsuk-card__link">{{ $item->label }}</a>--}}
+{{--                                        @else--}}
+{{--                                            {{ $item->label }}--}}
+{{--                                        @endif--}}
+{{--                                    </h2>--}}
+{{--                                    <p class="nhsuk-card__description">--}}
+{{--                                        {{ $item->description ?? '' }}--}}
+{{--                                    </p>--}}
+{{--                                    @if ($item->framework()->exists())--}}
+{{--                                        <svg class="nhsuk-icon nhsuk-icon--chevron-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false" aria-hidden="true">--}}
+{{--                                            <path d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20Zm-.3 5.8a1 1 0 1 0-1.5 1.4l2.9 2.8-2.9 2.8a1 1 0 0 0 1.5 1.4l3.5-3.5c.4-.4.4-1 0-1.4Z" />--}}
+{{--                                        </svg>--}}
+{{--                                    @endif--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </li>--}}
+{{--                    @endforeach--}}
+{{--                </ul>--}}
+{{--            @else--}}
+{{--                <p>No stages found in the selected framework.</p>--}}
+{{--            @endif--}}
+            @if (!empty($this->frameworks()->variantAttributes))
+                <form wire:submit="store()">
+                    @foreach ($this->frameworks()->variantAttributes as $variant)
+{{--                        @dd($variant->label)--}}
+                        {{-- Render each component based on type and it's properties --}}
+                        @component('components.form.radio', [
+                            'name' => 'data.' . $variant->key ?? null,
+                            'class' => $variant->class ?? null,
+                            'options_list' => $variant->options->pluck('label', 'id')?->toArray() ?? [],
+                            'type' => $variant->type ?? null,
+                        ])
+                            @slot('hint')
+{{--                                {{ $question['text'] ?? $question['hint'] }}--}}
+                            @endslot
+                            @slot('label')
+                                <span class="nhsuk-u-visually-hidden">Stage {{$variant->id}}</span>{{ $variant->label ?? null }}
+                            @endslot
+                        @endcomponent
+                        <hr>
                     @endforeach
-                </ul>
+
+                        <button class="nhsuk-button" type="submit">Continue</button>
+
+                </form>
             @else
                 <p>No stages found in the selected framework.</p>
             @endif

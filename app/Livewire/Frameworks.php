@@ -3,9 +3,12 @@
 namespace App\Livewire;
 
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Framework;
+use App\Models\Rater;
 use App\Traits\UserTrait;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\Attributes\Title;
@@ -47,20 +50,40 @@ class Frameworks extends Component
         return $this->user->assessments?->where('framework_id', $this->frameworkId);
     }
 
-//    public function newAssessment(): void
-//    {
-//        $assessment = new Assessment([
-//            'framework_id' => $this->frameworkId ?? null,
-//            'user_id' => $this->user->id,
-//        ]);
-//        $assessment->save();
-//
-//        if ($assessment->exists) {
-//            $this->redirect(route('assessments', $assessment->id));
-//        } else {
-//            session()->flash('message', __('Could not initialise new assessment. Please try again later.'));
-//        }
-//    }
+    public function newAssessment(): void
+    {
+        try {
+            DB::transaction(function () {
+                // Create the assessment
+                $assessment = Assessment::create([
+                    'framework_id' => $this->frameworkId ?? null,
+                    'user_id'      => $this->user()->user_id,
+                ]);
+
+                // Ensure rater record exists (no duplicates)
+                $rater = Rater::firstOrCreate(
+                    ['user_id' => $this->user()->user_id],
+                    ['created_at' => now()] // optional defaults
+                );
+
+                // Link rater to this assessment (avoid duplicates too)
+                AssessmentRater::firstOrCreate([
+                    'assessment_id' => $assessment->id,
+                    'rater_id'      => $rater->id,
+                ]);
+
+                // Redirect only after transaction succeeds
+                $this->redirect(route('assessments', $assessment->id));
+            }, 3); // retry count for deadlocks.
+        } catch (\Throwable $e) {
+            report($e); // log the error for debugging
+            $this->dispatch(
+                'alert',
+                type: 'error',
+                message: __('alerts.errors.assessment-initialise'),
+            );
+        }
+    }
 
     #[Title('Frameworks')]
     public function render()
