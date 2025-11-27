@@ -15,10 +15,8 @@ class RatersTable
     {
         return $table
             ->columns([
-                TextColumn::make('user.name')
-                    ->searchable(),
                 TextColumn::make('user_id')
-                    ->numeric(),
+                    ->label('User ID'),
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('email')
