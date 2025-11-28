@@ -131,15 +131,10 @@ class Questions extends Component
         }
 
         $questions = $this->nodeQuestions()?->keyBy('name');
-        // TODO - Remove users table and the constrain in the raters table. Have user_id should be sso user id.
-        $rater = Rater::firstOrCreate([
-            'user_id' => 1,
-            'name' => '',
-        ]);
 
         foreach ($this->data as $name => $values) {
             if (isset($questions[$name])) {
-                UserResponseService::updateOrCreate($values, $questions[$name], $this->assessmentId, $rater->id);
+                UserResponseService::updateOrCreate($values, $questions[$name], $this->assessmentId, $this->user()?->user_id);
             }
         }
 
