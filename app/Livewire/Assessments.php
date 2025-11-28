@@ -16,11 +16,18 @@ class Assessments extends Component
     use WithPagination;
     use UserTrait;
 
-    public $assessmentId;
+    public ?string $assessmentId;
 
-    protected $perPage = 1;
-    protected $pageName = 'assessmentId';
-    protected $simplePagination = true;
+    protected ?int $perPage = 1;
+    protected ?string $pageName = 'assessmentId';
+    protected ?bool $simplePagination = true;
+
+    public function mount($assessmentId)
+    {
+        if (empty($this->assessmentId) || ! is_numeric($this->assessmentId)) {
+            return redirect()->route('frameworks');
+        }
+    }
 
     #[Computed]
     public function assessment(): ?Assessment
