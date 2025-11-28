@@ -52,37 +52,7 @@ class Frameworks extends Component
 
     public function newAssessment(): void
     {
-        try {
-            DB::transaction(function () {
-                // Create the assessment
-                $assessment = Assessment::create([
-                    'framework_id' => $this->frameworkId ?? null,
-                    'user_id'      => $this->user()->user_id,
-                ]);
-
-                // Ensure rater record exists (no duplicates)
-                $rater = Rater::firstOrCreate(
-                    ['user_id' => $this->user()->user_id],
-                    ['created_at' => now()] // optional defaults
-                );
-
-                // Link rater to this assessment (avoid duplicates too)
-                AssessmentRater::firstOrCreate([
-                    'assessment_id' => $assessment->id,
-                    'rater_id'      => $rater->id,
-                ]);
-
-                // Redirect only after transaction succeeds
-                $this->redirect(route('assessments', $assessment->id));
-            }, 3); // retry count for deadlocks.
-        } catch (\Throwable $e) {
-            report($e); // log the error for debugging
-            $this->dispatch(
-                'alert',
-                type: 'error',
-                message: __('alerts.errors.assessment-initialise'),
-            );
-        }
+        $this->redirect(route('variants', [$this->frameworkId]));
     }
 
     #[Title('Frameworks')]
