@@ -1,4 +1,4 @@
-FROM ghcr.io/nhsleadership/nhsl-ubuntu-phpv2:8.4-master AS build
+FROM ghcr.io/nhsleadership/nhsl-ubuntu-phpv2:8.3-master AS build
 SHELL ["/bin/bash", "-exo", "pipefail", "-c"]
 
 COPY --chown=nhsla:nhsla / /app
@@ -16,7 +16,7 @@ USER 1000
 WORKDIR /app
 RUN composer install --no-scripts --no-dev && npm install && npm run build
 
-FROM ghcr.io/nhsleadership/nhsl-ubuntu-phpv2:8.4-master
+FROM ghcr.io/nhsleadership/nhsl-ubuntu-phpv2:8.3-master
 SHELL ["/bin/bash", "-exo", "pipefail", "-c"] 
 
 COPY --chown=nhsla:nhsla docker/rootfs/ /
