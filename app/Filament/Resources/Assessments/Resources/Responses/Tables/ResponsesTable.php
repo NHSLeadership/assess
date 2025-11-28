@@ -15,14 +15,30 @@ class ResponsesTable
     {
         return $table
             ->columns([
-                TextColumn::make('rater.name')
-                    ->searchable(),
+                TextColumn::make('rater')
+                    ->formatStateUsing(function ($state, $record) {
+                        $rater = $record->rater ?? null;
+                        $name  = $rater->name ?? null;
+                        $uid   = $rater->user_id ?? null;
+
+                        if ($uid && $name) {
+                            return "{$uid} ({$name})";
+                        }
+
+                        if ($uid) {
+                            return (string) $uid;
+                        }
+
+                        if ($name) {
+                            return (string) $name;
+                        }
+
+                        return '';
+                    }),
                 TextColumn::make('question.title')
-                    ->limit(80)
-                    ->searchable(),
+                    ->limit(80),
                 TextColumn::make('scaleOption.label')
-                    ->label('Answer')
-                    ->searchable(),
+                    ->label('Answer'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

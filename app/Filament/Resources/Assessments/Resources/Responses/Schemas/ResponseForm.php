@@ -5,11 +5,9 @@ namespace App\Filament\Resources\Assessments\Resources\Responses\Schemas;
 use App\Models\Question;
 use App\Models\Rater;
 use App\Models\ScaleOption;
-use App\Models\User;
 use App\Services\QuestionTextResolver;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
@@ -20,25 +18,31 @@ class ResponseForm
         return $schema
             ->components([
                 Select::make('rater_id')
-                    ->relationship('rater', 'name')
-                    ->createOptionForm([
-                        Select::make('user_id')
-                            ->hint('Select an existing user if rater is internal.')
-                            ->relationship('user', 'name')
-                            ->preload()
-                            ->live()
-                            ->afterStateUpdated(function ($state, callable $set) {
-                                if ($state) {
-                                    $user = User::find($state);
-                                    if ($user) {
-                                        $set('name', $user->name);
-                                        $set('email', $user->email);
-                                    }
-                                }
+                    ->label('Rater')
+                    // Display all that are available from user_id, name and email
+                    ->options(function () {
+                        return Rater::query()
+                            ->orderBy('user_id')
+                            ->get()
+                            ->mapWithKeys(function (Rater $rater) {
+                                $parts = array_filter([
+                                    $rater->user_id,
+                                    $rater->name,
+                                    $rater->email,
+                                ]);
+                                $label = implode(' | ', $parts);
+                                return [$rater->id => $label];
                             })
+                            ->toArray();
+                    })
+                    ->default(fn () => Rater::where('user_id', auth()->id())->value('id'))
+                    ->createOptionForm([
+                        TextInput::make('user_id')
+                            ->hint('Select an existing user if rater is internal.')
+                            ->default(auth()->id())
                             ->nullable(),
-                        TextInput::make('name')->required(),
-                        TextInput::make('email')->required(),
+                        TextInput::make('name')->nullable(),
+                        TextInput::make('email')->nullable(),
                     ])
                     ->required()
                     ->live(),
@@ -70,9 +74,6 @@ class ResponseForm
                             ->pluck('label', 'id')
                             ->toArray();
                     }),
-                Textarea::make('free_text')
-                    ->disabled(fn (Get $get) => blank($get('question_id')))
-                    ->columnSpanFull(),
             ]);
     }
 }

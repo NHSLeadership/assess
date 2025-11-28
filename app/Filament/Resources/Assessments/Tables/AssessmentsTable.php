@@ -15,7 +15,7 @@ class AssessmentsTable
     {
         return $table
             ->columns([
-                TextColumn::make('subject.name'),
+                TextColumn::make('user_id')->label('Subject'),
                 TextColumn::make('framework.name'),
                 TextColumn::make('created_at')
                     ->dateTime()

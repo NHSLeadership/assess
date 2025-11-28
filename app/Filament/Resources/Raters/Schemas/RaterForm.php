@@ -12,21 +12,13 @@ class RaterForm
     {
         return $schema
             ->components([
-                Select::make('user_id')
-                    ->hint('Select an existing user if rater is internal.')
-                    ->relationship('user', 'name')
-                    ->live()
-                    ->afterStateUpdated(function ($state, callable $set,) {
-                        $set('user_id', $state);
-                    }),
                 TextInput::make('user_id')
-                    ->disabled()
-                    ->numeric(),
+                    ->label('User ID')
+                    ->nullable(),
                 TextInput::make('name')
-                    ->required(),
+                    ->nullable(),
                 TextInput::make('email')
-                    ->required()
-                    ->label('Email address')
+                    ->nullable()
                     ->email(),
             ]);
     }

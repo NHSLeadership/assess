@@ -3,15 +3,13 @@
 namespace App\Filament\Resources\Assessments\Schemas;
 
 use App\Models\FrameworkVariantAttribute;
-use App\Models\FrameworkVariantOption;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Schemas\Components\Fieldset;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
@@ -22,10 +20,12 @@ class AssessmentForm
     {
         return $schema
             ->components([
-                Select::make('user_id')
-                    ->relationship('subject', 'name')
+                TextInput::make('user_id')
+                    ->label('Subject')
+                    ->disabled()
+                    ->dehydrated()
+                    ->default(auth()->id())
                     ->required(),
-
 
                 Select::make('framework_id')
                     ->relationship('framework', 'name')
@@ -100,7 +100,6 @@ class AssessmentForm
                     ->columns(1),
 
                 DateTimePicker::make('target_completion_date')->default(now()->addMonth()),
-                DateTimePicker::make('submitted_at'),
                 Textarea::make('notes')
                     ->columnSpanFull(),
             ]);
