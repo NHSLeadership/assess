@@ -27,7 +27,6 @@ class Assessments extends Component
         if (empty($this->assessmentId) || ! is_numeric($this->assessmentId)) {
             return redirect()->route('frameworks');
         }
-        $this->assessmentId = $assessmentId;
     }
 
     #[Computed]

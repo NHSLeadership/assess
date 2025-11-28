@@ -50,11 +50,6 @@ class Frameworks extends Component
         return $this->user()->assessments?->where('framework_id', $this->frameworkId);
     }
 
-    public function newAssessment(): void
-    {
-        $this->redirect(route('variants', [$this->frameworkId]));
-    }
-
     #[Title('Frameworks')]
     public function render()
     {
