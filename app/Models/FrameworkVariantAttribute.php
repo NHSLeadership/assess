@@ -27,6 +27,6 @@ class FrameworkVariantAttribute extends Model
 
     public function getKeyAttribute(): string
     {
-        return 'key_'.$this->attributes['id'];
+        return $this->attributes['key'];
     }
 }
