@@ -94,7 +94,7 @@ class Variants extends Component
         }
 
         if (empty($this->assessmentId)) {
-            $this->assessmentId = $this->initializeAssessment();
+            $this->assessmentId = $this->initialiseAssessment();
         }
         if ($this->assessmentId) {
             $attributes = $this->attributes()?->keyBy('key');
@@ -127,13 +127,13 @@ class Variants extends Component
         return $this->getErrorBag()->isEmpty();
     }
 
-    public function initializeAssessment()
+    public function initialiseAssessment()
     {
         try {
             DB::transaction(function () {
                 // Create the assessment
                 $assessment = Assessment::create([
-                    'framework_id' => $this->frameworkId ?? null,
+                    'framework_id' => $this->frameworkId,
                     'user_id' => $this->user()->user_id,
                 ]);
                 $this->assessmentId = $assessment->id;
