@@ -3,9 +3,11 @@
 namespace App\Livewire;
 
 use App\Models\Assessment;
+use App\Models\Node;
 use App\Traits\FormFieldValidationRulesTrait;
 use App\Traits\UserTrait;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Illuminate\Support\Collection;
 use Livewire\WithPagination;
@@ -21,6 +23,8 @@ class Assessments extends Component
     protected ?int $perPage = 1;
     protected ?string $pageName = 'assessmentId';
     protected ?bool $simplePagination = true;
+
+    public Node|null $currentNode;
 
     public function mount($assessmentId)
     {
@@ -45,9 +49,11 @@ class Assessments extends Component
         if (empty($this->assessment)) {
             return null;
         }
-
-        return $this->assessment?->framework?->nodes()->whereNotNull('parent_id')->orderBy('parent_id')->orderBy('id');
+        return $this->assessment?->framework?->nodes()
+            //->whereNotNull('parent_id')
+            ->orderBy('order')->orderBy('order');
     }
+
 
     #[Computed]
     public function startedAreas(): ?Collection
@@ -80,6 +86,11 @@ class Assessments extends Component
         return $this->user->assessments()->where('id', $this->assessmentId)->get();
     }
 
+    #[On('questions-next-node')]
+    public function currentQuestionNode($nodeId = null)
+    {
+        $this->currentNode = Node::find($nodeId);
+    }
     public function render()
     {
         return view('livewire.assessments', [

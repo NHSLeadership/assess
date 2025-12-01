@@ -87,7 +87,6 @@ class Questions extends Component
          * Convert collection to iterator
          */
         $nodesIterator = $nodes->getIterator();
-
         if (empty($this->nodeId)) {
             $this->nodeId = $nodesIterator->key() ?? 0;
         }
@@ -151,6 +150,7 @@ class Questions extends Component
             $this->nodes->next();
             $this->nodeId = $this->nodes->key();
         }
+        $this->dispatch('questions-next-node', $this->nodes?->current()?->id);
     }
 
     protected function paginatedQuestions(): ?LengthAwarePaginator
