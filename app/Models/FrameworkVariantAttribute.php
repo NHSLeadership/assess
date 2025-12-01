@@ -24,4 +24,5 @@ class FrameworkVariantAttribute extends Model
     {
         return $this->hasMany(FrameworkVariantOption::class)->orderBy('order');
     }
+    
 }

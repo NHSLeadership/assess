@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\AssessmentRater;
 use App\Models\Node;
 use App\Models\Assessment;
 use App\Models\Rater;
@@ -123,6 +124,11 @@ class Questions extends Component
         return $rules ?? [];
     }
 
+    public function rater()
+    {
+        return AssessmentRater::where('assessment_id', $this->assessmentId)
+            ->first();
+    }
     public function store(): void
     {
         $rules = $this->getRules();
@@ -131,15 +137,10 @@ class Questions extends Component
         }
 
         $questions = $this->nodeQuestions()?->keyBy('name');
-        // TODO - Remove users table and the constrain in the raters table. Have user_id should be sso user id.
-        $rater = Rater::firstOrCreate([
-            'user_id' => 1,
-            'name' => '',
-        ]);
 
         foreach ($this->data as $name => $values) {
             if (isset($questions[$name])) {
-                UserResponseService::updateOrCreate($values, $questions[$name], $this->assessmentId, $rater->id);
+                UserResponseService::updateOrCreate($values, $questions[$name], $this->assessmentId, $this->rater()?->rater_id);
             }
         }
 

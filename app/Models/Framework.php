@@ -34,8 +34,4 @@ class Framework extends Model
         return $this->hasMany(FrameworkVariantAttribute::class)->orderBy('order');
     }
 
-    public function stages(): HasMany
-    {
-        return $this->hasMany(FrameworkVariantAttribute::class)->where('key', 'stage');
-    }
 }

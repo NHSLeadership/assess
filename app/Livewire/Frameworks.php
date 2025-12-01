@@ -3,9 +3,12 @@
 namespace App\Livewire;
 
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Framework;
+use App\Models\Rater;
 use App\Traits\UserTrait;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\Attributes\Title;
@@ -15,9 +18,7 @@ class Frameworks extends Component
     use UserTrait;
 
     public ?string $frameworkId;
-
-    public ?string $stageId;
-
+    
     #[Computed]
     public function framework(): ?Framework
     {
@@ -41,26 +42,11 @@ class Frameworks extends Component
     public function assessments(): ?Collection
     {
         if (empty($this->frameworkId)) {
-            return $this->user->assessments;
+            return $this->user()->assessments;
         }
 
-        return $this->user->assessments?->where('framework_id', $this->frameworkId);
+        return $this->user()->assessments?->where('framework_id', $this->frameworkId);
     }
-
-//    public function newAssessment(): void
-//    {
-//        $assessment = new Assessment([
-//            'framework_id' => $this->frameworkId ?? null,
-//            'user_id' => $this->user->id,
-//        ]);
-//        $assessment->save();
-//
-//        if ($assessment->exists) {
-//            $this->redirect(route('assessments', $assessment->id));
-//        } else {
-//            session()->flash('message', __('Could not initialise new assessment. Please try again later.'));
-//        }
-//    }
 
     #[Title('Frameworks')]
     public function render()
