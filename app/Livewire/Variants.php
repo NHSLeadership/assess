@@ -19,7 +19,6 @@ class Variants extends Component
     use UserTrait;
 
     public ?string $frameworkId;
-    public ?string $stageId;
     public ?string $assessmentId;
     public ?array $data;
 
@@ -59,15 +58,6 @@ class Variants extends Component
         return Framework::find($this->frameworkId)->variantAttributes()->get();
     }
 
-    #[Computed]
-    public function variant(): ?FrameworkVariantOption
-    {
-        if (empty($this->frameworkId)) {
-            return null;
-        }
-
-        return Framework::find($this->frameworkId)->stages()->first()->options()->where('id', $this->stageId)->first();
-    }
 
     #[Computed]
     public function frameworks(): \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|Framework|null

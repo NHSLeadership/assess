@@ -60,21 +60,6 @@ class Summary extends Component
         return $this->assessment?->framework?->nodes()->whereHas('questions')->get();
     }
 
-    #[Computed]
-    public function stage(): ?FrameworkVariantAttribute
-    {
-        if (empty($this->frameworkId) || ! is_numeric($this->frameworkId)) {
-            return null;
-        }
-
-        return Framework::find($this->frameworkId)->stages()->first()->options()->get();
-    }
-
-    #[Computed]
-    public function stages(): Collection
-    {
-        return Framework::find($this->frameworkId)->stages()->options()->get();
-    }
 
     #[Computed]
     public function responses(): ?Collection

@@ -18,9 +18,7 @@ class Frameworks extends Component
     use UserTrait;
 
     public ?string $frameworkId;
-
-    public ?string $stageId;
-
+    
     #[Computed]
     public function framework(): ?Framework
     {
