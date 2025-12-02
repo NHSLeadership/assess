@@ -27,7 +27,8 @@
                         <p>You completed all required fields, you can still navigate and change your answers or finish the assessment to receive a report.</p>
                     </div>
                     {{-- Submit button continues to next page instead of pagination links --}}
-                    <button class="nhsuk-button nhsuk-button--reverse nhsuk-u-margin-right-3" type="submit">Continue</button>
+                    <button class="nhsuk-button nhsuk-u-margin-right-3" type="submit">Continue</button>
+
                     @if ($this->responses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count())
                         <a class="nhsuk-button" href="{{ route('summary', ['frameworkId' => $this->assessment?->framework->id, 'assessmentId' => $this->assessmentId]) }}">Finish assessment</a>
                     @endif
