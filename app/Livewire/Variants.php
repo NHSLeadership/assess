@@ -26,14 +26,26 @@ class Variants extends Component
     {
         $this->frameworkId = $frameworkId;
         $this->assessmentId = $assessmentId;
-        if (empty($this->frameworkId) || !is_numeric($this->frameworkId)) {
-            return redirect()->route('frameworks');
-        }
-        if (!empty($this->assessmentId) && !is_numeric($this->assessmentId)) {
+
+        // Validate frameworkId
+        if (
+            empty($this->frameworkId) ||
+            !is_numeric($this->frameworkId) ||
+            !Framework::whereKey((int) $this->frameworkId)->exists()
+        ) {
             return redirect()->route('frameworks');
         }
 
-        $this->data = $this->variantSelections()->toArray();
+        // Validate assessmentId
+        if (
+            !empty($this->assessmentId) &&
+            (!is_numeric($this->assessmentId) ||
+            !Assessment::whereKey($this->assessmentId)->exists())
+        ) {
+            return redirect()->route('frameworks');
+        }
+
+        $this->data = $this->variantSelections()?->toArray();
     }
 
     #[Computed]
@@ -66,14 +78,14 @@ class Variants extends Component
     }
 
     #[Computed]
-    public function variantSelections(): Collection
+    public function variantSelections(): Collection|null
     {
         if (empty($this->assessmentId)) {
             return Collection::empty();
         }
 
-        return $this->user()->assessments()->where('id', $this->assessmentId)->first()
-            ->variantSelections->pluck('framework_variant_option_id', 'attribute.key');
+        return $this->user()->assessments()->where('id', $this->assessmentId)?->first()
+            ?->variantSelections->pluck('framework_variant_option_id', 'attribute.key');
     }
 
     public function store(): void
