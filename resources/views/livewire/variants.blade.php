@@ -28,6 +28,7 @@
                     @endforeach
 
                         <button class="nhsuk-button" type="submit">Continue</button>
+                        <a class="nhsuk-button" href="{{ route('frameworks') }}">Close</a>
 
                 </form>
             @else
