@@ -50,7 +50,6 @@ class Assessments extends Component
             return null;
         }
         return $this->assessment?->framework?->nodes()
-            //->whereNotNull('parent_id')
             ->orderBy('order')->orderBy('order');
     }
 
