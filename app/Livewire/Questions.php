@@ -13,6 +13,7 @@ use App\Traits\UserTrait;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
@@ -145,16 +146,25 @@ class Questions extends Component
         }
 
         $this->dispatch('questions-next-node', $this->node()?->id);
+        $this->dispatch('scroll-to-top');
     }
 
     /**
      * Validate and save user responses
+     * @throws ValidationException
      */
     private function validateAndSaveResponses(): void
     {
         $rules = $this->getRules();
         if (!empty($rules)) {
-            $this->validate($rules);
+            try {
+                $this->validate($rules);
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                // Dispatch your event only on failure
+                $this->dispatch('scroll-to-top');
+                // Rethrow - Livewire still shows the error messages
+                throw $e;
+            }
         }
 
         $questions = $this->nodeQuestions()?->keyBy('name');
@@ -185,6 +195,7 @@ class Questions extends Component
         }
 
         $this->dispatch('questions-next-node', $this->node()?->id);
+        $this->dispatch('scroll-to-top');
     }
 
     /**
