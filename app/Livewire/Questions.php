@@ -184,7 +184,7 @@ class Questions extends Component
             $this->goToVariantSelection();
         }
 
-        $this->dispatch('questions-previous-node', $this->node()?->id);
+        $this->dispatch('questions-next-node', $this->node()?->id);
     }
 
     /**
