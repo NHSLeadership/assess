@@ -29,7 +29,6 @@
                         </div>
                     @endif
                     {{-- Submit button continues to next page instead of pagination links --}}
-                    {{ $this->nodes()->count() }} {{ $this->nodes()->key() }} {{ $this->nodeId }}
                     @if($this->nodes()->key() + 1 > 0)
                             <button wire:click.prevent="goPrevious" class="nhsuk-button nhsuk-u-margin-right-3">Previous page</button>
                     @endif
