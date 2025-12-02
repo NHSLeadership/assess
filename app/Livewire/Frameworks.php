@@ -41,11 +41,11 @@ class Frameworks extends Component
     #[Computed]
     public function assessments(): ?Collection
     {
-        if (empty($this->frameworkId)) {
-            return $this->user()->assessments;
+        if (!empty($this->frameworkId)) {
+            return $this->user()->assessments->sortByDesc('updated_at');
         }
 
-        return $this->user()->assessments?->where('framework_id', $this->frameworkId);
+        return $this->user()->assessments?->where('framework_id', $this->frameworkId)->sortByDesc('updated_at');
     }
 
     #[Title('Frameworks')]
