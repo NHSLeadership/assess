@@ -34,7 +34,7 @@
                     @endif
                 @else
                     {{-- Submit button continues to next page instead of pagination links --}}
-                    <button class="nhsuk-button" type="submit">Continue1</button>
+                    <button class="nhsuk-button" type="submit">Continue</button>
                 @endif
             </form>
 
