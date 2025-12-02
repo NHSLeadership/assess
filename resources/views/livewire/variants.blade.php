@@ -5,7 +5,7 @@
 
             <h1 class="nhsuk-heading-xl">{{ $this->framework->name }}</h1>
 
-            <p>{{ $this->framework->description }}</p>
+            <p>{!! $this->framework->description !!}</p>
 
             <livewire:alerts />
 

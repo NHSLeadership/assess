@@ -12,10 +12,10 @@
                         'type' => $question['type'] ?? null,
                     ])
                         @slot('hint')
-                            {{ $question['text'] ?? $question['hint'] }}
+                            {!! $question['text'] ?? $question['hint'] !!}
                         @endslot
                         @slot('label')
-                            <span class="nhsuk-u-visually-hidden">Competency {{$question->id}}</span>{{ $question['title'] ?? null }}
+                            <span class="nhsuk-u-visually-hidden">Competency {{$question->id}}</span>{!! $question['title'] ?? null !!}
                         @endslot
                     @endcomponent
                     <hr>
