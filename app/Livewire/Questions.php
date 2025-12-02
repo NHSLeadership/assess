@@ -81,7 +81,7 @@ class Questions extends Component
          */
         $nodes = $this->assessment?->framework?->nodes()
                                               ->whereHas('questions')
-                                              ->orderBy('parent_id')->orderBy('order')->orderBy('id')
+                                              ->orderBy('order')->orderBy('id')
                                               ->get();
         /**
          * Convert collection to iterator

@@ -49,8 +49,8 @@ class Assessments extends Component
         if (empty($this->assessment)) {
             return null;
         }
-        return $this->assessment?->framework?->nodes()
-            ->orderBy('order')->orderBy('order');
+        return $this->assessment?->framework?->nodes()->whereHas('questions')
+            ->orderBy('order');
     }
 
 

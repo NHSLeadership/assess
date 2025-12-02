@@ -22,7 +22,7 @@
             @foreach ($paginatedNodes as $node)
                 <h2 class="nhsuk-heading-m">
                     <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">
-                        {{ $currentNode->name ??  $node->name ?? ''}}
+                      {{$currentNode?->parent?->name ?? $node?->parent?->name}} >  {{ $currentNode->name ??  $node->name ?? ''}}
                     </span>
                 </h2>
 
