@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
+use App\Models\Rater;
 use App\Models\User;
 use Auth0\Laravel\UserRepositoryAbstract;
 use Auth0\Laravel\UserRepositoryContract;
@@ -47,6 +48,8 @@ final class UserRepository extends UserRepositoryAbstract implements UserReposit
         $user['timezone'] = $user[$prefix . '/timezone'] ?? $user['timezone'] ?? '';
         $user['updated_at'] = $user[$prefix . '/updated_at'] ?? $user['updated_at'] ?? '';
         $user['user_metadata'] = $user[$prefix . '/user_metadata'] ?? $user['user_metadata'] ?? '';
+
+        $user['rater_id'] = Rater::where('user_id', $user['user_id'])->value('id');
 
         if (config('app.debug')) {
             Log::debug(serialize([$user]));

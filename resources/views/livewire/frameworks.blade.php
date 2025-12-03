@@ -7,8 +7,10 @@
             <p>{{ $this->framework->description ?? '' }}</p>
 
             <div class="nhsuk-action-link">
-                <a class="nhsuk-action-link__link" href="{{ route('variants', ['frameworkId' => $this->framework?->id]) }}">
-                    <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                <a class="nhsuk-action-link__link"
+                   href="{{ route('variants', ['frameworkId' => $this->framework?->id]) }}">
+                    <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg"
+                         viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>
                     </svg>
@@ -22,28 +24,44 @@
         @if ($this->assessments()?->count())
             <h3>{{ __('Started assessments') }}</h3>
 
-            <ul class="nhsuk-task-list">
+            <table class="nhsuk-table">
+                <thead class="nhsuk-table__head">
+                <tr>
+                    <th scope="col" class="nhsuk-table__header">Assessment</th>
+                    <th scope="col" class="nhsuk-table__header">Last accessed</th>
+                    <th scope="col" class="nhsuk-table__header">Status</th>
+                </tr>
+                </thead>
+                <tbody class="nhsuk-table__body">
                 @foreach ($this->assessments() as $assessment)
-                    <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
-                        <div class="nhsuk-task-list__name-and-hint">
-                            <a href="{{ route('variants', ['frameworkId' => $assessment->framework?->id, 'assessmentId' => $assessment->id]) }}"
+                    <tr class="nhsuk-table__row">
+                        <td class="nhsuk-table__cell">
+                            <a href="{{ !empty($assessment->submitted_at)
+                               ? route('summary', ['frameworkId' => $this->framework?->id, 'assessmentId' => $assessment->id])
+                               : route('variants', ['frameworkId' => $assessment->framework?->id, 'assessmentId' => $assessment->id]) }}"
                                aria-describedby="{{ $assessment->slug }}-hint"
-                               class="nhsuk-link nhsuk-task-list__link">{{ $assessment->framework?->name }}</a>
-                               - {{$assessment->created_at}}
-                        </div>
-                        <div class="nhsuk-task-list__status nhsuk-task-list__status--completed">
-                            @if ($assessment->whereNull('completed_at'))
+                               class="nhsuk-link">
+                                {{ $this->getAssessmentLabel($assessment) ?? $assessment->framework?->name }}
+                            </a>
+                        </td>
+                        <td class="nhsuk-table__cell">
+                            {{ $this->displayAssessmentDate($assessment, true) }}
+                        </td>
+                        <td class="nhsuk-table__cell">
+                            @if (empty($assessment->submitted_at))
                                 @if ($assessment->questions)
-                                    <span>{{ __('Not started') }}</span>
+                                    <strong class="nhsuk-tag nhsuk-tag--red">{{ __('Not started') }}</strong>
                                 @else
                                     <strong class="nhsuk-tag nhsuk-tag--blue">{{ __('In Progress') }}</strong>
                                 @endif
+                            @else
+                                <strong class="nhsuk-tag nhsuk-tag--green">{{ __('Submitted') }}</strong>
                             @endif
-                        </div>
-                    </li>
+                        </td>
+                    </tr>
                 @endforeach
-
-            </ul>
+                </tbody>
+            </table>
         @else
             <div class="nhsuk-inset-text nhsuk-u-margin-top-1">
                 <span class="nhsuk-u-visually-hidden">Information: </span>
