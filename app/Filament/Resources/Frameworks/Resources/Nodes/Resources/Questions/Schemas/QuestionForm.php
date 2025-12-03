@@ -30,7 +30,7 @@ class QuestionForm
 //                            'multi_choice' => 'Multiple choice',
                             'scale' => 'Scale',
 //                            'boolean' => 'Boolean',
-                            'free_text' => 'Free text',
+                            'textarea' => 'Text',
                     ])
                     ->required()
                     ->default('scale'),
