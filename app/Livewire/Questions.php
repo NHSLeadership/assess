@@ -126,8 +126,7 @@ class Questions extends Component
 
     public function rater()
     {
-        return AssessmentRater::where('assessment_id', $this->assessmentId)
-            ->first();
+        return $this->assessment()?->raters()?->first();
     }
 
     /**
@@ -174,7 +173,7 @@ class Questions extends Component
                     $values,
                     $questions[$name],
                     $this->assessmentId,
-                    $this->rater()?->rater_id
+                    $this->rater()?->id
                 );
             }
         }
