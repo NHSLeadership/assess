@@ -31,7 +31,6 @@ class Questions extends Component
 
     protected $perPage = 3;
     protected $pageName = 'questionId';
-    protected $parentPageName = 'assessmentId';
 
     public ?array $data;
     public ?int $nodeId;
@@ -46,7 +45,7 @@ class Questions extends Component
         if (empty($this->data) && $this->nodeQuestions()) {
             foreach ($this->nodeQuestions() as $question) {
                 $defaults = null;
-                // This may be a match/switch expression in future based on response_type
+                // This may be a match/switch expression in future based on multiple response_types
                 if($question->response_type !== ResponseType::TYPE_TEXTAREA->value){
                     $defaults = unserialize($question['defaults']) ?? null;
                 }
@@ -112,7 +111,7 @@ class Questions extends Component
     {
         $assessment = $this->user->assessments()
             ->where('id', $this->assessmentId)
-            ->with('responses.question') // eager load to avoid N+1
+            ->with('responses.question')
             ->first();
         return $assessment->responses
             ->mapWithKeys(function ($response) {
