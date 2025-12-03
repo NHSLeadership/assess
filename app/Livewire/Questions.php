@@ -105,8 +105,23 @@ class Questions extends Component
     #[Computed]
     public function responses(): Collection
     {
-        return $this->user->assessments()->where('id', $this->assessmentId)->first()
-            ->responses->pluck('scale_option_id', 'question.name');
+        $assessment = $this->user->assessments()
+            ->where('id', $this->assessmentId)
+            ->with('responses.question') // eager load to avoid N+1
+            ->first();
+
+        return $assessment->responses
+            ->mapWithKeys(function ($response) {
+                $key = $response->question->name;
+
+                if ($response->question->response_type === 'textarea') {
+                    $value = $response->textarea;
+                } else {
+                    $value = $response->scale_option_id;
+                }
+
+                return [$key => $value];
+            });
     }
 
     public function backPage(): void

@@ -38,7 +38,7 @@
                 wire:{{ $wire_type }}="{{ $wire_name }}"
                 @endforeach
             @else
-                wire:model.live="{{ $name }}"
+                wire:model.live="{{ $name ?? null }}"
             @endif
             rows="{{ $rows ?? 5 }}"
             aria-describedby="example-hint">{{ old($name) }}</textarea><br/>

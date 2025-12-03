@@ -25,7 +25,7 @@ enum ResponseType: string
     {
         return match($this) {
             self::TYPE_BOOLEAN,
-            self::TYPE_TEXTAREA     => 'text',
+            self::TYPE_TEXTAREA     => 'textarea',
             self::TYPE_MULTI_CHOICE  => 'checkbox',
             self::TYPE_SCALE,
             self::TYPE_SINGLE_CHOICE => 'radio',
