@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\ResponseType;
 use App\Models\AssessmentRater;
 use App\Models\Node;
 use App\Models\Assessment;
@@ -44,7 +45,11 @@ class Questions extends Component
 
         if (empty($this->data) && $this->nodeQuestions()) {
             foreach ($this->nodeQuestions() as $question) {
-                $defaults = unserialize($question['defaults']) ?? null;
+                $defaults = null;
+                // This may be a match/switch expression in future based on response_type
+                if($question->response_type !== ResponseType::TYPE_TEXTAREA->value){
+                    $defaults = unserialize($question['defaults']) ?? null;
+                }
                 $this->data[$question['name']] = $defaults;
             }
         }
@@ -109,13 +114,12 @@ class Questions extends Component
             ->where('id', $this->assessmentId)
             ->with('responses.question') // eager load to avoid N+1
             ->first();
-
         return $assessment->responses
             ->mapWithKeys(function ($response) {
                 $key = $response->question->name;
 
-                if ($response->question->response_type === 'textarea') {
-                    $value = $response->textarea;
+                if ($response->question->response_type === ResponseType::TYPE_TEXTAREA->value) {
+                    $value = $response->textarea ?? '';
                 } else {
                     $value = $response->scale_option_id;
                 }
