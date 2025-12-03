@@ -53,17 +53,6 @@ class Assessments extends Component
             ->orderBy('order');
     }
 
-
-    #[Computed]
-    public function startedAreas(): ?Collection
-    {
-        if (empty($this->assessment)) {
-            return null;
-        }
-
-        return $this->assessment?->framework?->nodes()->whereHas('questions')->get();
-    }
-
     #[Computed]
     public function data()
     {

@@ -13,6 +13,7 @@ use App\Traits\UserTrait;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
@@ -128,20 +129,13 @@ class Questions extends Component
         return AssessmentRater::where('assessment_id', $this->assessmentId)
             ->first();
     }
-    public function store(): void
+
+    /**
+     * Store responses and go to next question or node
+     */
+    public function storeNext(): void
     {
-        $rules = $this->getRules();
-        if (!empty($rules)) {
-            $this->validate($rules);
-        }
-
-        $questions = $this->nodeQuestions()?->keyBy('name');
-
-        foreach ($this->data as $name => $values) {
-            if (isset($questions[$name])) {
-                UserResponseService::updateOrCreate($values, $questions[$name], $this->assessmentId, $this->rater()?->rater_id);
-            }
-        }
+        $this->validateAndSaveResponses();
 
         if ($this->paginatedQuestions()->hasMorePages()) {
             $this->nextPage(pageName: $this->pageName);
@@ -150,8 +144,86 @@ class Questions extends Component
             $this->nodes->next();
             $this->nodeId = $this->nodes->key();
         }
-        $this->dispatch('questions-next-node', $this->nodes?->current()?->id);
+
+        $this->dispatch('questions-next-node', $this->node()?->id);
+        $this->dispatch('scroll-to-top');
     }
+
+    /**
+     * Validate and save user responses
+     * @throws ValidationException
+     */
+    private function validateAndSaveResponses(): void
+    {
+        $rules = $this->getRules();
+        if (!empty($rules)) {
+            try {
+                $this->validate($rules);
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                // Dispatch your event only on failure
+                $this->dispatch('scroll-to-top');
+                // Rethrow - Livewire still shows the error messages
+                throw $e;
+            }
+        }
+
+        $questions = $this->nodeQuestions()?->keyBy('name');
+        foreach ($this->data as $name => $values) {
+            if (isset($questions[$name])) {
+                UserResponseService::updateOrCreate(
+                    $values,
+                    $questions[$name],
+                    $this->assessmentId,
+                    $this->rater()?->rater_id
+                );
+            }
+        }
+    }
+
+    /**
+     * Go to previous question or node
+     */
+    public function goPrevious(): void
+    {
+        $this->resetPage(pageName: $this->pageName);
+
+        if ($this->nodeId > 0) {
+            $this->nodes->seek($this->nodeId - 1);
+            $this->nodeId = $this->nodes->key();
+        } else {
+            $this->goToVariantSelection();
+        }
+
+        $this->dispatch('questions-next-node', $this->node()?->id);
+        $this->dispatch('scroll-to-top');
+    }
+
+    /**
+     * Finish the assessment and go to summary page
+     */
+    public function finishAssessment()
+    {
+        $this->validateAndSaveResponses();
+
+        // Additional logic for finishing the assessment can be added here
+        return redirect()->route(
+            'summary',
+            ['frameworkId' => $this->assessment?->framework->id, 'assessmentId' => $this->assessmentId]
+        );
+    }
+
+    /**
+     * Go to variant selection page
+     */
+    public function goToVariantSelection()
+    {
+        return redirect()
+            ->route(
+                'variants',
+                ['frameworkId' => $this->assessment?->framework->id, 'assessmentId' => $this->assessmentId]
+            );
+    }
+
 
     protected function paginatedQuestions(): ?LengthAwarePaginator
     {

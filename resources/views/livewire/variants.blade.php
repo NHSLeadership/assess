@@ -5,7 +5,7 @@
 
             <h1 class="nhsuk-heading-xl">{{ $this->framework->name }}</h1>
 
-            <p>{{ $this->framework->description }}</p>
+            <p>{!! $this->framework->description !!}</p>
 
             <livewire:alerts />
 
@@ -28,6 +28,7 @@
                     @endforeach
 
                         <button class="nhsuk-button" type="submit">Continue</button>
+                        <a class="nhsuk-button" href="{{ route('frameworks') }}">Close</a>
 
                 </form>
             @else
