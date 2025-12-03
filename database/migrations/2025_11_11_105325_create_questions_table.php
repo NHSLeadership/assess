@@ -25,7 +25,7 @@ return new class extends Migration
                 'multi_choice',
                 'scale',
                 'boolean',
-                'free_text',
+                'textarea',
             ])->default('scale');
             $table->foreignId('scale_id')
                 ->nullable()
