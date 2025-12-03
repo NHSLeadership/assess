@@ -41,7 +41,7 @@ class Frameworks extends Component
     #[Computed]
     public function assessments(): ?Collection
     {
-        if (!empty($this->frameworkId)) {
+        if (empty($this->frameworkId)) {
             return $this->user()->assessments->sortByDesc('updated_at');
         }
 
