@@ -1,6 +1,5 @@
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-
         @if (!empty($questions))
             <form wire:submit.prevent="storeNext()">
                 @foreach ($questions as $question)
@@ -12,7 +11,7 @@
                         'type' => $question['type'] ?? null,
                     ])
                         @slot('hint')
-                            {!! $question['text'] ?? $question['hint'] !!}
+                            {!! \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $question['id']) ?? $question['hint'] !!}
                         @endslot
                         @slot('label')
                             <span class="nhsuk-u-visually-hidden">Competency {{$question->id}}</span>{!! $question['title'] ?? null !!}
