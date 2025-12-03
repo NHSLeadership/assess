@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\ResponseType;
 use App\Models\AssessmentRater;
 use App\Models\Node;
 use App\Models\Assessment;
@@ -30,7 +31,6 @@ class Questions extends Component
 
     protected $perPage = 3;
     protected $pageName = 'questionId';
-    protected $parentPageName = 'assessmentId';
 
     public ?array $data;
     public ?int $nodeId;
@@ -44,7 +44,11 @@ class Questions extends Component
 
         if (empty($this->data) && $this->nodeQuestions()) {
             foreach ($this->nodeQuestions() as $question) {
-                $defaults = unserialize($question['defaults']) ?? null;
+                $defaults = null;
+                // This may be a match/switch expression in future based on multiple response_types
+                if($question->response_type !== ResponseType::TYPE_TEXTAREA->value){
+                    $defaults = unserialize($question['defaults']) ?? null;
+                }
                 $this->data[$question['name']] = $defaults;
             }
         }
@@ -105,8 +109,22 @@ class Questions extends Component
     #[Computed]
     public function responses(): Collection
     {
-        return $this->user->assessments()->where('id', $this->assessmentId)->first()
-            ->responses->pluck('scale_option_id', 'question.name');
+        $assessment = $this->user->assessments()
+            ->where('id', $this->assessmentId)
+            ->with('responses.question')
+            ->first();
+        return $assessment->responses
+            ->mapWithKeys(function ($response) {
+                $key = $response->question->name;
+
+                if ($response->question->response_type === ResponseType::TYPE_TEXTAREA->value) {
+                    $value = $response->textarea ?? '';
+                } else {
+                    $value = $response->scale_option_id;
+                }
+
+                return [$key => $value];
+            });
     }
 
     public function backPage(): void

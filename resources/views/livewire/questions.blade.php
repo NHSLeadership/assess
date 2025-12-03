@@ -6,9 +6,9 @@
                 @foreach ($questions as $question)
                     {{-- Render each component based on type and it's properties --}}
                     @component('components.form.' . $question['component'], [
-                        'name' => 'data.' . $question['name'] ?? null,
+                        'name' => $question['name'] ? 'data.' . $question['name'] : null,
                         'class' => $question['class'] ?? null,
-                        'options_list' => $question->scale->options()->pluck('label', 'id')?->toArray() ?? [],
+                        'options_list' => $question?->scale?->options()->pluck('label', 'id')?->toArray() ?? [],
                         'type' => $question['type'] ?? null,
                     ])
                         @slot('hint')
