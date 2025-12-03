@@ -54,4 +54,48 @@ class QuestionTextResolver
         }
         return $map;
     }
+
+    public static function textFor(
+        Assessment $assessment,
+        ?Rater $rater = null,
+        int $questionId
+    ): string {
+        // 1) Derive rater type
+        $subjectUserId = $assessment->getAttribute('user_id');
+        $raterUserId   = $rater?->getAttribute('user_id');
+        $raterType     = ($raterUserId && $subjectUserId && $raterUserId === $subjectUserId)
+            ? RaterType::Self
+            : RaterType::Rater;
+
+        // 2) Selected framework variant option ids for this assessment
+        $selectedOptionIds = $assessment->variantSelections()
+            ->pluck('framework_variant_option_id')
+            ->all();
+
+        // 3) Load just the one question
+        $question = Question::query()
+            ->where('id', $questionId)
+            ->whereHas('node', fn($q) => $q->where('framework_id', $assessment->framework_id))
+            ->with(['variants' => function ($q) use ($raterType) {
+                $q->whereNull('rater_type')
+                    ->orWhere('rater_type', $raterType)
+                    ->orderByDesc('priority')
+                    ->orderBy('id');
+            }, 'variants.matches'])
+            ->first();
+
+        if (!$question) {
+            return ''; // Question not found in this framework
+        }
+
+        // 4) Pick variant for this question
+        $chosen = $question->variants->first(function ($variant) use ($selectedOptionIds) {
+            if ($variant->matches->isEmpty()) return true;
+
+            $variantOptionIds = $variant->matches->pluck('framework_variant_option_id');
+            return collect($selectedOptionIds)->every(fn($id) => $variantOptionIds->contains($id));
+        });
+
+        return $chosen?->text ?? $question->text;
+    }
 }
