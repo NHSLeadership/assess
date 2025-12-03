@@ -18,6 +18,31 @@ class QuestionVariantMatchSeeder extends Seeder
             ['question_variant_id' => 2, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
             ['question_variant_id' => 3, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
             ['question_variant_id' => 4, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+
+            ['question_variant_id' => 5, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 6, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 7, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 8, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+
+            ['question_variant_id' => 9, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 10, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 11, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 12, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+
+            ['question_variant_id' => 13, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 14, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 15, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 16, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+
+            ['question_variant_id' => 17, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 18, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 19, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 20, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+
+            ['question_variant_id' => 21, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 22, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 23, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 24, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
         ];
         foreach ($matches as $match) {
             QuestionVariantMatch::firstOrCreate(
