@@ -22,7 +22,7 @@ class ScaleSeeder extends Seeder
             ['label' => 'Mostly agree', 'value' => 2, 'order' => 2],
             ['label' => 'Mostly disagree', 'value' => 3, 'order' => 3],
             ['label' => 'Strongly disagree', 'value' => 4, 'order' => 4],
-            ['label' => 'N/A', 'value' => 0, 'order' => 5],
+            ['label' => 'Not applicable for my role', 'value' => 0, 'order' => 5],
         ];
 
         foreach ($options as $option) {
