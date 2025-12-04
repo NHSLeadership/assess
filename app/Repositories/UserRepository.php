@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Repositories;
 
-use App\Models\Rater;
 use App\Models\User;
 use Auth0\Laravel\UserRepositoryAbstract;
 use Auth0\Laravel\UserRepositoryContract;
