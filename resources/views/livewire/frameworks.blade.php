@@ -27,8 +27,8 @@
             <table class="nhsuk-table">
                 <thead class="nhsuk-table__head">
                 <tr>
-                    <th scope="col" class="nhsuk-table__header">Assessment</th>
-                    <th scope="col" class="nhsuk-table__header">Last accessed</th>
+                    <th scope="col" class="nhsuk-table__header">Framework</th>
+                    <th scope="col" class="nhsuk-table__header">Last updated</th>
                     <th scope="col" class="nhsuk-table__header">Status</th>
                 </tr>
                 </thead>
@@ -41,7 +41,7 @@
                                : route('variants', ['frameworkId' => $assessment->framework?->id, 'assessmentId' => $assessment->id]) }}"
                                aria-describedby="{{ $assessment->slug }}-hint"
                                class="nhsuk-link">
-                                {{ $this->getAssessmentLabel($assessment) ?? $assessment->framework?->name }}
+                                {{ $assessment->framework?->name }}
                             </a>
                         </td>
                         <td class="nhsuk-table__cell">

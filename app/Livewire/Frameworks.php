@@ -50,23 +50,6 @@ class Frameworks extends Component
     }
 
     /**
-     * Get the most relevant label for an assessment
-     * @param $assessment
-     * @return string
-     */
-    public function getAssessmentLabel($assessment): string
-    {
-        $raterRole = AssessmentRater::where('rater_id', $this->user()->rater_id ?? null)
-            ->where('assessment_id', $assessment->id)
-            ->value('role');
-
-        // This logic needs to be changed if more rater types are added
-        return $raterRole === RaterType::Self->value
-            ? 'Self Assessment'
-            : '360 Review';
-    }
-
-    /**
      * Display the most relevant date for an assessment
      * @param $assessment
      * @param bool $useAmPm
