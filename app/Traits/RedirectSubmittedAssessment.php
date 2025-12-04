@@ -11,11 +11,11 @@ trait RedirectSubmittedAssessment
     /**
      * Redirect to summary if the assessment has been submitted.
      *
-     * @param int $assessmentId
-     * @param int $frameworkId
+     * @param int|null $assessmentId
+     * @param int|null $frameworkId
      * @return Redirector|RedirectResponse|null
      */
-    protected function redirectIfSubmitted(int $assessmentId, int $frameworkId): Redirector|RedirectResponse|null
+    protected function redirectIfSubmitted(?int $assessmentId, ?int $frameworkId): Redirector|RedirectResponse|null
     {
         $assessment = Assessment::find($assessmentId);
 

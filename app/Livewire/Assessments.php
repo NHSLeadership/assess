@@ -35,12 +35,7 @@ class Assessments extends Component
         }
 
         //Redirect already submitted assignments to summary page
-        if ($this->redirectIfSubmitted($this->assessmentId, $this->assessment?->framework?->id)) {
-            return redirect()->route(
-                'summary',
-                ['frameworkId' => $this->assessment?->framework?->id, 'assessmentId' => $this->assessmentId]
-            );
-        }
+        $this->redirectIfSubmitted($this->assessmentId, $this->assessment?->framework?->id);
     }
 
     #[Computed]
