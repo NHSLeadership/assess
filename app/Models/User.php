@@ -66,7 +66,6 @@ class User extends Model implements
         'user_metadata',
         'permissions',
         'roles',
-        'rater_id'
     ];
 
 

@@ -49,8 +49,6 @@ final class UserRepository extends UserRepositoryAbstract implements UserReposit
         $user['updated_at'] = $user[$prefix . '/updated_at'] ?? $user['updated_at'] ?? '';
         $user['user_metadata'] = $user[$prefix . '/user_metadata'] ?? $user['user_metadata'] ?? '';
 
-        $user['rater_id'] = Rater::where('user_id', $user['user_id'])->value('id');
-
         if (config('app.debug')) {
             Log::debug(serialize([$user]));
         }

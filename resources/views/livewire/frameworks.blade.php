@@ -45,7 +45,7 @@
                             </a>
                         </td>
                         <td class="nhsuk-table__cell">
-                            {{ $this->displayAssessmentDate($assessment, true) }}
+                            {{ $this->displayAssessmentDate($assessment) }}
                         </td>
                         <td class="nhsuk-table__cell">
                             @if (empty($assessment->submitted_at))
