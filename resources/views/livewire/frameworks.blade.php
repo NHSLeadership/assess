@@ -22,7 +22,7 @@
         @endif
 
         @if ($this->assessments()?->count())
-            <h3>{{ __('Started assessments') }}</h3>
+            <h3>{{ __('Assessments') }}</h3>
 
             <table class="nhsuk-table">
                 <thead class="nhsuk-table__head">
@@ -52,10 +52,10 @@
                                 @if ($assessment->questions)
                                     <strong class="nhsuk-tag nhsuk-tag--red">{{ __('Not started') }}</strong>
                                 @else
-                                    <strong class="nhsuk-tag nhsuk-tag--blue">{{ __('In Progress') }}</strong>
+                                    <strong class="nhsuk-tag nhsuk-tag--blue">{{ __('Started') }}</strong>
                                 @endif
                             @else
-                                <strong class="nhsuk-tag nhsuk-tag--green">{{ __('Submitted') }}</strong>
+                                <strong class="nhsuk-tag nhsuk-tag--green">{{ __('Completed') }}</strong>
                             @endif
                         </td>
                     </tr>
