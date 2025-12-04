@@ -13,15 +13,16 @@ class ScaleSeeder extends Seeder
     public function run(): void
     {
         $scale = Scale::firstOrCreate(
-            ['name' => 'Behaviour likert 1-4'],
-            ['description' => 'Insufficient -> Exemplary']
+            ['name' => 'Agreement likert 1-4'],
+            ['description' => 'Strongly disagree -> Strongly agree']
         );
 
         $options = [
-            ['label' => 'Insufficient', 'value' => 1, 'order' => 1],
-            ['label' => 'Essential', 'value' => 2, 'order' => 2],
-            ['label' => 'Proficient', 'value' => 3, 'order' => 3],
-            ['label' => 'Exemplary', 'value' => 4, 'order' => 4],
+            ['label' => 'Strongly disagree', 'value' => 1, 'order' => 1],
+            ['label' => 'Mostly agree', 'value' => 2, 'order' => 2],
+            ['label' => 'Mostly disagree', 'value' => 3, 'order' => 3],
+            ['label' => 'Strongly disagree', 'value' => 4, 'order' => 4],
+            ['label' => 'Not applicable for my role', 'value' => 0, 'order' => 5],
         ];
 
         foreach ($options as $option) {
