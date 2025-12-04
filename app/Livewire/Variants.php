@@ -47,13 +47,8 @@ class Variants extends Component
             return redirect()->route('frameworks');
         }
 
-        //Check already submitted assessment
-        if ($this->redirectIfSubmitted($this->assessmentId, $this->frameworkId)) {
-            return redirect()->route(
-                'summary',
-                ['frameworkId' => $this->frameworkId, 'assessmentId' => $this->assessmentId]
-            );
-        }
+        //Redirect to summary if already submitted assessment
+        $this->redirectIfSubmitted($this->assessmentId, $this->frameworkId);
 
         $this->data = $this->variantSelections()?->toArray();
     }
