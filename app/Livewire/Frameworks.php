@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\RaterType;
 use App\Models\Assessment;
 use App\Models\AssessmentRater;
 use App\Models\Framework;
@@ -46,6 +47,31 @@ class Frameworks extends Component
         }
 
         return $this->user()->assessments?->where('framework_id', $this->frameworkId)->sortByDesc('updated_at');
+    }
+
+    /**
+     * Display the most relevant date for an assessment
+     * @param $assessment
+     * @param bool $useAmPm
+     * @return string
+     */
+    public function displayAssessmentDate($assessment, bool $useAmPm = false): string
+    {
+        try {
+            $date = $assessment->submitted_at
+                ?? $assessment->updated_at
+                ?? $assessment->created_at;
+
+            if (!$date) {
+                return 'Not available';
+            }
+
+            $format = $useAmPm ? 'd F Y, g:i a' : 'd F Y, H:i';
+
+            return \Carbon\Carbon::parse($date)->format($format);
+        } catch (\Exception $e) {
+            return 'Not available';
+        }
     }
 
     #[Title('Frameworks')]

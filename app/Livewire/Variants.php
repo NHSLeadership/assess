@@ -8,6 +8,7 @@ use App\Models\Framework;
 use App\Models\FrameworkVariantOption;
 use App\Models\Rater;
 use App\Services\UserAssessmentVariantSelectionService;
+use App\Traits\RedirectSubmittedAssessment;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -17,6 +18,7 @@ use App\Traits\UserTrait;
 class Variants extends Component
 {
     use UserTrait;
+    use RedirectSubmittedAssessment;
 
     public ?string $frameworkId;
     public ?string $assessmentId;
@@ -44,6 +46,9 @@ class Variants extends Component
         ) {
             return redirect()->route('frameworks');
         }
+
+        //Redirect to summary if already submitted assessment
+        $this->redirectIfSubmitted($this->assessmentId, $this->frameworkId);
 
         $this->data = $this->variantSelections()?->toArray();
     }

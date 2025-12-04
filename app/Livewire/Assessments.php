@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Assessment;
 use App\Models\Node;
 use App\Traits\FormFieldValidationRulesTrait;
+use App\Traits\RedirectSubmittedAssessment;
 use App\Traits\UserTrait;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -17,6 +18,7 @@ class Assessments extends Component
     use FormFieldValidationRulesTrait;
     use WithPagination;
     use UserTrait;
+    use RedirectSubmittedAssessment;
 
     public ?string $assessmentId;
 
@@ -31,6 +33,9 @@ class Assessments extends Component
         if (empty($this->assessmentId) || ! is_numeric($this->assessmentId)) {
             return redirect()->route('frameworks');
         }
+
+        //Redirect already submitted assignments to summary page
+        $this->redirectIfSubmitted($this->assessmentId, $this->assessment?->framework?->id);
     }
 
     #[Computed]

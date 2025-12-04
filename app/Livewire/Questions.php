@@ -19,6 +19,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
+use App\Traits\RedirectSubmittedAssessment;
 
 class Questions extends Component
 {
@@ -26,6 +27,7 @@ class Questions extends Component
     use WithPagination;
     use WithoutUrlPagination;
     use UserTrait;
+    use RedirectSubmittedAssessment;
 
     public $assessmentId;
 
@@ -37,6 +39,8 @@ class Questions extends Component
 
     public function mount(): void
     {
+        $this->redirectIfSubmitted($this->assessmentId, $this->assessment?->framework->id);
+
         /**
          * Pre-populate forms with defaults
          */
