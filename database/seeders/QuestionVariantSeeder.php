@@ -42,6 +42,37 @@ class QuestionVariantSeeder extends Seeder
             ['question_id' => 6, 'text' => 'I advocate for others, using their expertise and experience to negotiate mutually beneficial outcomes.', 'rater_type' => null, 'priority' => 0],
             ['question_id' => 6, 'text' => 'I influence and negotiate across functions or systems, acting as an advocate to improve outcomes and experiences for all.', 'rater_type' => null, 'priority' => 0],
             ['question_id' => 6, 'text' => 'I am an advocate for my organisation using evidence to influence local, national, and political decision makers.', 'rater_type' => null, 'priority' => 0],
+
+            ['question_id' => 7, 'text' => 'I take responsibility for my actions and use feedback and self-reflection to help me improve how I act.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 7, 'text' => 'I establish clear lines of accountability within or across teams and challenge inappropriate behaviour, as well as any failure to deal with it.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 7, 'text' => 'I take responsibility for my team’s actions, make sure we are fair and inclusive, and challenge inappropriate behaviour and any failure to address it.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 7, 'text' => 'I shape the organisation’s culture and use up-to-date knowledge and insight to embed inclusivity and ethical approaches into policies, processes and practice.', 'rater_type' => null, 'priority' => 0],
+
+            ['question_id' => 8, 'text' => 'I help colleagues and patients to feel included. I share updates, listen to their views and interact with them openly and respectfully', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 8, 'text' => 'I avoid distractions and give colleagues and patients my full attention, showing that I value their input.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 8, 'text' => 'I am readily accessible and visible to others, joining team and stakeholder meetings and communicating frequently through different channels.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 8, 'text' => 'I model being visible and transparent, keep colleagues and stakeholders well-informed through regular communication and explain the rationale for decisions.', 'rater_type' => null, 'priority' => 0],
+
+            ['question_id' => 9, 'text' => 'I listen and respond to colleagues and patients’ concerns with interest, care, and professionalism.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 9, 'text' => 'I balance openness with sensitivity when resolving difficult situations. I use supportive, developmental conversations to improve performance.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 9, 'text' => 'I promote compassionate and inclusive leadership, including identifying and calling out discourteous or inappropriate behaviour.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 9, 'text' => 'I promote a workplace culture that is kind and respectful, where people thrive and enjoy coming to work and the quality of services improves.', 'rater_type' => null, 'priority' => 0],
+
+
+            ['question_id' => 10, 'text' => 'I help people feel involved. I recognise their strengths, encourage teamwork, celebrate success and share what we’ve learned.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 10, 'text' => 'I create an environment where people feel valued and safe. I share successes and lessons learned across teams to increase engagement.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 10, 'text' => 'I foster a culture of respect and creativity that motivates people and values everyone’s ideas.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 10, 'text' => 'I promote an inclusive culture, helping people apply their different skills, expertise and perspectives effectively. I help attract and retain talent by celebrating our successes.', 'rater_type' => null, 'priority' => 0],
+
+            ['question_id' => 11, 'text' => 'I make sure that everyone acts safely, feels safe to speak up, and can identify risks and safety training needs.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 11, 'text' => 'I assess risks and maintain risk registers, making sure that physical and psychological safety issues and incidents are reported and responded to, trends are identified, and lessons learned are disseminated.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 11, 'text' => 'I implement appropriate safety policies, making sure everyone understands their role in achieving a safe working environment and has access to safety training.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 11, 'text' => 'I build a learning culture that puts safety first, takes whistleblowing seriously, and prioritises safe workplaces and practices at all times.', 'rater_type' => null, 'priority' => 0],
+
+            ['question_id' => 12, 'text' => 'I support colleagues in challenging situations - encouraging them to focus on what they can control during change or crisis.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 12, 'text' => 'I handle challenges in my area of responsibility. I listen and gather feedback, identify solutions, and escalate upwards if required.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 12, 'text' => 'I manage complex challenges – spotting risks early, setting out clear expectations, and empowering others to identify, develop, implement, and evaluate solutions.', 'rater_type' => null, 'priority' => 0],
+            ['question_id' => 12, 'text' => 'I navigate organisational and national challenges – identifying and tackling the risks proactively, communicating clearly, and building a resilient, \'can-do\' culture.', 'rater_type' => null, 'priority' => 0],
         ];
         foreach ($variants as $variant) {
             QuestionVariant::firstOrCreate(
