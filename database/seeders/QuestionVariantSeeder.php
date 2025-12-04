@@ -177,7 +177,8 @@ class QuestionVariantSeeder extends Seeder
             QuestionVariant::firstOrCreate([
                 'question_id' => $variant['question_id'],
                 'text'        => $variant['text'],
-                'rater_type'  => $variant['rater_type'],
+//                'rater_type'  => $variant['rater_type'],
+                'rater_type'  => 'self',
                 'priority'    => $variant['priority'],
             ]);
         }
