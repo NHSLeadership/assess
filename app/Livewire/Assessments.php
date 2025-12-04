@@ -34,7 +34,7 @@ class Assessments extends Component
             return redirect()->route('frameworks');
         }
 
-        //Redirect already submitted assignments to summary age
+        //Redirect already submitted assignments to summary page
         if ($this->redirectIfSubmitted($this->assessmentId, $this->assessment?->framework?->id)) {
             return redirect()->route(
                 'summary',
