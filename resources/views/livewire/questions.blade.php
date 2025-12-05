@@ -20,24 +20,43 @@
                     <hr>
                 @endforeach
 
+                <div class="nhsuk-grid-row">
+                    <div class="nhsuk-grid-column-one-half">
+                        {!! $this->getQuestionProgressLabel() !!}
+                    </div>
+                    <div class="nhsuk-grid-column-one-half">
+                        @component(
+                                'components.form.dropdown',
+                                [
+                                    'name' => 'selectNode',
+                                    'options_list' => $this->nodeIdsCollection() ?? [],
+                                    'wire' => ['model.live' => 'selectNode', 'change' => 'goToNodeById($event.target.value)']
+                                    ]
+                        )
+                            @slot('label')
+                                Select competency standard to navigate to
+                            @endslot
+                        @endcomponent
+                    </div>
+
+                </div>
+                    <hr>
+
                 @if ($this->responses?->count())
-                    @if ($this->responses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count())
-                        <div class="nhsuk-inset-text">
-                            <span class="nhsuk-u-visually-hidden">Information: </span>
-                            <p>You completed all required fields, you can still navigate and change your answers or finish the assessment to receive a report.</p>
-                        </div>
-                    @endif
                     {{-- Submit button continues to next page instead of pagination links --}}
                     @if($this->nodes()->key() + 1 > 0)
                             <button wire:click.prevent="goPrevious" class="nhsuk-button nhsuk-u-margin-right-3">Previous page</button>
                     @endif
                     @if($this->nodes()->count() > $this->nodes()->key() + 1 )
                         <button wire:submit.prevent="storeNext" class="nhsuk-button nhsuk-u-margin-right-3" type="submit">Save and continue</button>
-                    @else (
-                        ( $this->responses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count() ) ||
-                        ( $this->nodes()->count() === $this->nodes()->key() + 1 )
-                    )
-                            <button wire:click.prevent="finishAssessment" class="nhsuk-button nhsuk-u-margin-right-3" >Finish assessment</button>
+                    @endif
+
+                    @if ($this->responses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count())
+                        <button wire:click.prevent="finishAssessment" class="nhsuk-button nhsuk-u-margin-right-3" >Finish assessment</button>
+                        <div class="nhsuk-inset-text">
+                            <span class="nhsuk-u-visually-hidden">Information: </span>
+                            <p>You completed all required fields, you can still navigate and change your answers or finish the assessment to receive a report.</p>
+                        </div>
                     @endif
                 @else
                     {{-- No responses yet, from the variant select page --}}
