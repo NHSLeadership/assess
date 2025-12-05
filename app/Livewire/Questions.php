@@ -37,6 +37,8 @@ class Questions extends Component
     public ?array $data;
     public ?int $nodeId;
 
+    public $selectNode;
+
     public function mount(): void
     {
         $this->redirectIfSubmitted($this->assessmentId, $this->assessment?->framework->id);
@@ -199,6 +201,70 @@ class Questions extends Component
                 );
             }
         }
+    }
+
+    /**
+     * Get question progress label
+     */
+    public function getQuestionProgressLabel(): string
+    {
+        $nodes = $this->nodes()->getArrayCopy();
+
+        $currentNodeId = $this->nodeQuestions()->first()?->node_id;
+
+        if (!$currentNodeId) {
+            return '';
+        }
+
+        $questionCounts = [];
+        foreach ($nodes as $node) {
+            $questionCounts[$node->id] = $node->questions()->count();
+        }
+        $questionCounter = 0;
+        foreach ($nodes as $node) {
+            if ($node->id === $currentNodeId) {
+                break;
+            }
+            $questionCounter += $questionCounts[$node->id];
+        }
+        $currentOffset = $this->nodeQuestions()->first()?->order ?? 0;
+
+        $currentNumber = $questionCounter + $currentOffset + 1;
+
+        $total = $this->assessment?->framework->questions()->count() ?? 0;
+
+        return "<strong>Question {$currentNumber} of {$total}</strong>";
+    }
+
+    public function goToNodeById(int $nodeId = 7): void
+    {
+        $this->resetPage(pageName: $this->pageName);
+
+        $nodes = $this->nodes();
+        foreach ($nodes as $index => $node) {
+            if ($node->id === $nodeId) {
+                $nodes->seek($index);
+                $this->nodeId = $index;
+                break;
+            }
+        }
+
+        $this->dispatch('questions-next-node', $this->node()?->id);
+        $this->dispatch('scroll-to-top');
+    }
+
+    /**
+     * Get collection of node IDs and names for current assessment
+     */
+    public function nodeIdsCollection(): ?array
+    {
+        return $this->assessment?->framework?->nodes()
+            ->whereHas('questions')
+            ->orderBy('order')
+            ->orderBy('id')
+            ->get()
+            ?->pluck('name', 'id')
+            ?->toArray();
     }
 
     /**
