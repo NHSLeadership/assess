@@ -3,6 +3,15 @@
         @if (!empty($questions))
             <form wire:submit.prevent="storeNext()">
                 @foreach ($questions as $question)
+                    <h2 class="nhsuk-heading-m">
+                        <span class="nhsuk-tag--{{ $question->node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">
+                          {!! $question->node?->parent?->name ?? '' !!} >  {!! $question->node->name ?? '' !!}
+                        </span>
+                    </h2>
+                    <p>{!! $question?->node?->description ?? '' !!}</p>
+
+                    <p>{!! $this->getQuestionProgressLabel() !!}</p>
+
                     {{-- Render each component based on type and it's properties --}}
                     @component('components.form.' . $question['component'], [
                         'name' => $question['name'] ? 'data.' . $question['name'] : null,
@@ -19,28 +28,6 @@
                     @endcomponent
                     <hr>
                 @endforeach
-
-                <div class="nhsuk-grid-row">
-                    <div class="nhsuk-grid-column-one-half">
-                        {!! $this->getQuestionProgressLabel() !!}
-                    </div>
-                    <div class="nhsuk-grid-column-one-half">
-                        @component(
-                                'components.form.dropdown',
-                                [
-                                    'name' => 'selectNode',
-                                    'options_list' => $this->nodeIdsCollection() ?? [],
-                                    'wire' => ['model.live' => 'selectNode', 'change' => 'goToNodeById($event.target.value)']
-                                    ]
-                        )
-                            @slot('label')
-                                Select competency standard to navigate to
-                            @endslot
-                        @endcomponent
-                    </div>
-
-                </div>
-                    <hr>
 
                 @if ($this->responses?->count())
                     {{-- Submit button continues to next page instead of pagination links --}}

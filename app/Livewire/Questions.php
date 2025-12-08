@@ -236,37 +236,6 @@ class Questions extends Component
         return "<strong>Question {$currentNumber} of {$total}</strong>";
     }
 
-    public function goToNodeById(int $nodeId = 7): void
-    {
-        $this->resetPage(pageName: $this->pageName);
-
-        $nodes = $this->nodes();
-        foreach ($nodes as $index => $node) {
-            if ($node->id === $nodeId) {
-                $nodes->seek($index);
-                $this->nodeId = $index;
-                break;
-            }
-        }
-
-        $this->dispatch('questions-next-node', $this->node()?->id);
-        $this->dispatch('scroll-to-top');
-    }
-
-    /**
-     * Get collection of node IDs and names for current assessment
-     */
-    public function nodeIdsCollection(): ?array
-    {
-        return $this->assessment?->framework?->nodes()
-            ->whereHas('questions')
-            ->orderBy('order')
-            ->orderBy('id')
-            ->get()
-            ?->pluck('name', 'id')
-            ?->toArray();
-    }
-
     /**
      * Go to previous question or node
      */
