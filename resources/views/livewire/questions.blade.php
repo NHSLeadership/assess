@@ -3,14 +3,17 @@
         @if (!empty($questions))
             <form wire:submit.prevent="storeNext()">
                 @foreach ($questions as $question)
-                    <h2 class="nhsuk-heading-m">
+{{--                    <h2 class="nhsuk-heading-m">--}}
+{{--                        <span class="nhsuk-tag--{{ $question->node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">--}}
+{{--                          {!! $question->node?->parent?->name ?? '' !!} >  {!! $question->node->name ?? '' !!}--}}
+{{--                        </span>--}}
+{{--                    </h2>--}}
+                    <h1 class="nhsuk-heading-l">
                         <span class="nhsuk-tag--{{ $question->node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">
-                          {!! $question->node?->parent?->name ?? '' !!} >  {!! $question->node->name ?? '' !!}
+                            {{ $question?->node?->name ?? '' }}
                         </span>
-                    </h2>
+                    </h1>
                     <p>{!! $question?->node?->description ?? '' !!}</p>
-
-                    <p>{!! $this->getQuestionProgressLabel() !!}</p>
 
                     {{-- Render each component based on type and it's properties --}}
                     @component('components.form.' . $question['component'], [
@@ -18,12 +21,14 @@
                         'class' => $question['class'] ?? null,
                         'options_list' => $question?->scale?->options()->orderBy('order')->pluck('label', 'id')?->toArray() ?? [],
                         'type' => $question['type'] ?? null,
+                        'hints' => [
+                            $question['text'] ?? null,
+                            \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $question['id']) ?? $question['hint']
+                         ]
+
                     ])
-                        @slot('hint')
-                            {!! \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $question['id']) ?? $question['hint'] !!}
-                        @endslot
                         @slot('label')
-                            <span class="nhsuk-u-visually-hidden">Competency {{$question->id}}</span>{!! $question['title'] ?? null !!}
+                            <span class="nhsuk-u-visually-hidden">Competency {{$question->id}}</span>{!! $this->getQuestionProgressLabel() . ': '. $question['title'] ?? null !!}
                         @endslot
                     @endcomponent
                     <hr>
