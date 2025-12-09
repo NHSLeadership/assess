@@ -29,6 +29,7 @@
                 <tr>
                     <th scope="col" class="nhsuk-table__header">Framework</th>
                     <th scope="col" class="nhsuk-table__header">Last updated</th>
+                    <th scope="col" class="nhsuk-table__header">Progress</th>
                     <th scope="col" class="nhsuk-table__header">Status</th>
                 </tr>
                 </thead>
@@ -48,9 +49,14 @@
                             {{ $this->displayAssessmentDate($assessment) }}
                         </td>
                         <td class="nhsuk-table__cell">
+                            {{ $this->displayProgress($assessment) }}
+                        </td>
+                        <td class="nhsuk-table__cell">
                             @if (empty($assessment->submitted_at))
                                 @if ($assessment->questions)
                                     <strong class="nhsuk-tag nhsuk-tag--red">{{ __('Not started') }}</strong>
+                                @elseif ($assessment->responses?->count() === $assessment?->framework?->questions?->where('required', 1)->count())
+                                    <strong class="nhsuk-tag nhsuk-tag--orange">{{ __('Ready') }}</strong>
                                 @else
                                     <strong class="nhsuk-tag nhsuk-tag--blue">{{ __('Started') }}</strong>
                                 @endif
