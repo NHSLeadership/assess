@@ -53,9 +53,10 @@ class Frameworks extends Component
      * Display the most relevant date for an assessment
      * @param $assessment
      * @param bool $useAmPm
+     * @param bool $showTime
      * @return string
      */
-    public function displayAssessmentDate($assessment, bool $useAmPm = false): string
+    public function displayAssessmentDate($assessment, bool $useAmPm = false, bool $showTime = false): string
     {
         try {
             $date = $assessment->submitted_at
@@ -66,12 +67,41 @@ class Frameworks extends Component
                 return 'Not available';
             }
 
-            $format = $useAmPm ? 'd F Y, g:i a' : 'd F Y, H:i';
+            $format = 'j F Y';
+
+            if ($showTime) {
+                $format .= $useAmPm ? ', g:i a' : ', H:i';
+            }
 
             return \Carbon\Carbon::parse($date)->format($format);
+
         } catch (\Exception $e) {
             return 'Not available';
         }
+    }
+
+    /**
+     * Calculate the percentage of questions answered in a step
+     *
+     * @param Assessment|null $assessment
+     * @return string
+     */
+    function displayProgress(?Assessment $assessment): string
+    {
+        if (!$assessment) {
+            return 'Not available';
+        }
+
+        $total = (int) ($assessment->framework?->questions?->count() ?? 0);
+
+        if ($total <= 0) {
+            return 'Not available';
+        }
+
+        $answered = (int) ($assessment->responses?->count() ?? 0);
+        $percentage = (int) round(($answered / $total) * 100);
+
+        return sprintf('%d/%d (%d%%)', $answered, $total, $percentage);
     }
 
     #[Title('Frameworks')]
