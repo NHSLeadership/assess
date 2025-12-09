@@ -37,8 +37,6 @@ class Questions extends Component
     public ?array $data;
     public ?int $nodeId;
 
-    public $selectNode;
-
     public function mount(): void
     {
         $this->redirectIfSubmitted($this->assessmentId, $this->assessment?->framework->id);
