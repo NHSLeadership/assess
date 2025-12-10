@@ -6,6 +6,7 @@ use App\Models\Assessment;
 use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\FrameworkVariantOption;
+use App\Models\Node;
 use App\Models\Rater;
 use App\Services\UserAssessmentVariantSelectionService;
 use App\Traits\RedirectSubmittedAssessment;
@@ -50,7 +51,46 @@ class Variants extends Component
         //Redirect to summary if already submitted assessment
         $this->redirectIfSubmitted($this->assessmentId, $this->frameworkId);
 
+        $node = $this->getAssessmentResumeNode($this->assessmentId, false);
+        if (!empty($node)) {
+            // There are answered questions, so we should resume there
+            $this->redirect(route('questions', [
+                'assessmentId' => $this->assessmentId,
+                'nodeId' => $node?->id
+            ]));
+        }
+
         $this->data = $this->variantSelections()?->toArray();
+    }
+
+    /**
+     * Get the next or last node for the assessment
+     * to navigate to if the user is resuming an assessment.
+     *
+     * @param int|null $assessmentId
+     * @param bool $next
+     * @return Node|null
+     */
+    public function getAssessmentResumeNode(?int $assessmentId = null, bool $next = true): ?Node
+    {
+        if ($next) {
+            // Next unanswered node
+            return Node::with('questions')
+                ->whereHas('questions') // must have questions
+                ->whereDoesntHave('questions.responses', function ($q) use ($assessmentId) {
+                    $q->where('assessment_id', $assessmentId);
+                })
+                ->orderBy('order', 'asc')
+                ->first();
+        }
+
+        // Last answered node
+        return Node::with('questions')
+            ->whereHas('questions.responses', function ($q) use ($assessmentId) {
+                $q->where('assessment_id', $assessmentId);
+            })
+            ->orderBy('order', 'desc')
+            ->first();
     }
 
     #[Computed]

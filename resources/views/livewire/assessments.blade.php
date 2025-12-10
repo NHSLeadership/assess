@@ -30,7 +30,7 @@
 
                 <p>Please review the questions in the code and each of the competency areas below to complete your 360. You can work through the competency areas in any order.</p>
 
-                @livewire('questions', ['assessmentId' => $this->assessmentId])
+                @livewire('questions', ['assessmentId' => $this->assessmentId, 'nodeId' => $this->nodeId])
             @endforeach
 
             <hr>

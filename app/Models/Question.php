@@ -56,4 +56,9 @@ class Question extends Model
     {
         return $this->hasMany(QuestionVariant::class);
     }
+
+    public function responses()
+    {
+        return $this->hasMany(Response::class, 'question_id');
+    }
 }
