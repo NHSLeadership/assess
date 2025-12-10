@@ -18,18 +18,20 @@ class Frameworks extends Component
 {
     use UserTrait;
 
-    public ?string $frameworkId;
+    public ?string $frameworkId = null;
+
+    public function mount()
+    {
+        // Set default framework if none selected
+        if (empty($this->frameworkId)) {
+            $framework = Framework::first();
+            $this->frameworkId = $framework->id;
+        }
+    }
     
     #[Computed]
     public function framework(): ?Framework
     {
-        if (empty($this->frameworkId)) {
-            $framework = Framework::first();
-            $this->frameworkId = $framework->id;
-
-            return $framework;
-        }
-
         return Framework::find($this->frameworkId);
     }
 
@@ -42,9 +44,6 @@ class Frameworks extends Component
     #[Computed]
     public function assessments(): ?Collection
     {
-        if (empty($this->frameworkId)) {
-            return $this->user()->assessments->sortByDesc('updated_at');
-        }
 
         return $this->user()
             ->assessments()
