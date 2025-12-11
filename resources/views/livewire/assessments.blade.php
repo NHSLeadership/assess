@@ -1,9 +1,9 @@
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
 
-        @if (!empty($this->assessment->framework->name))
-            <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3">{{ $this->assessment->framework->name }}</h1>
-        @endif
+{{--        @if (!empty($this->assessment->framework->name))--}}
+{{--            <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3">{{ $this->assessment->framework->name }}</h1>--}}
+{{--        @endif--}}
 
         @if (!empty($this->assessment->id))
 {{--            <div class="nhsuk-action-link disabled">--}}
