@@ -1,9 +1,9 @@
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
 
-        @if (!empty($this->assessment->framework->name))
-            <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3">{{ $this->assessment->framework->name }}</h1>
-        @endif
+{{--        @if (!empty($this->assessment->framework->name))--}}
+{{--            <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3">{{ $this->assessment->framework->name }}</h1>--}}
+{{--        @endif--}}
 
         @if (!empty($this->assessment->id))
 {{--            <div class="nhsuk-action-link disabled">--}}
@@ -20,16 +20,6 @@
         @if ($this->nodes?->count())
 
             @foreach ($paginatedNodes as $node)
-                <h2 class="nhsuk-heading-m">
-                    <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">
-                      {{$currentNode?->parent?->name ?? $node?->parent?->name}} >  {{ $currentNode->name ??  $node->name ?? ''}}
-                    </span>
-                </h2>
-
-                <p>{!! $currentNode->description ?? $node->description ?? '' !!}</p>
-
-                <p>Please review the questions in the code and each of the competency areas below to complete your 360. You can work through the competency areas in any order.</p>
-
                 @livewire('questions', ['assessmentId' => $this->assessmentId])
             @endforeach
 

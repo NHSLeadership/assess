@@ -202,6 +202,39 @@ class Questions extends Component
     }
 
     /**
+     * Get question progress label
+     */
+    public function getQuestionProgressLabel(): string
+    {
+        $nodes = $this->nodes()->getArrayCopy();
+
+        $currentNodeId = $this->nodeQuestions()->first()?->node_id;
+
+        if (!$currentNodeId) {
+            return '';
+        }
+
+        $questionCounts = [];
+        foreach ($nodes as $node) {
+            $questionCounts[$node->id] = $node->questions()->count();
+        }
+        $questionCounter = 0;
+        foreach ($nodes as $node) {
+            if ($node->id === $currentNodeId) {
+                break;
+            }
+            $questionCounter += $questionCounts[$node->id];
+        }
+        $currentOffset = $this->nodeQuestions()->first()?->order ?? 0;
+
+        $currentNumber = $questionCounter + $currentOffset + 1;
+
+        $total = $this->assessment?->framework->questions()->count() ?? 0;
+
+        return "<strong>Question {$currentNumber} of {$total}</strong>";
+    }
+
+    /**
      * Go to previous question or node
      */
     public function goPrevious(): void
