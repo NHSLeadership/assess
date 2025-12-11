@@ -19,8 +19,8 @@ class ScaleSeeder extends Seeder
 
         $options = [
             ['label' => 'Strongly disagree', 'value' => 1, 'order' => 1],
-            ['label' => 'Mostly disagree', 'value' => 2, 'order' => 3],
-            ['label' => 'Mostly agree', 'value' => 3, 'order' => 2],
+            ['label' => 'Mostly disagree', 'value' => 2, 'order' => 2],
+            ['label' => 'Mostly agree', 'value' => 3, 'order' => 3],
             ['label' => 'Strongly agree', 'value' => 4, 'order' => 4],
             ['label' => 'Not applicable for my role', 'value' => 0, 'order' => 5],
         ];
