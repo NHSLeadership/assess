@@ -28,6 +28,8 @@ class Assessments extends Component
 
     public Node|null $currentNode;
 
+    public ?int $nodeId = null;
+
     public function mount($assessmentId)
     {
         if (empty($this->assessmentId) || ! is_numeric($this->assessmentId)) {

@@ -18,13 +18,13 @@ Route::group([
     ]
 ], function () {
     // Route::get('/', \App\Livewire\Stages::class)->name('home');
-    Route::get('/assessments', \App\Livewire\Frameworks::class)->name('frameworks');
+    Route::get('/assessments/{frameworkId?}', \App\Livewire\Frameworks::class)->name('frameworks');
     Route::get('/assessment-variants/{frameworkId?}/{assessmentId?}', \App\Livewire\Variants::class)->name('variants');
 
 //    Route::get('/frameworks/{frameworkId?}/{stageId?}', \App\Livewire\Frameworks::class)->name('frameworks');
 //    Route::get('/standards/{frameworkId?}/{stageId?}', \App\Livewire\Stages::class)->name('standards');
     Route::get('/summary/{frameworkId?}/{assessmentId?}', \App\Livewire\Summary::class)->name('summary');
-    Route::get('/assessment/{assessmentId?}', \App\Livewire\Assessments::class)->name('questions');
+    Route::get('/assessment/{assessmentId?}/{nodeId?}', \App\Livewire\Assessments::class)->name('questions');
 
     /**
      * Request review

@@ -18,18 +18,20 @@ class Frameworks extends Component
 {
     use UserTrait;
 
-    public ?string $frameworkId;
+    public ?string $frameworkId = null;
+
+    public function mount()
+    {
+        // Set default framework if none selected
+        if (empty($this->frameworkId)) {
+            $framework = Framework::first();
+            $this->frameworkId = $framework->id;
+        }
+    }
     
     #[Computed]
     public function framework(): ?Framework
     {
-        if (empty($this->frameworkId)) {
-            $framework = Framework::first();
-            $this->frameworkId = $framework->id;
-
-            return $framework;
-        }
-
         return Framework::find($this->frameworkId);
     }
 
@@ -42,11 +44,18 @@ class Frameworks extends Component
     #[Computed]
     public function assessments(): ?Collection
     {
-        if (empty($this->frameworkId)) {
-            return $this->user()->assessments->sortByDesc('updated_at');
-        }
 
-        return $this->user()->assessments?->where('framework_id', $this->frameworkId)->sortByDesc('updated_at');
+        return $this->user()
+            ->assessments()
+            ->where('framework_id', $this->frameworkId)
+            ->addSelect([
+                'last_response_at' => DB::table('responses')
+                    ->selectRaw('MAX(updated_at)')
+                    ->whereColumn('assessment_id', 'assessments.id')
+            ])
+            ->orderByDesc('last_response_at')
+            ->with('responses')
+            ->get();
     }
 
     /**
@@ -59,16 +68,25 @@ class Frameworks extends Component
     public function displayAssessmentDate($assessment, bool $useAmPm = false, bool $showTime = false): string
     {
         try {
-            $date = $assessment->submitted_at
-                ?? $assessment->updated_at
-                ?? $assessment->created_at;
+            // If submitted, always use submitted_at
+            if ($assessment->submitted_at) {
+                $date = $assessment->submitted_at;
+            } else {
+                // Otherwise, fallback to latest response date
+                $latestResponse = $assessment->responses()
+                    ->orderByDesc('updated_at')
+                    ->first();
+
+                $date = $latestResponse->updated_at
+                    ?? $assessment->updated_at
+                    ?? $assessment->created_at;
+            }
 
             if (!$date) {
                 return 'Not available';
             }
 
             $format = 'j F Y';
-
             if ($showTime) {
                 $format .= $useAmPm ? ', g:i a' : ', H:i';
             }

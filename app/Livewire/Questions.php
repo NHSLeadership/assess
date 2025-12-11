@@ -35,6 +35,7 @@ class Questions extends Component
     protected $pageName = 'questionId';
 
     public ?array $data;
+    public ?int $nodeKeyId;
     public ?int $nodeId;
 
     public function mount(): void
@@ -55,6 +56,10 @@ class Questions extends Component
                 }
                 $this->data[$question['name']] = $defaults;
             }
+        }
+
+        if (!empty($this->nodeId)) {
+            $this->goToNodeById($this->nodeId);
         }
     }
 
@@ -96,10 +101,10 @@ class Questions extends Component
          * Convert collection to iterator
          */
         $nodesIterator = $nodes->getIterator();
-        if (empty($this->nodeId)) {
-            $this->nodeId = $nodesIterator->key() ?? 0;
+        if (empty($this->nodeKeyId)) {
+            $this->nodeKeyId = $nodesIterator->key() ?? 0;
         }
-        $nodesIterator->seek($this->nodeId);
+        $nodesIterator->seek($this->nodeKeyId);
 
         return $nodesIterator;
     }
@@ -163,7 +168,7 @@ class Questions extends Component
         } else {
             $this->resetPage(pageName: $this->pageName);
             $this->nodes->next();
-            $this->nodeId = $this->nodes->key();
+            $this->nodeKeyId = $this->nodes->key();
         }
 
         $this->dispatch('questions-next-node', $this->node()?->id);
@@ -241,9 +246,9 @@ class Questions extends Component
     {
         $this->resetPage(pageName: $this->pageName);
 
-        if ($this->nodeId > 0) {
-            $this->nodes->seek($this->nodeId - 1);
-            $this->nodeId = $this->nodes->key();
+        if ($this->nodeKeyId > 0) {
+            $this->nodes->seek($this->nodeKeyId - 1);
+            $this->nodeKeyId = $this->nodes->key();
         } else {
             $this->goToVariantSelection();
         }
@@ -278,6 +283,30 @@ class Questions extends Component
             );
     }
 
+    /**
+     * Go to a specific node by its id
+     * @param int $nodeId
+     * @return void
+     */
+    public function goToNodeById(int $nodeId): void
+    {
+        if (empty($nodeId)) {
+            return;
+        }
+        $this->resetPage(pageName: $this->pageName);
+
+        $nodes = $this->nodes();
+        foreach ($nodes as $index => $node) {
+            if ($node->id === $nodeId) {
+                $nodes->seek($index);
+                $this->nodeKeyId = $index;
+                break;
+            }
+        }
+
+        $this->dispatch('questions-next-node', $this->node()?->id);
+        $this->dispatch('scroll-to-top');
+    }
 
     protected function paginatedQuestions(): ?LengthAwarePaginator
     {
