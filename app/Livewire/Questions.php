@@ -208,8 +208,11 @@ class Questions extends Component
 
     /**
      * Get question progress label
+     *
+     * @param int|null $questionId
+     * @return string
      */
-    public function getQuestionProgressLabel(int $questionId): string
+    public function getQuestionProgressLabel(?int $questionId = null): string
     {
         $nodes = $this->nodes()->getArrayCopy();
 
@@ -239,35 +242,6 @@ class Questions extends Component
         }
 
         $currentNumber = $questionCounter + 1;
-        $total = $this->assessment?->framework->questions()->count() ?? 0;
-
-        return "<strong>Question {$currentNumber} of {$total}</strong>";
-    }
-    public function getQuestionProgressLabel1(): string
-    {
-        $nodes = $this->nodes()->getArrayCopy();
-
-        $currentNodeId = $this->nodeQuestions()->first()?->node_id;
-
-        if (!$currentNodeId) {
-            return '';
-        }
-
-        $questionCounts = [];
-        foreach ($nodes as $node) {
-            $questionCounts[$node->id] = $node->questions()->count();
-        }
-        $questionCounter = 0;
-        foreach ($nodes as $node) {
-            if ($node->id === $currentNodeId) {
-                break;
-            }
-            $questionCounter += $questionCounts[$node->id];
-        }
-        $currentOffset = $this->nodeQuestions()->first()?->order ?? 0;
-
-        $currentNumber = $questionCounter + $currentOffset + 1;
-
         $total = $this->assessment?->framework->questions()->count() ?? 0;
 
         return "<strong>Question {$currentNumber} of {$total}</strong>";
