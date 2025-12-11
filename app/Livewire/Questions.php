@@ -2,18 +2,15 @@
 
 namespace App\Livewire;
 
+use App\Enums\RaterType;
 use App\Enums\ResponseType;
-use App\Models\AssessmentRater;
 use App\Models\Node;
 use App\Models\Assessment;
-use App\Models\Rater;
-use App\Models\Response;
 use App\Services\UserResponseService;
 use App\Traits\FormFieldValidationRulesTrait;
 use App\Traits\UserTrait;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
@@ -90,16 +87,45 @@ class Questions extends Component
             return null;
         }
 
-        /**
-         * Take all nodes with questions only
-         */
-        $nodes = $this->assessment?->framework?->nodes()
-                                              ->whereHas('questions')
-                                              ->orderBy('order')->orderBy('id')
-                                              ->get();
-        /**
-         * Convert collection to iterator
-         */
+        $assessment = $this->assessment;
+        $selectedOptionIds = $assessment->variantSelections()
+            ->pluck('framework_variant_option_id')
+            ->all();
+
+        if (empty($selectedOptionIds)) {
+            $empty = collect([]);
+            $nodesIterator = $empty->getIterator();
+            $this->nodeId = null;
+            return $nodesIterator;
+        }
+
+        $rater = $this->rater();
+        $subjectUserId = $assessment->getAttribute('user_id');
+        $raterUserId = $rater?->getAttribute('user_id');
+        $raterType = ($raterUserId && $subjectUserId && $raterUserId === $subjectUserId)
+            ? RaterType::Self
+            : RaterType::Rater;
+
+        $requiredMatchCount = count($selectedOptionIds);
+
+        // get nodes that have at least one question with a variant that:
+        // - matches rater_type (null or specific)
+        // - has matches for every selected option id (and the matched count equals the selected count)
+        $nodes = $assessment->framework->nodes()
+            ->whereHas('questions', function ($q) use ($selectedOptionIds, $raterType, $requiredMatchCount) {
+                $q->where('active', true)
+                    ->whereHas('variants', function ($v) use ($selectedOptionIds, $raterType, $requiredMatchCount) {
+                        $v->where(function ($w) use ($raterType) {
+                            $w->whereNull('rater_type')->orWhere('rater_type', $raterType);
+                        })
+                            ->whereHas('matches', function ($m) use ($selectedOptionIds) {
+                                $m->whereIn('framework_variant_option_id', $selectedOptionIds);
+                            }, '=', $requiredMatchCount);
+                    });
+            })
+            ->orderBy('order')->orderBy('id')
+            ->get();
+
         $nodesIterator = $nodes->getIterator();
         if (empty($this->nodeKeyId)) {
             $this->nodeKeyId = $nodesIterator->key() ?? 0;

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\RaterType;
 use App\Models\Assessment;
 use App\Models\Node;
 use App\Traits\FormFieldValidationRulesTrait;
@@ -53,10 +54,42 @@ class Assessments extends Component
     #[Computed]
     public function nodes()
     {
-        if (empty($this->assessment)) {
+        if (empty($this->assessment) || empty($this->assessment->framework)) {
             return null;
         }
-        return $this->assessment?->framework?->nodes()->whereHas('questions')
+
+        $selectedOptionIds = $this->assessment->variantSelections()
+            ->pluck('framework_variant_option_id')
+            ->all();
+
+        if (empty($selectedOptionIds)) {
+            return $this->assessment->framework->nodes()->whereRaw('0 = 1');
+        }
+
+        $requiredMatchCount = count($selectedOptionIds);
+
+        $rater = $this->assessment->raters()->first();
+        $subjectUserId = $this->assessment->getAttribute('user_id');
+        $raterUserId = $rater?->getAttribute('user_id');
+        $raterType = ($raterUserId && $subjectUserId && $raterUserId === $subjectUserId)
+            ? RaterType::Self
+            : RaterType::Rater;
+
+        // return nodes that have at least one question with a variant that:
+        // - matches rater_type (null or specific)
+        // - has matches for every selected option id (and the matched count equals the selected count)
+        return $this->assessment->framework->nodes()
+            ->whereHas('questions', function ($q) use ($selectedOptionIds, $raterType, $requiredMatchCount) {
+                $q->where('active', true)
+                    ->whereHas('variants', function ($v) use ($selectedOptionIds, $raterType, $requiredMatchCount) {
+                    $v->where(function ($w) use ($raterType) {
+                        $w->whereNull('rater_type')->orWhere('rater_type', $raterType);
+                    })
+                        ->whereHas('matches', function ($m) use ($selectedOptionIds) {
+                            $m->whereIn('framework_variant_option_id', $selectedOptionIds);
+                        }, '=', $requiredMatchCount);
+                });
+            })
             ->orderBy('order');
     }
 
