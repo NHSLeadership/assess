@@ -24,6 +24,7 @@ class Variants extends Component
     public ?string $frameworkId;
     public ?string $assessmentId;
     public ?array $data;
+    public ?string $back = null;
 
     public function mount($frameworkId = null, $assessmentId = null)
     {
@@ -51,7 +52,7 @@ class Variants extends Component
         //Redirect to summary if already submitted assessment
         $this->redirectIfSubmitted($this->assessmentId, $this->frameworkId);
 
-        if (!empty($this->assessmentId)) {
+        if (!empty($this->assessmentId) && !$this->back) {
             $node = $this->getAssessmentResumeNode($this->assessmentId);
             if (!empty($node)) {
                 // There are answered questions, so we should resume there
@@ -63,6 +64,12 @@ class Variants extends Component
         }
 
         $this->data = $this->variantSelections()?->toArray();
+    }
+
+    #[Computed]
+    public function assessment(): Assessment
+    {
+        return Assessment::find($this->assessmentId);
     }
 
     /**

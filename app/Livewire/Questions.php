@@ -209,7 +209,41 @@ class Questions extends Component
     /**
      * Get question progress label
      */
-    public function getQuestionProgressLabel(): string
+    public function getQuestionProgressLabel(int $questionId): string
+    {
+        $nodes = $this->nodes()->getArrayCopy();
+
+        $currentQuestion = $this->assessment?->framework
+            ->questions()
+            ->where('questions.id', $questionId)
+            ->first();
+
+        if (!$currentQuestion) {
+            return '';
+        }
+
+        $questionCounter = 0;
+
+        foreach ($nodes as $node) {
+            if ($node->id === $currentQuestion->node_id) {
+                $offset = $node->questions()
+                    ->orderBy('order')
+                    ->pluck('id')
+                    ->search($questionId);
+
+                $questionCounter += ($offset !== false ? $offset : 0);
+                break;
+            }
+
+            $questionCounter += $node->questions()->count();
+        }
+
+        $currentNumber = $questionCounter + 1;
+        $total = $this->assessment?->framework->questions()->count() ?? 0;
+
+        return "<strong>Question {$currentNumber} of {$total}</strong>";
+    }
+    public function getQuestionProgressLabel1(): string
     {
         $nodes = $this->nodes()->getArrayCopy();
 
@@ -279,7 +313,11 @@ class Questions extends Component
         return redirect()
             ->route(
                 'variants',
-                ['frameworkId' => $this->assessment?->framework->id, 'assessmentId' => $this->assessmentId]
+                [
+                    'frameworkId' => $this->assessment?->framework->id,
+                    'assessmentId' => $this->assessmentId,
+                    'back' => 1
+                ]
             );
     }
 

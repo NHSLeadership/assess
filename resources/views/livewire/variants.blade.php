@@ -29,6 +29,13 @@
 
                         <button class="nhsuk-button" type="submit">Continue</button>
                         <a class="nhsuk-button" href="{{ route('frameworks') }}">Close</a>
+                        @if ($this->assessment?->responses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count())
+                            <button wire:click.prevent="finishAssessment" class="nhsuk-button nhsuk-u-margin-right-3" >Finish assessment</button>
+                            <div class="nhsuk-inset-text">
+                                <span class="nhsuk-u-visually-hidden">Information: </span>
+                                <p>You completed all required fields, you can still navigate and change your answers or finish the assessment to receive a report.</p>
+                            </div>
+                        @endif
 
                 </form>
             @else
