@@ -51,13 +51,15 @@ class Variants extends Component
         //Redirect to summary if already submitted assessment
         $this->redirectIfSubmitted($this->assessmentId, $this->frameworkId);
 
-        $node = $this->getAssessmentResumeNode($this->assessmentId);
-        if (!empty($node)) {
-            // There are answered questions, so we should resume there
-            $this->redirect(route('questions', [
-                'assessmentId' => $this->assessmentId,
-                'nodeId' => $node?->id
-            ]));
+        if (!empty($this->assessmentId)) {
+            $node = $this->getAssessmentResumeNode($this->assessmentId);
+            if (!empty($node)) {
+                // There are answered questions, so we should resume there
+                $this->redirect(route('questions', [
+                    'assessmentId' => $this->assessmentId,
+                    'nodeId' => $node?->id
+                ]));
+            }
         }
 
         $this->data = $this->variantSelections()?->toArray();

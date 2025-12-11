@@ -14,9 +14,11 @@
         </div>
     @endif
 
-    @if (isset($hints) && $hints->has($name))
-        <div class="nhsuk-hint" id="{{ $name }}-error-hint">
-            {{ $hints->first($name) }}
+    @if (!empty($hints) && is_array($hints))
+        <div class="nhsuk-hint">
+            @foreach($hints as $hint)
+                <p>{!! $hint !!}</p>
+            @endforeach
         </div>
     @endif
 
