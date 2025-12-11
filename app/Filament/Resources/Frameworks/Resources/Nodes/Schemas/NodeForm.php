@@ -2,11 +2,10 @@
 
 namespace App\Filament\Resources\Frameworks\Resources\Nodes\Schemas;
 
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Str;
 
 class NodeForm
 {
@@ -25,7 +24,7 @@ class NodeForm
                     ->required(),
                 TextInput::make('name')
                     ->required(),
-                Textarea::make('description')
+                RichEditor::make('description')
                     ->required()
                     ->columnSpanFull(),
             ]);
