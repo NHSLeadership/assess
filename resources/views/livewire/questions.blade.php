@@ -42,7 +42,7 @@
                     @if($this->nodes()->count() > $this->nodes()->key() + 1 )
                         <button wire:submit.prevent="storeNext" class="nhsuk-button nhsuk-u-margin-right-3" type="submit">Save and continue</button>
                     @endif
-                    
+
                     @if ($this->responses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count() || $this->nodes()->count() === $this->nodes()->key() + 1)
                         <button wire:click.prevent="finishAssessment" class="nhsuk-button nhsuk-u-margin-right-3" >Finish assessment</button>
                         <div class="nhsuk-inset-text">

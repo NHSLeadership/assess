@@ -20,15 +20,13 @@
         @if ($this->nodes?->count())
 
             @foreach ($paginatedNodes as $node)
-                <h2 class="nhsuk-heading-m">
-                    <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">
-                      {{$currentNode?->parent?->name ?? $node?->parent?->name}} >  {{ $currentNode->name ??  $node->name ?? ''}}
-                    </span>
-                </h2>
+{{--                <h2 class="nhsuk-heading-m">--}}
+{{--                    <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">--}}
+{{--                      {{$currentNode?->parent?->name ?? $node?->parent?->name}} >  {{ $currentNode->name ??  $node->name ?? ''}}--}}
+{{--                    </span>--}}
+{{--                </h2>--}}
 
-                <p>{!! $currentNode->description ?? $node->description ?? '' !!}</p>
-
-                <p>Please review the questions in the code and each of the competency areas below to complete your 360. You can work through the competency areas in any order.</p>
+{{--                <p>{!! $currentNode->description ?? $node->description ?? '' !!}</p>--}}
 
                 @livewire('questions', ['assessmentId' => $this->assessmentId, 'nodeId' => $this->nodeId])
             @endforeach
