@@ -54,7 +54,7 @@ class Frameworks extends Component
                     ->whereColumn('assessment_id', 'assessments.id')
             ])
             ->orderByDesc('last_response_at')
-            ->with('responses') // eager load responses if you need them
+            ->with('responses')
             ->get();
     }
 
