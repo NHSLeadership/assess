@@ -15,7 +15,7 @@ class FrameworkForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->live(debounce: 400)
+                    ->live(onBlur: true)
                     ->afterStateUpdated(function ($state, callable $set, callable $get) {
                         $set('slug', Str::slug($state));
                     })

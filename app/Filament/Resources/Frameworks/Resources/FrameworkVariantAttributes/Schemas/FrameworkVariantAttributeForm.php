@@ -13,7 +13,7 @@ class FrameworkVariantAttributeForm
         return $schema
             ->components([
                 TextInput::make('key')
-                    ->live()
+                    ->live(onBlur: true)
                     ->afterStateUpdated(function ($state, callable $set,) {
                         $set('label', Str::title($state));
                     })
