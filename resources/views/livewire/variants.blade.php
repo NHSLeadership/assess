@@ -27,6 +27,7 @@
                         <hr>
                     @endforeach
 
+                        <button wire:click.prevent="goPrevious" class="nhsuk-button nhsuk-u-margin-right-3">Previous page</button>
                         <button class="nhsuk-button" type="submit">Save and continue</button>
                         @if ($this->assessment?->framework?->questions?->where('required', 1)->count() && ($this->assessment?->responses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count()))
                             <a class="nhsuk-button" href="{{ route('summary', ['frameworkId' => $this->frameworkId, 'assessmentId' => $this->assessmentId]) }}" >Finish assessment</a>
