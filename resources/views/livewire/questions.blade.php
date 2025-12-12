@@ -8,12 +8,6 @@
 {{--                          {!! $question->node?->parent?->name ?? '' !!} >  {!! $question->node->name ?? '' !!}--}}
 {{--                        </span>--}}
 {{--                    </h2>--}}
-                    <h1 class="nhsuk-heading-l">
-                        <span class="nhsuk-tag--{{ $question->node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">
-                            {{ $question?->node?->name ?? '' }}
-                        </span>
-                    </h1>
-                    <p>{!! $question?->node?->description ?? '' !!}</p>
 
                     {{-- Render each component based on type and it's properties --}}
                     @component('components.form.' . $question['component'], [
@@ -28,7 +22,7 @@
 
                     ])
                         @slot('label')
-                            <span class="nhsuk-u-visually-hidden">Competency {{$question->id}}</span>{!! $this->getQuestionProgressLabel() . ': '. $question['title'] ?? null !!}
+                            <span class="nhsuk-u-visually-hidden">Competency {{$question->id}}</span>{!! $this->getQuestionProgressLabel($question['id'] ?? null) . ': '. $question['title'] ?? null !!}
                         @endslot
                     @endcomponent
                     <hr>
@@ -45,10 +39,12 @@
 
                     @if ($this->responses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count() || $this->nodes()->count() === $this->nodes()->key() + 1)
                         <button wire:click.prevent="finishAssessment" class="nhsuk-button nhsuk-u-margin-right-3" >Finish assessment</button>
-                        <div class="nhsuk-inset-text">
-                            <span class="nhsuk-u-visually-hidden">Information: </span>
-                            <p>You completed all required fields, you can still navigate and change your answers or finish the assessment to receive a report.</p>
-                        </div>
+                        @if ($this->responses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count())
+                            <div class="nhsuk-inset-text">
+                                <span class="nhsuk-u-visually-hidden">Information: </span>
+                                <p>You completed all required fields, you can still navigate and change your answers or finish the assessment to receive a report.</p>
+                            </div>
+                        @endif
                     @endif
                 @else
                     {{-- No responses yet, from the variant select page --}}

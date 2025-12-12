@@ -27,8 +27,14 @@
                         <hr>
                     @endforeach
 
-                        <button class="nhsuk-button" type="submit">Continue</button>
-                        <a class="nhsuk-button" href="{{ route('frameworks') }}">Close</a>
+                        <button class="nhsuk-button" type="submit">Save and continue</button>
+                        @if ($this->assessment?->framework?->questions?->where('required', 1)->count() && ($this->assessment?->responses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count()))
+                            <a class="nhsuk-button" href="{{ route('summary', ['frameworkId' => $this->frameworkId, 'assessmentId' => $this->assessmentId]) }}" >Finish assessment</a>
+                            <div class="nhsuk-inset-text">
+                                <span class="nhsuk-u-visually-hidden">Information: </span>
+                                <p>You completed all required fields, you can still navigate and change your answers or finish the assessment to receive a report.</p>
+                            </div>
+                        @endif
 
                 </form>
             @else
@@ -36,10 +42,6 @@
             @endif
 
         @endif
-
-        <a class="nhsuk-back-link" href="{{ route('frameworks') }}">
-            Back
-        </a>
 
     </div>
 

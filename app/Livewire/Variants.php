@@ -9,7 +9,7 @@ use App\Models\FrameworkVariantOption;
 use App\Models\Node;
 use App\Models\Rater;
 use App\Services\UserAssessmentVariantSelectionService;
-use App\Traits\RedirectSubmittedAssessment;
+use App\Traits\RedirectAssessment;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -19,11 +19,12 @@ use App\Traits\UserTrait;
 class Variants extends Component
 {
     use UserTrait;
-    use RedirectSubmittedAssessment;
+    use RedirectAssessment;
 
     public ?string $frameworkId;
-    public ?string $assessmentId;
+    public ?string $assessmentId = null;
     public ?array $data;
+    public ?string $back = null;
 
     public function mount($frameworkId = null, $assessmentId = null)
     {
@@ -49,9 +50,9 @@ class Variants extends Component
         }
 
         //Redirect to summary if already submitted assessment
-        $this->redirectIfSubmitted($this->assessmentId, $this->frameworkId);
+        $this->redirectIfSubmittedOrFinished($this->assessmentId, $this->frameworkId);
 
-        if (!empty($this->assessmentId)) {
+        if (!empty($this->assessmentId) && !$this->back) {
             $node = $this->getAssessmentResumeNode($this->assessmentId);
             if (!empty($node)) {
                 // There are answered questions, so we should resume there
@@ -63,6 +64,14 @@ class Variants extends Component
         }
 
         $this->data = $this->variantSelections()?->toArray();
+    }
+
+    #[Computed]
+    public function assessment(): ?Assessment
+    {
+        return $this->assessmentId
+            ? Assessment::find($this->assessmentId)
+            : null;
     }
 
     /**

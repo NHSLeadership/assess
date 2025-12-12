@@ -20,13 +20,14 @@
         @if ($this->nodes?->count())
 
             @foreach ($paginatedNodes as $node)
-{{--                <h2 class="nhsuk-heading-m">--}}
-{{--                    <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">--}}
+                <h1 class="nhsuk-heading-l">
+                    <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">
 {{--                      {{$currentNode?->parent?->name ?? $node?->parent?->name}} >  {{ $currentNode->name ??  $node->name ?? ''}}--}}
-{{--                    </span>--}}
-{{--                </h2>--}}
+                      {{ $currentNode->name ??  $node->name ?? ''}}
+                    </span>
+                </h1>
 
-{{--                <p>{!! $currentNode->description ?? $node->description ?? '' !!}</p>--}}
+                <p>{!! $currentNode->description ?? $node->description ?? '' !!}</p>
 
                 @livewire('questions', ['assessmentId' => $this->assessmentId, 'nodeId' => $this->nodeId])
             @endforeach

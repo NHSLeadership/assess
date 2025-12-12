@@ -19,7 +19,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
-use App\Traits\RedirectSubmittedAssessment;
+use App\Traits\RedirectAssessment;
 
 class Questions extends Component
 {
@@ -27,7 +27,7 @@ class Questions extends Component
     use WithPagination;
     use WithoutUrlPagination;
     use UserTrait;
-    use RedirectSubmittedAssessment;
+    use RedirectAssessment;
 
     public $assessmentId;
 
@@ -40,7 +40,7 @@ class Questions extends Component
 
     public function mount(): void
     {
-        $this->redirectIfSubmitted($this->assessmentId, $this->assessment?->framework->id);
+        $this->redirectIfSubmittedOrFinished($this->assessmentId, $this->assessment?->framework->id);
 
         /**
          * Pre-populate forms with defaults
@@ -208,32 +208,40 @@ class Questions extends Component
 
     /**
      * Get question progress label
+     *
+     * @param int|null $questionId
+     * @return string
      */
-    public function getQuestionProgressLabel(): string
+    public function getQuestionProgressLabel(?int $questionId = null): string
     {
         $nodes = $this->nodes()->getArrayCopy();
 
-        $currentNodeId = $this->nodeQuestions()->first()?->node_id;
+        $currentQuestion = $this->assessment?->framework
+            ->questions()
+            ->where('questions.id', $questionId)
+            ->first();
 
-        if (!$currentNodeId) {
+        if (!$currentQuestion) {
             return '';
         }
 
-        $questionCounts = [];
-        foreach ($nodes as $node) {
-            $questionCounts[$node->id] = $node->questions()->count();
-        }
         $questionCounter = 0;
+
         foreach ($nodes as $node) {
-            if ($node->id === $currentNodeId) {
+            if ($node->id === $currentQuestion->node_id) {
+                $offset = $node->questions()
+                    ->orderBy('order')
+                    ->pluck('id')
+                    ->search($questionId);
+
+                $questionCounter += ($offset !== false ? $offset : 0);
                 break;
             }
-            $questionCounter += $questionCounts[$node->id];
+
+            $questionCounter += $node->questions()->count();
         }
-        $currentOffset = $this->nodeQuestions()->first()?->order ?? 0;
 
-        $currentNumber = $questionCounter + $currentOffset + 1;
-
+        $currentNumber = $questionCounter + 1;
         $total = $this->assessment?->framework->questions()->count() ?? 0;
 
         return "<strong>Question {$currentNumber} of {$total}</strong>";
@@ -279,7 +287,11 @@ class Questions extends Component
         return redirect()
             ->route(
                 'variants',
-                ['frameworkId' => $this->assessment?->framework->id, 'assessmentId' => $this->assessmentId]
+                [
+                    'frameworkId' => $this->assessment?->framework->id,
+                    'assessmentId' => $this->assessmentId,
+                    'back' => 1
+                ]
             );
     }
 
