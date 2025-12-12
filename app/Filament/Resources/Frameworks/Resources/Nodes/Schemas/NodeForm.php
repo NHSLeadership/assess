@@ -22,6 +22,20 @@ class NodeForm
                             ->required(),
                     ])
                     ->required(),
+                Select::make('colour')
+                    ->options([
+                        'blue' => 'Blue',
+                        'green' => 'Green',
+                        'grey' => 'Grey',
+                        'aqua-green' => 'Aqua green',
+                        'orange' => 'Orange',
+                        'purple' => 'Purple',
+                        'pink' => 'Pink',
+                        'red' => 'Red',
+                        'white' => 'White',
+                        'yellow' => 'Yellow',
+                    ])
+                    ->required(),
                 TextInput::make('name')
                     ->required(),
                 RichEditor::make('description')

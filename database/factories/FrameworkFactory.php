@@ -22,6 +22,7 @@ class FrameworkFactory extends Factory
             'name' => $name,
             'slug' => Str::kebab($name),
             'description' => $this->faker->sentence(10),
+            'instructions' => $this->faker->sentence(10),
         ];
     }
 }

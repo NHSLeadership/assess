@@ -17,6 +17,7 @@ class Framework extends Model
         'name',
         'slug',
         'description',
+        'instructions',
     ];
 
     public function nodes(): HasMany

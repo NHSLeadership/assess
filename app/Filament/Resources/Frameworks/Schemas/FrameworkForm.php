@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\Frameworks\Schemas;
 
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
@@ -24,6 +24,8 @@ class FrameworkForm
                     ->required(),
                 Textarea::make('description')
                     ->required()
+                    ->columnSpanFull(),
+                RichEditor::make('instructions')
                     ->columnSpanFull(),
             ]);
     }
