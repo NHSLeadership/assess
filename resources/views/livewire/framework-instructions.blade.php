@@ -3,8 +3,8 @@
 
         @if (!empty($this->framework))
 
-            <h1 class="nhsuk-heading-xl">Instructions</h1>
-            {!! $this->framework->instructions !!}
+            <h1 class="nhsuk-heading-xl">{!! $this->framework?->name ?? 'Instructions' !!}</h1>
+            {!! $this->framework?->instructions ?? null !!}
              <hr>
             <a class="nhsuk-button" href="{{ route('variants', ['frameworkId' => $this->framework?->id, 'assessmentId' => $this->assessment?->id]) }}">Continue</a>
 
