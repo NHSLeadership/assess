@@ -20,12 +20,32 @@
         @if ($this->nodes?->count())
 
             @foreach ($paginatedNodes as $node)
-                <h1 class="nhsuk-heading-l">
-                    <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">
-{{--                      {{$currentNode?->parent?->name ?? $node?->parent?->name}} >  {{ $currentNode->name ??  $node->name ?? ''}}--}}
-                      {{ $currentNode->name ??  $node->name ?? ''}}
-                    </span>
-                </h1>
+
+                @if(!empty($headingHierarchy))
+                    @foreach ($headingHierarchy as $item)
+                        <{{ $item['headingTag'] }} class="{{ $item['headingClass'] }}">
+                        <span class="nhsuk-tag--{{ $item['colour'] }} nhsuk-tag--no-border nhsuk-u-padding-2">
+                            {{ $item['name'] }}
+                        </span>
+                    </{{ $item['headingTag'] }}>
+                    @endforeach
+                @else
+                    <h1 class="nhsuk-heading-l" >
+                        <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">
+                          {{$node?->parent?->parent?->name}}
+                        </span>
+                    </h1>
+                    <h2 class="nhsuk-heading-m">
+                        <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">
+                          {{$node?->parent?->name}}
+                        </span>
+                    </h2>
+                    <h3 class="nhsuk-heading-s">
+                        <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">
+                          {{ $node->name ?? ''}}
+                        </span>
+                    </h3>
+                @endif
 
                 <p>{!! $currentNode->description ?? $node->description ?? '' !!}</p>
 
