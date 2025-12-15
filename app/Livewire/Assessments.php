@@ -38,9 +38,8 @@ class Assessments extends Component
         }
 
         //Redirect already submitted assignments to summary page
-        if (!$this->edit) {
-            $this->redirectIfSubmittedOrFinished($this->assessmentId, $this->assessment?->framework?->id);
-        }
+        $this->redirectIfSubmittedOrFinished($this->assessmentId, $this->assessment?->framework?->id, $this->edit);
+
     }
 
     #[Computed]
