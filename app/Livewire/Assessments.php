@@ -26,7 +26,7 @@ class Assessments extends Component
     protected ?string $pageName = 'assessmentId';
     protected ?bool $simplePagination = true;
 
-    public Node|null $currentNode;
+    public Node|null $currentNode = null;
 
     public ?int $nodeId = null;
 
@@ -86,6 +86,54 @@ class Assessments extends Component
     {
         $this->currentNode = Node::find($nodeId);
     }
+
+    /**
+     * Build the heading hierarchy for the current node
+     *
+     * @return array
+     */
+    #[Computed]
+    protected function headingHierarchy(): array
+    {
+        if (! $this->currentNode instanceof Node) {
+            return [];
+        }
+        $stack = [];
+        $current = $this->currentNode;
+
+        while ($current) {
+            $stack[] = $current;
+            $current = $current?->parent;
+        }
+
+        $stack = array_reverse($stack);
+
+        return collect($stack)?->map(function ($n, $index) {
+            $headingTag = match ($index) {
+                0 => 'h1',
+                1 => 'h2',
+                2 => 'h3',
+                3 => 'h4',
+                default => 'h5',
+            };
+
+            $headingClass = match ($index) {
+                0 => 'nhsuk-heading-l',
+                1 => 'nhsuk-heading-m',
+                2 => 'nhsuk-heading-s',
+                3 => 'nhsuk-heading-xs',
+                default => 'nhsuk-heading-xs',
+            };
+
+            return [
+                'name'        => $n->name ?? '',
+                'colour'      => $n->colour ?? 'blue',
+                'headingTag'  => $headingTag,
+                'headingClass'=> $headingClass,
+            ];
+        })->toArray();
+    }
+
     public function render()
     {
         return view('livewire.assessments', [

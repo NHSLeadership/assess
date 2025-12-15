@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\Assessment;
+use App\Models\Framework;
 use Illuminate\Http\RedirectResponse;
 use Livewire\Features\SupportRedirects\Redirector;
 
@@ -37,6 +38,29 @@ trait RedirectAssessment
                 'frameworkId'  => $frameworkId,
                 'assessmentId' => $assessmentId,
             ]);
+        }
+
+        return null;
+    }
+    
+    protected function redirectIfInvalidAssessment(?int $frameworkId, ?int $assessmentId): Redirector|RedirectResponse|null
+    {
+        // Validate frameworkId
+        if (
+            empty($frameworkId) ||
+            !is_numeric($frameworkId) ||
+            !Framework::whereKey((int) $frameworkId)->exists()
+        ) {
+            return redirect()->route('frameworks');
+        }
+
+        // Validate assessmentId
+        if (
+            !empty($assessmentId) &&
+            (!is_numeric($assessmentId) ||
+                !Assessment::whereKey($assessmentId)->exists())
+        ) {
+            return redirect()->route('frameworks');
         }
 
         return null;

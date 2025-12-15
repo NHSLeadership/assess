@@ -19,6 +19,7 @@ Route::group([
 ], function () {
     Route::get('/assessments/{frameworkId?}', \App\Livewire\Frameworks::class)->name('frameworks');
     Route::get('/assessment-variants/{frameworkId?}/{assessmentId?}/{back?}', \App\Livewire\Variants::class)->name('variants');
+    Route::get('/framework-instructions/{frameworkId?}/{assessmentId?}', \App\Livewire\FrameworkInstructions::class)->name('instructions');
 
     Route::get('/summary/{frameworkId?}/{assessmentId?}', \App\Livewire\Summary::class)->name('summary');
     Route::get('/assessment/{assessmentId?}/{nodeId?}', \App\Livewire\Assessments::class)->name('questions');

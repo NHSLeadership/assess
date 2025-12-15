@@ -221,6 +221,14 @@ class Variants extends Component
         }
     }
 
+    public function goPrevious()
+    {
+        return redirect()->route('instructions', [
+            'frameworkId' => $this->frameworkId,
+            'assessmentId' => $this->assessmentId,
+        ]);
+    }
+
     public function render()
     {
         return view('livewire.variants');

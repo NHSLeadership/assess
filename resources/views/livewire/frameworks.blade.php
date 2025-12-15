@@ -8,7 +8,7 @@
 
             <div class="nhsuk-action-link">
                 <a class="nhsuk-action-link__link"
-                   href="{{ route('variants', ['frameworkId' => $this->framework?->id]) }}">
+                   href="{{ route('instructions', ['frameworkId' => $this->framework?->id]) }}">
                     <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg"
                          viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M0 0h24v24H0z" fill="none"></path>
