@@ -51,44 +51,49 @@
 
     {{-- Event-driven alerts via dispatch/emit --}}
     @if ($type && $message)
-        @switch($type)
-            @case('message')
-                <div class="nhsuk-inset-text" role="message" tabindex="-1">
-                    <span class="nhsuk-u-visually-hidden">Message: </span>
-                    <p>{!! $message !!}</p>
-                </div>
-                @break
-
-            @case('error')
-                <div class="nhsuk-error-summary" role="alert" tabindex="-1">
-                    <h2 class="nhsuk-error-summary__title">
-                        {{ $heading ?? __('alerts.errors.title') }} <span class="nhsuk-u-visually-hidden">:</span>
-                    </h2>
-                    <div class="nhsuk-error-summary__body">
+        <div x-data="{ show: true }"
+             x-init="setTimeout(() => { show = false; $wire.clearAlert() }, 5000)"
+             x-show="show"
+             wire:ignore.self>
+            @switch($type)
+                @case('message')
+                    <div class="nhsuk-inset-text" role="message" tabindex="-1">
+                        <span class="nhsuk-u-visually-hidden">Message: </span>
                         <p>{!! $message !!}</p>
                     </div>
-                </div>
-                @break
+                    @break
 
-            @case('warning')
-                <div class="nhsuk-warning-callout" role="warning" tabindex="-1">
-                    <h3 class="nhsuk-warning-callout__label">
-                        Warning <span class="nhsuk-u-visually-hidden">:</span>
-                    </h3>
-                    <p>{!! $message !!}</p>
-                </div>
-                @break
-
-            @case('success')
-                <div class="nhsuk-card">
-                    <div class="nhsuk-card__content">
-                        <h3 class="nhsuk-card__heading">
-                            {!! $heading ?? 'Success' !!}
-                        </h3>
-                        <p class="nhsuk-card__description">{!! $message !!}</p>
+                @case('error')
+                    <div class="nhsuk-error-summary" role="alert" tabindex="-1">
+                        <h2 class="nhsuk-error-summary__title">
+                            {{ $heading ?? __('alerts.errors.title') }} <span class="nhsuk-u-visually-hidden">:</span>
+                        </h2>
+                        <div class="nhsuk-error-summary__body">
+                            <p>{!! $message !!}</p>
+                        </div>
                     </div>
-                </div>
-                @break
-        @endswitch
+                    @break
+
+                @case('warning')
+                    <div class="nhsuk-warning-callout" role="warning" tabindex="-1">
+                        <h3 class="nhsuk-warning-callout__label">
+                            Warning <span class="nhsuk-u-visually-hidden">:</span>
+                        </h3>
+                        <p>{!! $message !!}</p>
+                    </div>
+                    @break
+
+                @case('success')
+                    <div class="nhsuk-card">
+                        <div class="nhsuk-card__content">
+                            <h3 class="nhsuk-card__heading">
+                                {!! $heading ?? 'Success' !!}
+                            </h3>
+                            <p class="nhsuk-card__description">{!! $message !!}</p>
+                        </div>
+                    </div>
+                    @break
+            @endswitch
+        </div>
     @endif
 </div>

@@ -31,7 +31,7 @@ class Assessments extends Component
     public ?int $nodeId = null;
     public ?string $edit = null;
 
-    public function mount($assessmentId, $nodeId)
+    public function mount($assessmentId, $nodeId = null, $edit = null)
     {
         if (empty($this->assessmentId) || ! is_numeric($this->assessmentId)) {
             return redirect()->route('frameworks');

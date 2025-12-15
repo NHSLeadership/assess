@@ -6,6 +6,7 @@ use App\Models\Assessment;
 use App\Models\Framework;
 use App\Models\FrameworkVariantAttribute;
 use App\Models\Node;
+use App\Notifications\AssessmentCompleted as AssessmentCompletedNotification;
 use App\Traits\UserTrait;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -14,8 +15,9 @@ use Livewire\Component;
 class Summary extends Component
 {
     use UserTrait;
-    public $frameworkId;
-    public $assessmentId;
+
+    public ?int $frameworkId = null;
+    public ?int $assessmentId = null;
 
     #[Computed]
     public function framework(): ?Framework
@@ -70,6 +72,49 @@ class Summary extends Component
             'nodeId' => $nodeId,
             'edit' => 'edit',
         ]);
+    }
+
+    public function confirmSubmit()
+    {
+        $this->dispatch('confirm-submit');
+    }
+
+    #[\Livewire\Attributes\On('submitAssessmentConfirmed')]
+    public function submitAssessmentConfirmed(): ?\Illuminate\Http\RedirectResponse
+    {
+        try {
+            $assessment = $this->assessment();
+
+            if (! $assessment) {
+                $this->dispatch('alert', type: 'error', message: __('alerts.errors.assessment-not-found'));
+                $this->dispatch('scroll-to-top');
+                return null;
+
+            }
+
+            if (! is_null($assessment->submitted_at)) {
+                $this->dispatch('alert', type: 'error', message: __('alerts.errors.assessment-already-submitted'));
+                $this->dispatch('scroll-to-top');
+                return null;
+            }
+
+            $assessment->submitted_at = now();
+            $assessment->save();
+
+            $this->user?->notify(new AssessmentCompletedNotification($assessment));
+
+            return redirect()->route(
+                'assessment-completed', ['assessmentId' => $assessment?->id]
+            );
+        } catch (\Throwable $e) {
+            $this->dispatch(
+                'alert',
+                type: 'error',
+                message: $e->getMessage(),
+            );
+            $this->dispatch('scroll-to-top');
+            return null;
+        }
     }
 
     public function render()
