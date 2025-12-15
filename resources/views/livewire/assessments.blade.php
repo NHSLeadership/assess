@@ -21,8 +21,8 @@
 
             @foreach ($paginatedNodes as $node)
 
-                @if(!empty($headingHierarchy))
-                    @foreach ($headingHierarchy as $item)
+                @if(!empty($this->headingHierarchy()))
+                    @foreach ($this->headingHierarchy() as $item)
                         <{{ $item['headingTag'] }} class="{{ $item['headingClass'] }}">
                         <span class="nhsuk-tag--{{ $item['colour'] }} nhsuk-tag--no-border nhsuk-u-padding-2">
                             {{ $item['name'] }}

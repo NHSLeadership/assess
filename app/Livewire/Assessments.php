@@ -26,8 +26,7 @@ class Assessments extends Component
     protected ?string $pageName = 'assessmentId';
     protected ?bool $simplePagination = true;
 
-    public Node|null $currentNode;
-    public ?array $headingHierarchy = [];
+    public Node|null $currentNode = null;
 
     public ?int $nodeId = null;
 
@@ -86,7 +85,6 @@ class Assessments extends Component
     public function currentQuestionNode($nodeId = null)
     {
         $this->currentNode = Node::find($nodeId);
-        $this->headingHierarchy = $this->buildHierarchy($this->currentNode);
     }
 
     /**
@@ -94,7 +92,8 @@ class Assessments extends Component
      *
      * @return array
      */
-    protected function buildHierarchy(): array
+    #[Computed]
+    protected function headingHierarchy(): array
     {
         if (! $this->currentNode instanceof Node) {
             return [];
