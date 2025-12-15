@@ -21,7 +21,7 @@ Route::group([
     Route::get('/assessment-variants/{frameworkId?}/{assessmentId?}/{back?}', \App\Livewire\Variants::class)->name('variants');
 
     Route::get('/summary/{frameworkId?}/{assessmentId?}', \App\Livewire\Summary::class)->name('summary');
-    Route::get('/assessment/{assessmentId?}/{nodeId?}', \App\Livewire\Assessments::class)->name('questions');
+    Route::get('/assessment/{assessmentId?}/{nodeId?}/{edit?}', \App\Livewire\Assessments::class)->name('questions');
 
     /**
      * Request review

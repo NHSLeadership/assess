@@ -10,7 +10,7 @@
 
         @foreach ($this->nodes as $node)
             @if (empty($node->parent))
-                <h3 class="nhsuk-heading-m nhsuk-tag--no-border nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-1">
+                <h3 class="nhsuk-heading-m nhsuk-tag--no-border nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2">
                     {{ $node->name ?? '' }}
                 </h3>
             @elseif ($node->children->count())
@@ -22,10 +22,10 @@
             @if ($this->responses?->where('question.node_id', $node->id)->count())
                 <ul class="nhsuk-task-list nhsuk-list--border">
                     @foreach ($this->responses?->where('question.node_id', $node->id) as $response)
-                        <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link nhsuk-u-padding-left-2">
+                        <li class="nhsuk-task-list__item nhsuk-u-padding-left-2">
                             <div class="nhsuk-task-list__name-and-hint">
                                 {!! $response->question->title ?? '' !!}
-                                <a href="#" wire:click.prevent="editAnswer({{ $response->question?->node?->id ?? '' }})" class="nhsuk-link nhsuk-task-list__link">
+                                <a href="#" wire:click.prevent="editAnswer({{ $response->question?->node?->id ?? '' }})" class="nhsuk-link">
                                     Edit answer
                                 </a>
                             </div>
@@ -42,6 +42,9 @@
             @endif
         @endforeach
 
-        <button class="nhsuk-button">Close</button>
+        <button class="nhsuk-button"
+                wire:click.prevent="editAnswer({{ $this->nodes?->last()?->id }})">
+            Previous question
+        </button>
     </div>
 </div>

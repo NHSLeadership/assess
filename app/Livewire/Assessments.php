@@ -29,6 +29,7 @@ class Assessments extends Component
     public Node|null $currentNode;
 
     public ?int $nodeId = null;
+    public ?string $edit = null;
 
     public function mount($assessmentId, $nodeId)
     {
@@ -37,7 +38,9 @@ class Assessments extends Component
         }
 
         //Redirect already submitted assignments to summary page
-        //$this->redirectIfSubmittedOrFinished($this->assessmentId, $this->assessment?->framework?->id);
+        if (!$this->edit) {
+            $this->redirectIfSubmittedOrFinished($this->assessmentId, $this->assessment?->framework?->id);
+        }
     }
 
     #[Computed]

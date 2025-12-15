@@ -62,9 +62,13 @@ class Summary extends Component
      */
     public function editAnswer($nodeId)
     {
+        if (!is_numeric($nodeId)) {
+            return null;
+        }
         return redirect()->route('questions', [
             'assessmentId' => $this->assessmentId,
-            'nodeId' => $nodeId
+            'nodeId' => $nodeId,
+            'edit' => 'edit',
         ]);
     }
 
