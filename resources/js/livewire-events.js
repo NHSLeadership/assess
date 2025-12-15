@@ -7,8 +7,3 @@ Livewire.on('confirm-submit', () => {
         Livewire.dispatch('submitAssessmentConfirmed');
     }
 });
-
-Livewire.on('redirect-to', ({ url }) => {
-    // Give the alert a moment to render before navigating
-    setTimeout(() => { window.location.href = url; }, 1200);
-});
