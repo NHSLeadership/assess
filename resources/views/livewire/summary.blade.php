@@ -24,12 +24,14 @@
                     @foreach ($this->responses?->where('question.node_id', $node->id) as $response)
                         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link nhsuk-u-padding-left-2">
                             <div class="nhsuk-task-list__name-and-hint">
-                                <p>{{ $response->question->text ?? '' }}</p>
-                                <div class="nhsuk-task-list__hint"></div>
+                                {!! $response->question->title ?? '' !!}
+                                <a href="#" wire:click.prevent="editAnswer({{ $response->question?->node?->id ?? '' }})" class="nhsuk-link nhsuk-task-list__link">
+                                    Edit answer
+                                </a>
                             </div>
-                            <div class="nhsuk-task-list__status nhsuk-task-list__status--completed">
-                                <strong class="nhsuk-tag nhsuk-tag--transparent nhsuk-tag--no-border">
-                                    <p class="nhsuk-tag nhsuk-tag--grey">{{ $response->scaleOption->label ?? '' }}</p>
+                            <div class="nhsuk-task-list__status">
+                                <strong class="nhsuk-tag nhsuk-tag--blue">
+                                    {{ $response->scaleOption->label ?? '' }}
                                 </strong>
                             </div>
                         </li>

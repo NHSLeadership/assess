@@ -50,21 +50,22 @@ class Summary extends Component
         //return Node::where('framework_id', $this->frameworkId)->orderByRaw('coalesce(parent_id, id), `order`')->orderBy('order')->get();
     }
 
-    #[Computed]
-    public function startedAreas(): ?Collection
-    {
-        if (empty($this->assessment)) {
-            return null;
-        }
-
-        return $this->assessment?->framework?->nodes()->whereHas('questions')->get();
-    }
-
 
     #[Computed]
     public function responses(): ?Collection
     {
         return $this->assessment?->responses()?->get();
+    }
+
+    /**
+     * Redirect to edit answers for a specific node
+     */
+    public function editAnswer($nodeId)
+    {
+        return redirect()->route('questions', [
+            'assessmentId' => $this->assessmentId,
+            'nodeId' => $nodeId
+        ]);
     }
 
     public function render()

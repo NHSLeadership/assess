@@ -20,7 +20,7 @@ class Assessments extends Component
     use UserTrait;
     use RedirectAssessment;
 
-    public ?string $assessmentId;
+    public ?int $assessmentId;
 
     protected ?int $perPage = 1;
     protected ?string $pageName = 'assessmentId';
@@ -30,14 +30,14 @@ class Assessments extends Component
 
     public ?int $nodeId = null;
 
-    public function mount($assessmentId)
+    public function mount($assessmentId, $nodeId)
     {
         if (empty($this->assessmentId) || ! is_numeric($this->assessmentId)) {
             return redirect()->route('frameworks');
         }
 
         //Redirect already submitted assignments to summary page
-        $this->redirectIfSubmittedOrFinished($this->assessmentId, $this->assessment?->framework?->id);
+        //$this->redirectIfSubmittedOrFinished($this->assessmentId, $this->assessment?->framework?->id);
     }
 
     #[Computed]

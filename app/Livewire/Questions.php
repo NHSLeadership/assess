@@ -40,7 +40,7 @@ class Questions extends Component
 
     public function mount(): void
     {
-        $this->redirectIfSubmittedOrFinished($this->assessmentId, $this->assessment?->framework->id);
+        //$this->redirectIfSubmittedOrFinished($this->assessmentId, $this->assessment?->framework->id);
 
         /**
          * Pre-populate forms with defaults
