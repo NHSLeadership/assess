@@ -23,18 +23,18 @@
 
                 @if(!empty($this->headingHierarchy()))
                     @foreach ($this->headingHierarchy() as $item)
-                        <{{ $item['headingTag'] }} class="{{ $item['headingClass'] }} nhsuk-tag--{{ $item['colour'] }} nhsuk-u-padding-2">
+                        <{{ $item['headingTag'] }} class="{{ $item['headingClass'] }} nhsuk-tag--{{ $item['colour'] }} nhsuk-u-padding-2 nhsuk-u-margin-bottom-2">
                         {{ $item['name'] }}
                     </{{ $item['headingTag'] }}>
                     @endforeach
                 @else
-                    <h1 class="nhsuk-heading-l nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2" >
+                    <h1 class="nhsuk-heading-l nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2 nhsuk-u-margin-bottom-2" >
                       {{$node?->parent?->parent?->name}}
                     </h1>
-                    <h2 class="nhsuk-heading-m nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2">
+                    <h2 class="nhsuk-heading-m nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2 nhsuk-u-margin-bottom-2">
                       {{$node?->parent?->name}}
                     </h2>
-                    <h3 class="nhsuk-heading-s nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2">
+                    <h3 class="nhsuk-heading-s nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2 nhsuk-u-margin-bottom-2">
                       {{ $node->name ?? ''}}
                     </h3>
                 @endif
