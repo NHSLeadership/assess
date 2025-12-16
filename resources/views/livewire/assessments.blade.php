@@ -49,7 +49,7 @@
 
                 <p>{!! $currentNode->description ?? $node->description ?? '' !!}</p>
 
-                @livewire('questions', ['assessmentId' => $this->assessmentId, 'nodeId' => $this->nodeId])
+                @livewire('questions', ['assessmentId' => $this->assessmentId, 'nodeId' => $this->nodeId, 'edit' => $this->edit ?? null])
             @endforeach
 
             <hr>

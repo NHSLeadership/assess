@@ -1,6 +1,8 @@
 <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
     <div class="nhsuk-grid-column-full">
 
+        <livewire:alerts />
+
         @if (!empty($this->framework))
             <h1 class="nhsuk-heading-xl">
                 {{ $this->framework->name ?? '' }}
@@ -10,7 +12,7 @@
 
         @foreach ($this->nodes as $node)
             @if (empty($node->parent))
-                <h3 class="nhsuk-heading-m nhsuk-tag--no-border nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-1">
+                <h3 class="nhsuk-heading-m nhsuk-tag--no-border nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2">
                     {{ $node->name ?? '' }}
                 </h3>
             @elseif ($node->children->count())
@@ -24,12 +26,14 @@
                     @foreach ($this->responses?->where('question.node_id', $node->id) as $response)
                         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link nhsuk-u-padding-left-2">
                             <div class="nhsuk-task-list__name-and-hint">
-                                <p>{{ $response->question->text ?? '' }}</p>
-                                <div class="nhsuk-task-list__hint"></div>
+                                <a href="#" wire:click.prevent="editAnswer({{ $response->question?->node?->id ?? '' }})" class="nhsuk-link nhsuk-task-list__link">
+                                    {!! $response->question->title ?? '' !!}
+                                    <span class="nhsuk-u-visually-hidden"> – edit this answer</span>
+                                </a>
                             </div>
-                            <div class="nhsuk-task-list__status nhsuk-task-list__status--completed">
-                                <strong class="nhsuk-tag nhsuk-tag--transparent nhsuk-tag--no-border">
-                                    <p class="nhsuk-tag nhsuk-tag--grey">{{ $response->scaleOption->label ?? '' }}</p>
+                            <div class="nhsuk-task-list__status">
+                                <strong class="nhsuk-tag nhsuk-tag--blue">
+                                    {{ $response->scaleOption->label ?? '' }}
                                 </strong>
                             </div>
                         </li>
@@ -40,6 +44,13 @@
             @endif
         @endforeach
 
-        <button class="nhsuk-button">Close</button>
+        @if (empty($this->assessment->submitted_at))
+            <h2 class="nhsuk-heading-m">Complete your assessment</h2>
+            <p>You will not be able to change your responses after completing your assessment</p>
+            <button class="nhsuk-button"
+                    wire:click.prevent="confirmSubmit()">
+                Complete assessment
+            </button>
+        @endif
     </div>
 </div>

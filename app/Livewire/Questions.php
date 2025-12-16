@@ -38,9 +38,11 @@ class Questions extends Component
     public ?int $nodeKeyId;
     public ?int $nodeId;
 
+    public ?string $edit;
+
     public function mount(): void
     {
-        $this->redirectIfSubmittedOrFinished($this->assessmentId, $this->assessment?->framework->id);
+        $this->redirectIfSubmittedOrFinished($this->assessmentId, $this->assessment?->framework->id, $this->edit);
 
         /**
          * Pre-populate forms with defaults

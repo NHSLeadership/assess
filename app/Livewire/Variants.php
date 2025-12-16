@@ -161,7 +161,14 @@ class Variants extends Component
                     UserAssessmentVariantSelectionService::updateOrCreate($value, $attributes[$key], $this->assessmentId);
                 }
             }
-            $this->redirect(route('questions', $this->assessmentId));
+            $this->redirect(
+                route('questions',
+                    [
+                        'assessmentId' => $this->assessmentId,
+                        'nodeId' => null
+                    ]
+                )
+            );
         } else {
             $this->dispatch(
                 'alert',

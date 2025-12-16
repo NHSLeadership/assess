@@ -11,7 +11,9 @@ class Alerts extends Component
     public $heading = null;
 
     // Listen for Livewire events
-    protected $listeners = ['alert' => 'showAlert'];
+    protected $listeners = [
+        'alert' => 'showAlert',
+    ];
 
     public function showAlert($type, $message, $heading = null): void
     {
@@ -20,6 +22,10 @@ class Alerts extends Component
         $this->heading = $heading;
     }
 
+    public function clearAlert(): void
+    {
+        $this->reset(['type', 'message', 'heading']);
+    }
     public function render()
     {
         return view('livewire.alerts');

@@ -14,9 +14,11 @@ trait RedirectAssessment
      *
      * @param int|null $assessmentId
      * @param int|null $frameworkId
+     * @param string|null $edit
+     *
      * @return Redirector|RedirectResponse|null
      */
-    protected function redirectIfSubmittedOrFinished(?int $assessmentId, ?int $frameworkId): Redirector|RedirectResponse|null
+    protected function redirectIfSubmittedOrFinished(?int $assessmentId, ?int $frameworkId, ?string $edit = null): Redirector|RedirectResponse|null
     {
         $assessment = Assessment::find($assessmentId);
 
@@ -33,7 +35,7 @@ trait RedirectAssessment
         $allRequiredAnswered = $requiredCount > 0 && $responseCount === $requiredCount;
         $alreadySubmitted    = !is_null($assessment->submitted_at);
 
-        if ($allRequiredAnswered || $alreadySubmitted) {
+        if ( (empty($edit) && $allRequiredAnswered) || $alreadySubmitted) {
             return redirect()->route('summary', [
                 'frameworkId'  => $frameworkId,
                 'assessmentId' => $assessmentId,

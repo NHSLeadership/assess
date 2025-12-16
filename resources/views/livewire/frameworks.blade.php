@@ -4,6 +4,8 @@
         @if ($this->framework)
             <h1>{{ $this->framework->name ?? __('Framework dashboard') }}</h1>
 
+            <livewire:alerts />
+
             <p>{{ $this->framework->description ?? '' }}</p>
 
             <div class="nhsuk-action-link">

@@ -22,7 +22,8 @@ Route::group([
     Route::get('/framework-instructions/{frameworkId?}/{assessmentId?}', \App\Livewire\FrameworkInstructions::class)->name('instructions');
 
     Route::get('/summary/{frameworkId?}/{assessmentId?}', \App\Livewire\Summary::class)->name('summary');
-    Route::get('/assessment/{assessmentId?}/{nodeId?}', \App\Livewire\Assessments::class)->name('questions');
+    Route::get('/assessment/{assessmentId?}/{nodeId?}/{edit?}', \App\Livewire\Assessments::class)->name('questions');
+    Route::get('/assessment-completed/{assessmentId?}', \App\Livewire\AssessmentCompleted::class)->name('assessment-completed');
 
     /**
      * Request review
