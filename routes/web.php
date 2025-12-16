@@ -11,6 +11,8 @@ Route::any('/admin/login', function () {
     return redirect('/login');
 })->name('filament.admin.login');
 
+Route::get('/contact', \App\Livewire\ContactUs::class)->name('contact-us');
+
 Route::group([
     'middleware' => [
         'auth',
