@@ -74,13 +74,7 @@ class Summary extends Component
         ]);
     }
 
-    public function confirmSubmit()
-    {
-        $this->dispatch('confirm-submit');
-    }
-
-    #[\Livewire\Attributes\On('submitAssessmentConfirmed')]
-    public function submitAssessmentConfirmed(): ?\Illuminate\Http\RedirectResponse
+    public function confirmSubmit(): ?\Illuminate\Http\RedirectResponse
     {
         try {
             $assessment = $this->assessment();

@@ -45,10 +45,8 @@
         @endforeach
 
         @if (empty($this->assessment->submitted_at))
-            <button class="nhsuk-button"
-                    wire:click.prevent="editAnswer({{ $this->nodes?->last()?->id }})">
-                Previous question
-            </button>
+            <h2 class="nhsuk-heading-m">Complete your assessment</h2>
+            <p>You will not be able to change your responses after completing your assessment</p>
             <button class="nhsuk-button"
                     wire:click.prevent="confirmSubmit()">
                 Complete assessment
