@@ -23,19 +23,27 @@
 
                 @if(!empty($this->headingHierarchy()))
                     @foreach ($this->headingHierarchy() as $item)
-                        <{{ $item['headingTag'] }} class="{{ $item['headingClass'] }} nhsuk-tag--{{ $item['colour'] }} nhsuk-u-padding-2 nhsuk-u-margin-bottom-2">
-                        {{ $item['name'] }}
+                        <{{ $item['headingTag'] }} class="{{ $item['headingClass'] }}">
+                        <span class="nhsuk-tag--{{ $item['colour'] }} nhsuk-tag--no-border nhsuk-u-padding-2 tag-inline-wrap">
+                            {{ $item['name'] }}
+                        </span>
                     </{{ $item['headingTag'] }}>
                     @endforeach
                 @else
-                    <h1 class="nhsuk-heading-l nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2 nhsuk-u-margin-bottom-2" >
-                      {{$node?->parent?->parent?->name}}
+                    <h1 class="nhsuk-heading-l" >
+                        <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 tag-inline-wrap">
+                          {{$node?->parent?->parent?->name}}
+                        </span>
                     </h1>
-                    <h2 class="nhsuk-heading-m nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2 nhsuk-u-margin-bottom-2">
-                      {{$node?->parent?->name}}
+                    <h2 class="nhsuk-heading-m">
+                        <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 tag-inline-wrap">
+                          {{$node?->parent?->name}}
+                        </span>
                     </h2>
-                    <h3 class="nhsuk-heading-s nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2 nhsuk-u-margin-bottom-2">
-                      {{ $node->name ?? ''}}
+                    <h3 class="nhsuk-heading-s">
+                        <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">
+                          {{ $node->name ?? ''}}
+                        </span>
                     </h3>
                 @endif
 
