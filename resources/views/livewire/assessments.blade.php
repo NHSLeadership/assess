@@ -31,7 +31,7 @@
                     @endforeach
                 @else
                     <h1 class="nhsuk-heading-l" >
-                        <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">
+                        <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 tag-inline-wrap">
                           {{$node?->parent?->parent?->name}}
                         </span>
                     </h1>
