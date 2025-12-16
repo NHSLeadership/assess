@@ -107,6 +107,7 @@ class Summary extends Component
                 'assessment-completed', ['assessmentId' => $assessment?->id]
             );
         } catch (\Throwable $e) {
+            report($e); // log the error for debugging
             $this->dispatch(
                 'alert',
                 type: 'error',
