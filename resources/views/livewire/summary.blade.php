@@ -44,12 +44,13 @@
             @endif
         @endforeach
 
-        @if ($this->responses?->count() !== $this->assessment?->framework?->questions?->where('required', 1)->count())
+        @if (empty($this->assessment->submitted_at)
+            && ($this->responses?->count() !== $this->assessment?->framework?->questions()->where('required', 1)->count()))
             <button class="nhsuk-button"
                     wire:click.prevent="continueAssessment()">
                 Continue assessment
             </button>
-        @else (empty($this->assessment->submitted_at))
+        @elseif (empty($this->assessment->submitted_at))
             <h2 class="nhsuk-heading-m">Complete your assessment</h2>
             <p>You will not be able to change your responses after completing your assessment</p>
             <button class="nhsuk-button"
