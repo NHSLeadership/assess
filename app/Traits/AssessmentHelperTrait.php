@@ -11,6 +11,7 @@ use Livewire\Features\SupportRedirects\Redirector;
 
 trait AssessmentHelperTrait
 {
+    use UserTrait;
     /**
      * Redirect to summary if the assessment has been submitted.
      *

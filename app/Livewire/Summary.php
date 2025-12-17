@@ -37,19 +37,6 @@ class Summary extends Component
         return Framework::all();
     }
 
-    #[Computed]
-    public function assessment(): ?Assessment
-    {
-        if (empty($this->assessmentId)) {
-            return null;
-        }
-
-        return Assessment::with(['raters'])
-            ->where('id', $this->assessmentId)
-            ->where('user_id', $this->user()?->user_id)
-            ->firstOrFail();
-    }
-
     public function continueAssessment()
     {
         $node = $this->getAssessmentResumeNode($this->assessmentId);
