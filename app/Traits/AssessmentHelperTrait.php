@@ -81,12 +81,24 @@ trait AssessmentHelperTrait
      *
      * @param int|null $assessmentId
      * @param bool $next
+     * @param bool $firstUnanswered
      * @return Node|null
      */
-    public function getAssessmentResumeNode(?int $assessmentId = null, bool $next = false): ?Node
+    public function getAssessmentResumeNode(?int $assessmentId = null, bool $next = true, bool $firstUnanswered = true ): ?Node
     {
 
         if ($next) {
+            if ($firstUnanswered) {
+                return Node::with('questions')
+                    ->whereHas('questions', function ($q) use ($assessmentId) {
+                        $q->whereDoesntHave('responses', function ($r) use ($assessmentId) {
+                            $r->where('assessment_id', $assessmentId);
+                        });
+                    })
+                    ->orderBy('order')
+                    ->first();
+            }
+            // First unanswered and required question's node
             return Node::with('questions')
                 ->whereHas('questions', function ($q) use ($assessmentId) {
                     $q->where('required', 1)
