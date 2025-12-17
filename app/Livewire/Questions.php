@@ -74,7 +74,14 @@ class Questions extends Component
     {
         foreach ($this->nodeQuestions() as $question) {
             $messages['data.' . $question['name'] . '.numeric'] = 'Select one of the following options';
-            $messages['data.' . $question['name'] . '.required'] = 'Select one of the following options';
+            if ($question->response_type !== ResponseType::TYPE_TEXTAREA->value) {
+                $messages['data.' . $question['name'] . '.required'] = 'Select one of the following options';
+            } else {
+                $messages['data.' . $question['name'] . '.required'] = 'Your response cannot be empty.';
+                $messages['data.' . $question['name'] . '.max'] =
+                    'Your response must not be longer than ' .
+                    $this->getMaxLengthForType(ResponseType::TYPE_TEXTAREA->value) . ' characters.';
+            }
         }
 
         return $messages ?? [];
