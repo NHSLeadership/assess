@@ -9,7 +9,7 @@ use App\Models\FrameworkVariantOption;
 use App\Models\Node;
 use App\Models\Rater;
 use App\Services\UserAssessmentVariantSelectionService;
-use App\Traits\RedirectAssessment;
+use App\Traits\AssessmentHelperTrait;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -19,7 +19,7 @@ use App\Traits\UserTrait;
 class Variants extends Component
 {
     use UserTrait;
-    use RedirectAssessment;
+    use AssessmentHelperTrait;
 
     public ?string $frameworkId;
     public ?string $assessmentId = null;
@@ -50,7 +50,7 @@ class Variants extends Component
         }
 
         //Redirect to summary if already submitted assessment
-        $this->redirectIfSubmittedOrFinished($this->assessmentId, $this->frameworkId);
+        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->frameworkId);
 
         if (!empty($this->assessmentId) && !$this->back) {
             $node = $this->getAssessmentResumeNode($this->assessmentId);
@@ -66,43 +66,6 @@ class Variants extends Component
         $this->data = $this->variantSelections()?->toArray();
     }
 
-    #[Computed]
-    public function assessment(): ?Assessment
-    {
-        return $this->assessmentId
-            ? Assessment::find($this->assessmentId)
-            : null;
-    }
-
-    /**
-     * Get the next or last node for the assessment
-     * to navigate to if the user is resuming an assessment.
-     *
-     * @param int|null $assessmentId
-     * @param bool $next
-     * @return Node|null
-     */
-    public function getAssessmentResumeNode(?int $assessmentId = null, bool $next = true): ?Node
-    {
-        if ($next) {
-            // Next unanswered node
-            return Node::with('questions')
-                ->whereHas('questions') // must have questions
-                ->whereDoesntHave('questions.responses', function ($q) use ($assessmentId) {
-                    $q->where('assessment_id', $assessmentId);
-                })
-                ->orderBy('order', 'asc')
-                ->first();
-        }
-
-        // Last answered node
-        return Node::with('questions')
-            ->whereHas('questions.responses', function ($q) use ($assessmentId) {
-                $q->where('assessment_id', $assessmentId);
-            })
-            ->orderBy('order', 'desc')
-            ->first();
-    }
 
     #[Computed]
     public function framework(): ?Framework

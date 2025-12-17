@@ -6,11 +6,11 @@ use App\Models\Assessment;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use App\Models\Framework;
-use App\Traits\RedirectAssessment;
+use App\Traits\AssessmentHelperTrait;
 
 class FrameworkInstructions extends Component
 {
-    use RedirectAssessment;
+    use AssessmentHelperTrait;
 
     public ?int $frameworkId = null;
     public ?int $assessmentId = null;
