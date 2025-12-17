@@ -74,16 +74,16 @@
         },
         {
             "name": "auth0/auth0-php",
-            "version": "8.17.0",
+            "version": "8.18.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/auth0/auth0-PHP.git",
-                "reference": "1767d11b3dd7a5c622c034fd22649ed254a7683c"
+                "reference": "0d78289d9ed0028e8832aca664d3c25d164972a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/auth0/auth0-PHP/zipball/1767d11b3dd7a5c622c034fd22649ed254a7683c",
-                "reference": "1767d11b3dd7a5c622c034fd22649ed254a7683c",
+                "url": "https://api.github.com/repos/auth0/auth0-PHP/zipball/0d78289d9ed0028e8832aca664d3c25d164972a1",
+                "reference": "0d78289d9ed0028e8832aca664d3c25d164972a1",
                 "shasum": ""
             },
             "require": {
@@ -167,9 +167,9 @@
             ],
             "support": {
                 "issues": "https://github.com/auth0/auth0-PHP/issues",
-                "source": "https://github.com/auth0/auth0-PHP/tree/8.17.0"
+                "source": "https://github.com/auth0/auth0-PHP/tree/8.18.0"
             },
-            "time": "2025-10-01T08:49:46+00:00"
+            "time": "2025-12-16T12:30:04+00:00"
         },
         {
             "name": "auth0/login",
@@ -12780,5 +12780,5 @@
         "php": "~8.4"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }
