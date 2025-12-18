@@ -122,6 +122,7 @@ class Assessments extends Component
                 'colour'      => $n->colour ?? 'blue',
                 'headingTag'  => $headingTag,
                 'headingClass'=> $headingClass,
+                'type'        => $n->type?->name ?? '',
             ];
         })->toArray();
     }

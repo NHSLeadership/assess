@@ -129,6 +129,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'description'  => env('APP_DESCRIPTION', 'NHS Leadership Self Assessment Tools')
+    'description'  => env('APP_DESCRIPTION', 'NHS Leadership Self Assessment Tools'),
+    'show_node_type_prefix' => env('SHOW_NODE_TYPE_PREFIX', false),
 
 ];

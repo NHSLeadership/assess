@@ -13,11 +13,11 @@
         @foreach ($this->nodes as $node)
             @if (empty($node->parent))
                 <h3 class="nhsuk-heading-m nhsuk-tag--no-border nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2">
-                    {{ $node->name ?? '' }}
+                    {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }} {{ $node->name ?? '' }}
                 </h3>
             @elseif ($node->children->count())
                 <h4 class="nhsuk-heading-s">
-                    {{ $node->name ?? '' }}
+                    {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }} {{ $node->name ?? '' }}
                 </h4>
             @else
 
