@@ -44,7 +44,7 @@
                                : route('variants', ['frameworkId' => $assessment->framework?->id, 'assessmentId' => $assessment->id]) }}"
                                aria-describedby="{{ $assessment->slug }}-hint"
                                class="nhsuk-link">
-                                {{ $assessment->framework?->name }}
+                                {{ $assessment->framework?->name }} <span class="nhsuk-u-visually-hidden">{{ $this->displayAssessmentDate($assessment) }}</span>
                             </a>
                         </td>
                         <td class="nhsuk-table__cell">
