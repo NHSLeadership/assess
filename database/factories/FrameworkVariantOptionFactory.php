@@ -18,7 +18,7 @@ class FrameworkVariantOptionFactory extends Factory
     {
         return [
             'framework_variant_attribute_id' => $this->faker->numberBetween(1000, 999999),
-            'value' => $this->faker->word(),
+            'value' => $this->faker->unique()->word(),
             'label' => $this->faker->word(),
             'order' => $this->faker->numberBetween(1, 100),
         ];
