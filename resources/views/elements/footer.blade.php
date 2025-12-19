@@ -17,7 +17,7 @@
                     <a class="nhsuk-footer__list-item-link" href="https://www.leadershipacademy.nhs.uk/how-we-use-our-cookies/">How we use our cookies</a>
                 </li>
                 <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
-                    <a class="nhsuk-footer__list-item-link" href="{{ route('contact-us') }}">Contact Us</a>
+                    <a class="nhsuk-footer__list-item-link" href="https://leadershipacademy.nhs.uk/contact-us/">Contact Us</a>
                 </li>
             </ul>
             <p class="nhsuk-body-s">
