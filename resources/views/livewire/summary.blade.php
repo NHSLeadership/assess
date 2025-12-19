@@ -28,7 +28,7 @@
                             <div class="nhsuk-task-list__name-and-hint">
                                 <a href="#" wire:click.prevent="editAnswer({{ $response->question?->node?->id ?? '' }})" class="nhsuk-link nhsuk-task-list__link">
                                     {!! $response->question->title ?? '' !!}
-                                    <span class="nhsuk-u-visually-hidden">Edit this answer</span>
+                                    <span class="nhsuk-u-visually-hidden">Click to edit this answer</span>
                                 </a>
                             </div>
                             <div class="nhsuk-task-list__status">
