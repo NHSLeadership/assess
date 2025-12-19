@@ -3,8 +3,6 @@
 use App\Models\User;
 use Livewire\Livewire;
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
-
 test('login screen redirects to Auth0', function () {
     $response = $this->get('/login');
 
