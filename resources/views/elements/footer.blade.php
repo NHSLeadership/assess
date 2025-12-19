@@ -8,10 +8,13 @@
                     <a class="nhsuk-footer__list-item-link" href="https://www.leadershipacademy.nhs.uk/accessibility/">Accessibility</a>
                 </li>
                 <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
-                    <a class="nhsuk-footer__list-item-link" href="https://www.leadershipacademy.nhs.uk/terms-and-conditions/">Terms & Conditions</a>
+                    <a class="nhsuk-footer__list-item-link" href="https://www.leadershipacademy.nhs.uk/terms-and-conditions/">Terms and conditions</a>
                 </li>
                 <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
-                    <a class="nhsuk-footer__list-item-link" href="https://www.leadershipacademy.nhs.uk/privacy/">Privacy</a>
+                    <a class="nhsuk-footer__list-item-link" href="https://www.leadershipacademy.nhs.uk/privacy/">Privacy and cookies</a>
+                </li>
+                <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
+                    <a class="nhsuk-footer__list-item-link" href="https://leadershipacademy.nhs.uk/contact-us/">Contact us</a>
                 </li>
             </ul>
             <p class="nhsuk-body-s">

@@ -33,7 +33,4 @@
         </nav>
 
     </div>
-
-    @include('elements.nav')
-
 </header>
