@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Framework;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -17,12 +18,12 @@ class FrameworkFactory extends Factory
      */
     public function definition(): array
     {
-        $name = $this->faker->sentence(3);
         return [
-            'name' => $name,
-            'slug' => Str::kebab($name),
-            'description' => $this->faker->sentence(10),
-            'instructions' => $this->faker->sentence(10),
+            'name'        => $this->faker->text(100),   // returns "Leadership Framework"
+            'slug'        => $this->faker->slug(),
+            'description' => $this->faker->paragraph(),
+            'instructions'=> $this->faker->text(100),
         ];
+
     }
 }

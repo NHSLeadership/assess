@@ -6,46 +6,46 @@ use Livewire\Livewire;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
-test('login screen can be rendered', function () {
+test('login screen redirects to Auth0', function () {
     $response = $this->get('/login');
 
-    $response->assertStatus(200);
+    // Auth0 usually redirects to its hosted login page
+    $response->assertStatus(302);
+    $response->assertRedirectContains('leadershipacademy.nhs.uk');
 });
 
-test('users can authenticate using the login screen', function () {
-    $user = User::factory()->create();
+test('admin users can authenticate via Auth0', function () {
+    $user = new User([
+        'id' => 'auth0|123456',
+        'email' => 'test@example.com',
+        'name' => 'Test User',
+        'user_id' => 'TestUser',
+    ]);
 
-    $response = Livewire::test(Login::class)
-        ->set('email', $user->email)
-        ->set('password', 'password')
-        ->call('login');
 
-    $response
-        ->assertHasNoErrors()
-        ->assertRedirect(route('dashboard', absolute: false));
+    Livewire::actingAs($user);
 
+    $response = $this->get('/admin');
+
+    $response->assertStatus(200);
     $this->assertAuthenticated();
 });
 
-test('users can not authenticate with invalid password', function () {
-    $user = User::factory()->create();
 
-    $response = Livewire::test(Login::class)
-        ->set('email', $user->email)
-        ->set('password', 'wrong-password')
-        ->call('login');
-
-    $response->assertHasErrors('email');
-
-    $this->assertGuest();
-});
 
 test('users can logout', function () {
-    $user = User::factory()->create();
+    $user = new User([
+        'id' => 'auth0|123456',
+        'email' => 'test@example.com',
+        'name' => 'Test User',
+        'user_id' => 'TestUser',
+    ]);
 
-    $response = $this->actingAs($user)->post('/logout');
+    $this->actingAs($user);
 
-    $response->assertRedirect('/');
+    $response = $this->get('/logout');   // <-- GET instead of POST
+
+    $response->assertRedirectContains('leadershipacademy.nhs.uk/v2/logout');
 
     $this->assertGuest();
 });

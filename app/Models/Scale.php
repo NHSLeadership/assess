@@ -22,6 +22,6 @@ class Scale extends Model
 
     public function questions(): HasMany
     {
-        return $this->hasMany(Node::class);
+        return $this->hasMany(Question::class);
     }
 }

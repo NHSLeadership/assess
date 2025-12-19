@@ -17,7 +17,11 @@ class ResponseFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'question_id' => $this->faker->numberBetween(1000, 999999),
+            'assessment_id' => $this->faker->numberBetween(1000, 999999),
+            'rater_id' => $this->faker->numberBetween(1000, 999999),
+            'scale_option_id' => $this->faker->optional()->numberBetween(1000, 999999),
+            'textarea' => $this->faker->optional()->paragraph(),
         ];
     }
 }

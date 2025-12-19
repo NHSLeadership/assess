@@ -17,7 +17,12 @@ class ScaleOptionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'id' => $this->faker->unique()->numberBetween(1, 999999),
+            'scale_id' => $this->faker->numberBetween(1000, 999999),
+            'label' => $this->faker->word(),
+            'value' => $this->faker->numberBetween(1, 10),
+            'order' => $this->faker->numberBetween(1, 10),
+            'description' => $this->faker->optional()->sentence(),
         ];
     }
 }

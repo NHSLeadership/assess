@@ -17,7 +17,10 @@ class NodeFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'id' => $this->faker->unique()->numberBetween(1000, 999999), // if your PK is UUID
+            'node_type_id' => $this->faker->unique()->numberBetween(1000, 999999),
+            'name' => $this->faker->name(),
+            'description' => $this->faker->text(),
         ];
     }
 }

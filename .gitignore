@@ -13,6 +13,7 @@
 .DS_Store
 .idea
 .env
+.env.testing
 .phpunit.result.cache
 .phpunit.cache
 .scribe

@@ -17,7 +17,9 @@ class QuestionVariantFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'question_id' => $this->faker->numberBetween(1000, 999999),
+            'text' => $this->faker->text(),
+            'priority' => $this->faker->numberBetween(1, 10),
         ];
     }
 }
