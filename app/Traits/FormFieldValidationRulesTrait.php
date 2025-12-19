@@ -11,7 +11,7 @@ trait FormFieldValidationRulesTrait
         'checkbox' => ['sometimes', 'array'],
         'select' => ['numeric'],
         'text' => ['max:255'],
-        'textarea' => ['max:2000'],
+        'textarea' => ['max:65,535' ],
     ];
 
     public function getRulesForType($question = null): array
