@@ -5,7 +5,7 @@ namespace App\Livewire;
 use App\Models\Assessment;
 use App\Models\Node;
 use App\Traits\FormFieldValidationRulesTrait;
-use App\Traits\RedirectAssessment;
+use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -18,7 +18,7 @@ class Assessments extends Component
     use FormFieldValidationRulesTrait;
     use WithPagination;
     use UserTrait;
-    use RedirectAssessment;
+    use AssessmentHelperTrait;
 
     public ?int $assessmentId;
 
@@ -38,18 +38,8 @@ class Assessments extends Component
         }
 
         //Redirect already submitted assignments to summary page
-        $this->redirectIfSubmittedOrFinished($this->assessmentId, $this->assessment?->framework?->id, $this->edit);
+        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment?->framework?->id, $this->edit);
 
-    }
-
-    #[Computed]
-    public function assessment(): ?Assessment
-    {
-        if (empty($this->assessmentId)) {
-            return null;
-        }
-
-        return Assessment::find($this->assessmentId);
     }
 
     #[Computed]

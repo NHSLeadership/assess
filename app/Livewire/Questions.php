@@ -19,7 +19,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
-use App\Traits\RedirectAssessment;
+use App\Traits\AssessmentHelperTrait;
 
 class Questions extends Component
 {
@@ -27,7 +27,7 @@ class Questions extends Component
     use WithPagination;
     use WithoutUrlPagination;
     use UserTrait;
-    use RedirectAssessment;
+    use AssessmentHelperTrait;
 
     public $assessmentId;
 
@@ -42,12 +42,12 @@ class Questions extends Component
 
     public function mount(): void
     {
-        $this->redirectIfSubmittedOrFinished($this->assessmentId, $this->assessment?->framework->id, $this->edit);
+        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment?->framework->id, $this->edit);
 
         /**
          * Pre-populate forms with defaults
          */
-        $this->data = $this->responses()->toArray();
+        $this->data = $this->responses()?->toArray();
 
         if (empty($this->data) && $this->nodeQuestions()) {
             foreach ($this->nodeQuestions() as $question) {
@@ -112,19 +112,13 @@ class Questions extends Component
     }
 
     #[Computed]
-    public function assessment(): Assessment
-    {
-        return Assessment::find($this->assessmentId);
-    }
-
-    #[Computed]
-    public function responses(): Collection
+    public function responses(): ?Collection
     {
         $assessment = $this->user->assessments()
             ->where('id', $this->assessmentId)
             ->with('responses.question')
             ->first();
-        return $assessment->responses
+        return $assessment?->responses
             ->mapWithKeys(function ($response) {
                 $key = $response->question->name;
 

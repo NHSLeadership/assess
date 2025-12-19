@@ -7,6 +7,7 @@ use App\Models\Framework;
 use App\Models\FrameworkVariantAttribute;
 use App\Models\Node;
 use App\Notifications\AssessmentCompleted as AssessmentCompletedNotification;
+use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
@@ -15,6 +16,7 @@ use Livewire\Component;
 class Summary extends Component
 {
     use UserTrait;
+    use AssessmentHelperTrait;
 
     public ?int $frameworkId = null;
     public ?int $assessmentId = null;
@@ -35,14 +37,18 @@ class Summary extends Component
         return Framework::all();
     }
 
-    #[Computed]
-    public function assessment(): ?Assessment
+    public function continueAssessment()
     {
-        if (empty($this->assessmentId)) {
-            return null;
+        $node = $this->getAssessmentResumeNode($this->assessmentId);
+        if (!empty($node)) {
+            // There are unanswered questions, so we should resume there
+            $this->redirect(route('questions', [
+                'assessmentId' => $this->assessmentId,
+                'nodeId' => $node?->id
+            ]));
+        } else {
+            $this->redirect(route('frameworks'));
         }
-
-        return Assessment::find($this->assessmentId);
     }
 
     #[Computed]
