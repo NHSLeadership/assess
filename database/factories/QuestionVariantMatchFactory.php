@@ -17,7 +17,9 @@ class QuestionVariantMatchFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'question_variant_id' => $this->faker->numberBetween(1000, 999999),
+            'framework_variant_attribute_id' => $this->faker->numberBetween(1000, 999999),
+            'framework_variant_option_id' => $this->faker->numberBetween(1000, 999999),
         ];
     }
 }

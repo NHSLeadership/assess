@@ -17,7 +17,11 @@ class SignpostFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'framework_variant_option_id' => $this->faker->numberBetween(1000, 999999),
+            'node_id' => $this->faker->numberBetween(1000, 999999),
+            'min_value' => $this->faker->numberBetween(1, 50),
+            'max_value' => $this->faker->numberBetween(51, 100),
+            'guidance' => $this->faker->text(),
         ];
     }
 }

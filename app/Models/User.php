@@ -27,7 +27,6 @@ class User extends Model implements
     use Authenticatable;
     use Authorizable;
     use HasFactory;
-    use HasFactory;
     use Notifiable;
 
     protected $primaryKey = 'user_id';

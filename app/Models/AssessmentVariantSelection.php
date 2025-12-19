@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AssessmentVariantSelection extends Pivot
 {
+    use HasFactory;
+
     protected $table = 'assessment_variant_selections';
 
     protected $fillable = [
