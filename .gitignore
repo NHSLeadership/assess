@@ -10,6 +10,8 @@
 /storage/*.key
 /storage/framework/views
 /vendor
+/coverage
+/public/coverage
 .DS_Store
 .idea
 .env
