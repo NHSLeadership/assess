@@ -15,7 +15,7 @@ class FrameworkSeeder extends Seeder
         Framework::firstOrCreate([
             'name'        => 'Management and Leadership framework',
             'slug'        => 'mlf',
-            'description' => 'The framework consists of a code of practice, standards and competencies at all levels from entry level manager to executive, and a learning and development curriculum.',
+            'description' => '<p>The framework consists of a code of practice, standards and competencies at all levels from entry level manager to executive, and a learning and development curriculum.</p>',
             'instructions' => '<h2>Welcome to your NHS Management and Leadership assessment</h2><p>In this assessment you will be presented with a series of questions.</p><p>To get the most value from this exercise answer these questions as accurately and honestly as you can.</p>',
         ]);
     }
