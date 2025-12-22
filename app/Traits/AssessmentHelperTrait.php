@@ -21,7 +21,7 @@ trait AssessmentHelperTrait
      *
      * @return Redirector|RedirectResponse|null
      */
-    protected function redirectIfSubmittedOrFinished(?Assessment $assessment, ?int $frameworkId, ?string $edit = null): Redirector|RedirectResponse|null
+    public function redirectIfSubmittedOrFinished(?Assessment $assessment, ?int $frameworkId, ?string $edit = null): Redirector|RedirectResponse|null
     {
         if (!$assessment) {
             return null;
@@ -53,7 +53,7 @@ trait AssessmentHelperTrait
      * @param int|null $assessmentId
      * @return Redirector|RedirectResponse|null
      */
-    protected function redirectIfInvalidAssessment(?int $frameworkId, ?int $assessmentId): Redirector|RedirectResponse|null
+    public function redirectIfInvalidAssessment(?int $frameworkId, ?int $assessmentId): Redirector|RedirectResponse|null
     {
         // Validate frameworkId
         if (
