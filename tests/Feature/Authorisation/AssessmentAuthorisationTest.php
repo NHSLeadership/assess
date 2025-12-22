@@ -1,5 +1,9 @@
 <?php
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
+
 beforeEach(function () {
     // A test user that mocks Auth0 permissions
     $this->user = new class extends \App\Models\User {
