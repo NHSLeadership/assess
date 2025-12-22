@@ -199,6 +199,10 @@ class Questions extends Component
         $questions = $this->nodeQuestions()?->keyBy('name');
         foreach ($this->data as $name => $values) {
             if (isset($questions[$name])) {
+                if ($questions[$name]['response_type'] === ResponseType::TYPE_TEXTAREA->value
+                    && empty(trim($values))) {
+                    continue; // skip textarea question if empty.
+                }
                 UserResponseService::updateOrCreate(
                     $values,
                     $questions[$name],
