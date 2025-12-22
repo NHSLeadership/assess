@@ -15,6 +15,7 @@ class FrameworkVariantAttribute extends Model
         'framework_id',
         'key',
         'label',
+        'hint_text',
         'order'
     ];
 

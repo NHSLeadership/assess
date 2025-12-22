@@ -17,6 +17,7 @@ class FrameworkVariantAttributeSeeder extends Seeder
                 'framework_id' => 1,
                 'key' => 'stage',
                 'label' => 'Career stage',
+                'hint_text' => '<p>This framework is contextual to your current role. Please select the stage you operate at. If you need assistance selecting this, please visit <a href="https://mlframework.leadershipacademy.nhs.uk">mlframework.leadershipacademy.nhs.uk</a> or speak with your line manager.</p>',
                 'order' => 1,
             ]
         );

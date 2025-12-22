@@ -21,6 +21,7 @@ class FrameworkVariantAttributeFactory extends Factory
             'framework_id' => $this->faker->numberBetween(1000, 999999),
             'key' => $this->faker->word(),
             'label' => $this->faker->title(),
+            'hint_text' => $this->faker->sentence(),
             'order' => $this->faker->numberBetween(1, 100),
         ];
     }
