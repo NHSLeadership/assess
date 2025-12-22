@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Frameworks\Resources\FrameworkVariantAttributes\Schemas;
 
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
@@ -20,10 +21,9 @@ class FrameworkVariantAttributeForm
                     ->required(),
                 TextInput::make('label')
                     ->required(),
-                TextInput::make('order')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
+                RichEditor::make('hint_text')
+                    ->columnSpanFull()
+                    ->nullable(),
             ]);
     }
 }
