@@ -13,7 +13,8 @@ test('login screen redirects to Auth0', function () {
 
 test('admin users can authenticate via Auth0', function () {
     $user = new User([
-        'id' => 'auth0|123456',
+        'id' => '123456',
+        'sub' => 'auth0|123456',
         'email' => 'test@example.com',
         'name' => 'Test User',
         'user_id' => 'TestUser',
@@ -32,7 +33,8 @@ test('admin users can authenticate via Auth0', function () {
 
 test('users can logout', function () {
     $user = new User([
-        'id' => 'auth0|123456',
+        'id' => '123456',
+        'sub' => 'auth0|123456',
         'email' => 'test@example.com',
         'name' => 'Test User',
         'user_id' => 'TestUser',
