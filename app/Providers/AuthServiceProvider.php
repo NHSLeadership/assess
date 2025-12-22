@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -20,19 +21,29 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::before(function ($user, $ability) {
-            $auth0Permission = "assessment:{$ability}";
+        Gate::before(function ($user, $ability, $arguments) {
+            // Determine the model name from the arguments
+            $model = $arguments[0] ?? null;
 
-            $permissions = $user->getAuth0Permissions();
-            $hasPermission = array_any(
-                $permissions,
-                fn($permission) => ($permission['permission_name'] ?? null) === $auth0Permission
-            );
-            if (! $hasPermission) {
-                return false;
+            if (! $model) {
+                return null;
             }
 
-            return null;
+            // Convert model class to permission prefix
+            $prefix = Str::camel(class_basename($model));
+
+            // Build the required permission
+            $requiredPermission = "{$prefix}:{$ability}";
+
+            // Check if user has it
+            $permissions = $user->getAuth0Permissions();
+
+            $hasPermission = array_any(
+                $permissions,
+                fn($p) => ($p['permission_name'] ?? null) === $requiredPermission
+            );
+
+            return $hasPermission ? null : false;
         });
     }
 
