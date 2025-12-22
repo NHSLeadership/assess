@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('framework_variant_attributes', function (Blueprint $table) {
-            $table->string('hint_text')->nullable()->after('label');
+            $table->text('hint_text')->nullable()->after('label');
         });
     }
 

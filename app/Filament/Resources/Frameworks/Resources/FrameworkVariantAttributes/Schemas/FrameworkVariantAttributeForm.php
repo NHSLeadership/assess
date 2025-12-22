@@ -22,7 +22,6 @@ class FrameworkVariantAttributeForm
                 TextInput::make('label')
                     ->required(),
                 RichEditor::make('hint_text')
-//                    ->label('Hint Text')
                     ->nullable(),
                 TextInput::make('order')
                     ->required()
