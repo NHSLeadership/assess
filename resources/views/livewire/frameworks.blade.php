@@ -6,7 +6,7 @@
 
             <livewire:alerts />
 
-            <p>{{ $this->framework->description ?? '' }}</p>
+            <p>{!! $this->framework->description ?? '' !!}</p>
 
             <div class="nhsuk-action-link">
                 <a class="nhsuk-action-link__link"

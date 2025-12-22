@@ -5,8 +5,6 @@
 
             <h1 class="nhsuk-heading-xl">{{ $this->framework->name }}</h1>
 
-            <p>{!! $this->framework->description !!}</p>
-
             <livewire:alerts />
 
             @if (!empty($this->frameworks()->variantAttributes))
@@ -17,6 +15,7 @@
                             'class' => $variant->class ?? null,
                             'options_list' => $variant->options->pluck('label', 'id')?->toArray() ?? [],
                             'type' => $variant->type ?? null,
+                            'hints' => [ $variant->hint_text ?? null]
                         ])
                             @slot('hint')
                             @endslot
