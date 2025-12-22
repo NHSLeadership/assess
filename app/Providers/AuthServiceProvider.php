@@ -22,20 +22,24 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::before(function ($user, $ability, $arguments) {
-            // Determine the model name from the arguments
+            // Determine the model (instance or class name)
             $model = $arguments[0] ?? null;
 
             if (! $model) {
                 return null;
             }
 
-            // Convert model class to permission prefix
-            $prefix = Str::camel(class_basename($model));
+            // Support both: Assessment::class and new Assessment()
+            if (is_string($model)) {
+                $prefix = Str::camel(class_basename($model));
+            } else {
+                $prefix = Str::camel(class_basename($model::class));
+            }
 
             // Build the required permission
             $requiredPermission = "{$prefix}:{$ability}";
 
-            // Check if user has it
+            // Fetch user permissions
             $permissions = $user->getAuth0Permissions();
 
             $hasPermission = array_any(
@@ -43,6 +47,7 @@ class AuthServiceProvider extends ServiceProvider
                 fn($p) => ($p['permission_name'] ?? null) === $requiredPermission
             );
 
+            // If user has the permission return NULL to continue to normal policy (\App\Policies\*) checks
             return $hasPermission ? null : false;
         });
     }

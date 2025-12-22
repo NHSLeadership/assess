@@ -115,7 +115,9 @@ class User extends Model implements
             return [];
         }
 
-        $ttl = config('app.auth0_admin_permission_cache_ttl', 300);
+        $ttl = config('app.auth0_admin_permission_cache_ttl', 300) < 5
+            ? 5
+            : config('app.auth0_admin_permission_cache_ttl', 300);;
 
         return cache()->remember("auth0_permissions_{$this->sub}", $ttl, function () {
             $sdk = app('auth0');
