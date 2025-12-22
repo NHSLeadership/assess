@@ -9,14 +9,6 @@ use Illuminate\Support\Str;
 class AuthServiceProvider extends ServiceProvider
 {
     /**
-     * Register services.
-     */
-    public function register(): void
-    {
-        //
-    }
-
-    /**
      * Bootstrap services.
      */
     public function boot(): void
