@@ -17,6 +17,7 @@
                             'class' => $variant->class ?? null,
                             'options_list' => $variant->options->pluck('label', 'id')?->toArray() ?? [],
                             'type' => $variant->type ?? null,
+                            'hints' => [ $variant->hint_text ?? null]
                         ])
                             @slot('hint')
                             @endslot
