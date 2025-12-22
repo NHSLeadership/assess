@@ -22,7 +22,7 @@ class FrameworkForm
                     ->required(),
                 TextInput::make('slug')
                     ->required(),
-                Textarea::make('description')
+                RichEditor::make('description')
                     ->required()
                     ->columnSpanFull(),
                 RichEditor::make('instructions')
