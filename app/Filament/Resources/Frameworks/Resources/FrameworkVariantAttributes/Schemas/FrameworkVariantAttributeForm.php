@@ -22,11 +22,8 @@ class FrameworkVariantAttributeForm
                 TextInput::make('label')
                     ->required(),
                 RichEditor::make('hint_text')
+                    ->columnSpanFull()
                     ->nullable(),
-                TextInput::make('order')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
             ]);
     }
 }
