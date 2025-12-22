@@ -22,8 +22,6 @@ class Authenticate extends Middleware
             return;
         }
 
-        // TODO: Guards logic once permission is implemented
-
         throw new AuthenticationException(
             'Unauthenticated.',
             $guards,

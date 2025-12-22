@@ -131,5 +131,6 @@ return [
 
     'description'  => env('APP_DESCRIPTION', 'NHS Leadership Self Assessment Tools'),
     'show_node_type_prefix' => env('SHOW_NODE_TYPE_PREFIX', false),
+    'auth0_admin_permission_cache_ttl' => env('AUTH0_ADMIN_PERMISSION_CACHE_TTL', 300),
 
 ];

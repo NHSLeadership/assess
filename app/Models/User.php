@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
+use JsonException;
 
 class User extends Model implements
     AuthenticatableContract,
@@ -104,15 +105,44 @@ class User extends Model implements
     }
 
 
-    public function permissions()
+    /**
+     * Returns Auth0 Permissions for the user
+     * @throws JsonException
+     */
+    public function getAuth0Permissions(): array
     {
-        $sdk = app('auth0');
-        $options = (new RequestOptions)->setPagination(
-            new PaginatedRequest(0, 100)
-        );
-        $response = $sdk->management()->users()->getPermissions($this->sub, $options);
-        if (HttpResponse::wasSuccessful($response)) {
-            return HttpResponse::decodeContent($response);
+        if (!$this->sub) {
+            return [];
         }
+
+        $ttl = config('app.auth0_admin_permission_cache_ttl', 300);
+
+        return cache()->remember("auth0_permissions_{$this->sub}", $ttl, function () {
+            $sdk = app('auth0');
+
+            $all = [];
+            $page = 0;
+
+            do {
+                $options = (new RequestOptions)->setPagination(
+                    new PaginatedRequest($page, 100)
+                );
+
+                $response = $sdk->management()->users()->getPermissions($this->sub, $options);
+
+                if (! HttpResponse::wasSuccessful($response)) {
+                    break;
+                }
+
+                $chunk = HttpResponse::decodeContent($response);
+
+                $all = array_merge($all, $chunk);
+
+                $page++;
+            } while (count($chunk) === 100);
+
+            return $all;
+        });
     }
+
 }
