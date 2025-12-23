@@ -11,7 +11,7 @@
     @if ($errors->any() || session()->has('error'))
         <div class="nhsuk-error-summary" role="alert" tabindex="-1">
             <h2 class="nhsuk-error-summary__title">
-                {{ __('headers.generic.error') }} <span class="nhsuk-u-visually-hidden">:</span>
+                {{ $heading ?? __('alerts.errors.title') }} <span class="nhsuk-u-visually-hidden">:</span>
             </h2>
             <div class="nhsuk-error-summary__body">
                 @if ($errors->any())
@@ -50,7 +50,7 @@
     @endif
 
     {{-- Event-driven alerts via dispatch/emit --}}
-    @if ($type && $message)
+    @if (!empty($type) && !empty($message))
         <div x-data="{ show: true }"
              x-init="setTimeout(() => { show = false; $wire.clearAlert() }, 5000)"
              x-show="show"

@@ -13,10 +13,12 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\Attributes\Title;
+use App\Traits\AssessmentHelperTrait;
 
 class Frameworks extends Component
 {
     use UserTrait;
+    use AssessmentHelperTrait;
 
     public ?string $frameworkId = null;
 
