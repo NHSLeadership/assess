@@ -157,6 +157,7 @@ trait AssessmentHelperTrait
 
             // Otherwise → block starting a new one
             session()->flash('error', __('alerts.errors.assessment-in-progress'));
+            session()->flash('error-title', __('alerts.errors.assessment-in-progress-title'));
             return redirect()->route('frameworks');
         }
 
@@ -169,6 +170,7 @@ trait AssessmentHelperTrait
             'months' => $months,
             'newDate' => $newDate,
         ]));
+        session()->flash('error-title', __('alerts.errors.assessment-not-permitted-now-title'));
 
         return redirect()->route('frameworks');
     }

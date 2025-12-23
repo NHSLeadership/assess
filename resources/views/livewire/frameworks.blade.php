@@ -4,9 +4,6 @@
         @if ($this->framework)
             <h1>{{ $this->framework->name ?? __('Framework dashboard') }}</h1>
 
-
-            @include('livewire.alerts')
-
             <p>{!! $this->framework->description ?? '' !!}</p>
 
             <div class="nhsuk-action-link">
@@ -23,6 +20,8 @@
         @else
             <p>No frameworks found.</p>
         @endif
+
+        @include('livewire.alerts')
 
         @if ($this->assessments()?->count())
             <h3>{{ __('Assessments') }}</h3>

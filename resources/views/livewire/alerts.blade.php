@@ -11,7 +11,7 @@
     @if ($errors->any() || session()->has('error'))
         <div class="nhsuk-error-summary" role="alert" tabindex="-1">
             <h2 class="nhsuk-error-summary__title">
-                {{ $heading ?? __('alerts.errors.title') }} <span class="nhsuk-u-visually-hidden">:</span>
+                {{ session('error-title') ?? $heading ?? __('alerts.errors.title') }} <span class="nhsuk-u-visually-hidden">:</span>
             </h2>
             <div class="nhsuk-error-summary__body">
                 @if ($errors->any())
