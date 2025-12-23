@@ -17,12 +17,47 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-
-test('mount sets default framework when none is provided', function () {
-    $user = User::factory()->make([
+// Centralized helpers to reduce duplication across tests
+function authUser(array $overrides = [])
+{
+    return User::factory()->make(array_merge([
         'preferred_username' => 'test-user',
         'user_id' => '1000000000',
+    ], $overrides));
+}
+
+function raterForUser(User $user, array $overrides = [])
+{
+    return Rater::factory()->create(array_merge([
+        'user_id' => $user->user_id,
+    ], $overrides));
+}
+
+function createFrameworkWithNodeAndQuestions(int $questionCount = 2)
+{
+    $framework = Framework::factory()->create();
+    $nodeType = NodeType::factory()->create();
+    $node     = Node::factory()->create([
+        'framework_id' => $framework->id,
+        'node_type_id' => $nodeType->id,
     ]);
+
+    $questions = collect();
+    for ($i = 0; $i < $questionCount; $i++) {
+        $questions->push(Question::factory()->create([
+            'node_id' => $node->id,
+        ]));
+    }
+
+    $scale       = Scale::factory()->create();
+    $scaleOption = ScaleOption::factory()->create(['scale_id' => $scale->id]);
+
+    return compact('framework', 'nodeType', 'node', 'questions', 'scale', 'scaleOption');
+}
+
+
+test('mount sets default framework when none is provided', function () {
+    $user = authUser();
     Framework::factory()->count(2)->create();
     Livewire::actingAs($user)
         ->test(\App\Livewire\Frameworks::class)
@@ -35,10 +70,7 @@ test('mount keeps provided frameworkId', function () {
     $framework2 = Framework::factory()->create();
 
     // Create a real authenticated user
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = authUser();
 
     // Pass frameworkB explicitly
     Livewire::actingAs($user)
@@ -52,10 +84,7 @@ test('framework computed property returns the correct framework', function () {
     $framework2 = Framework::factory()->create();
 
     // Create authenticated user
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = authUser();
 
     // Test component
     Livewire::actingAs($user)
@@ -69,10 +98,7 @@ test('framework computed property returns the correct framework', function () {
 
 test('framework computed property returns null for invalid frameworkId', function () {
     // Create a real authenticated user
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = authUser();
 
     $invalidId = 999999;
 
@@ -86,10 +112,7 @@ test('framework computed property returns null for invalid frameworkId', functio
 });
 
 test('frameworks computed property returns all frameworks', function () {
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = authUser();
 
     // Create 3 frameworks
     Framework::factory()->count(3)->create();
@@ -142,10 +165,7 @@ test('assessments computed property returns only assessments for the logged-in u
 
 test('assessments computed property filters by frameworkId', function () {
     // Create authenticated user
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = authUser();
 
     // Create two frameworks
     $frameworkA = Framework::factory()->create();
@@ -175,29 +195,15 @@ test('assessments computed property filters by frameworkId', function () {
 
 test('assessments are ordered by last response date descending', function () {
     // Create authenticated user
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
-    $rater = Rater::factory()->create([
-        'user_id' => $user->user_id,
-    ]);
+    $user = authUser();
+    $rater = raterForUser($user);
 
-    // Create framework
-    $framework = Framework::factory()->create();
-    $nodeType = NodeType::factory()->create();
-    $node     = Node::factory()->create([
-        'framework_id' => $framework->id,
-        'node_type_id' => $nodeType->id,
-    ]);
+    // Create framework + questions graph
+    $setup = createFrameworkWithNodeAndQuestions(1);
+    $framework = $setup['framework'];
+    $question = $setup['questions']->first();
+    $scaleOption = $setup['scaleOption'];
 
-    $question = Question::factory()->create([
-        'node_id' => $node->id,
-    ]);
-
-    // Scale + Option
-    $scale       = Scale::factory()->create();
-    $scaleOption = ScaleOption::factory()->create(['scale_id' => $scale->id]);
     // Create two assessments for the same user
     $assessmentOld = Assessment::factory()->for($user)->create([
         'framework_id' => $framework->id,
@@ -237,33 +243,16 @@ test('assessments are ordered by last response date descending', function () {
 });
 
 test('assessments include responses relationship', function () {
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = authUser();
 
-    $rater = Rater::factory()->create([
-        'user_id' => $user->user_id,
-    ]);
+    $rater = raterForUser($user);
 
-    // Create framework
-    $framework = Framework::factory()->create();
-    $nodeType = NodeType::factory()->create();
-    $node     = Node::factory()->create([
-        'framework_id' => $framework->id,
-        'node_type_id' => $nodeType->id,
-    ]);
-
-    $question1 = Question::factory()->create([
-        'node_id' => $node->id,
-    ]);
-    $question2 = Question::factory()->create([
-        'node_id' => $node->id,
-    ]);
-
-    // Scale + Option
-    $scale       = Scale::factory()->create();
-    $scaleOption = ScaleOption::factory()->create(['scale_id' => $scale->id]);
+    // Create framework + questions graph
+    $setup = createFrameworkWithNodeAndQuestions(2);
+    $framework = $setup['framework'];
+    $question1 = $setup['questions']->get(0);
+    $question2 = $setup['questions']->get(1);
+    $scaleOption = $setup['scaleOption'];
 
     // Create an assessment
     $assessment = Assessment::factory()->for($user)->create([
@@ -306,10 +295,7 @@ test('assessments include responses relationship', function () {
 });
 
 test('displayAssessmentDate uses submitted_at when present', function () {
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = authUser();
 
     // Create framework
     $framework = Framework::factory()->create();
@@ -333,50 +319,25 @@ test('displayAssessmentDate uses submitted_at when present', function () {
 });
 
 test('displayAssessmentDate uses latest response date when submitted_at is null', function () {
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
-
-    // Create framework
-    $framework = Framework::factory()->create();
-
-    // Create assessment with NO submitted_at
-    $assessment = Assessment::factory()->for($user)->create([
-        'framework_id' => $framework->id,
-        'submitted_at' => null,
-    ]);
+    $user = authUser();
 
     // Create two responses with different timestamps
     $older = Carbon::parse('2024-01-10 09:00:00');
     $newer = Carbon::parse('2024-01-20 14:45:00');
 
-    $rater = Rater::factory()->create([
-        'user_id' => $user->user_id,
-    ]);
+    $rater = raterForUser($user);
 
-    // Create framework
-    $framework = Framework::factory()->create();
-    $nodeType = NodeType::factory()->create();
-    $node     = Node::factory()->create([
-        'framework_id' => $framework->id,
-        'node_type_id' => $nodeType->id,
-    ]);
+    // Create framework + questions graph
+    $setup = createFrameworkWithNodeAndQuestions(2);
+    $framework = $setup['framework'];
+    $question1 = $setup['questions']->get(0);
+    $question2 = $setup['questions']->get(1);
+    $scaleOption = $setup['scaleOption'];
 
-    $question1 = Question::factory()->create([
-        'node_id' => $node->id,
-    ]);
-    $question2 = Question::factory()->create([
-        'node_id' => $node->id,
-    ]);
-
-    // Scale + Option
-    $scale       = Scale::factory()->create();
-    $scaleOption = ScaleOption::factory()->create(['scale_id' => $scale->id]);
-
-    // Create an assessment
+    // Create assessment with NO submitted_at
     $assessment = Assessment::factory()->for($user)->create([
         'framework_id' => $framework->id,
+        'submitted_at' => null,
     ]);
 
     // Add responses
@@ -408,10 +369,7 @@ test('displayAssessmentDate uses latest response date when submitted_at is null'
 
 test('changing frameworkId refreshes framework and assessments', function () {
     // Create authenticated user
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = authUser();
 
     // Create two frameworks
     $frameworkA = Framework::factory()->create();
@@ -449,10 +407,7 @@ test('changing frameworkId refreshes framework and assessments', function () {
 
 test('mount loads the correct framework when frameworkId is passed', function () {
     // Create authenticated user
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = authUser();
 
     // Create two frameworks
     $frameworkA = Framework::factory()->create();
@@ -472,10 +427,7 @@ test('mount loads the correct framework when frameworkId is passed', function ()
 
 test('mount sets frameworkId to the first framework when none is provided', function () {
     // Create authenticated user
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = authUser();
 
     // Create frameworks
     Framework::factory()->create();   // this will be Framework::first()
@@ -494,10 +446,7 @@ test('mount sets frameworkId to the first framework when none is provided', func
 
 test('frameworks list is always available', function () {
     // Create authenticated user
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = authUser();
 
     // Create multiple frameworks
     $frameworks = Framework::factory()->count(3)->create();
@@ -519,10 +468,7 @@ test('frameworks list is always available', function () {
 
 test('framework computed property returns the correct model for the selected frameworkId', function () {
     // Create authenticated user
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = authUser();
 
     // Create frameworks
     $frameworkA = Framework::factory()->create();
@@ -545,10 +491,7 @@ test('framework computed property returns the correct model for the selected fra
 
 test('assessments computed property returns only assessments for the selected framework', function () {
     // Create authenticated user
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = authUser();
 
     // Create two frameworks
     $frameworkA = Framework::factory()->create();
