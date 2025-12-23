@@ -129,4 +129,10 @@ class Frameworks extends Component
     {
         return view('livewire.frameworks');
     }
+
+    public function startNewAssessment()
+    {
+        //Redirect if not permitted to do an assessment for this framework now
+        $this->redirectIfAssessmentNotPermitted($this->frameworkId);
+    }
 }
