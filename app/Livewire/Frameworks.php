@@ -130,9 +130,42 @@ class Frameworks extends Component
         return view('livewire.frameworks');
     }
 
-    public function startNewAssessment()
+    public function startNewAssessment(): void
     {
-        //Redirect if not permitted to do an assessment for this framework now
-        $this->redirectIfAssessmentNotPermitted($this->frameworkId);
+        $months = (int) config('app.assessment_min_interval_months');
+        $latest = $this->getLatestAssessmentForFramework($this->frameworkId);
+
+        // No assessments at all → allowed
+        if (! $latest) {
+            $this->redirect(route('instructions', [
+                'frameworkId' => $this->frameworkId,
+            ]));
+            return;
+        }
+
+        // Draft exists → block
+        if (is_null($latest->submitted_at)) {
+            session()->flash('error', __('alerts.errors.assessment-in-progress'));
+            session()->flash('error-title', __('alerts.errors.assessment-in-progress-title'));
+            return;
+        }
+
+        // Completed assessment → check cooldown
+        $cooldownEnds = $latest->submitted_at->clone()->addMonths($months);
+
+        if ($cooldownEnds->isFuture()) {
+            session()->flash('error', __('alerts.errors.assessment-not-permitted-now', [
+                'months' => $months,
+                'newDate' => $cooldownEnds->format('j F Y'),
+            ]));
+            session()->flash('error-title', __('alerts.errors.assessment-not-permitted-now-title'));
+            return;
+        }
+
+        // Completed and cooldown passed → allowed
+        $this->redirect(route('instructions', [
+            'frameworkId' => $this->frameworkId,
+        ]));
     }
+
 }

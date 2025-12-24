@@ -14,6 +14,7 @@ use App\Models\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use function Pest\Laravel\actingAs;
 
 uses(RefreshDatabase::class);
 
@@ -537,4 +538,37 @@ test('assessments computed property returns only assessments for the selected fr
 
             expect($ids)->toEqual([$assessmentB->id]);
         });
+});
+
+it('allows starting when no assessments exist', function () {
+    $user = authUser();
+    actingAs($user);
+
+    $framework = Framework::factory()->create();
+
+    Livewire::test(Frameworks::class, [
+        'frameworkId' => $framework->id,
+    ])
+        ->call('startNewAssessment')
+        ->assertRedirect(route('instructions', [
+            'frameworkId' => $framework->id,
+        ]));
+});
+
+it('blocks starting when a draft exists', function () {
+    $user = authUser();
+    actingAs($user);
+
+    $framework = Framework::factory()->create();
+
+    Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id'      => $user->user_id,
+        'submitted_at' => null,
+    ]);
+
+    Livewire::test(Frameworks::class, [
+        'frameworkId' => $framework->id,
+    ])
+        ->assertNoRedirect();
 });
