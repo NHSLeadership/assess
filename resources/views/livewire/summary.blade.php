@@ -25,16 +25,31 @@
                 <ul class="nhsuk-task-list nhsuk-list--border">
                     @foreach ($this->responses?->where('question.node_id', $node->id) as $response)
                         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link nhsuk-u-padding-left-2">
-                            <div class="nhsuk-task-list__name-and-hint">
-                                <a href="#" wire:click.prevent="editAnswer({{ $response->question?->node?->id ?? '' }})" class="nhsuk-link nhsuk-task-list__link">
-                                    {!! $response->question->title ?? '' !!}
-                                    <span class="nhsuk-u-visually-hidden">Click to edit this answer</span>
-                                </a>
+                            <div class="nhsuk-task-list__name-and-hint nhsuk-u-width-three-quarters">
+                                @if(!empty($response?->assessment?->submitted_at))
+                                    <strong>{!! $response->question->title ?? '' !!}</strong>
+                                    <br>
+                                    {!! \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $response->question->id) ?? $response->question?->hint !!}
+                                @else
+                                    <a href="#" wire:click.prevent="editAnswer({{ $response->question?->node?->id ?? '' }})" class="nhsuk-link nhsuk-task-list__link">
+                                        <strong>{!! $response->question->title ?? '' !!}</strong>
+                                        <br>
+                                        {!! \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $response->question->id) ?? $response->question?->hint !!}
+                                        <span class="nhsuk-u-visually-hidden">Click to edit this answer</span>
+                                    </a>
+                                @endif
+                                @if(!empty($response?->question?->response_type) && ($response?->question?->response_type === \App\Enums\ResponseType::TYPE_TEXTAREA->value))
+                                    <div class="nhsuk-task-list__hint">
+                                        {{ $response?->textarea ?? '' }}
+                                    </div>
+                                @endif
                             </div>
                             <div class="nhsuk-task-list__status">
-                                <strong class="nhsuk-tag nhsuk-tag--blue">
-                                    {{ $response->scaleOption->label ?? '' }}
-                                </strong>
+                                @if(!empty($response?->question?->response_type) && ($response?->question?->response_type === \App\Enums\ResponseType::TYPE_SCALE->value))
+                                    <strong class="nhsuk-tag nhsuk-tag--blue">
+                                        {{ $response->scaleOption->label ?? '' }}
+                                    </strong>
+                                @endif
                             </div>
                         </li>
                     @endforeach

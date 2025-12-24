@@ -6,6 +6,7 @@ use App\Models\Assessment;
 use App\Models\Framework;
 use App\Models\FrameworkVariantAttribute;
 use App\Models\Node;
+use App\Models\Rater;
 use App\Notifications\AssessmentCompleted as AssessmentCompletedNotification;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
@@ -62,7 +63,7 @@ class Summary extends Component
     #[Computed]
     public function responses(): ?Collection
     {
-        return $this->assessment?->responses()?->get();
+        return $this->assessment()?->responses()->get();
     }
 
     /**
@@ -116,6 +117,19 @@ class Summary extends Component
             $this->dispatch('scroll-to-top');
             return null;
         }
+    }
+
+    #[Computed]
+    public function rater()
+    {
+        if (empty($this->assessmentId) || empty($this->user()?->user_id)) {
+            return null;
+        }
+        return Rater::where('user_id', $this->user()?->user_id)
+            ->whereHas('assessments', function ($q) {
+                $q->where('assessments.id', $this->assessmentId);
+            })
+            ->first();
     }
 
     public function render()
