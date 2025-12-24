@@ -24,27 +24,48 @@
                 @if(!empty($this->headingHierarchy()))
                     @foreach ($this->headingHierarchy() as $item)
                         <{{ $item['headingTag'] }} class="{{ $item['headingClass'] }} nhsuk-u-margin-bottom-2">
-                        <span class="nhsuk-tag--{{ $item['colour'] }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">
-                            {{ config('app.show_node_type_prefix') && $item['type'] ? $item['type'] . ': ' : '' }} {{ $item['name'] }}
-                        </span>
+                        @if(!empty($item['name']))
+                            <span class="nhsuk-tag--{{ $item['colour'] }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">
+                                {{ config('app.show_node_type_prefix') && !empty($item['type']) ? $item['type'] . ': ' : '' }}
+                                {{ $item['name'] }}
+                            </span>
+                        @endif
                     </{{ $item['headingTag'] }}>
                     @endforeach
                 @else
-                    <h1 class="nhsuk-heading-l nhsuk-u-margin-bottom-2" >
-                        <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">
-                          {{ config('app.show_node_type_prefix') && $node?->parent?->parent?->type?->name ? $node?->parent?->parent?->type?->name . ': ' : '' }} {{ $node?->parent?->parent?->name ?? '' }}
-                        </span>
-                    </h1>
-                    <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">
-                        <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">
-                          {{ config('app.show_node_type_prefix') && $node?->parent?->type?->name ? $node?->parent?->type?->name . ': ' : '' }} {{ $node?->parent?->name ?? '' }}
-                        </span>
-                    </h2>
-                    <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
-                        <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">
-                          {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }} {{ $node->name ?? '' }}
-                        </span>
-                    </h3>
+                    @if(!empty($node?->parent?->parent?->name))
+                        <h1 class="nhsuk-heading-l nhsuk-u-margin-bottom-2" >
+                            <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">
+                                {{ config('app.show_node_type_prefix') && !empty($node?->parent?->parent?->type?->name)
+                                    ? $node->parent->parent->type->name . ': '
+                                    : '' }}
+                                {{ $node->parent->parent->name }}
+                            </span>
+                        </h1>
+                   @endif
+                   @if(!empty($node?->parent?->name))
+                        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">
+                            <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">
+                                {{ config('app.show_node_type_prefix') && !empty($node?->parent?->type?->name)
+                                    ? $node->parent->type->name . ': '
+                                    : '' }}
+                                {{ $node->parent->name }}
+                            </span>
+                        </h2>
+                    @endif
+
+
+                    @if(!empty($node?->name))
+                        <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
+                            <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">
+                                {{ config('app.show_node_type_prefix') && !empty($node?->type?->name)
+                                    ? $node->type->name . ': '
+                                    : '' }}
+                                {{ $node->name }}
+                            </span>
+                        </h3>
+                    @endif
+
                 @endif
 
                 <p>{!! $currentNode->description ?? $node->description ?? '' !!}</p>

@@ -102,7 +102,8 @@ class Summary extends Component
             $assessment->submitted_at = now();
             $assessment->save();
 
-            $this->user?->notify(new AssessmentCompletedNotification($assessment));
+            // Disable notifications for now.
+            //$this->user?->notify(new AssessmentCompletedNotification($assessment));
 
             return redirect()->route(
                 'assessment-completed', ['assessmentId' => $assessment?->id]
