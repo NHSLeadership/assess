@@ -570,5 +570,59 @@ it('blocks starting when a draft exists', function () {
     Livewire::test(Frameworks::class, [
         'frameworkId' => $framework->id,
     ])
+        ->call('startNewAssessment')
         ->assertNoRedirect();
+});
+
+it('blocks starting when cooldown is active', function () {
+    config(['app.assessment_min_interval_months' => 6]);
+
+    $user = authUser();
+    actingAs($user);
+
+    $framework = Framework::factory()->create();
+
+    $submittedAt = now()->subMonths(2);
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id'      => $user->user_id,
+        'submitted_at' => $submittedAt,
+        'created_at'   => $submittedAt,   // ensure ordering matches
+        'updated_at'   => $submittedAt,
+    ]);
+
+    Livewire::test(Frameworks::class, [
+        'frameworkId' => $framework->id,
+    ])
+        ->call('startNewAssessment')
+        ->assertNoRedirect();
+});
+
+it('allows starting when cooldown has passed', function () {
+    config(['app.assessment_min_interval_months' => 6]);
+
+    $user = authUser();
+    actingAs($user);
+
+    $framework = Framework::factory()->create();
+
+    // Completed 10 months ago → cooldown passed
+    $submittedAt = now()->subMonths(10);
+
+    Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id'      => $user->id,
+        'submitted_at' => $submittedAt,
+        'created_at'   => $submittedAt,
+        'updated_at'   => $submittedAt,
+    ]);
+
+    Livewire::test(Frameworks::class, [
+        'frameworkId' => $framework->id,
+    ])
+        ->call('startNewAssessment')
+        ->assertRedirect(route('instructions', [
+            'frameworkId' => $framework->id,
+        ]));
 });
