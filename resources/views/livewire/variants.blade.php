@@ -5,7 +5,7 @@
 
             <h1 class="nhsuk-heading-xl">{{ $this->framework->name }}</h1>
 
-            <livewire:alerts />
+            @include('livewire.alerts')
 
             @if (!empty($this->frameworks()->variantAttributes))
                 <form wire:submit="store()">

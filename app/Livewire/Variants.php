@@ -49,6 +49,9 @@ class Variants extends Component
             return redirect()->route('frameworks');
         }
 
+        //Redirect if not permitted to do an assessment for this framework now
+        $this->redirectIfAssessmentNotPermitted($this->frameworkId, $this->assessmentId);
+
         //Redirect to summary if already submitted assessment
         $this->redirectIfSubmittedOrFinished($this->assessment(), $this->frameworkId);
 

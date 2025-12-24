@@ -11,6 +11,7 @@ use App\Notifications\AssessmentCompleted as AssessmentCompletedNotification;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
 use Illuminate\Support\Collection;
+use League\Csv\Exception;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -85,16 +86,15 @@ class Summary extends Component
     {
         try {
             $assessment = $this->assessment();
-
             if (! $assessment) {
-                $this->dispatch('alert', type: 'error', message: __('alerts.errors.assessment-not-found'));
+                session()->flash('error', __('alerts.errors.assessment-not-found'));
                 $this->dispatch('scroll-to-top');
                 return null;
 
             }
 
             if (! is_null($assessment->submitted_at)) {
-                $this->dispatch('alert', type: 'error', message: __('alerts.errors.assessment-already-submitted'));
+                session()->flash('error', __('alerts.errors.assessment-already-submitted'));
                 $this->dispatch('scroll-to-top');
                 return null;
             }
@@ -110,11 +110,7 @@ class Summary extends Component
             );
         } catch (\Throwable $e) {
             report($e); // log the error for debugging
-            $this->dispatch(
-                'alert',
-                type: 'error',
-                message: $e->getMessage(),
-            );
+            session()->flash('error', $e->getMessage());
             $this->dispatch('scroll-to-top');
             return null;
         }

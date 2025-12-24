@@ -20,6 +20,9 @@ class FrameworkInstructions extends Component
         $this->frameworkId = $frameworkId;
         $this->assessmentId = $assessmentId;
 
+        //Redirect if not permitted to do an assessment for this framework now
+        $this->redirectIfAssessmentNotPermitted($this->frameworkId, $this->assessmentId);
+
         $this->redirectIfInvalidAssessment($frameworkId, $assessmentId);
     }
 

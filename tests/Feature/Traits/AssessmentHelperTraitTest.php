@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Tests\Support\AssessmentHelperFake;
 use App\Models\Framework;
 use App\Models\Assessment;
@@ -102,4 +104,118 @@ test('redirectIfSubmittedOrFinished redirects when assessment is already submitt
     expect($response->getTargetUrl())->toBe(
         route('summary', ['frameworkId' => $framework->id, 'assessmentId' => $assessment->id])
     );
+});
+
+test('allows starting when no assessments exist', function () {
+    config(['app.assessment_min_interval_months' => 6]);
+
+    $user = User::factory()->make([
+        'email' => 'test@example.com',
+        'user_id' => 1000000000,
+    ]);
+
+    $this->actingAs($user);
+
+    $helper = new AssessmentHelperFake($user);
+
+    expect($helper->userCanStartAssessment(1))->toBeTrue();
+});
+
+test('blocks when a draft exists and user is not continuing it', function () {
+    config(['app.assessment_min_interval_months' => 6]);
+
+    $user = User::factory()->make([
+        'email' => 'test@example.com',
+        'user_id' => 1000000000,
+    ]);
+    $framework = Framework::factory()->create();
+    $this->actingAs($user);
+
+    // Create a draft assessment
+    $draft = Assessment::factory()->create([
+        'user_id' => $user->id,
+        'framework_id' => $framework->id,
+        'submitted_at' => null,
+    ]);
+
+    $helper = new AssessmentHelperFake($user);
+
+    $response = $helper->redirectIfAssessmentNotPermitted($framework->id, null);
+
+    expect($response)->toBeNull();
+});
+
+test('allows continuing the same draft', function () {
+    config(['app.assessment_min_interval_months' => 6]);
+
+    $user = User::factory()->make([
+        'email' => 'test@example.com',
+        'user_id' => 1000000000,
+    ]);
+    $framework = Framework::factory()->create();
+
+    $this->actingAs($user);
+
+    // Create a draft assessment
+    $draft = Assessment::factory()->create([
+        'user_id' => $user->user_id, // IMPORTANT: matches trait logic
+        'framework_id' => $framework->id,
+        'submitted_at' => null,
+    ]);
+
+    $helper = new AssessmentHelperFake($user);
+
+    // User continues the same draft
+    $response = $helper->redirectIfAssessmentNotPermitted(1, $draft->id);
+
+    expect($response)->toBeNull();
+});
+
+test('blocks when cooldown has not passed', function () {
+    config(['app.assessment_min_interval_months' => 6]);
+
+    $user = User::factory()->make([
+        'email' => 'test@example.com',
+        'user_id' => 1000000000,
+    ]);
+
+    $framework = Framework::factory()->create();
+    $this->actingAs($user);
+
+    // Create a submitted assessment 2 months ago (cooldown not passed)
+    $submitted = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+        'framework_id' => $framework->id,
+        'submitted_at' => Carbon::now()->subMonths(2),
+    ]);
+
+    $helper = new AssessmentHelperFake($user);
+
+    $response = $helper->redirectIfAssessmentNotPermitted($framework->id, null);
+    expect($response->getTargetUrl())->toBe(route('frameworks'));
+});
+
+test('allows starting a new assessment when cooldown has passed', function () {
+    config(['app.assessment_min_interval_months' => 6]);
+
+    $user = User::factory()->make([
+        'email' => 'test@example.com',
+        'user_id' => 1000000000,
+    ]);
+
+    $framework = Framework::factory()->create();
+    $this->actingAs($user);
+
+    // Submitted 8 months ago → cooldown passed
+    $submitted = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+        'framework_id' => $framework->id,
+        'submitted_at' => Carbon::now()->subMonths(8),
+    ]);
+
+    $helper = new AssessmentHelperFake($user);
+
+    $response = $helper->redirectIfAssessmentNotPermitted($framework->id, null);
+
+    expect($response)->toBeNull();
 });

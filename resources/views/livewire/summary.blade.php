@@ -1,7 +1,7 @@
 <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
     <div class="nhsuk-grid-column-full">
 
-        <livewire:alerts />
+        @include('livewire.alerts')
 
         @if (!empty($this->framework))
             <h1 class="nhsuk-heading-xl">
@@ -49,6 +49,8 @@
                                     <strong class="nhsuk-tag nhsuk-tag--blue">
                                         {{ $response->scaleOption->label ?? '' }}
                                     </strong>
+                                @else
+                                    {{ $response?->textarea ?? '' }}
                                 @endif
                             </div>
                         </li>

@@ -133,5 +133,75 @@ trait AssessmentHelperTrait
             ->firstOrFail();
     }
 
+    public function redirectIfAssessmentNotPermitted(int $frameworkId, ?int $assessmentId = null): Redirector|RedirectResponse|null
+    {
+        $months = (int) config('app.assessment_min_interval_months');
+        $latest = $this->getLatestAssessmentForFramework($frameworkId);
+
+        if ($this->userCanStartAssessment($frameworkId)) {
+            return null;
+        }
+
+        if (! $latest) {
+            return null;
+        }
+
+        // Case 1: Draft exists
+        // Draft exists
+        if (is_null($latest->submitted_at)) {
+
+            // If user is trying to continue the same draft → allow
+            if ($assessmentId && $assessmentId === $latest->id) {
+                return null;
+            }
+
+            // Otherwise → block starting a new one
+            session()->flash('error', __('alerts.errors.assessment-in-progress'));
+            session()->flash('error-title', __('alerts.errors.assessment-in-progress-title'));
+            return redirect()->route('frameworks');
+        }
+
+        // Case 2: Cooldown applies
+        $newDate = $latest->submitted_at
+            ->addMonths($months)
+            ->format('j F Y');
+
+        session()->flash('error', __('alerts.errors.assessment-not-permitted-now', [
+            'months' => $months,
+            'newDate' => $newDate,
+        ]));
+        session()->flash('error-title', __('alerts.errors.assessment-not-permitted-now-title'));
+
+        return redirect()->route('frameworks');
+    }
+
+
+    public function userCanStartAssessment(int $frameworkId): bool
+    {
+        $months = (int) config('app.assessment_min_interval_months');
+        $latest = $this->getLatestAssessmentForFramework($frameworkId);
+        if (! $latest) {
+            return true;
+        }
+
+        // Draft exists → block
+        if (is_null($latest->submitted_at)) {
+            return false;
+        }
+
+        // Submitted → apply cooldown
+        return $latest->submitted_at
+            ->addMonths($months)
+            ->isPast();
+    }
+
+
+    public function getLatestAssessmentForFramework(int $frameworkId): ?Assessment
+    {
+        return $this->user->assessments()
+            ->where('framework_id', $frameworkId)
+            ->orderByDesc('created_at')
+            ->first();
+    }
 }
 

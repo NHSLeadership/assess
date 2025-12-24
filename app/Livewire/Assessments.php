@@ -37,6 +37,9 @@ class Assessments extends Component
             return redirect()->route('frameworks');
         }
 
+        //Redirect if not permitted to do an assessment for this framework now
+        $this->redirectIfAssessmentNotPermitted($this->assessment?->framework?->id, $this->assessmentId);
+
         //Redirect already submitted assignments to summary page
         $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment?->framework?->id, $this->edit);
 

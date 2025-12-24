@@ -4,13 +4,11 @@
         @if ($this->framework)
             <h1>{{ $this->framework->name ?? __('Framework dashboard') }}</h1>
 
-            <livewire:alerts />
-
             <p>{!! $this->framework->description ?? '' !!}</p>
 
             <div class="nhsuk-action-link">
                 <a class="nhsuk-action-link__link"
-                   href="{{ route('instructions', ['frameworkId' => $this->framework?->id]) }}">
+                   href="#" wire:click.prevent="startNewAssessment()">
                     <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg"
                          viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M0 0h24v24H0z" fill="none"></path>
@@ -22,6 +20,8 @@
         @else
             <p>No frameworks found.</p>
         @endif
+
+        @include('livewire.alerts')
 
         @if ($this->assessments()?->count())
             <h3>{{ __('Assessments') }}</h3>
@@ -79,4 +79,3 @@
 
     </div>
 </div>
-

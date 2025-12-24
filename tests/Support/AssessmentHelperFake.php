@@ -8,15 +8,17 @@ class AssessmentHelperFake
 {
     use AssessmentHelperTrait;
 
+    public $user;
+
+    public function __construct($user = null)
+    {
+        $this->user = $user;
+    }
+
     public ?int $assessmentId = null {
         set {
             $this->assessmentId = $value;
         }
     }
 
-    // Fake user() from UserTrait
-    public function user()
-    {
-        return (object) ['user_id' => 1];
-    }
 }

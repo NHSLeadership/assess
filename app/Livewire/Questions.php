@@ -42,6 +42,9 @@ class Questions extends Component
 
     public function mount(): void
     {
+        //Redirect if not permitted to do an assessment for this framework now
+        $this->redirectIfAssessmentNotPermitted($this->assessment?->framework?->id, $this->assessmentId);
+
         $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment?->framework->id, $this->edit);
 
         /**

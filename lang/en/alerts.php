@@ -13,6 +13,10 @@ return [
         'assessment-initialise' => 'Could not initialise new assessment. Please try again later.',
         'assessment-not-found' => 'Assessment not found.',
         'assessment-already-submitted' => 'This assessment has already been submitted.',
+        'assessment-not-permitted-now' => 'You cannot have more than one assessment in the same framework within a :months month time period. You can start your next one after :newDate.',
+        'assessment-not-permitted-now-title' => 'Framework assessment limit reached',
+        'assessment-in-progress' => 'You cannot start a new assessment for this framework until you finish the one already in progress.',
+        'assessment-in-progress-title' => 'Assessment in progress',
     ],
     'success' => [
         'title' => 'Assessment submitted',
