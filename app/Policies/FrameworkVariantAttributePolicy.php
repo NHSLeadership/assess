@@ -62,4 +62,12 @@ class FrameworkVariantAttributePolicy
     {
         return true;
     }
+
+    /**
+     * Determine whether records can be reordered in a table.
+     */
+    public function reorder(User $user): bool
+    {
+        return true;
+    }
 }
