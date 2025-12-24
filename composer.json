@@ -8,7 +8,7 @@
     "require": {
         "php": "~8.4",
         "filament/filament": "^4.0",
-        "auth0/login": "^7.19",
+        "auth0/login": "^7.20",
         "diglactic/laravel-breadcrumbs": "*",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
