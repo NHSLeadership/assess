@@ -33,10 +33,11 @@
                                 @else
                                     <a href="#" wire:click.prevent="editAnswer({{ $response->question?->node?->id ?? '' }})" class="nhsuk-link nhsuk-task-list__link">
                                         <strong>{!! $response->question->title ?? '' !!}</strong>
-                                        <br>
-                                        {!! \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $response->question->id) ?? $response->question?->hint !!}
-                                        <span class="nhsuk-u-visually-hidden">Click to edit this answer</span>
                                     </a>
+                                    <br>
+                                    {!! \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $response->question->id) ?? $response->question?->hint !!}
+                                    <span class="nhsuk-u-visually-hidden">Click to edit this answer</span>
+
                                 @endif
                                 @if(!empty($response?->question?->response_type) && ($response?->question?->response_type === \App\Enums\ResponseType::TYPE_TEXTAREA->value))
                                     <div class="nhsuk-task-list__hint">
