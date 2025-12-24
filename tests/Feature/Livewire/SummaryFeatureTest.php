@@ -342,3 +342,97 @@ it('returns null when no frameworkId is provided', function () {
     ])
         ->assertSet('framework', null);
 });
+
+it('returns all responses for the assessment', function () {
+
+    foreach ([
+                 \App\Models\Response::class,
+                 \App\Models\Assessment::class,
+                 \App\Models\AssessmentRater::class,
+             ] as $model) {
+        $model::query()->delete();
+    }
+    // User is NOT persisted — using make()
+    $user = User::factory()->make([
+        'preferred_username' => 'test-user',
+        'user_id' => '1000000000',
+    ]);
+
+    $this->be($user);
+
+    // Rater
+    $rater = Rater::factory()->create([
+        'user_id' => $user->user_id,
+    ]);
+
+    // Framework + Assessment
+    $framework = Framework::factory()->create();
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $rater->user_id,
+    ]);
+
+    // Node + Question
+    $nodeType = NodeType::factory()->create();
+    $node = Node::factory()->create([
+        'framework_id' => $framework->id,
+        'node_type_id' => $nodeType->id,
+    ]);
+
+    $question1 = Question::factory()->create([
+        'node_id' => $node->id,
+    ]);
+    $question2 = Question::factory()->create([
+        'node_id' => $node->id,
+    ]);
+
+    // Scale + Option
+    $scale = Scale::factory()->create();
+    $scaleOption = ScaleOption::factory()->create(['scale_id' => $scale->id]);
+
+    // Response for THIS assessment
+    $responseA = Response::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'question_id' => $question1->id,
+        'scale_option_id' => $scaleOption->id,
+    ]);
+
+    // Another response for THIS assessment
+    $responseB = Response::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'question_id' => $question2->id,
+        'scale_option_id' => $scaleOption->id,
+    ]);
+
+    // Response for a DIFFERENT assessment (should NOT appear)
+    $framework1 = Framework::factory()->create();
+    Response::factory()->create([
+        'assessment_id' => Assessment::factory()->create(['framework_id' => $framework1->id, 'user_id' => $rater->user_id,])->id,
+        'rater_id' => $rater->id,
+        'question_id' => $question2->id,
+        'scale_option_id' => $scaleOption->id,
+    ]);
+
+    $component = Livewire::test(Summary::class, [
+        'assessmentId' => $assessment->id,
+        'frameworkId'  => $framework->id,
+    ]);
+    $responses = $component->get('responses');
+    $expectedIds = Response::where('assessment_id', $assessment->id)
+        ->pluck('id')
+        ->sort()
+        ->values()
+        ->toArray();
+
+    $actualIds = collect($component->get('responses'))
+        ->pluck('id')
+        ->sort()
+        ->values()
+        ->toArray();
+
+
+    $this->assertCount(2, $responses);
+    $this->assertSame($expectedIds, $actualIds);
+});
