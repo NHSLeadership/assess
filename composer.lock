@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "38b118d59b2eae3021b19e5a49da0924",
+    "content-hash": "3c4dbd8dcc0db1f6e1b8c92bd8d1d4e9",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -74,16 +74,16 @@
         },
         {
             "name": "auth0/auth0-php",
-            "version": "8.17.0",
+            "version": "8.18.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/auth0/auth0-PHP.git",
-                "reference": "1767d11b3dd7a5c622c034fd22649ed254a7683c"
+                "reference": "0d78289d9ed0028e8832aca664d3c25d164972a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/auth0/auth0-PHP/zipball/1767d11b3dd7a5c622c034fd22649ed254a7683c",
-                "reference": "1767d11b3dd7a5c622c034fd22649ed254a7683c",
+                "url": "https://api.github.com/repos/auth0/auth0-PHP/zipball/0d78289d9ed0028e8832aca664d3c25d164972a1",
+                "reference": "0d78289d9ed0028e8832aca664d3c25d164972a1",
                 "shasum": ""
             },
             "require": {
@@ -167,26 +167,26 @@
             ],
             "support": {
                 "issues": "https://github.com/auth0/auth0-PHP/issues",
-                "source": "https://github.com/auth0/auth0-PHP/tree/8.17.0"
+                "source": "https://github.com/auth0/auth0-PHP/tree/8.18.0"
             },
-            "time": "2025-10-01T08:49:46+00:00"
+            "time": "2025-12-16T12:30:04+00:00"
         },
         {
             "name": "auth0/login",
-            "version": "7.19.0",
+            "version": "7.20.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/auth0/laravel-auth0.git",
-                "reference": "a8cdf1add3dac0b52112abcec3ff84f168444803"
+                "reference": "860aa53925ec71453d45f33d592e9252033b400b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/auth0/laravel-auth0/zipball/a8cdf1add3dac0b52112abcec3ff84f168444803",
-                "reference": "a8cdf1add3dac0b52112abcec3ff84f168444803",
+                "url": "https://api.github.com/repos/auth0/laravel-auth0/zipball/860aa53925ec71453d45f33d592e9252033b400b",
+                "reference": "860aa53925ec71453d45f33d592e9252033b400b",
                 "shasum": ""
             },
             "require": {
-                "auth0/auth0-php": "^8.17",
+                "auth0/auth0-php": "^8.18",
                 "ext-json": "*",
                 "illuminate/contracts": "^11 || ^12",
                 "illuminate/http": "^11 || ^12",
@@ -281,7 +281,7 @@
                 "issues": "https://github.com/auth0/laravel-auth0/issues",
                 "source": "https://github.com/auth0/laravel-auth0"
             },
-            "time": "2025-10-01T11:28:46+00:00"
+            "time": "2025-12-16T14:08:03+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
