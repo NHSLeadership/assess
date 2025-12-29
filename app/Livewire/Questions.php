@@ -38,7 +38,7 @@ class Questions extends Component
     public ?int $nodeKeyId;
     public ?int $nodeId;
 
-    public ?string $edit;
+    public ?string $edit = null;
 
     public function mount(): void
     {
@@ -51,7 +51,6 @@ class Questions extends Component
          * Pre-populate forms with defaults
          */
         $this->data = $this->responses()?->toArray();
-
         if (empty($this->data) && $this->nodeQuestions()) {
             foreach ($this->nodeQuestions() as $question) {
                 $defaults = null;
@@ -59,7 +58,7 @@ class Questions extends Component
                 if($question->response_type !== ResponseType::TYPE_TEXTAREA->value){
                     $defaults = unserialize($question['defaults']) ?? null;
                 }
-                $this->data[$question['name']] = $defaults;
+                $this->data["question_{$question->id}"] = $defaults;
             }
         }
 

@@ -17,10 +17,6 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-// Helper functions (makeAuthUser, createFrameworkWithNodeAndQuestionsForVariants,
-// variantsRaterForUser, variantsLivewireTest, createFrameworkWithAttributeAndOption,
-// createAssessmentForUser) are provided globally by tests/Support/TestHelpers.php
-
 it('redirects to frameworks when frameworkId is invalid', function () {
     Livewire::test(Variants::class, [
         'frameworkId' => 999, // does not exist

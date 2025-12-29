@@ -18,7 +18,7 @@ use Illuminate\Support\Carbon;
  *
  * @param array $overrides
  * @param bool $persist
- * @return \App\Models\User
+ * @return mixed
  */
 function testUserFactory(array $overrides = [], bool $persist = false)
 {
@@ -40,7 +40,7 @@ function testUserFactory(array $overrides = [], bool $persist = false)
  * Create a fake auth user (non-persisted). Use this as the canonical helper in tests.
  *
  * @param array $overrides
- * @return \App\Models\User
+ * @return mixed
  */
 function makeAuthUser(array $overrides = [])
 {
@@ -51,7 +51,7 @@ function makeAuthUser(array $overrides = [])
  * Create and persist an auth user (useful when tests expect a created user)
  *
  * @param array $overrides
- * @return \App\Models\User
+ * @return mixed
  */
 function createAuthUser(array $overrides = [])
 {
@@ -78,6 +78,7 @@ function createFrameworkWithNodeAndQuestionsForVariants(int $questionCount = 2)
         $questions->push(Question::factory()->create([
             'node_id' => $node->id,
             'response_type' => 'scale',
+            'required' => 1,
         ]));
     }
     $scale       = Scale::factory()->create();
@@ -173,12 +174,12 @@ function variantsLivewireTest($user = null, array $params = [])
 /**
  * Generic Livewire test helper that optionally acts as a given user and mounts any component class.
  *
- * @param mixed|null $user
  * @param string $componentClass
+ * @param mixed|null $user
  * @param array $params
  * @return mixed
  */
-function livewireTest($user = null, string $componentClass, array $params = [])
+function livewireTest(string $componentClass, $user = null, array $params = [])
 {
     if ($user) {
         Livewire::actingAs($user);
@@ -225,6 +226,36 @@ function createAssessmentForUser($user, $framework, array $overrides = [])
         'framework_id' => $framework->id,
         'user_id'      => $user->user_id,
     ], $overrides));
+}
+
+/**
+ * Create a framework with a node and questions useful for variants/resume tests.
+ *
+ * @param $framework
+ * @param int $questionCount
+ * @return array
+ */
+function createNodeAndQuestionsForFramework($framework, int $questionCount = 2, int $order = 1)
+{
+    $nodeType = NodeType::factory()->create();
+    $node     = \App\Models\Node::factory()->create([
+        'framework_id' => $framework->id,
+        'node_type_id' => $nodeType->id,
+        'order'        => $order,
+    ]);
+
+    $questions = collect();
+    for ($i = 0; $i < $questionCount; $i++) {
+        $questions->push(Question::factory()->create([
+            'node_id' => $node->id,
+            'response_type' => 'scale',
+            'required' => 1,
+        ]));
+    }
+    $scale       = Scale::factory()->create();
+    $scaleOption = ScaleOption::factory()->create(['scale_id' => $scale->id]);
+
+    return compact('framework', 'nodeType', 'node', 'questions', 'scale', 'scaleOption');
 }
 
 /**
