@@ -11,9 +11,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     // Common setup for all tests
-    $this->user = User::factory()->make([
-        'user_id' => '1000000000',
-    ]);
+    $this->user = makeAuthUser(['user_id' => '1000000000']);
 
     $this->framework = Framework::factory()->create();
     $this->assessment = Assessment::factory()->create([
@@ -29,31 +27,16 @@ test('assessment belongs to a framework', function () {
 test('assessment has many responses', function () {
     $rater = Rater::factory()->create(['user_id' => $this->user->user_id]);
 
-    $nodeType = \App\Models\NodeType::factory()->create();
-    $node = \App\Models\Node::factory()->create([
-        'framework_id'  => $this->framework->id,
-        'node_type_id'  => $nodeType->id,
-    ]);
+    // Create node + questions via helper
+    $setup = createNodeWithQuestions(3, 'scale', ['framework' => $this->framework]);
+    $questions = $setup['questions'];
 
-    $questions = \App\Models\Question::factory()
-        ->count(3)
-        ->create(['node_id' => $node->id, 'response_type' => 'scale']);
+    // Create scale + option
+    $scaleSetup = createScaleWithOption();
+    $option = $scaleSetup['scaleOption'];
 
-    $scale = \App\Models\Scale::factory()->create();
-
-    $option = \App\Models\ScaleOption::factory()->create([
-        'scale_id' => $scale->id,
-        'label'    => 'Good',
-        'value'    => 3,
-        'order'    => 1,
-    ]);
     foreach ($questions as $question) {
-        Response::factory()->create([
-            'assessment_id' => $this->assessment->id,
-            'rater_id'      => $rater->id,
-            'question_id'   => $question->id,
-            'scale_option_id' => $option->id,
-        ]);
+        createResponseForAssessment($this->assessment, $rater, $question, $option);
     }
 
     expect($this->assessment->responses)->toHaveCount(3);

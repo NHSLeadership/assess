@@ -67,38 +67,26 @@ test('question can have many variants', function () {
 });
 
 test('question can have many responses', function () {
-    $question = makeQuestion();
+    // Create a scale-type question using the helper
+    $setup = createNodeWithQuestions(1, 'scale');
+    $question = $setup['questions']->first();
 
-    $user = \App\Models\User::factory()->make([
-        'user_id' => '1000000000',
-    ]);
-    $framework = Framework::factory()->create();
+    $user = makeAuthUser(['user_id' => '1000000000']);
     $assessment1 = \App\Models\Assessment::factory()->create([
-        'framework_id' => $framework->id,
+        'framework_id' => $setup['framework']->id,
         'user_id'      => $user->id,
     ]);
     $assessment2 = \App\Models\Assessment::factory()->create([
-        'framework_id' => $framework->id,
+        'framework_id' => $setup['framework']->id,
         'user_id'      => $user->id,
     ]);
 
     $rater = \App\Models\Rater::factory()->create(['user_id' => $user->user_id]);
-    $scale = Scale::factory()->create();
-    $scaleOption = \App\Models\ScaleOption::factory()->create([
-        'scale_id' => $scale->id,
-    ]);
-    $response1 = Response::factory()->create([
-        'question_id' => $question->id,
-        'assessment_id' => $assessment1->id,
-        'rater_id' => $rater->id,
-        'scale_option_id' => $scaleOption->id,
-    ]);
-    $response2 = Response::factory()->create([
-        'question_id' => $question->id,
-        'assessment_id' => $assessment2->id,
-        'rater_id' => $rater->id,
-        'scale_option_id' => $scaleOption->id,
-    ]);
+    $scaleSetup = createScaleWithOption();
+    $scaleOption = $scaleSetup['scaleOption'];
+
+    createResponseForAssessment($assessment1, $rater, $question, $scaleOption);
+    createResponseForAssessment($assessment2, $rater, $question, $scaleOption);
 
     expect($question->responses)->toHaveCount(2)
         ->and($question->responses->first())->toBeInstanceOf(Response::class);

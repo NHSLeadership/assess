@@ -19,9 +19,7 @@ uses(RefreshDatabase::class);
  */
 function makeResponse(): \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
 {
-    $user = User::factory()->make([
-        'user_id' => '1000000000',
-    ]);
+    $user = makeAuthUser(['user_id' => '1000000000']);
 
     $rater = Rater::factory()->create([
         'user_id' => $user->user_id,

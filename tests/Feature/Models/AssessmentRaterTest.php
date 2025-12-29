@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    $this->user = User::factory()->make(['user_id' => '1000000000']);
+    $this->user = makeAuthUser(['user_id' => '1000000000']);
     $this->framework = Framework::factory()->create();
     $this->assessment = Assessment::factory()->create([
         'framework_id' => $this->framework->id,

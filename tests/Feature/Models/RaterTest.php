@@ -20,9 +20,7 @@ uses(RefreshDatabase::class);
  */
 function makeRater(): \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
 {
-    $user = User::factory()->make([
-        'user_id' => '1000000000',
-    ]);
+    $user = makeAuthUser(['user_id' => '1000000000']);
 
     return Rater::factory()->create([
         'user_id' => $user->id,
@@ -45,9 +43,7 @@ test('rater can belong to many assessments with pivot data', function () {
     $rater = makeRater();
 
     $framework = Framework::factory()->create();
-    $user = \App\Models\User::factory()->make([
-        'user_id' => '1000000000',
-    ]);
+    $user = makeAuthUser(['user_id' => '1000000000']);
 
     $assessment1 = Assessment::factory()->create(['framework_id' => $framework->id, 'user_id' => $user->id]);
     $assessment2 = Assessment::factory()->create(['framework_id' => $framework->id, 'user_id' => $user->id]);

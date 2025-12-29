@@ -19,10 +19,7 @@ uses(RefreshDatabase::class);
 
 it('returns null when editAnswer receives a non-numeric nodeId', function () {
 
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = makeAuthUser();
     $this->actingAs($user);
     $framework = Framework::factory()->create();
     $assessment = Assessment::factory()
@@ -40,10 +37,7 @@ it('returns null when editAnswer receives a non-numeric nodeId', function () {
 it('redirects to questions when editAnswer receives a numeric nodeId', function () {
 
     // User is NOT persisted — using make()
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = makeAuthUser();
 
     // Authenticate the made user
     $this->be($user);
@@ -68,10 +62,7 @@ it('redirects to questions when editAnswer receives a numeric nodeId', function 
 it('redirects to questions when a resume node exists', function () {
 
     // User is NOT persisted — using make()
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = makeAuthUser();
 
     // Authenticate the made user
     $this->be($user);
@@ -82,13 +73,11 @@ it('redirects to questions when a resume node exists', function () {
         ->for($user)
         ->create();
 
-    $framework = Framework::factory()->create();
-    $nodeType = NodeType::factory()->create();
-    $node = Node::factory()->create([
-        'framework_id' => $framework->id,
-        'node_type_id' => $nodeType->id,
-    ]);
-    $node->questions()->create(['text' => 'Q1', 'order' => 1, 'node_id' => $node->id, 'title' => 'Question 1']);
+    // Create a node + question graph using the shared helper
+    $setup = createNodeWithQuestions(1, 'scale');
+    $framework = $setup['framework'];
+    $node = $setup['node'];
+    $question = $setup['questions']->first();
 
     // Create a response that marks this node as unanswered
     // so getAssessmentResumeNode() returns this node
@@ -109,10 +98,7 @@ it('redirects to questions when a resume node exists', function () {
 it('redirects to frameworks when no resume node exists', function () {
 
     // User is NOT persisted — using make()
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = makeAuthUser();
 
     // Authenticate the made user
     $this->be($user);
@@ -128,28 +114,18 @@ it('redirects to frameworks when no resume node exists', function () {
         'user_id' => $rater->user_id,
     ]);
 
-    // Node + Question
-    $nodeType = NodeType::factory()->create();
-    $node = Node::factory()->create([
-        'framework_id' => $framework->id,
-        'node_type_id' => $nodeType->id,
-    ]);
-
-    $question = Question::factory()->create([
-        'node_id' => $node->id,
-    ]);
+    // Node + Question (use helper to create a node under the same framework)
+    $setup = createNodeWithQuestions(1, 'scale', ['framework' => $framework]);
+    $node = $setup['node'];
+    $question = $setup['questions']->first();
 
     // Scale + Option
-    $scale = Scale::factory()->create();
-    $scaleOption = ScaleOption::factory()->create(['scale_id' => $scale->id]);
+    $scaleSetup = createScaleWithOption();
+    $scale = $scaleSetup['scale'];
+    $scaleOption = $scaleSetup['scaleOption'];
 
     // Response
-    Response::factory()->create([
-        'assessment_id' => $assessment->id,
-        'rater_id' => $rater->id,
-        'question_id' => $question->id,
-        'scale_option_id' => $scaleOption->id,
-    ]);
+    createResponseForAssessment($assessment, $rater, $question, $scaleOption);
 
     Livewire::test(Summary::class, [
         'assessmentId' => $assessment->id,
@@ -162,10 +138,7 @@ it('redirects to frameworks when no resume node exists', function () {
 it('surfaces an error and scrolls to top when assessment is already submitted', function () {
 
     // User is NOT persisted — using make()
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = makeAuthUser();
 
     // Authenticate the made user
     $this->be($user);
@@ -188,10 +161,7 @@ it('surfaces an error and scrolls to top when assessment is already submitted', 
 it('submits the assessment and redirects to the completed page', function () {
 
     // User is NOT persisted — using make()
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = makeAuthUser();
 
     $this->be($user);
 
@@ -220,10 +190,7 @@ it('submits the assessment and redirects to the completed page', function () {
 it('returns the correct rater for the assessment via pivot table', function () {
 
     // User is NOT persisted — using make()
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = makeAuthUser();
 
     $this->be($user);
 
@@ -254,10 +221,7 @@ it('returns the correct rater for the assessment via pivot table', function () {
 it('returns nodes ordered by order for the framework', function () {
 
     // User is NOT persisted — using make()
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = makeAuthUser();
 
     $this->be($user);
 
@@ -301,10 +265,7 @@ it('returns nodes ordered by order for the framework', function () {
 it('returns the correct framework for the assessment', function () {
 
     // User is NOT persisted — using make()
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = makeAuthUser();
 
     $this->be($user);
 
@@ -324,10 +285,7 @@ it('returns the correct framework for the assessment', function () {
 
 it('returns null when no frameworkId is provided', function () {
 
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = makeAuthUser();
 
     $this->be($user);
     $framework  = Framework::factory()->create();
@@ -353,10 +311,7 @@ it('returns all responses for the assessment', function () {
         $model::query()->delete();
     }
     // User is NOT persisted — using make()
-    $user = User::factory()->make([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ]);
+    $user = makeAuthUser();
 
     $this->be($user);
 
@@ -436,3 +391,4 @@ it('returns all responses for the assessment', function () {
     $this->assertCount(2, $responses);
     $this->assertSame($expectedIds, $actualIds);
 });
+
