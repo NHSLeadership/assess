@@ -88,14 +88,14 @@ jobs:
           path: coverage
 
       - name: Report test results
-        uses: dorny/test-reporter@v2.3.0
+        uses: dorny/test-reporter@6efb86e1f884696e9a2bbd33e43da8777c8e469c
         if: success() || failure()
         with:
           name: Assess System Tests
-          path: reports/test-results.xml
-          reporter: phpunit-junit
-          only-summary: false
-          fail-on-error: false
+          path: 'reports/test-results.xml'
+          reporter: 'phpunit-junit'
+          only-summary: 'false'
+          fail-on-error: 'false'
       
       - name: run Pint code style linting
         continue-on-error: true
