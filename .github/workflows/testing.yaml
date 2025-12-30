@@ -58,6 +58,9 @@ jobs:
       - name: copy env file
         run: cp .env.example .env
 
+      - name: setup cache folders
+        run: mkdir -p storage/framework/{sessions,views,cache}
+
       - name: Force git to use ssh
         run: git config --global url."git@github.com:".insteadOf git://github.com/
 
