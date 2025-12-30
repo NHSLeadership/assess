@@ -90,19 +90,25 @@ trait AssessmentHelperTrait
 
         if ($next) {
             if ($firstUnanswered) {
-                return Node::with('questions')
+                return Node::with(['questions' => function ($q) {
+                    $q->where('active', true);
+                }])
                     ->whereHas('questions', function ($q) use ($assessmentId) {
-                        $q->whereDoesntHave('responses', function ($r) use ($assessmentId) {
-                            $r->where('assessment_id', $assessmentId);
-                        });
+                        $q->where('active', true)
+                            ->whereDoesntHave('responses', function ($r) use ($assessmentId) {
+                                $r->where('assessment_id', $assessmentId);
+                            });
                     })
                     ->orderBy('order')
                     ->first();
             }
             // First unanswered and required question's node
-            return Node::with('questions')
+            return Node::with(['questions' => function ($q) {
+                $q->where('active', true);
+            }])
                 ->whereHas('questions', function ($q) use ($assessmentId) {
-                    $q->where('required', 1)
+                    $q->where('active', true)
+                        ->where('required', 1)
                         ->whereDoesntHave('responses', function ($r) use ($assessmentId) {
                             $r->where('assessment_id', $assessmentId);
                         });
@@ -112,9 +118,14 @@ trait AssessmentHelperTrait
         }
 
         // Last answered node
-        return Node::with('questions')
-            ->whereHas('questions.responses', function ($q) use ($assessmentId) {
-                $q->where('assessment_id', $assessmentId);
+        return Node::with(['questions' => function ($q) {
+            $q->where('active', true);
+        }])
+            ->whereHas('questions', function ($q) use ($assessmentId) {
+                $q->where('active', true)
+                    ->whereHas('responses', function ($r) use ($assessmentId) {
+                        $r->where('assessment_id', $assessmentId);
+                    });
             })
             ->orderBy('order', 'desc')
             ->first();

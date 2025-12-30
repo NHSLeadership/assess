@@ -103,12 +103,18 @@ class Questions extends Component
         }
 
         /**
-         * Take all nodes with questions only
+         * Take all nodes that have at least one active question
          */
         $nodes = $this->assessment?->framework?->nodes()
-                                              ->whereHas('questions')
-                                              ->orderBy('order')->orderBy('id')
-                                              ->get();
+            ->whereHas('questions', function ($q) {
+                $q->where('active', true);
+            })
+            ->with(['questions' => function ($q) {
+                $q->where('active', true);
+            }])
+            ->orderBy('order')
+            ->orderBy('id')
+            ->get();
         /**
          * Convert collection to iterator
          */
@@ -252,7 +258,10 @@ class Questions extends Component
         }
 
         $currentNumber = $questionCounter + 1;
-        $total = $this->assessment?->framework->questions()->count() ?? 0;
+        $total = $this->assessment?->framework
+            ->questions()
+            ->where('active', true)
+            ->count() ?? 0;
 
         return "<strong>Question {$currentNumber} of {$total}</strong>";
     }
