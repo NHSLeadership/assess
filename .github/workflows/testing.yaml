@@ -40,7 +40,7 @@ jobs:
       AUTH0_DOMAIN: ${{ secrets.DEV_AUTH0_DOMAIN }}
       AUTH0_CUSTOM_DOMAIN: ${{ secrets.DEV_AUTH0_CUST_DOMAIN }}
       DB_CONNECTION: sqlite
-      DB_DATABASE ":memory:"
+      DB_DATABASE: ":memory:"
 
     steps:
       - name: setup php
