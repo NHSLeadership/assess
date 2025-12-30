@@ -12,6 +12,8 @@
 /vendor
 /coverage
 /public/coverage
+/reports
+/coverage
 .DS_Store
 .idea
 .env
