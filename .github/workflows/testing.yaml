@@ -1,0 +1,100 @@
+name: tests
+
+on:
+  pull_request:
+    types: [opened,synchronize]
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  vulnerabilities:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+  
+      - name: Scan repository for vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+      
+  laravel_tests:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    env:
+      XDEBUG_MODE=coverage
+      APP_ENV: testing
+      AUTH0_CLIENT_ID: ${{ secrets.DEV_AUTH0_CLIENTID }}
+      AUTH0_CLIENT_SECRET: ${{ secrets.DEV_AUTH0_CLIENTSECRET }}
+      AUTH0_DOMAIN: ${{ secrets.DEV_AUTH0_DOMAIN }}
+      AUTH0_CUSTOM_DOMAIN: ${{ secrets.DEV_AUTH0_CUST_DOMAIN }}
+      DB_CONNECTION: sqlite
+      DB_DATABASE ":memory:"
+
+    steps:
+      - name: setup php
+        uses: shivammathur/setup-php@2.36.0
+        with:
+          php-version: '8.4'
+  
+      - uses: actions/setup-node@v6.1.0
+        with:
+          node-version: 22
+      
+      - name: checkout code
+        uses: actions/checkout@v6
+
+      - name: copy env file
+        run: cp .env.example .env
+
+      - name: Force git to use ssh
+        run: git config --global url."git@github.com:".insteadOf git://github.com/
+
+      - name: Install dependencies
+#        env:
+#          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{secrets.COMPOSER_AUTH}}"} }'
+        run: composer install --no-ansi --no-interaction --no-scripts --prefer-dist
+
+      - name: npm install
+        run: npm install
+
+      - name: npm run build
+        run: npm run build
+
+      - name: generate app key
+        run: php artisan key:generate
+      
+      - name: run Laravel tests
+        run: php artisan test --coverage --parallel --coverage-html=coverage
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report
+          path: coverage
+
+      - name: Report test results
+        uses: dorny/test-reporter@v2.3.0
+        if: success() || failure()
+        with:
+          name: Assess System Tests
+          path: reports/test-results.xml
+          reporter: phpunit-junit
+          only-summary: false
+          fail-on-error: false
+      
+      - name: run Pint code style linting
+        continue-on-error: true
+        run: vendor/bin/pint --test
+

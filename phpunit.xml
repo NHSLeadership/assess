@@ -4,6 +4,9 @@
          bootstrap="vendor/autoload.php"
          colors="true"
 >
+    <logging>
+        <junit outputFile="reports/test-results.xml"/>
+    </logging>
     <testsuites>
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
