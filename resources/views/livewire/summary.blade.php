@@ -73,6 +73,11 @@
                     wire:click.prevent="confirmSubmit()">
                 Complete assessment
             </button>
+        @else
+            <button class="nhsuk-button"
+                    wire:click.prevent="viewReport()">
+                View report
+            </button>
         @endif
     </div>
 </div>
