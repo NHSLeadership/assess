@@ -28,8 +28,8 @@
                 @endphp
 
                 @if ($chart)
-                    <div class="nhsuk-u-margin-bottom-5" style="height: 380px;" wire:ignore>
-                        <canvas id="{{ $chart['id'] }}"></canvas>
+                    <div class="nhsuk-u-margin-bottom-5" wire:ignore>
+                        <canvas id="{{ $chart['id'] }}" style="width: 100%; max-width: 900px;"></canvas>
                     </div>
                 @endif
 
