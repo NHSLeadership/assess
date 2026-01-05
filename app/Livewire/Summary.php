@@ -129,6 +129,14 @@ class Summary extends Component
             ->first();
     }
 
+    public function viewReport()
+    {
+        return redirect()->route('assessment-report', [
+            'frameworkId' => $this->frameworkId,
+            'assessmentId' => $this->assessmentId
+        ]);
+    }
+
     public function render()
     {
         return view('livewire.summary', [
