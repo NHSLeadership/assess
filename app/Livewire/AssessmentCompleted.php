@@ -23,7 +23,13 @@ class AssessmentCompleted extends Component
 
     }
 
-
+    public function viewReport()
+    {
+        return redirect()->route('assessment-report', [
+            'frameworkId' => $this->assessment?->framework?->id,
+            'assessmentId' => $this->assessmentId
+        ]);
+    }
     public function render()
     {
         return view('livewire.assessment-completed');
