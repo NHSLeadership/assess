@@ -254,7 +254,7 @@ class Questions extends Component
         $currentNumber = $questionCounter + 1;
         $total = $this->assessment?->framework->questions()->count() ?? 0;
 
-        return "<strong>Question {$currentNumber} of {$total}</strong>";
+        return "<strong>Response {$currentNumber} of {$total}</strong>";
     }
 
     /**
