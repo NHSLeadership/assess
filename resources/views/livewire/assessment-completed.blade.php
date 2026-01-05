@@ -13,10 +13,14 @@
             </div>
         </div>
 
+        <button class="nhsuk-button"
+                wire:click.prevent="viewReport()">
+            View report
+        </button>
+
         <h3>Need Help?</h3>
         <p>If you need help on this assessment please <a href="/contact">contact us</a> to let us know and we'll be
             happy to help.</p>
-
 
     </div>
 </div>
