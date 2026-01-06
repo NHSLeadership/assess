@@ -2,7 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Exceptions\AssessmentFrameworkMismatchException;
 use App\Exceptions\AssessmentNotFoundException;
+use App\Exceptions\AssessmentNotSubmittedException;
 use App\Exceptions\FrameworkNotFoundException;
 use App\Models\Assessment;
 use App\Models\Framework;
@@ -30,6 +32,8 @@ class AssessmentReport extends Component
     /**
      * @throws FrameworkNotFoundException
      * @throws AssessmentNotFoundException
+     * @throws AssessmentFrameworkMismatchException
+     * @throws AssessmentNotSubmittedException
      */
     public function mount(int $frameworkId, int $assessmentId): void
     {
@@ -46,14 +50,19 @@ class AssessmentReport extends Component
             throw new AssessmentNotFoundException(__('alerts.errors.assessment-not-found'));
         }
 
-        // Ensure assessment belongs to framework
         if ($this->assessment()->framework_id !== $this->framework()->id) {
-            abort(403, __('alerts.errors.assessment-not-belong-to-framework'));
+            throw new AssessmentFrameworkMismatchException(
+                assessmentId: $this->assessmentId,
+                frameworkId: $this->frameworkId,
+                message: __('alerts.errors.assessment-not-belong-to-framework')
+            );
         }
 
-        // Ensure assessment is submitted
         if (is_null($this->assessment()->submitted_at)) {
-            abort(403, __('alerts.errors.assessment-not-submitted'));
+            throw new AssessmentNotSubmittedException(
+                assessmentId: $this->assessmentId,
+                message: __('alerts.errors.assessment-not-submitted')
+            );
         }
 
 
@@ -93,7 +102,7 @@ class AssessmentReport extends Component
             return null;
         }
 
-        return Assessment::find($this->assessmentId);
+        return Assessment::find($this->assessmentI);
     }
 
     #[Computed]
