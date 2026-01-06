@@ -102,7 +102,7 @@ class AssessmentReport extends Component
             return null;
         }
 
-        return Assessment::find($this->assessmentI);
+        return Assessment::find($this->assessmentId);
     }
 
     #[Computed]
