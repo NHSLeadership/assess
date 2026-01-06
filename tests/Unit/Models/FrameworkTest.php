@@ -11,6 +11,7 @@ test('framework has expected fillable attributes', function () {
         'slug',
         'description',
         'instructions',
+        'report_intro',
     ]);
 });
 

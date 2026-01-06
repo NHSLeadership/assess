@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Frameworks\Schemas;
 
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
@@ -26,6 +25,9 @@ class FrameworkForm
                     ->required()
                     ->columnSpanFull(),
                 RichEditor::make('instructions')
+                    ->columnSpanFull(),
+                RichEditor::make('report_intro')
+                    ->label('Report Introduction')
                     ->columnSpanFull(),
             ]);
     }

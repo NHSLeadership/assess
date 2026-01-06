@@ -23,6 +23,7 @@ class FrameworkFactory extends Factory
             'slug'        => $this->faker->slug(),
             'description' => $this->faker->paragraph(),
             'instructions'=> $this->faker->text(100),
+            'report_intro'=> $this->faker->paragraph(),
         ];
 
     }

@@ -10,6 +10,7 @@ test('framework can be created with factory', function () {
         'slug'        => 'leadership-framework',
         'description' => 'Framework for leadership skills',
         'instructions'=> 'Answer all questions honestly',
+        'report_intro'=> 'This report summarises your leadership skills',
     ]);
 
     expect($framework->exists)->toBeTrue()
