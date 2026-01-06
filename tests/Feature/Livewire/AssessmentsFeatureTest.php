@@ -11,14 +11,6 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-function makeAuthUser(array $overrides = [])
-{
-    return User::factory()->make(array_merge([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ], $overrides));
-}
-
 it('redirects to frameworks when assessmentId is invalid', function () {
     Livewire::test(Assessments::class, [
         'assessmentId' => null,

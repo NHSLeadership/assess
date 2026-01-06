@@ -19,7 +19,6 @@ class FrameworkFactory extends Factory
     public function definition(): array
     {
         return [
-            'id'          => $this->faker->unique()->numberBetween(1000, 999999), // if your PK is UUID
             'name'        => $this->faker->text(100),   // returns "Leadership Framework"
             'slug'        => $this->faker->slug(),
             'description' => $this->faker->paragraph(),

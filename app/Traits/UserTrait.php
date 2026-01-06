@@ -9,7 +9,7 @@ trait UserTrait
     public function user(): ?User
     {
         $authUser = auth()->user();
-        $authUser->id = $authUser->preferred_username;
+        $authUser->id = $authUser?->preferred_username;
 
         return new User($authUser->getAttributes());
     }

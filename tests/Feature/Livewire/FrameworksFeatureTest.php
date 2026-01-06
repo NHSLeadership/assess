@@ -18,47 +18,12 @@ use function Pest\Laravel\actingAs;
 
 uses(RefreshDatabase::class);
 
-// Centralized helpers to reduce duplication across tests
-function authUser(array $overrides = [])
-{
-    return User::factory()->make(array_merge([
-        'preferred_username' => 'test-user',
-        'user_id' => '1000000000',
-    ], $overrides));
-}
-
-function raterForUser(User $user, array $overrides = [])
-{
-    return Rater::factory()->create(array_merge([
-        'user_id' => $user->user_id,
-    ], $overrides));
-}
-
-function createFrameworkWithNodeAndQuestions(int $questionCount = 2)
-{
-    $framework = Framework::factory()->create();
-    $nodeType = NodeType::factory()->create();
-    $node     = Node::factory()->create([
-        'framework_id' => $framework->id,
-        'node_type_id' => $nodeType->id,
-    ]);
-
-    $questions = collect();
-    for ($i = 0; $i < $questionCount; $i++) {
-        $questions->push(Question::factory()->create([
-            'node_id' => $node->id,
-        ]));
-    }
-
-    $scale       = Scale::factory()->create();
-    $scaleOption = ScaleOption::factory()->create(['scale_id' => $scale->id]);
-
-    return compact('framework', 'nodeType', 'node', 'questions', 'scale', 'scaleOption');
-}
+// Helper functions like makeAuthUser(), raterForUser(), and createFrameworkWithNodeAndQuestions()
+// are provided globally by tests/Support/TestHelpers.php
 
 
 test('mount sets default framework when none is provided', function () {
-    $user = authUser();
+    $user = makeAuthUser();
     Framework::factory()->count(2)->create();
     Livewire::actingAs($user)
         ->test(\App\Livewire\Frameworks::class)
@@ -71,7 +36,7 @@ test('mount keeps provided frameworkId', function () {
     $framework2 = Framework::factory()->create();
 
     // Create a real authenticated user
-    $user = authUser();
+    $user = makeAuthUser();
 
     // Pass frameworkB explicitly
     Livewire::actingAs($user)
@@ -85,7 +50,7 @@ test('framework computed property returns the correct framework', function () {
     $framework2 = Framework::factory()->create();
 
     // Create authenticated user
-    $user = authUser();
+    $user = makeAuthUser();
 
     // Test component
     Livewire::actingAs($user)
@@ -99,7 +64,7 @@ test('framework computed property returns the correct framework', function () {
 
 test('framework computed property returns null for invalid frameworkId', function () {
     // Create a real authenticated user
-    $user = authUser();
+    $user = makeAuthUser();
 
     $invalidId = 999999;
 
@@ -113,7 +78,7 @@ test('framework computed property returns null for invalid frameworkId', functio
 });
 
 test('frameworks computed property returns all frameworks', function () {
-    $user = authUser();
+    $user = makeAuthUser();
 
     // Create 3 frameworks
     Framework::factory()->count(3)->create();
@@ -132,12 +97,12 @@ test('assessments computed property returns only assessments for the logged-in u
     $framework = Framework::factory()->create();
 
     // Create two users
-    $userA = User::factory()->make([
+    $userA = makeAuthUser([
         'preferred_username' => 'userA',
         'user_id' => '1000000000',
     ]);
 
-    $userB = User::factory()->make([
+    $userB = makeAuthUser([
         'preferred_username' => 'userB',
         'user_id' => '1000000002',
     ]);
@@ -166,7 +131,7 @@ test('assessments computed property returns only assessments for the logged-in u
 
 test('assessments computed property filters by frameworkId', function () {
     // Create authenticated user
-    $user = authUser();
+    $user = makeAuthUser();
 
     // Create two frameworks
     $frameworkA = Framework::factory()->create();
@@ -196,7 +161,7 @@ test('assessments computed property filters by frameworkId', function () {
 
 test('assessments are ordered by last response date descending', function () {
     // Create authenticated user
-    $user = authUser();
+    $user = makeAuthUser();
     $rater = raterForUser($user);
 
     // Create framework + questions graph
@@ -244,7 +209,7 @@ test('assessments are ordered by last response date descending', function () {
 });
 
 test('assessments include responses relationship', function () {
-    $user = authUser();
+    $user = makeAuthUser();
 
     $rater = raterForUser($user);
 
@@ -296,7 +261,7 @@ test('assessments include responses relationship', function () {
 });
 
 test('displayAssessmentDate uses submitted_at when present', function () {
-    $user = authUser();
+    $user = makeAuthUser();
 
     // Create framework
     $framework = Framework::factory()->create();
@@ -320,7 +285,7 @@ test('displayAssessmentDate uses submitted_at when present', function () {
 });
 
 test('displayAssessmentDate uses latest response date when submitted_at is null', function () {
-    $user = authUser();
+    $user = makeAuthUser();
 
     // Create two responses with different timestamps
     $older = Carbon::parse('2024-01-10 09:00:00');
@@ -370,7 +335,7 @@ test('displayAssessmentDate uses latest response date when submitted_at is null'
 
 test('changing frameworkId refreshes framework and assessments', function () {
     // Create authenticated user
-    $user = authUser();
+    $user = makeAuthUser();
 
     // Create two frameworks
     $frameworkA = Framework::factory()->create();
@@ -408,7 +373,7 @@ test('changing frameworkId refreshes framework and assessments', function () {
 
 test('mount loads the correct framework when frameworkId is passed', function () {
     // Create authenticated user
-    $user = authUser();
+    $user = makeAuthUser();
 
     // Create two frameworks
     $frameworkA = Framework::factory()->create();
@@ -428,7 +393,7 @@ test('mount loads the correct framework when frameworkId is passed', function ()
 
 test('mount sets frameworkId to the first framework when none is provided', function () {
     // Create authenticated user
-    $user = authUser();
+    $user = makeAuthUser();
 
     // Create frameworks
     Framework::factory()->create();   // this will be Framework::first()
@@ -447,7 +412,7 @@ test('mount sets frameworkId to the first framework when none is provided', func
 
 test('frameworks list is always available', function () {
     // Create authenticated user
-    $user = authUser();
+    $user = makeAuthUser();
 
     // Create multiple frameworks
     $frameworks = Framework::factory()->count(3)->create();
@@ -469,7 +434,7 @@ test('frameworks list is always available', function () {
 
 test('framework computed property returns the correct model for the selected frameworkId', function () {
     // Create authenticated user
-    $user = authUser();
+    $user = makeAuthUser();
 
     // Create frameworks
     $frameworkA = Framework::factory()->create();
@@ -492,7 +457,7 @@ test('framework computed property returns the correct model for the selected fra
 
 test('assessments computed property returns only assessments for the selected framework', function () {
     // Create authenticated user
-    $user = authUser();
+    $user = makeAuthUser();
 
     // Create two frameworks
     $frameworkA = Framework::factory()->create();
@@ -541,7 +506,7 @@ test('assessments computed property returns only assessments for the selected fr
 });
 
 it('allows starting when no assessments exist', function () {
-    $user = authUser();
+    $user = makeAuthUser();
     actingAs($user);
 
     $framework = Framework::factory()->create();
@@ -556,7 +521,7 @@ it('allows starting when no assessments exist', function () {
 });
 
 it('blocks starting when a draft exists', function () {
-    $user = authUser();
+    $user = makeAuthUser();
     actingAs($user);
 
     $framework = Framework::factory()->create();
@@ -577,7 +542,7 @@ it('blocks starting when a draft exists', function () {
 it('blocks starting when cooldown is active', function () {
     config(['app.assessment_min_interval_months' => 6]);
 
-    $user = authUser();
+    $user = makeAuthUser();
     actingAs($user);
 
     $framework = Framework::factory()->create();
@@ -602,7 +567,7 @@ it('blocks starting when cooldown is active', function () {
 it('allows starting when cooldown has passed', function () {
     config(['app.assessment_min_interval_months' => 6]);
 
-    $user = authUser();
+    $user = makeAuthUser();
     actingAs($user);
 
     $framework = Framework::factory()->create();

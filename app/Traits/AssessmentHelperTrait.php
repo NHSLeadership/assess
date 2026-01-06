@@ -32,10 +32,8 @@ trait AssessmentHelperTrait
             ->count();
 
         $responseCount = $assessment->responses()?->count() ?? 0;
-
         $allRequiredAnswered = $requiredCount > 0 && $responseCount === $requiredCount;
         $alreadySubmitted    = !is_null($assessment->submitted_at);
-
         if ( (empty($edit) && $allRequiredAnswered) || $alreadySubmitted) {
             return redirect()->route('summary', [
                 'frameworkId'  => $frameworkId,

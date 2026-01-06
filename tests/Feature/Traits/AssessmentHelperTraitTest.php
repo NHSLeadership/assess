@@ -33,7 +33,7 @@ test('redirectIfInvalidAssessment redirects when assessmentId is invalid', funct
 
 
 test('redirectIfInvalidAssessment returns null when IDs are valid', function () {
-    $user = \App\Models\User::factory()->make(['user_id' => '1000000000']);
+    $user = makeAuthUser(['user_id' => '1000000000']);
     $framework = Framework::factory()->create();
     $assessment = Assessment::factory()->create(['framework_id' => $framework->id, 'user_id' => $user->id]);
 
@@ -46,7 +46,7 @@ test('redirectIfInvalidAssessment returns null when IDs are valid', function () 
 
 
 test('redirectIfSubmittedOrFinished redirects when all required questions are answered', function () {
-    $user = \App\Models\User::factory()->make(['user_id' => '1000000000']);
+    $user = makeAuthUser(['user_id' => '1000000000']);
     $framework = Framework::factory()->create();
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
@@ -89,7 +89,7 @@ test('redirectIfSubmittedOrFinished redirects when all required questions are an
 });
 
 test('redirectIfSubmittedOrFinished redirects when assessment is already submitted', function () {
-    $user = \App\Models\User::factory()->make(['user_id' => '1000000000']);
+    $user = makeAuthUser(['user_id' => '1000000000']);
     $framework = Framework::factory()->create();
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
@@ -109,10 +109,7 @@ test('redirectIfSubmittedOrFinished redirects when assessment is already submitt
 test('allows starting when no assessments exist', function () {
     config(['app.assessment_min_interval_months' => 6]);
 
-    $user = User::factory()->make([
-        'email' => 'test@example.com',
-        'user_id' => 1000000000,
-    ]);
+    $user = makeAuthUser(['email' => 'test@example.com', 'user_id' => 1000000000]);
 
     $this->actingAs($user);
 
@@ -124,10 +121,7 @@ test('allows starting when no assessments exist', function () {
 test('blocks when a draft exists and user is not continuing it', function () {
     config(['app.assessment_min_interval_months' => 6]);
 
-    $user = User::factory()->make([
-        'email' => 'test@example.com',
-        'user_id' => 1000000000,
-    ]);
+    $user = makeAuthUser(['email' => 'test@example.com', 'user_id' => 1000000000]);
     $framework = Framework::factory()->create();
     $this->actingAs($user);
 
@@ -148,10 +142,7 @@ test('blocks when a draft exists and user is not continuing it', function () {
 test('allows continuing the same draft', function () {
     config(['app.assessment_min_interval_months' => 6]);
 
-    $user = User::factory()->make([
-        'email' => 'test@example.com',
-        'user_id' => 1000000000,
-    ]);
+    $user = makeAuthUser(['email' => 'test@example.com', 'user_id' => 1000000000]);
     $framework = Framework::factory()->create();
 
     $this->actingAs($user);
@@ -174,10 +165,7 @@ test('allows continuing the same draft', function () {
 test('blocks when cooldown has not passed', function () {
     config(['app.assessment_min_interval_months' => 6]);
 
-    $user = User::factory()->make([
-        'email' => 'test@example.com',
-        'user_id' => 1000000000,
-    ]);
+    $user = makeAuthUser(['email' => 'test@example.com', 'user_id' => 1000000000]);
 
     $framework = Framework::factory()->create();
     $this->actingAs($user);
@@ -198,10 +186,7 @@ test('blocks when cooldown has not passed', function () {
 test('allows starting a new assessment when cooldown has passed', function () {
     config(['app.assessment_min_interval_months' => 6]);
 
-    $user = User::factory()->make([
-        'email' => 'test@example.com',
-        'user_id' => 1000000000,
-    ]);
+    $user = makeAuthUser(['email' => 'test@example.com', 'user_id' => 1000000000]);
 
     $framework = Framework::factory()->create();
     $this->actingAs($user);
