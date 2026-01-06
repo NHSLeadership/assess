@@ -30,7 +30,19 @@ class Frameworks extends Component
             $this->frameworkId = $framework->id;
         }
     }
-    
+
+    public function deleteAssessment($id): void
+    {
+        $assessment = Assessment::find($id);
+        if (! $assessment) {
+            session()->flash('error', 'Assessment not found.');
+            return;
+        }
+
+        $assessment->delete();
+        session()->flash('message', 'Assessment deleted.');
+    }
+
     #[Computed]
     public function framework(): ?Framework
     {
