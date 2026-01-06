@@ -106,19 +106,26 @@ class Frameworks extends Component
      * @param Assessment|null $assessment
      * @return string
      */
-    function displayProgress(?Assessment $assessment): string
+    public function displayProgress(?Assessment $assessment): string
     {
         if (!$assessment) {
             return 'Not available';
         }
 
-        $total = (int) ($assessment->framework?->questions?->count() ?? 0);
+        // Count only ACTIVE questions in the framework
+        $total = (int) ($assessment->framework?->questions()
+            ->where('active', true)
+            ->count() ?? 0);
 
         if ($total <= 0) {
             return 'Not available';
         }
 
-        $answered = (int) ($assessment->responses?->count() ?? 0);
+        // Count only responses that belong to ACTIVE questions
+        $answered = (int) ($assessment->responses()
+            ->whereHas('question', fn ($q) => $q->where('active', true))
+            ->count() ?? 0);
+
         $percentage = (int) round(($answered / $total) * 100);
 
         return sprintf('%d/%d (%d%%)', $answered, $total, $percentage);
