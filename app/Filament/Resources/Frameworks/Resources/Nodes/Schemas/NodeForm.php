@@ -39,7 +39,6 @@ class NodeForm
                 TextInput::make('name')
                     ->required(),
                 RichEditor::make('description')
-                    ->required()
                     ->columnSpanFull(),
             ]);
     }
