@@ -54,6 +54,12 @@
             color: #333;
             margin-top: 5px;
         }
+
+        .answer-background {
+            background-color: #ccdff1;
+            color: #004281;
+            border-color: #004281;
+        }
     </style>
 </head>
 <body>
@@ -141,7 +147,7 @@
                         {{-- Scale response --}}
                         @if ($response->question->response_type === \App\Enums\ResponseType::TYPE_SCALE->value)
                             <div style="margin-top: 5px;">
-                                <span class="tag" style="background: {{ $response->question->node->colour }}">{{ $response->scaleOption->label }}</span>
+                                <strong class="tag answer-background">{{ $response->scaleOption->label }}</strong>
                             </div>
                         @endif
 
