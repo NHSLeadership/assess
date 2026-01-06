@@ -2,6 +2,8 @@
 
 namespace App\Livewire;
 
+use App\Exceptions\AssessmentNotFoundException;
+use App\Exceptions\FrameworkNotFoundException;
 use App\Models\Assessment;
 use App\Models\Framework;
 use App\Models\Node;
@@ -25,10 +27,35 @@ class AssessmentReport extends Component
     public array $radarOptions = [];
     public array $radarData = [];
 
+    /**
+     * @throws FrameworkNotFoundException
+     * @throws AssessmentNotFoundException
+     */
     public function mount(int $frameworkId, int $assessmentId): void
     {
         $this->frameworkId  = $frameworkId;
         $this->assessmentId = $assessmentId;
+
+        // Validate framework
+        if (!$this->framework()) {
+            throw new FrameworkNotFoundException(__('alerts.errors.framework-not-found'));
+        }
+
+        // Validate assessment
+        if (!$this->assessment()) {
+            throw new AssessmentNotFoundException(__('alerts.errors.assessment-not-found'));
+        }
+
+        // Ensure assessment belongs to framework
+        if ($this->assessment()->framework_id !== $this->framework()->id) {
+            abort(403, __('alerts.errors.assessment-not-belong-to-framework'));
+        }
+
+        // Ensure assessment is submitted
+        if (is_null($this->assessment()->submitted_at)) {
+            abort(403, __('alerts.errors.assessment-not-submitted'));
+        }
+
 
         // Use the shared service for all report data
         $service = new AssessmentReportService($frameworkId, $assessmentId);
