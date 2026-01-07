@@ -10,6 +10,7 @@ test('node has expected fillable attributes', function () {
         'parent_id',
         'node_type_id',
         'name',
+        'visibility',
         'description',
         'colour',
         'order',
