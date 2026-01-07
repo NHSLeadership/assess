@@ -2,11 +2,8 @@
 
 namespace App\Livewire;
 
-use App\Enums\RaterType;
 use App\Models\Assessment;
-use App\Models\AssessmentRater;
 use App\Models\Framework;
-use App\Models\Rater;
 use App\Traits\UserTrait;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +11,8 @@ use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\Attributes\Title;
 use App\Traits\AssessmentHelperTrait;
+use Log;
+use Throwable;
 
 class Frameworks extends Component
 {
@@ -30,7 +29,29 @@ class Frameworks extends Component
             $this->frameworkId = $framework->id;
         }
     }
-    
+
+    public function deleteAssessment($id): void
+    {
+        $assessment = Assessment::find($id);
+        if (! $assessment) {
+            session()->flash('error', 'Assessment not found.');
+            return;
+        }
+
+        try {
+            $assessment->delete();
+            session()->flash('message', 'Assessment deleted.');
+        } catch (Throwable $e) {
+            Log::error('Failed to delete assessment', [
+                'assessment_id' => $id,
+                'user_id' => $this->user()?->user_id,
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            session()->flash('error', 'Failed to delete assessment.');
+        }
+    }
+
     #[Computed]
     public function framework(): ?Framework
     {

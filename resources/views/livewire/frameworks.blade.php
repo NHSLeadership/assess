@@ -33,6 +33,7 @@
                     <th scope="col" class="nhsuk-table__header">Last updated</th>
                     <th scope="col" class="nhsuk-table__header">Progress</th>
                     <th scope="col" class="nhsuk-table__header">Status</th>
+                    <th scope="col" class="nhsuk-table__header">Actions</th>
                 </tr>
                 </thead>
                 <tbody class="nhsuk-table__body">
@@ -65,6 +66,16 @@
                             @else
                                 <strong class="nhsuk-tag nhsuk-tag--green">{{ __('Completed') }}</strong>
                             @endif
+                        </td>
+                        <td>
+                            <button type="button"
+                                    class="nhsuk-button nhsuk-button--small nhsuk-button--warning"
+                                    data-module="nhsuk-button"
+                                    data-prevent-double-click="true"
+                                    wire:click="deleteAssessment({{ $assessment->id }})"
+                                    onclick="confirm('Are you sure you want to delete this assessment?') || event.stopImmediatePropagation()">
+                                Delete
+                            </button>
                         </td>
                     </tr>
                 @endforeach
