@@ -20,6 +20,7 @@ class NodeFactory extends Factory
             'id' => $this->faker->unique()->numberBetween(1000, 999999), // if your PK is UUID
             'node_type_id' => $this->faker->unique()->numberBetween(1000, 999999),
             'name' => $this->faker->name(),
+            'visibility' => 'always',
             'description' => $this->faker->text(),
         ];
     }

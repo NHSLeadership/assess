@@ -16,6 +16,7 @@ class Node extends Model
         'parent_id',
         'node_type_id',
         'name',
+        'visibility',
         'description',
         'colour',
         'order',
