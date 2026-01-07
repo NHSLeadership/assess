@@ -70,6 +70,8 @@
                         <td>
                             <button type="button"
                                     class="nhsuk-button nhsuk-button--small nhsuk-button--warning"
+                                    data-module="nhsuk-button"
+                                    data-prevent-double-click="true"
                                     wire:click="deleteAssessment({{ $assessment->id }})"
                                     onclick="confirm('Are you sure you want to delete this assessment?') || event.stopImmediatePropagation()">
                                 Delete
