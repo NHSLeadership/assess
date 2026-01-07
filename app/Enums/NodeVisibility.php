@@ -4,10 +4,10 @@ namespace App\Enums;
 
 enum NodeVisibility: string
 {
-    case Always = 'Always';
-    case Never  = 'Never';
-    case Self   = 'Self';
-    case Rater  = 'Rater';
+    case Always = 'always';
+    case Never  = 'never';
+    case Self   = 'self';
+    case Rater  = 'rater';
 
     public function label(): string
     {
