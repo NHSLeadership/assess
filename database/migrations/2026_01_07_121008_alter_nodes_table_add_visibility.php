@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('nodes', function (Blueprint $table) {
-            $table->text('visibility')->default('always')->after('name');
+            $table->string('visibility')->default('Always')->after('name');
         });
     }
 

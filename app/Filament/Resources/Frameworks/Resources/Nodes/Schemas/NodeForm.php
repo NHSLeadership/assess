@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\Frameworks\Resources\Nodes\Schemas;
 
+use App\Enums\NodeVisibility;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class NodeForm
@@ -41,14 +41,10 @@ class NodeForm
                     ->required(),
                 Select::make('visibility')
                     ->hint('Select all who should see this node.')
-                    ->options([
-                        'always'  => 'Always show',
-                        'never' => 'Never show',
-                        'self'  => 'Show to self raters only',
-                        'rater' => 'Show to external raters only',
-                    ])
+                    ->options(NodeVisibility::options())
                     ->required()
-                    ->default('always'),
+                    ->default(NodeVisibility::Always->value)
+                    ->default(NodeVisibility::Always->value),
                 RichEditor::make('description')
                     ->columnSpanFull(),
             ]);
