@@ -5,12 +5,12 @@
             <h1 class="nhsuk-heading-xl">
                 {{ $this->framework->name ?? '' }}
             </h1>
-            <h2 class="nhsuk-heading-l">Assessment report</h2>
+            <h2 class="nhsuk-heading-l">Self assessment report</h2>
         @endif
 
         @if (!empty($radarData))
             <div class="nhsuk-u-margin-bottom-5" wire:ignore>
-                <canvas id="radarChart" style="max-height: 500px;max-width: 900px;"></canvas>
+                <canvas id="radarChart" style="max-height: 600px;max-width: 900px;"></canvas>
             </div>
         @endif
         @foreach ($this->nodes as $node)

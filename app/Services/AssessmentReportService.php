@@ -17,7 +17,9 @@ class AssessmentReportService
     public function __construct(
         public int $frameworkId,
         public int $assessmentId
-    ) {}
+    )
+    {
+    }
 
     public function framework(): ?Framework
     {
@@ -69,8 +71,7 @@ class AssessmentReportService
 
             foreach ($standards as $standard) {
 
-                $leafNodes = $this->nodes()->filter(fn($n) =>
-                    $n->children->count() === 0 &&
+                $leafNodes = $this->nodes()->filter(fn($n) => $n->children->count() === 0 &&
                     $n->parent_id === $standard->id
                 );
 
@@ -78,8 +79,7 @@ class AssessmentReportService
                     continue;
                 }
 
-                $scaleResponses = $this->responses()->filter(fn($r) =>
-                    $leafNodes->pluck('id')->contains($r->question->node_id) &&
+                $scaleResponses = $this->responses()->filter(fn($r) => $leafNodes->pluck('id')->contains($r->question->node_id) &&
                     $r->question->response_type === \App\Enums\ResponseType::TYPE_SCALE->value
                 );
 
@@ -88,7 +88,7 @@ class AssessmentReportService
                 }
 
                 $avg = round(
-                    $scaleResponses->avg(fn($r) => (int) ($r->scaleOption->value ?? 0))
+                    $scaleResponses->avg(fn($r) => (int)($r->scaleOption->value ?? 0))
                 );
 
                 $labels[] = $standard->name;
@@ -107,7 +107,7 @@ class AssessmentReportService
                 'data' => [
                     'labels' => $labels,
                     'datasets' => [[
-                        'label' => 'Standards',
+                        'label' => 'Self assessment',
                         'data' => $values,
                         'backgroundColor' => $area?->colour ?? 'rgba(79,70,229,0.5)',
                         'borderColor' => $area?->colour ?? '#4F46E5',
@@ -132,7 +132,13 @@ class AssessmentReportService
     /* ---------------------------------------------------------
        RADAR CHART
     --------------------------------------------------------- */
-    public function radarChart(): array
+    /**
+     * Generate a radar chart with one data point per area
+     *
+     * @param bool $useScaleLabels
+     * @return array
+     */
+    public function radarChartHighLevel(bool $useScaleLabels = false): array
     {
         $areas = $this->nodes()->whereNull('parent_id');
 
@@ -170,7 +176,7 @@ class AssessmentReportService
                 }
 
                 $avg = round(
-                    $scaleResponses->avg(fn($r) => (int) ($r->scaleOption->value ?? 0)),
+                    $scaleResponses->avg(fn($r) => (int)($r->scaleOption->value ?? 0)),
                     1
                 );
 
@@ -187,10 +193,11 @@ class AssessmentReportService
             $values[] = $areaAvg;
         }
 
+        // Build dataset
         $this->radarData = [
             'labels' => $labels,
             'datasets' => [[
-                'label' => 'Area Overview',
+                'label' => 'Self assessment',
                 'data' => $values,
                 'backgroundColor' => 'rgba(79,70,229,0.25)',
                 'borderColor' => '#4F46E5',
@@ -199,17 +206,80 @@ class AssessmentReportService
             ]]
         ];
 
+        // Build callback if scale labels are enabled
+        $scaleOptions = \App\Models\ScaleOption::orderBy('value')->pluck('label')->toArray();
+
+        $callback = $useScaleLabels
+            ? "function(value, index, values) {
+            const labels = " . json_encode($scaleOptions) . ";
+            return labels[index] ?? value;
+        }"
+            : null;
+
+        // Build options
         $this->radarOptions = [
             'min' => 0,
-            'max' => 5,
+            'max' => 4,
             'tickColor' => '#374151',
             'gridColor' => 'rgba(0,0,0,0.1)',
             'angleLineColor' => 'rgba(0,0,0,0.2)',
+            'callback' => $callback,
         ];
 
         return [
             'data' => $this->radarData,
             'options' => $this->radarOptions,
+        ];
+    }
+
+    /**
+     * Generate a radar chart with one data point per standard
+     *
+     * @param bool $useScaleLabels
+     * @return array
+     */
+    public function radarChart(bool $useScaleLabels = true): array
+    {
+        // Ensure bar charts are generated
+        if (empty($this->barCharts)) {
+            $this->barCharts();
+        }
+
+        $labels = [];
+        $values = [];
+
+        $scaleOptions = \App\Models\ScaleOption::orderBy('value')->pluck('label')->toArray();
+        $callback = $useScaleLabels
+            ? "function(value, index, values) {
+                const labels = " . json_encode($scaleOptions) . ";
+                return labels[index] ?? value;
+            }"
+            : null;
+
+        foreach ($this->barCharts as $chart) {
+            // Each bar chart has multiple labels and values
+            foreach ($chart['data']['labels'] as $i => $label) {
+                $labels[] = $label;
+                $values[] = $chart['data']['datasets'][0]['data'][$i];
+            }
+        }
+        return [
+            'data' => [
+                'labels' => $labels,
+                'datasets' => [[
+                    'label' => 'Self assessment',
+                    'data' => $values,
+                    'backgroundColor' => 'rgba(79,70,229,0.25)',
+                    'borderColor' => '#4F46E5',
+                    'pointBackgroundColor' => '#4F46E5',
+                    'borderWidth' => 2,
+                ]]
+            ],
+            'options' => [
+                'min' => 0,
+                'max' => 4,
+                'callback' => $callback
+            ]
         ];
     }
 }
