@@ -70,7 +70,7 @@
 
 @if (!empty($framework))
     <h1>{{ data_get($framework, 'name') }}</h1>
-    <h2>Self Assessment Report</h2>
+    <h2>Self assessment report</h2>
 @endif
 
 <strong>{{ Auth()?->user()?->name ?? '' }}</strong>
