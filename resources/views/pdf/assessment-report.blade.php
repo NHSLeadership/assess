@@ -86,7 +86,7 @@ if (!empty(Auth()?->user()?->user_id)) {
 
 @if (!empty($radarImage))
     <div class="page-break"></div>
-    <h3>Average competency score</h3>
+    <h3>Average competency scores</h3>
     <br>
     <div class="section">
         <img src="{{ $radarImage }}" class="radar-img" alt="Radar chart">
