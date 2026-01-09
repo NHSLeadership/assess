@@ -6,10 +6,23 @@
                 {{ $this->framework->name ?? '' }}
             </h1>
             <h2 class="nhsuk-heading-l">Self assessment report</h2>
+            <p>
+                <strong>For: {{ Auth()?->user()?->name ?? '' }}</strong>
+                <br>
+                <strong>Academy Id: {{ Auth()?->user()?->user_id ?? '' }}</strong>
+                <br>
+                <strong>
+                    Completed on {{ $this->assessment() ? \Carbon\Carbon::parse(data_get($this->assessment(), 'submitted_at'))->format('j F Y') : '' }}
+                </strong>
+            </p>
+            <p>{!! data_get($this->framework, 'report_intro') ?? '' !!}</p>
         @endif
+
+
 
         @if (!empty($radarData))
             <div class="nhsuk-u-margin-bottom-5" wire:ignore>
+                <h3>Average competency score</h3>
                 <canvas id="radarChart" style="max-height: 600px;max-width: 900px;"></canvas>
             </div>
         @endif

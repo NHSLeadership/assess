@@ -117,7 +117,7 @@ class AssessmentReportService
                 ],
                 'options' => [
                     'min' => 0,
-                    'max' => 5,
+                    'max' => 4,
                     'tickColor' => '#374151',
                     'gridColor' => 'rgba(0,0,0,0.1)',
                     'categoryPercentage' => 10,

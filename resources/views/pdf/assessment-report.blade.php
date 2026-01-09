@@ -35,12 +35,6 @@
             height: 100px;
         }
 
-        #footer-bar {
-            background: #005eb8;
-            height: 3px;
-            width: 100%;
-        }
-
         .answer-background {
             background-color: #ccdff1;
             color: #004281;
@@ -52,7 +46,6 @@
 <body>
 
 @php
-    // Safe defaults to avoid "Undefined variable" errors
     $barCharts  = $barCharts ?? [];
     $barImages  = $barImages ?? [];
     $radarImage = $radarImage ?? null;
@@ -65,7 +58,7 @@
 
 {{-- REPEATING HEADER --}}
 <header>
-    <img src="{{ public_path('media/nhs-england-logo.png') }}" style="height: 70px; width: auto; float: right;">
+    <img src="{{ public_path('media/nhs-logo.png') }}" style="height: 40px; width: 98px; float: right;">
 </header>
 
 @if (!empty($framework))
@@ -73,7 +66,15 @@
     <h2>Self assessment report</h2>
 @endif
 
-<strong>{{ Auth()?->user()?->name ?? '' }}</strong>
+<strong>For: {{ Auth()?->user()?->name ?? '' }}</strong>
+@php
+if (!empty(Auth()?->user()?->user_id)) {
+@endphp
+    <br>
+    <strong>Academy Id: {{ Auth()?->user()?->user_id ?? '' }}</strong>
+@php
+    }
+@endphp
 <br>
 <strong>
     Completed on {{ $assessment ? \Carbon\Carbon::parse(data_get($assessment, 'submitted_at'))->format('j F Y') : '' }}
@@ -85,7 +86,8 @@
 
 @if (!empty($radarImage))
     <div class="page-break"></div>
-
+    <h3>Average competency score</h3>
+    <br>
     <div class="section">
         <img src="{{ $radarImage }}" class="radar-img" alt="Radar chart">
     </div>
