@@ -22,7 +22,7 @@
 
         @if (!empty($radarData))
             <div class="nhsuk-u-margin-bottom-5" wire:ignore>
-                <h3>Average standard scores</h3>
+                <h3>Average scores for standards</h3>
                 <canvas id="radarChart" style="max-height: 600px;max-width: 900px;"></canvas>
             </div>
         @endif
