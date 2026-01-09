@@ -5,12 +5,25 @@
             <h1 class="nhsuk-heading-xl">
                 {{ $this->framework->name ?? '' }}
             </h1>
-            <h2 class="nhsuk-heading-l">Assessment report</h2>
+            <h2 class="nhsuk-heading-l">Self assessment report</h2>
+            <p>
+                <strong>For: {{ Auth()?->user()?->name ?? '' }}</strong>
+                <br>
+                <strong>Academy Id: {{ Auth()?->user()?->user_id ?? '' }}</strong>
+                <br>
+                <strong>
+                    Completed on {{ $this->assessment() ? \Carbon\Carbon::parse(data_get($this->assessment(), 'submitted_at'))->format('j F Y') : '' }}
+                </strong>
+            </p>
+            <p>{!! data_get($this->framework, 'report_intro') ?? '' !!}</p>
         @endif
+
+
 
         @if (!empty($radarData))
             <div class="nhsuk-u-margin-bottom-5" wire:ignore>
-                <canvas id="radarChart" style="max-height: 500px;max-width: 900px;"></canvas>
+                <h3>Average scores for standards</h3>
+                <canvas id="radarChart" style="max-height: 600px;max-width: 900px;"></canvas>
             </div>
         @endif
         @foreach ($this->nodes as $node)

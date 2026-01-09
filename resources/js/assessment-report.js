@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function () {
         radarCtx.width = 900;
         radarCtx.height = 900;
 
+        if (typeof radarOptions.callback === 'string') {
+            radarOptions.callback = eval('(' + radarOptions.callback + ')');
+        }
         new Chart(radarCtx, {
             type: 'radar',
             data: radarData,
@@ -26,7 +29,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             stepSize: 1,
                             maxTicksLimit: 100,
                             backdropColor: 'transparent',
-                            showLabelBackdrop: false
+                            showLabelBackdrop: false,
+                            callback: radarOptions.callback ?? undefined
                         },
                         grid: { color: radarOptions.gridColor },
                         angleLines: { color: radarOptions.angleLineColor },

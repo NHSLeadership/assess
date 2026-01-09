@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Assessment Report</title>
+
     <style>
         body { font-family: sans-serif; }
         h1, h2, h3, h4 { margin: 0 0 10px 0; }
@@ -18,41 +19,20 @@
             transform-origin: top left;
             image-rendering: crisp-edges;
         }
+
+        /* Reserve space for header + footer */
         @page {
-            margin-top: 40px;
-            margin-bottom: 80px;
+            margin-top: 140px;
+            margin-bottom: 100px;
         }
 
-        .radar-img {
-            height: auto;          /* scales proportionally */
-            width: auto;        /* keeps correct aspect ratio */
-            display: block;
-            margin: 0 auto 40px;
-        }
-
-        html {
-            counter-reset: page;
-        }
-
-        footer {
-            bottom: 0;
+        /* Header (repeats on every page) */
+        header {
+            position: fixed;
+            top: -110px;
             left: 0;
             right: 0;
-            height: 30px;
-            text-align: center;
-        }
-
-        #footer-bar {
-            background: #005eb8;
-            height: 6px;
-            width: 100%;
-        }
-
-        #footer-content {
-            text-align: center;
-            font-size: 12px;
-            color: #333;
-            margin-top: 5px;
+            height: 100px;
         }
 
         .answer-background {
@@ -62,95 +42,112 @@
         }
     </style>
 </head>
+
 <body>
-{{-- NHS PDF HEADER --}}
-<header style="background:#005eb8; padding:20px; margin-bottom:30px;">
-    <div style="display:flex; align-items:center;">
-        <img src="{{ public_path('media/nhs-logo.png') }}" width="100" height="40" alt="NHS Logo">
 
-        <span style="font-size:22px; font-weight:bold; color:white; margin-left:15px;">
-            {{ config('app.name') ?? 'Self Assessment Tools' }}
-        </span>
-    </div>
+@php
+    $barCharts  = $barCharts ?? [];
+    $barImages  = $barImages ?? [];
+    $radarImage = $radarImage ?? null;
+    $responses  = collect($responses ?? []);
+    $nodes      = collect($nodes ?? []);
+    $framework  = $framework ?? null;
+    $assessment = $assessment ?? null;
+    $rater      = $rater ?? null;
+@endphp
 
+{{-- REPEATING HEADER --}}
+<header>
+    <img src="{{ public_path('media/nhs-logo.png') }}" style="height: 40px; width: 98px; float: right;">
 </header>
-{{-- HEADER --}}
+
 @if (!empty($framework))
-    <h1>{{ $framework->name }}</h1>
-    <h2>Assessment Report</h2>
+    <h1>{{ data_get($framework, 'name') }}</h1>
+    <h2>Self assessment report</h2>
 @endif
 
-{{-- RADAR CHART --}}
+<strong>For: {{ Auth()?->user()?->name ?? '' }}</strong>
+@php
+if (!empty(Auth()?->user()?->user_id)) {
+@endphp
+    <br>
+    <strong>Academy Id: {{ Auth()?->user()?->user_id ?? '' }}</strong>
+@php
+    }
+@endphp
+<br>
+<strong>
+    Completed on {{ $assessment ? \Carbon\Carbon::parse(data_get($assessment, 'submitted_at'))->format('j F Y') : '' }}
+</strong>
+
+<br><br>
+
+<p>{!! data_get($framework, 'report_intro') ?? '' !!}</p>
+
 @if (!empty($radarImage))
+    <div class="page-break"></div>
+    <h3>Average scores for standards</h3>
+    <br>
     <div class="section">
-        <img src="{{ $radarImage }}" class="radar-img" >
+        <img src="{{ $radarImage }}" class="radar-img" alt="Radar chart">
     </div>
 @endif
-<div class="page-break"></div>
 
-{{-- NODES --}}
 @foreach ($nodes as $node)
 
-    {{-- AREA (top-level section) --}}
     @if (empty($node->parent_id))
+        <div class="page-break"></div>
+
         <div class="section">
             <h3 style="background: {{ $node->colour ?? '#005eb8' }}; color: white; padding: 6px;">
                 {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
                 {{ $node->name }}
             </h3>
 
-            {{-- BAR CHART FOR THIS AREA --}}
             @php
                 $chart = collect($barCharts)->firstWhere('node_id', $node->id);
             @endphp
 
-            @if ($chart && !empty($barImages[$chart['id']]))
-                <img src="{{ $barImages[$chart['id']] }}" class="bar-chart-img">
+            @if ($chart && !empty(data_get($barImages, $chart['id'])))
+                <img src="{{ data_get($barImages, $chart['id']) }}" class="bar-chart-img" alt="Bar chart">
             @endif
         </div>
 
-        {{-- SUBSECTION --}}
-    @elseif ($node->children->count())
+    @elseif (isset($node->children) && $node->children->count())
         <h4>
             {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
             {{ $node->name }}
         </h4>
 
-        {{-- LEAF NODE (QUESTIONS) --}}
     @else
         @php
-            $nodeResponses = $responses?->where('question.node_id', $node->id);
+            // Use a safe filter even if responses is empty or contains arrays/objects
+            $nodeResponses = $responses->filter(function($r) use ($node) {
+                return data_get($r, 'question.node_id') == $node->id;
+            });
         @endphp
 
         @if ($nodeResponses && $nodeResponses->count())
             <ul class="task-list">
-
                 @foreach ($nodeResponses as $response)
                     <li class="task-item">
+                        <strong>{{ data_get($response, 'question.title') }}</strong><br>
 
-                        <strong>{{ $response->question->title }}</strong><br>
-
-                        {{-- Question text --}}
                         {!! \App\Services\QuestionTextResolver::textFor(
                                 $assessment,
                                 $rater,
-                                $response->question->id
-                            ) ?? $response->question?->hint !!}
+                                data_get($response, 'question.id')
+                            ) ?? data_get($response, 'question.hint') !!}
 
-                        {{-- Textarea response --}}
-                        @if ($response->question->response_type === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
-                            <div style="margin-top: 5px;">
-                                {{ $response->textarea }}
-                            </div>
+                        @if (data_get($response, 'question.response_type') === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
+                            <div style="margin-top: 5px;">{{ data_get($response, 'textarea') }}</div>
                         @endif
 
-                        {{-- Scale response --}}
-                        @if ($response->question->response_type === \App\Enums\ResponseType::TYPE_SCALE->value)
+                        @if (data_get($response, 'question.response_type') === \App\Enums\ResponseType::TYPE_SCALE->value)
                             <div style="margin-top: 5px;">
-                                <strong class="tag answer-background">{{ $response->scaleOption->label }}</strong>
+                                <strong class="tag answer-background">{{ data_get($response, 'scaleOption.label') ?? '' }}</strong>
                             </div>
                         @endif
-
                     </li>
                 @endforeach
             </ul>
@@ -158,12 +155,20 @@
     @endif
 @endforeach
 
-<footer>
+{{-- REPEATING FOOTER --}}
+<footer style="bottom: 0; left: 0; right: 0; height: 30px; text-align: center;">
     <script type="text/php">
         if (isset($pdf)) {
-            echo '<div id="footer-bar">d</div>';
-            $font = $fontMetrics->get_font("sans-serif", "normal");
-            $pdf->page_text(270, 820, "Page {PAGE_NUM} of {PAGE_COUNT}", $font, 10);
+            $text = "Page {PAGE_NUM} of {PAGE_COUNT}";
+            $font = $fontMetrics->get_font("Arial", "normal");
+            $size = 10;
+            // measure the sample so centering accounts for max width of the tokens
+            $sample = "Page 100 of 100";
+            $width = $fontMetrics->get_text_width($sample, $font, $size);
+            $x = ($pdf->get_width() - $width) / 2;
+            $y = $pdf->get_height() - 35;
+            $color = array(0, 0, 0);
+            $pdf->page_text($x, $y, $text, $font, $size, $color);
         }
     </script>
 </footer>
