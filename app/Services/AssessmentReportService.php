@@ -183,4 +183,89 @@ class AssessmentReportService
             ]
         ];
     }
+
+    private function descendantLeafNodes(Node $node): \Illuminate\Support\Collection
+    {
+        $all = $this->nodes();
+        // build map: parent_id => [nodes]
+        $childrenMap = [];
+        foreach ($all as $n) {
+            $childrenMap[$n->parent_id ?? 0][] = $n;
+        }
+
+        $stack = [$node];
+        $leaves = collect();
+
+        while (!empty($stack)) {
+            /** @var Node $current */
+            $current = array_pop($stack);
+            $children = $childrenMap[$current->id] ?? [];
+
+            if (empty($children)) {
+                $leaves->push($current);
+            } else {
+                foreach ($children as $child) {
+                    $stack[] = $child;
+                }
+            }
+        }
+
+        return $leaves;
+    }
+
+    public function averageForNode(Node $node): ?float
+    {
+        $leafNodes = $this->descendantLeafNodes($node);
+
+        if ($leafNodes->isEmpty()) {
+            return null;
+        }
+
+        $leafIds = $leafNodes->pluck('id')->toArray();
+
+        $scaleResponses = $this->responses()->filter(fn($r) =>
+            in_array($r->question->node_id, $leafIds, true) &&
+            $r->question->response_type === \App\Enums\ResponseType::TYPE_SCALE->value
+        );
+
+        if ($scaleResponses->isEmpty()) {
+            return null;
+        }
+
+        return round(
+            $scaleResponses->avg(fn($r) => (int)($r->scaleOption->value ?? 0)),
+            1
+        );
+    }
+
+    public function signpostsForNode(Node $node): array
+    {
+        $avg = $this->averageForNode($node);
+        if ($avg === null) {
+            return [];
+        }
+
+        $selectedOptionIds = $this->assessment()?->variantSelections()
+            ? $this->assessment()->variantSelections()->pluck('framework_variant_option_id')->toArray()
+            : [];
+
+        $query = \App\Models\Signpost::query()
+            ->where('node_id', $node->id)
+            ->where('min_value', '<=', $avg)
+            ->where('max_value', '>=', $avg)
+            ->orderBy('min_value')
+            ->orderBy('max_value');
+
+        if (!empty($selectedOptionIds)) {
+            $query->where(function ($q) use ($selectedOptionIds) {
+                $q->whereNull('framework_variant_option_id')
+                    ->orWhereIn('framework_variant_option_id', $selectedOptionIds);
+            });
+        } else {
+            $query->whereNull('framework_variant_option_id');
+        }
+
+        // return array of Signpost models for this specific node
+        return $query->get()->all();
+    }
 }
