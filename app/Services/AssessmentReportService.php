@@ -118,7 +118,8 @@ class AssessmentReportService
                 'options' => [
                     'min' => 0,
                     'max' => 4,
-                    'tickColor' => '#374151',
+                    'tickColor' => '#212b32',
+                    'legendLabelsColor' => '#212b32',
                     'gridColor' => 'rgba(0,0,0,0.1)',
                     'categoryPercentage' => 10,
                     'barPercentage' => 10,
@@ -179,6 +180,9 @@ class AssessmentReportService
             'options' => [
                 'min' => 0,
                 'max' => 4,
+                'tickColor' => '#212b32',
+                'pointLabelsColor' => '#212b32',
+                'legendLabelsColor' => '#212b32',
                 'callback' => $callback
             ]
         ];
