@@ -6,6 +6,7 @@ use App\Enums\NodeVisibility;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Schema;
 
 class NodeForm
@@ -39,11 +40,12 @@ class NodeForm
                     ->required(),
                 TextInput::make('name')
                     ->required(),
-                Select::make('visibility')
-                    ->hint('Select all who should see this node.')
+                ToggleButtons::make('visibility')
+                    ->label('Display node in assessment form')
+                    ->inline()
+                    ->columnSpanFull()
                     ->options(NodeVisibility::options())
                     ->required()
-                    ->default(NodeVisibility::Always->value)
                     ->default(NodeVisibility::Always->value),
                 RichEditor::make('description')
                     ->columnSpanFull(),
