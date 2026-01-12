@@ -13,32 +13,6 @@
                     sans-serif;
             overflow-y: scroll;
         }
-        @font-face {
-            font-display: swap;
-            font-family: Frutiger W01;
-            font-style: normal;
-            font-weight: 400;
-            src: url(https://assets.nhs.uk/fonts/FrutigerLTW01-55Roman.eot?#iefix);
-            src:
-                    url(https://assets.nhs.uk/fonts/FrutigerLTW01-55Roman.eot?#iefix) format("eot"),
-                    url(https://assets.nhs.uk/fonts/FrutigerLTW01-55Roman.woff2) format("woff2"),
-                    url(https://assets.nhs.uk/fonts/FrutigerLTW01-55Roman.woff) format("woff"),
-                    url(https://assets.nhs.uk/fonts/FrutigerLTW01-55Roman.ttf) format("truetype"),
-                    url(https://assets.nhs.uk/fonts/FrutigerLTW01-55Roman.svg#7def0e34-f28d-434f-b2ec-472bde847115) format("svg");
-        }
-        @font-face {
-            font-display: swap;
-            font-family: Frutiger W01;
-            font-style: normal;
-            font-weight: 600;
-            src: url(https://assets.nhs.uk/fonts/FrutigerLTW01-65Bold.eot?#iefix);
-            src:
-                    url(https://assets.nhs.uk/fonts/FrutigerLTW01-65Bold.eot?#iefix) format("eot"),
-                    url(https://assets.nhs.uk/fonts/FrutigerLTW01-65Bold.woff2) format("woff2"),
-                    url(https://assets.nhs.uk/fonts/FrutigerLTW01-65Bold.woff) format("woff"),
-                    url(https://assets.nhs.uk/fonts/FrutigerLTW01-65Bold.ttf) format("truetype"),
-                    url(https://assets.nhs.uk/fonts/FrutigerLTW01-65Bold.svg#eae74276-dd78-47e4-9b27-dac81c3411ca) format("svg");
-        }
         h1, h2, h3, h4 { margin: 0 0 10px 0; }
         .section { margin-bottom: 25px; }
         .bar-chart-img, .radar-img { max-width: 100%; margin-bottom: 20px; }
@@ -73,68 +47,6 @@
             color: #004281;
             border-color: #004281;
         }
-
-        .nhsuk-notification-banner {
-            border: 4px solid #005eb8;
-            box-sizing: border-box;
-            /*font-size: 12px;*/
-            /*font-weight: 400;*/
-            /*line-height: 1.5;*/
-        }
-
-        .nhsuk-notification-banner {
-            margin-bottom: 48px;
-        }
-
-        .nhsuk-notification-banner:focus {
-            outline: 4px solid #ffeb3b;
-        }
-        .nhsuk-notification-banner__header {
-            background-color: #005eb8;
-            border-bottom: 1px solid transparent;
-            padding: 2px 16px 4px;
-        }
-        .nhsuk-notification-banner__header {
-            padding: 2px 24px 4px;
-        }
-
-        .nhsuk-notification-banner__title {
-            color: #fff;
-            font-size: 1rem;
-            /*font-weight: 600;*/
-            /*line-height: 1.5;*/
-            margin: 0;
-            padding: 0;
-        }
-
-        .nhsuk-notification-banner__content {
-            color: #212b32;
-            padding: 16px;
-        }
-
-        .nhsuk-notification-banner__content {
-            padding: 24px;
-        }
-
-        .nhsuk-notification-banner__content > :last-child {
-            margin-bottom: 0;
-        }
-        .nhsuk-notification-banner__heading {
-            /*font-size: 1.375rem;*/
-            /*font-weight: 600;*/
-            line-height: 1.31818;
-            margin: 0 0 16px;
-            padding: 0;
-        }
-
-        .nhsuk-notification-banner__link:visited {
-            color: #005eb8;
-        }
-        .nhsuk-notification-banner__link:visited .nhsuk-icon {
-            fill: #005eb8;
-        }
-
-
     </style>
 </head>
 
