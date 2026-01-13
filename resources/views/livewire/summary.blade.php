@@ -41,7 +41,14 @@
                         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link nhsuk-u-padding-left-2">
 
                             <div class="nhsuk-task-list__name-and-hint nhsuk-u-width-three-quarters">
-                                <strong>{!! $response->question->title !!}</strong>
+                                @if(!empty($response?->assessment?->submitted_at))
+                                    <strong>{!! $response->question->title !!}</strong>
+                                @else
+                                    <a href="#" wire:click.prevent="editAnswer({{ $response->question?->node?->id ?? '' }})" class="nhsuk-link nhsuk-task-list__link">
+                                        <strong>{!! $response->question->title ?? '' !!}</strong>
+                                    </a>
+                                    <span class="nhsuk-u-visually-hidden">Click to edit this answer</span>
+                                @endif
                                 <br>
                                 {!! \App\Services\QuestionTextResolver::textFor(
                                     $this->assessment(),
