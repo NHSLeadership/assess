@@ -32,9 +32,26 @@ document.addEventListener('DOMContentLoaded', function () {
                             showLabelBackdrop: false,
                             callback: radarOptions.callback ?? undefined
                         },
-                        grid: { color: radarOptions.gridColor },
-                        angleLines: { color: radarOptions.angleLineColor },
-                        pointLabels: { font: { size: 16 } }
+                        grid: {
+                            color: radarOptions.gridColor
+                        },
+                        angleLines: {
+                            color: radarOptions.angleLineColor
+                        },
+                        pointLabels:
+                            {
+                                font: {
+                                    size: 16
+                                },
+                                color: radarOptions.pointLabelsColor
+                            },
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: radarOptions.legendLabelsColor
+                        }
                     }
                 }
             }
@@ -57,18 +74,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 devicePixelRatio: 3,
                 indexAxis: 'y',
                 plugins: {
-                    legend: { labels: { font: { size: 18 } } }
+                    legend: {
+                        labels: {
+                            font: {size: 18},
+                            color: chart.options.legendLabelsColor
+                        }
+                    }
                 },
                 scales: {
                     x: {
                         min: chart.options.min,
                         max: chart.options.max,
-                        ticks: { color: chart.options.tickColor, font: { size: 16 } },
-                        grid: { color: chart.options.gridColor }
+                        ticks: {
+                            color: chart.options.tickColor, font: {size: 16}
+                        },
+                        grid: {color: chart.options.gridColor}
                     },
                     y: {
-                        ticks: { color: chart.options.tickColor, font: { size: 16 } },
-                        grid: { color: chart.options.gridColor }
+                        ticks: {
+                            color: chart.options.tickColor, font: {size: 16}
+                        },
+                        grid: {color: chart.options.gridColor}
                     }
                 }
             }

@@ -26,37 +26,40 @@
                 <canvas id="radarChart" style="max-height: 600px;max-width: 900px;"></canvas>
             </div>
         @endif
-        @foreach ($this->nodes as $node)
+            @foreach ($this->nodes as $node)
 
-            {{-- SECTION --}}
-            @if (empty($node->parent))
-                <h3 class="nhsuk-heading-m nhsuk-tag--no-border nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2">
-                    {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
-                    {{ $node->name ?? '' }}
-                </h3>
+                {{-- SECTION (top-level) --}}
+                @if (empty($node->parent))
+                    <h3 class="nhsuk-heading-m nhsuk-tag--no-border nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2">
+                        {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
+                        {{ $node->name }}
+                    </h3>
 
-                {{-- SECTION BAR CHART --}}
-                @php
-                    $chart = collect($barCharts)->firstWhere('node_id', $node->id);
-                @endphp
+                    {{-- BAR CHART --}}
+                    @php
+                        $chart = collect($barCharts)->firstWhere('node_id', $node->id);
+                    @endphp
 
-                @if ($chart)
-                    <div class="nhsuk-u-margin-bottom-5" wire:ignore>
-                        <canvas id="{{ $chart['id'] }}" style="width: 100%; max-width: 900px;"></canvas>
-                    </div>
+                    @if ($chart)
+                        <div class="nhsuk-u-margin-bottom-5" wire:ignore>
+                            <canvas id="{{ $chart['id'] }}" style="width: 100%; max-width: 900px;"></canvas>
+                        </div>
+                    @endif
+
+                    {{-- SUBSECTION (has children) --}}
+                @elseif ($node->children->count())
+                    <h4 class="nhsuk-heading-s">
+                        {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
+                        {{ $node->name }}
+                    </h4>
                 @endif
 
-                {{-- SUBSECTION --}}
-            @elseif ($node->children->count())
-                <h4 class="nhsuk-heading-s">
-                    {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
-                    {{ $node->name ?? '' }}
-                </h4>
 
-                {{-- LEAF NODE (QUESTIONS) --}}
-            @else
+
+                {{-- RESPONSES (leaf nodes only) --}}
                 @php
-                    $nodeResponses = $this->responses?->where('question.node_id', $node->id);
+                    $nodeResponses = $this->responses
+                        ?->filter(fn ($r) => $r->question?->node_id == $node->id);
                 @endphp
 
                 @if ($nodeResponses && $nodeResponses->count())
@@ -67,7 +70,7 @@
 
                                 <div class="nhsuk-task-list__name-and-hint nhsuk-u-width-three-quarters">
 
-                                    <strong>{{ $response->question->title ?? '' }}</strong>
+                                    <strong>{{ $response->question->title }}</strong>
                                     <br>
 
                                     {!! \App\Services\QuestionTextResolver::textFor(
@@ -76,17 +79,17 @@
                                             $response->question->id
                                         ) ?? $response->question?->hint !!}
 
-                                    @if ($response?->question?->response_type === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
+                                    @if ($response->question?->response_type === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
                                         <div class="nhsuk-task-list__hint">
-                                            {{ $response->textarea ?? '' }}
+                                            {{ $response->textarea }}
                                         </div>
                                     @endif
                                 </div>
 
                                 <div class="nhsuk-task-list__status">
-                                    @if ($response?->question?->response_type === \App\Enums\ResponseType::TYPE_SCALE->value)
+                                    @if ($response->question?->response_type === \App\Enums\ResponseType::TYPE_SCALE->value)
                                         <strong class="nhsuk-tag nhsuk-tag--blue">
-                                            {{ $response->scaleOption->label ?? '' }}
+                                            {{ $response->scaleOption->label }}
                                         </strong>
                                     @endif
                                 </div>
@@ -97,9 +100,13 @@
                     </ul>
                 @endif
 
-            @endif
+                {{-- SIGNPOSTS (always show if exist) --}}
+                @php
+                    $nodeSignposts = data_get($this->signposts, $node->id, []);
+                @endphp
 
-        @endforeach
+                <x-signpost-banner :signposts="$nodeSignposts" title="Guidance" :banner-id="$node->id" />
+            @endforeach
 
         <div class="nhsuk-u-margin-bottom-4">
             <button id="downloadPdfBtn" class="nhsuk-button">

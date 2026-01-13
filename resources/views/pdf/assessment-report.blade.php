@@ -5,7 +5,14 @@
     <title>Assessment Report</title>
 
     <style>
-        body { font-family: sans-serif; }
+        html {
+            background-color: #d8dde0;
+            font-family:
+                    Frutiger W01,
+                    arial,
+                    sans-serif;
+            overflow-y: scroll;
+        }
         h1, h2, h3, h4 { margin: 0 0 10px 0; }
         .section { margin-bottom: 25px; }
         .bar-chart-img, .radar-img { max-width: 100%; margin-bottom: 20px; }
@@ -95,6 +102,7 @@ if (!empty(Auth()?->user()?->user_id)) {
 
 @foreach ($nodes as $node)
 
+    {{-- SECTION (top-level) --}}
     @if (empty($node->parent_id))
         <div class="page-break"></div>
 
@@ -104,6 +112,7 @@ if (!empty(Auth()?->user()?->user_id)) {
                 {{ $node->name }}
             </h3>
 
+            {{-- BAR CHART --}}
             @php
                 $chart = collect($barCharts)->firstWhere('node_id', $node->id);
             @endphp
@@ -113,46 +122,58 @@ if (!empty(Auth()?->user()?->user_id)) {
             @endif
         </div>
 
-    @elseif (isset($node->children) && $node->children->count())
+        {{-- SUBSECTION (has children) --}}
+    @elseif ($node->children && $node->children->count())
         <h4>
             {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
             {{ $node->name }}
         </h4>
-
-    @else
-        @php
-            // Use a safe filter even if responses is empty or contains arrays/objects
-            $nodeResponses = $responses->filter(function($r) use ($node) {
-                return data_get($r, 'question.node_id') == $node->id;
-            });
-        @endphp
-
-        @if ($nodeResponses && $nodeResponses->count())
-            <ul class="task-list">
-                @foreach ($nodeResponses as $response)
-                    <li class="task-item">
-                        <strong>{{ data_get($response, 'question.title') }}</strong><br>
-
-                        {!! \App\Services\QuestionTextResolver::textFor(
-                                $assessment,
-                                $rater,
-                                data_get($response, 'question.id')
-                            ) ?? data_get($response, 'question.hint') !!}
-
-                        @if (data_get($response, 'question.response_type') === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
-                            <div style="margin-top: 5px;">{{ data_get($response, 'textarea') }}</div>
-                        @endif
-
-                        @if (data_get($response, 'question.response_type') === \App\Enums\ResponseType::TYPE_SCALE->value)
-                            <div style="margin-top: 5px;">
-                                <strong class="tag answer-background">{{ data_get($response, 'scaleOption.label') ?? '' }}</strong>
-                            </div>
-                        @endif
-                    </li>
-                @endforeach
-            </ul>
-        @endif
     @endif
+
+
+    {{-- ALWAYS SHOW SIGNPOSTS OR RESPONSES BELOW --}}
+    @php
+        $nodeSignposts = data_get($signposts, $node->id, []);
+        $nodeResponses = $responses->filter(fn($r) => data_get($r, 'question.node_id') == $node->id);
+    @endphp
+
+
+    {{-- LEAF NODE RESPONSES --}}
+    @if ($nodeResponses->count())
+        <ul class="task-list">
+            @foreach ($nodeResponses as $response)
+                <li class="task-item">
+                    <strong>{{ data_get($response, 'question.title') }}</strong><br>
+
+                    {!! \App\Services\QuestionTextResolver::textFor(
+                            $assessment,
+                            $rater,
+                            data_get($response, 'question.id')
+                        ) ?? data_get($response, 'question.hint') !!}
+
+                    @if (data_get($response, 'question.response_type') === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
+                        <div style="margin-top: 5px;">{{ data_get($response, 'textarea') }}</div>
+                    @endif
+
+                    @if (data_get($response, 'question.response_type') === \App\Enums\ResponseType::TYPE_SCALE->value)
+                        <div style="margin-top: 5px;">
+                            <strong class="tag answer-background">{{ data_get($response, 'scaleOption.label') }}</strong>
+                        </div>
+                    @endif
+                </li>
+            @endforeach
+        </ul>
+    @endif
+
+
+    {{-- SIGNPOSTS ALWAYS SHOWN, AFTER RESPONSES IF THEY EXIST --}}
+    <x-signpost-banner
+            :signposts="$nodeSignposts"
+            title="Guidance"
+            :banner-id="$node->id"
+            :pdf="true"
+    />
+
 @endforeach
 
 {{-- REPEATING FOOTER --}}
