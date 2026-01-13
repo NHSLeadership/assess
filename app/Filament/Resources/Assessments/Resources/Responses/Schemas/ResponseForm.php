@@ -6,7 +6,6 @@ use App\Models\Question;
 use App\Models\Rater;
 use App\Models\ScaleOption;
 use App\Services\QuestionTextResolver;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
