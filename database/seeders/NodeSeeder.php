@@ -18,7 +18,7 @@ class NodeSeeder extends Seeder
                 'parent_id' => null,
                 'node_type_id' => 1,  // Area
                 'name' => 'Personal impact',
-                'description' => 'Personal impact',
+                'description' => null,
                 'colour' => 'green',
                 'order' => 1,
             ],
@@ -27,7 +27,7 @@ class NodeSeeder extends Seeder
                     'parent_id' => 1,
                     'node_type_id' => 2,  // Standard
                     'name' => 'Personal productivity and wellbeing',
-                    'description' => 'Personal productivity and wellbeing',
+                    'description' => null,
                     'colour' => 'green',
                     'order' => 2,
                 ],
@@ -36,7 +36,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 2,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Prioritise for personal productivity',
-                        'description' => 'Prioritise for personal productivity',
+                        'description' => null,
                         'colour' => 'green',
                         'order' => 3,
                     ],
@@ -45,7 +45,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 2,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Develop personal health and wellbeing strategies',
-                        'description' => 'Develop personal health and wellbeing strategies',
+                        'description' => null,
                         'colour' => 'green',
                         'order' => 4,
                     ],
@@ -54,7 +54,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 2,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Commit to continuing professional development',
-                        'description' => 'Commit to continuing professional development',
+                        'description' => null,
                         'colour' => 'green',
                         'order' => 5,
                     ],
@@ -63,7 +63,7 @@ class NodeSeeder extends Seeder
                     'parent_id' => 1,
                     'node_type_id' => 2,  // Standard
                     'name' => 'Communicating Well',
-                    'description' => 'Communicating Well',
+                    'description' => null,
                     'colour' => 'green',
                     'order' => 6,
                 ],
@@ -72,7 +72,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 6,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Communicate with clarity and purpose',
-                        'description' => 'Communicate with clarity and purpose',
+                        'description' => null,
                         'colour' => 'green',
                         'order' => 7,
                     ],
@@ -81,7 +81,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 6,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Encourage open dialogue and feedback',
-                        'description' => 'Encourage open dialogue and feedback',
+                        'description' => null,
                         'colour' => 'green',
                         'order' => 8,
                     ],
@@ -90,7 +90,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 6,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Influence, negotiate and manage upwards',
-                        'description' => 'Influence, negotiate and manage upwards',
+                        'description' => null,
                         'colour' => 'green',
                         'order' => 9,
                     ],
@@ -99,7 +99,7 @@ class NodeSeeder extends Seeder
                     'parent_id' => 1,
                     'node_type_id' => 2,  // Standard
                     'name' => 'Responsibility and integrity',
-                    'description' => 'Responsibility and integrity',
+                    'description' => null,
                     'colour' => 'green',
                     'order' => 10,
                 ],
@@ -108,7 +108,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 10,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Take accountability for my actions',
-                        'description' => 'Take accountability for my actions',
+                        'description' => null,
                         'colour' => 'green',
                         'order' => 11,
                     ],
@@ -117,7 +117,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 10,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Be visible, transparent, and present',
-                        'description' => 'Be visible, transparent, and present',
+                        'description' => null,
                         'colour' => 'green',
                         'order' => 12,
                     ],
@@ -126,7 +126,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 10,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Manage with civility and compassion',
-                        'description' => 'Manage with civility and compassion',
+                        'description' => null,
                         'colour' => 'green',
                         'order' => 13,
                     ],
@@ -135,7 +135,7 @@ class NodeSeeder extends Seeder
                 'parent_id' => null,
                 'node_type_id' => 1,  // Area
                 'name' => 'Managing people and resources',
-                'description' => 'Managing people and resources',
+                'description' => null,
                 'colour' => 'red',
                 'order' => 14,
             ],
@@ -144,7 +144,7 @@ class NodeSeeder extends Seeder
                     'parent_id' => 14,
                     'node_type_id' => 2,  // Standard
                     'name' => 'Building teams',
-                    'description' => 'Building teams',
+                    'description' => null,
                     'colour' => 'red',
                     'order' => 15,
                 ],
@@ -153,7 +153,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 15,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Build engagement',
-                        'description' => 'Build engagement',
+                        'description' => null,
                         'colour' => 'red',
                         'order' => 16,
                     ],
@@ -162,7 +162,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 15,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Make sure people feel safe in the workplace',
-                        'description' => 'Make sure people feel safe in the workplace',
+                        'description' => null,
                         'colour' => 'red',
                         'order' => 17,
                     ],
@@ -171,7 +171,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 15,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Manage challenges',
-                        'description' => 'Manage challenges',
+                        'description' => null,
                         'colour' => 'red',
                         'order' => 18,
                     ],
@@ -180,7 +180,7 @@ class NodeSeeder extends Seeder
                     'parent_id' => 14,
                     'node_type_id' => 2,  // Standard
                     'name' => 'Performance and delivery',
-                    'description' => 'Performance and delivery',
+                    'description' => null,
                     'colour' => 'red',
                     'order' => 19,
                 ],
@@ -189,7 +189,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 19,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Provide clear purpose, vision, and deliverables',
-                        'description' => 'Provide clear purpose, vision, and deliverables',
+                        'description' => null,
                         'colour' => 'red',
                         'order' => 20,
                     ],
@@ -198,7 +198,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 19,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Manage and measure performance',
-                        'description' => 'Manage and measure performance',
+                        'description' => null,
                         'colour' => 'red',
                         'order' => 21,
                     ],
@@ -207,7 +207,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 19,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Manage conflict and sensitive conversations',
-                        'description' => 'Manage conflict and sensitive conversations',
+                        'description' => null,
                         'colour' => 'red',
                         'order' => 22,
                     ],
@@ -216,7 +216,7 @@ class NodeSeeder extends Seeder
                     'parent_id' => 14,
                     'node_type_id' => 2,  // Standard
                     'name' => 'Efficiency and effectiveness',
-                    'description' => 'Efficiency and effectiveness',
+                    'description' => null,
                     'colour' => 'red',
                     'order' => 23,
                 ],
@@ -225,7 +225,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 23,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Allocate and optimise the use of resources',
-                        'description' => 'Allocate and optimise the use of resources',
+                        'description' => null,
                         'colour' => 'red',
                         'order' => 24,
                     ],
@@ -234,7 +234,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 23,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Maximise outputs and get best value for public money',
-                        'description' => 'Maximise outputs and get best value for public money',
+                        'description' => null,
                         'colour' => 'red',
                         'order' => 25,
                     ],
@@ -243,7 +243,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 23,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Use data, evidence and critical thinking',
-                        'description' => 'Use data, evidence and critical thinking',
+                        'description' => null,
                         'colour' => 'red',
                         'order' => 26,
                     ],
@@ -252,7 +252,7 @@ class NodeSeeder extends Seeder
                 'parent_id' => null,
                 'node_type_id' => 1,  // Area
                 'name' => 'Delivering across health and care',
-                'description' => 'Delivering across health and care',
+                'description' => null,
                 'colour' => 'purple',
                 'order' => 27,
             ],
@@ -261,7 +261,7 @@ class NodeSeeder extends Seeder
                     'parent_id' => 27,
                     'node_type_id' => 2,  // Standard
                     'name' => 'Improving quality',
-                    'description' => 'Improving quality',
+                    'description' => null,
                     'colour' => 'purple',
                     'order' => 28,
                 ],
@@ -270,7 +270,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 28,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Respond to patient safety concerns, needs and preferences',
-                        'description' => 'Respond to patient safety concerns, needs and preferences',
+                        'description' => null,
                         'colour' => 'purple',
                         'order' => 29,
                     ],
@@ -279,7 +279,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 28,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Personalise care',
-                        'description' => 'Personalise care',
+                        'description' => null,
                         'colour' => 'purple',
                         'order' => 30,
                     ],
@@ -288,7 +288,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 28,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Implement policies and ensure good governance',
-                        'description' => 'Implement policies and ensure good governance',
+                        'description' => null,
                         'colour' => 'purple',
                         'order' => 31,
                     ],
@@ -297,7 +297,7 @@ class NodeSeeder extends Seeder
                     'parent_id' => 27,
                     'node_type_id' => 2,  // Standard
                     'name' => 'Innovation and improvement',
-                    'description' => 'Innovation and improvement',
+                    'description' => null,
                     'colour' => 'purple',
                     'order' => 32,
                 ],
@@ -306,7 +306,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 32,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Drive continuous improvement and innovation',
-                        'description' => 'Drive continuous improvement and innovation',
+                        'description' => null,
                         'colour' => 'purple',
                         'order' => 33,
                     ],
@@ -315,7 +315,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 32,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Transform through technology and innovation',
-                        'description' => 'Transform through technology and innovation',
+                        'description' => null,
                         'colour' => 'purple',
                         'order' => 34,
                     ],
@@ -324,7 +324,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 32,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Support others through change',
-                        'description' => 'Support others through change',
+                        'description' => null,
                         'colour' => 'purple',
                         'order' => 35,
                     ],
@@ -333,7 +333,7 @@ class NodeSeeder extends Seeder
                     'parent_id' => 27,
                     'node_type_id' => 2,  // Standard
                     'name' => 'Working collaboratively',
-                    'description' => 'Working collaboratively',
+                    'description' => null,
                     'colour' => 'purple',
                     'order' => 36,
                 ],
@@ -342,7 +342,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 36,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Build relationships',
-                        'description' => 'Build relationships',
+                        'description' => null,
                         'colour' => 'purple',
                         'order' => 37,
                     ],
@@ -351,7 +351,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 36,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Lead a collaborative team',
-                        'description' => 'Lead a collaborative team',
+                        'description' => null,
                         'colour' => 'purple',
                         'order' => 38,
                     ],
@@ -360,7 +360,7 @@ class NodeSeeder extends Seeder
                         'parent_id' => 36,
                         'node_type_id' => 3,  // Competency
                         'name' => 'Share good practice',
-                        'description' => 'Share good practice',
+                        'description' => null,
                         'colour' => 'purple',
                         'order' => 39,
                     ],
