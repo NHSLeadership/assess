@@ -12,7 +12,7 @@ class AssessmentVariantSelectionPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('assessmentVariantSelection:viewAny');
     }
 
     /**
@@ -20,7 +20,7 @@ class AssessmentVariantSelectionPolicy
      */
     public function view(User $user, AssessmentVariantSelection $assessmentVariantSelection): bool
     {
-        return true;
+        return $user->can('assessmentVariantSelection:view');
     }
 
     /**
@@ -28,7 +28,7 @@ class AssessmentVariantSelectionPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->can('assessmentVariantSelection:create');
     }
 
     /**
@@ -36,7 +36,7 @@ class AssessmentVariantSelectionPolicy
      */
     public function update(User $user, AssessmentVariantSelection $assessmentVariantSelection): bool
     {
-        return true;
+        return $user->can('assessmentVariantSelection:update');
     }
 
     /**
@@ -44,7 +44,7 @@ class AssessmentVariantSelectionPolicy
      */
     public function delete(User $user, AssessmentVariantSelection $assessmentVariantSelection): bool
     {
-        return true;
+        return $user->can('assessmentVariantSelection:delete');
     }
 
     /**
@@ -52,7 +52,7 @@ class AssessmentVariantSelectionPolicy
      */
     public function restore(User $user, AssessmentVariantSelection $assessmentVariantSelection): bool
     {
-        return true;
+        return $user->can('assessmentVariantSelection:restore');
     }
 
     /**
@@ -60,7 +60,7 @@ class AssessmentVariantSelectionPolicy
      */
     public function forceDelete(User $user, AssessmentVariantSelection $assessmentVariantSelection): bool
     {
-        return true;
+        return $user->can('assessmentVariantSelection:forceDelete');
     }
 
     /**
@@ -68,6 +68,6 @@ class AssessmentVariantSelectionPolicy
      */
     public function reorder(User $user): bool
     {
-        return true;
+        return $user->can('assessmentVariantSelection:reorder');
     }
 }

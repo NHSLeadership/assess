@@ -12,7 +12,7 @@ class ResponsePolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('response:viewAny');
     }
 
     /**
@@ -20,7 +20,7 @@ class ResponsePolicy
      */
     public function view(User $user, Response $response): bool
     {
-        return true;
+        return $user->can('response:view');
     }
 
     /**
@@ -28,7 +28,7 @@ class ResponsePolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->can('response:create');
     }
 
     /**
@@ -36,7 +36,7 @@ class ResponsePolicy
      */
     public function update(User $user, Response $response): bool
     {
-        return true;
+        return $user->can('response:update');
     }
 
     /**
@@ -44,7 +44,7 @@ class ResponsePolicy
      */
     public function delete(User $user, Response $response): bool
     {
-        return true;
+        return $user->can('response:delete');
     }
 
     /**
@@ -52,7 +52,7 @@ class ResponsePolicy
      */
     public function restore(User $user, Response $response): bool
     {
-        return true;
+        return $user->can('response:restore');
     }
 
     /**
@@ -60,7 +60,7 @@ class ResponsePolicy
      */
     public function forceDelete(User $user, Response $response): bool
     {
-        return true;
+        return $user->can('response:forceDelete');
     }
 
     /**
@@ -68,6 +68,6 @@ class ResponsePolicy
      */
     public function reorder(User $user): bool
     {
-        return true;
+        return $user->can('response:reorder');
     }
 }
