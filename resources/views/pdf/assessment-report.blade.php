@@ -157,7 +157,7 @@ if (!empty(Auth()?->user()?->user_id)) {
 
                     @if (data_get($response, 'question.response_type') === \App\Enums\ResponseType::TYPE_SCALE->value)
                         <div style="margin-top: 5px;">
-                            <strong class="tag answer-background">{{ Str::match('/^([A-Z][A-Za-z ]+)/', trim(data_get($response, 'scaleOption.label'))) }}</strong>
+                            <strong class="tag answer-background">{{ data_get($response, 'scaleOption.label') }}</strong>
                         </div>
                     @endif
                 </li>
