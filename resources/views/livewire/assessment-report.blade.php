@@ -79,21 +79,23 @@
                                             $response->question->id
                                         ) ?? $response->question?->hint !!}
 
-                                    @if ($response->question?->response_type === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
+                                    @php
+                                        $type = $response->question?->response_type;
+                                    @endphp
+
+                                    @if ($type === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
                                         <div class="nhsuk-task-list__hint">
                                             {{ $response->textarea }}
                                         </div>
+
+                                    @elseif ($type === \App\Enums\ResponseType::TYPE_SCALE->value)
+                                        <div class="nhsuk-task-list__hint">
+                                            <strong class="nhsuk-tag nhsuk-tag--blue">
+                                                {{ $response->scaleOption->label }}
+                                            </strong>
+                                        </div>
                                     @endif
                                 </div>
-
-                                <div class="nhsuk-task-list__status">
-                                    @if ($response->question?->response_type === \App\Enums\ResponseType::TYPE_SCALE->value)
-                                        <strong class="nhsuk-tag nhsuk-tag--blue">
-                                            {{ $response->scaleOption->label }}
-                                        </strong>
-                                    @endif
-                                </div>
-
                             </li>
                         @endforeach
 
