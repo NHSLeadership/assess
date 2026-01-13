@@ -67,15 +67,33 @@
                                 <strong class="nhsuk-tag nhsuk-tag--green">{{ __('Completed') }}</strong>
                             @endif
                         </td>
-                        <td>
-                            <button type="button"
-                                    class="nhsuk-button nhsuk-button--small nhsuk-button--warning"
-                                    data-module="nhsuk-button"
-                                    data-prevent-double-click="true"
-                                    wire:click="deleteAssessment({{ $assessment->id }})"
-                                    onclick="confirm('Are you sure you want to delete this assessment?') || event.stopImmediatePropagation()">
-                                Delete
-                            </button>
+                        <td class="nhsuk-table__cell">
+                            @if ($this->pendingDeleteId === $assessment->id)
+                                <div class="nhsuk-inset-text" role="status" aria-live="polite">
+                                    <p class="nhsuk-body-s">{{ __('Are you sure you want to delete this assessment?') }}</p>
+
+                                    <div class="nhsuk-button-group">
+                                        <button
+                                                type="button"
+                                                wire:click="confirmDelete"
+                                                class="nhsuk-button nhsuk-button--warning nhsuk-button--small"
+                                                data-prevent-double-click="true">
+                                            {{ __('Delete') }}
+                                        </button>
+
+                                        <button
+                                                type="button"
+                                                wire:click="cancelDelete"
+                                                class="nhsuk-button nhsuk-button--secondary nhsuk-button--small">
+                                            {{ __('Cancel') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            @else
+                                <a href="#" class="nhsuk-link" wire:click.prevent="askDelete({{ $assessment->id }})">
+                                    {{ __('Delete') }}
+                                </a>
+                            @endif
                         </td>
                     </tr>
                 @endforeach

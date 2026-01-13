@@ -20,6 +20,7 @@ class Frameworks extends Component
     use AssessmentHelperTrait;
 
     public ?string $frameworkId = null;
+    public ?int $pendingDeleteId = null;
 
     public function mount()
     {
@@ -30,25 +31,36 @@ class Frameworks extends Component
         }
     }
 
-    public function deleteAssessment($id): void
+    public function askDelete(int $id): void
     {
-        $assessment = Assessment::find($id);
-        if (! $assessment) {
-            session()->flash('error', 'Assessment not found.');
+        $this->pendingDeleteId = $id;
+    }
+
+    public function cancelDelete(): void
+    {
+        $this->pendingDeleteId = null;
+    }
+
+    public function confirmDelete(): void
+    {
+        $id = $this->pendingDeleteId;
+        if (! $id) {
             return;
         }
 
         try {
+            $assessment = Assessment::findOrFail($id);
             $assessment->delete();
-            session()->flash('message', 'Assessment deleted.');
-        } catch (Throwable $e) {
-            Log::error('Failed to delete assessment', [
+            session()->flash('success', __('Assessment deleted.'));
+        } catch (\Throwable $e) {
+            Log::error('Error deleting assessment', [
                 'assessment_id' => $id,
-                'user_id' => $this->user()?->user_id,
-                'exception' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'message' => $e->getMessage(),
+                'exception' => $e,
             ]);
-            session()->flash('error', 'Failed to delete assessment.');
+            session()->flash('error', __('Failed to delete assessment. Please try again.'));
+        } finally {
+            $this->pendingDeleteId = null;
         }
     }
 
