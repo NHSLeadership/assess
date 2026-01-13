@@ -11,53 +11,64 @@
         @endif
 
         @foreach ($this->nodes as $node)
+
+            {{-- Top-level node --}}
             @if (empty($node->parent))
                 <h3 class="nhsuk-heading-m nhsuk-tag--no-border nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2">
-                    {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }} {{ $node->name ?? '' }}
+                    {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
+                    {{ $node->name }}
                 </h3>
-            @elseif ($node->children->count())
+            @endif
+
+            {{-- Node with children --}}
+            @if ($node->children->count())
                 <h4 class="nhsuk-heading-s">
-                    {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }} {{ $node->name ?? '' }}
+                    {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
+                    {{ $node->name }}
                 </h4>
-            @else
+            @endif
 
-            @if ($this->responses?->where('question.node_id', $node->id)->count())
+            {{-- Compute responses ONCE --}}
+            @php
+                $nodeResponses = $this->responses
+                    ->filter(fn ($r) => $r->question?->node_id == $node->id);
+            @endphp
+
+            {{-- Leaf node responses --}}
+            @if ($nodeResponses->count())
                 <ul class="nhsuk-task-list nhsuk-list--border">
-                    @foreach ($this->responses?->where('question.node_id', $node->id) as $response)
+                    @foreach ($nodeResponses as $response)
                         <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link nhsuk-u-padding-left-2">
-                            <div class="nhsuk-task-list__name-and-hint nhsuk-u-width-three-quarters">
-                                @if(!empty($response?->assessment?->submitted_at))
-                                    <strong>{!! $response->question->title ?? '' !!}</strong>
-                                    <br>
-                                    {!! \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $response->question->id) ?? $response->question?->hint !!}
-                                @else
-                                    <a href="#" wire:click.prevent="editAnswer({{ $response->question?->node?->id ?? '' }})" class="nhsuk-link nhsuk-task-list__link">
-                                        <strong>{!! $response->question->title ?? '' !!}</strong>
-                                    </a>
-                                    <br>
-                                    {!! \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $response->question->id) ?? $response->question?->hint !!}
-                                    <span class="nhsuk-u-visually-hidden">Click to edit this answer</span>
 
-                                @endif
-                                @if(!empty($response?->question?->response_type) && ($response?->question?->response_type === \App\Enums\ResponseType::TYPE_TEXTAREA->value))
+                            <div class="nhsuk-task-list__name-and-hint nhsuk-u-width-three-quarters">
+                                <strong>{!! $response->question->title !!}</strong>
+                                <br>
+                                {!! \App\Services\QuestionTextResolver::textFor(
+                                    $this->assessment(),
+                                    $this->rater(),
+                                    $response->question->id
+                                ) !!}
+
+                                @if ($response->question?->response_type === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
                                     <div class="nhsuk-task-list__hint">
-                                        {{ $response?->textarea ?? '' }}
+                                        {{ $response->textarea }}
                                     </div>
                                 @endif
                             </div>
+
                             <div class="nhsuk-task-list__status">
-                                @if(!empty($response?->question?->response_type) && ($response?->question?->response_type === \App\Enums\ResponseType::TYPE_SCALE->value))
+                                @if ($response->question?->response_type === \App\Enums\ResponseType::TYPE_SCALE->value)
                                     <strong class="nhsuk-tag nhsuk-tag--blue">
-                                        {{ $response->scaleOption->label ?? '' }}
+                                        {{ $response->scaleOption->label }}
                                     </strong>
                                 @endif
                             </div>
+
                         </li>
                     @endforeach
                 </ul>
             @endif
 
-            @endif
         @endforeach
 
         @if (empty($this->assessment->submitted_at)

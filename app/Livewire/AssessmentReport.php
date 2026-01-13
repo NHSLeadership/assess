@@ -28,6 +28,10 @@ class AssessmentReport extends Component
     public array $barCharts = [];
     public array $radarOptions = [];
     public array $radarData = [];
+    /**
+     * @var array|mixed
+     */
+    public array $signposts;
 
     /**
      * @throws FrameworkNotFoundException
@@ -74,11 +78,20 @@ class AssessmentReport extends Component
         $radar = $service->radarChart();
         $this->radarData    = $radar['data'];
         $this->radarOptions = $radar['options'];
+
+        $this->signposts = [];
+
+        foreach ($service->nodes() as $node) {
+            $signposts = $service->signpostsForNode($node);
+            if ($signposts) {
+                $this->signposts[$node->id] = $signposts;
+            }
+        }
     }
 
     #[Computed]
     public function framework(): ?Framework
-    {
+{
         if (empty($this->frameworkId)) {
             return null;
         }

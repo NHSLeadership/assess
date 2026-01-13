@@ -18,6 +18,15 @@ class AssessmentReportPdfController extends Controller
             ->pluck('image', 'id')
             ->toArray();
 
+        $signposts = [];
+
+        foreach ($service->nodes() as $node) {
+            $signpostsForNode = $service->signpostsForNode($node);
+            if ($signpostsForNode) {
+                $signposts[$node->id] = $signpostsForNode;
+            }
+        }
+
         return Pdf::loadView('pdf.assessment-report', [
             'framework'  => $service->framework(),
             'nodes'      => $service->nodes(),
@@ -27,6 +36,7 @@ class AssessmentReportPdfController extends Controller
             'radarImage' => $request->radarImage,
             'barImages'  => $barImages,
             'barCharts'  => $service->barCharts(),
+            'signposts'  => $signposts,
         ])->download('assessment-report.pdf');
     }
 }
