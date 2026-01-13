@@ -89,7 +89,7 @@
                                 <div class="nhsuk-task-list__status">
                                     @if ($response->question?->response_type === \App\Enums\ResponseType::TYPE_SCALE->value)
                                         <strong class="nhsuk-tag nhsuk-tag--blue">
-                                            {{ $response->scaleOption->label }}
+                                            {{ Str::match('/^([A-Z][A-Za-z ]+)/', trim($response->scaleOption->label)) }}
                                         </strong>
                                     @endif
                                 </div>
