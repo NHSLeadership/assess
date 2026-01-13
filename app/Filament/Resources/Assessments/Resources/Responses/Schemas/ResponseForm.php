@@ -6,7 +6,9 @@ use App\Models\Question;
 use App\Models\Rater;
 use App\Models\ScaleOption;
 use App\Services\QuestionTextResolver;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -60,6 +62,8 @@ class ResponseForm
                     ->afterStateUpdated(fn ($state, callable $set) => $set('scale_option_id', null)),
                 Select::make('scale_option_id')
                     ->label('Answer')
+                    ->visible(fn (Get $get) => $get('question_id') && Question::query()->whereKey($get('question_id'))->value('response_type') === 'scale')
+                    ->required(fn (Get $get) => $get('question_id') && Question::query()->whereKey($get('question_id'))->value('response_type') === 'scale')
                     ->disabled(fn (Get $get) => blank($get('question_id')))
                     ->options(function (Get $get): array {
                         $questionId = $get('question_id');
@@ -74,6 +78,11 @@ class ResponseForm
                             ->pluck('label', 'id')
                             ->toArray();
                     }),
+                Textarea::make('textarea')
+                    ->label('Answer')
+                    ->visible(fn (Get $get) => $get('question_id') && Question::query()->whereKey($get('question_id'))->value('response_type') === 'textarea')
+                    ->required(fn (Get $get) => $get('question_id') && Question::query()->whereKey($get('question_id'))->value('response_type') === 'textarea')
+                    ->columnSpanFull(),
             ]);
     }
 }
