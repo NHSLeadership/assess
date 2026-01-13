@@ -116,8 +116,8 @@ class AssessmentReportService
                     ]],
                 ],
                 'options' => [
-                    'min' => 0,
-                    'max' => 4,
+                    'min' => 1,
+                    'max' => 5,
                     'tickColor' => '#212b32',
                     'legendLabelsColor' => '#212b32',
                     'gridColor' => 'rgba(0,0,0,0.1)',
@@ -178,8 +178,8 @@ class AssessmentReportService
                 ]]
             ],
             'options' => [
-                'min' => 0,
-                'max' => 4,
+                'min' => 1,
+                'max' => 5,
                 'tickColor' => '#212b32',
                 'pointLabelsColor' => '#212b32',
                 'legendLabelsColor' => '#212b32',
