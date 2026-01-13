@@ -22,7 +22,7 @@ class ScaleSeeder extends Seeder
             ['label' => 'Essential – I can do parts of this but need guidance.', 'value' => 2, 'order' => 2],
             ['label' => 'Proficient – I can do most of this with occasional help.', 'value' => 3, 'order' => 3],
             ['label' => 'Strong – I can do all of this independently.', 'value' => 4, 'order' => 4],
-            ['label' => 'Exemplary – I do this effectively and can support others to do this.', 'value' => 0, 'order' => 5],
+            ['label' => 'Exemplary – I do this effectively and can support others to do this.', 'value' => 5, 'order' => 5],
         ];
 
         foreach ($options as $option) {
