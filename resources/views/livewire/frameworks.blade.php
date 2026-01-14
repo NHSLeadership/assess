@@ -38,7 +38,7 @@
                 </thead>
                 <tbody class="nhsuk-table__body">
                 @foreach ($this->assessments() as $assessment)
-                    <tr class="nhsuk-table__row">
+                    <tr class="nhsuk-table__row" wire:key="assessment-{{ $assessment->id }}">
                         <td class="nhsuk-table__cell">
                             <a href="{{ !empty($assessment->submitted_at)
                                ? route('summary', ['frameworkId' => $this->framework?->id, 'assessmentId' => $assessment->id])
@@ -71,9 +71,12 @@
                             @if ($this->pendingDeleteId === $assessment->id)
                                 @include('livewire.partials.confirm-delete')
                             @else
-                                <a href="#" class="nhsuk-link" wire:click.prevent="askDelete({{ $assessment->id }})">
+                                <button
+                                    type="button"
+                                    class="nhsuk-link"
+                                    wire:click.prevent="askDelete({{ $assessment->id }})">
                                     {{ __('Delete') }}
-                                </a>
+                                </button>
                             @endif
                         </td>
                     </tr>
