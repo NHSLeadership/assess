@@ -17,6 +17,9 @@ return [
         'assessment-not-permitted-now-title' => 'Framework assessment limit reached',
         'assessment-in-progress' => 'You cannot start a new assessment for this framework until you finish the one already in progress.',
         'assessment-in-progress-title' => 'Assessment in progress',
+        'assessment-not-belong-to-framework' => 'Assessment does not belong to this framework.',
+        'assessment-not-submitted' => 'This assessment has not been submitted yet.',
+        'framework-not-found' => 'Framework not found.',
     ],
     'success' => [
         'title' => 'Assessment submitted',

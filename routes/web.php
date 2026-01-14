@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\AssessmentReportPdfController;
+use App\Livewire\AssessmentReport;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::get('/', \App\Livewire\Home::class)->name('home');
 
@@ -24,6 +28,10 @@ Route::group([
     Route::get('/summary/{frameworkId?}/{assessmentId?}', \App\Livewire\Summary::class)->name('summary');
     Route::get('/assessment/{assessmentId?}/{nodeId?}/{edit?}', \App\Livewire\Assessments::class)->name('questions');
     Route::get('/assessment-completed/{assessmentId?}', \App\Livewire\AssessmentCompleted::class)->name('assessment-completed');
+
+    Route::get('/assessment-report/{frameworkId}/{assessmentId}', AssessmentReport::class)->name('assessment-report');
+    Route::post('/assessment-report/{frameworkId}/{assessmentId}', AssessmentReportPdfController::class)
+        ->name('assessment-report-pdf');
 
     /**
      * Request review
