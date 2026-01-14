@@ -12,7 +12,7 @@ class FrameworkVariantOptionPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('frameworkVariantOption:viewAny');
     }
 
     /**
@@ -20,7 +20,7 @@ class FrameworkVariantOptionPolicy
      */
     public function view(User $user, FrameworkVariantOption $frameworkVariantOption): bool
     {
-        return true;
+        return $user->can('frameworkVariantOption:view');
     }
 
     /**
@@ -28,7 +28,7 @@ class FrameworkVariantOptionPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->can('frameworkVariantOption:create');
     }
 
     /**
@@ -36,7 +36,7 @@ class FrameworkVariantOptionPolicy
      */
     public function update(User $user, FrameworkVariantOption $frameworkVariantOption): bool
     {
-        return true;
+        return $user->can('frameworkVariantOption:update');
     }
 
     /**
@@ -44,7 +44,7 @@ class FrameworkVariantOptionPolicy
      */
     public function delete(User $user, FrameworkVariantOption $frameworkVariantOption): bool
     {
-        return true;
+        return $user->can('frameworkVariantOption:delete');
     }
 
     /**
@@ -52,7 +52,7 @@ class FrameworkVariantOptionPolicy
      */
     public function restore(User $user, FrameworkVariantOption $frameworkVariantOption): bool
     {
-        return true;
+        return $user->can('frameworkVariantOption:restore');
     }
 
     /**
@@ -60,7 +60,7 @@ class FrameworkVariantOptionPolicy
      */
     public function forceDelete(User $user, FrameworkVariantOption $frameworkVariantOption): bool
     {
-        return true;
+        return $user->can('frameworkVariantOption:forceDelete');
     }
 
     /**
@@ -68,6 +68,6 @@ class FrameworkVariantOptionPolicy
      */
     public function reorder(User $user): bool
     {
-        return true;
+        return $user->can('frameworkVariantOption:reorder');
     }
 }

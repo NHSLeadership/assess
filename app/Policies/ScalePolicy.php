@@ -12,7 +12,7 @@ class ScalePolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('scale:viewAny');
     }
 
     /**
@@ -20,7 +20,7 @@ class ScalePolicy
      */
     public function view(User $user, Scale $scale): bool
     {
-        return true;
+        return $user->can('scale:view');
     }
 
     /**
@@ -28,7 +28,7 @@ class ScalePolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->can('scale:create');
     }
 
     /**
@@ -36,7 +36,7 @@ class ScalePolicy
      */
     public function update(User $user, Scale $scale): bool
     {
-        return true;
+        return $user->can('scale:update');
     }
 
     /**
@@ -44,7 +44,7 @@ class ScalePolicy
      */
     public function delete(User $user, Scale $scale): bool
     {
-        return true;
+        return $user->can('scale:delete');
     }
 
     /**
@@ -52,7 +52,7 @@ class ScalePolicy
      */
     public function restore(User $user, Scale $scale): bool
     {
-        return true;
+        return $user->can('scale:restore');
     }
 
     /**
@@ -60,7 +60,7 @@ class ScalePolicy
      */
     public function forceDelete(User $user, Scale $scale): bool
     {
-        return true;
+        return $user->can('scale:forceDelete');
     }
 
     /**
@@ -68,6 +68,6 @@ class ScalePolicy
      */
     public function reorder(User $user): bool
     {
-        return true;
+        return $user->can('scale:reorder');
     }
 }

@@ -9,9 +9,15 @@ beforeEach(function () {
     $this->user = new class extends \App\Models\User {
         public array $fakePermissions = [];
 
-        public function getAuth0Permissions(): array
+        public function can($ability, $arguments = [])
         {
-            return $this->fakePermissions;
+            if (! empty($this->fakePermissions)) {
+                return collect($this->fakePermissions)
+                    ->pluck('permission_name')
+                    ->contains($ability);
+            }
+
+            return parent::can($ability, $arguments);
         }
     };
 

@@ -12,7 +12,7 @@ class AssessmentPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('assessment:viewAny');
     }
 
     /**
@@ -20,7 +20,7 @@ class AssessmentPolicy
      */
     public function view(User $user, Assessment $assessment): bool
     {
-        return true;
+        return $user->can('assessment:view');
     }
 
     /**
@@ -28,7 +28,7 @@ class AssessmentPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->can('assessment:create');
     }
 
     /**
@@ -36,7 +36,7 @@ class AssessmentPolicy
      */
     public function update(User $user, Assessment $assessment): bool
     {
-        return true;
+        return $user->can('assessment:update');
     }
 
     /**
@@ -44,7 +44,7 @@ class AssessmentPolicy
      */
     public function delete(User $user, Assessment $assessment): bool
     {
-        return true;
+        return $user->can('assessment:delete');
     }
 
     /**
@@ -52,7 +52,7 @@ class AssessmentPolicy
      */
     public function restore(User $user, Assessment $assessment): bool
     {
-        return true;
+        return $user->can('assessment:restore');
     }
 
     /**
@@ -60,7 +60,7 @@ class AssessmentPolicy
      */
     public function forceDelete(User $user, Assessment $assessment): bool
     {
-        return true;
+        return $user->can('assessment:forceDelete');
     }
 
     /**
@@ -68,6 +68,6 @@ class AssessmentPolicy
      */
     public function reorder(User $user): bool
     {
-        return true;
+        return $user->can('assessment:reorder');
     }
 }

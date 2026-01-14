@@ -12,7 +12,7 @@ class RaterPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('rater:viewAny');
     }
 
     /**
@@ -20,7 +20,7 @@ class RaterPolicy
      */
     public function view(User $user, Rater $rater): bool
     {
-        return true;
+        return $user->can('rater:view');
     }
 
     /**
@@ -28,7 +28,7 @@ class RaterPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->can('rater:create');
     }
 
     /**
@@ -36,7 +36,7 @@ class RaterPolicy
      */
     public function update(User $user, Rater $rater): bool
     {
-        return true;
+        return $user->can('rater:update');
     }
 
     /**
@@ -44,7 +44,7 @@ class RaterPolicy
      */
     public function delete(User $user, Rater $rater): bool
     {
-        return true;
+        return $user->can('rater:delete');
     }
 
     /**
@@ -52,7 +52,7 @@ class RaterPolicy
      */
     public function restore(User $user, Rater $rater): bool
     {
-        return true;
+        return $user->can('rater:restore');
     }
 
     /**
@@ -60,7 +60,7 @@ class RaterPolicy
      */
     public function forceDelete(User $user, Rater $rater): bool
     {
-        return true;
+        return $user->can('rater:forceDelete');
     }
 
     /**
@@ -68,6 +68,6 @@ class RaterPolicy
      */
     public function reorder(User $user): bool
     {
-        return true;
+        return $user->can('rater:reorder');
     }
 }

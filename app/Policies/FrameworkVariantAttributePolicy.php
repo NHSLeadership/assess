@@ -12,7 +12,7 @@ class FrameworkVariantAttributePolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('frameworkVariantAttribute:viewAny');
     }
 
     /**
@@ -20,7 +20,7 @@ class FrameworkVariantAttributePolicy
      */
     public function view(User $user, FrameworkVariantAttribute $frameworkVariantAttribute): bool
     {
-        return true;
+        return $user->can('frameworkVariantAttribute:view');
     }
 
     /**
@@ -28,7 +28,7 @@ class FrameworkVariantAttributePolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->can('frameworkVariantAttribute:create');
     }
 
     /**
@@ -36,7 +36,7 @@ class FrameworkVariantAttributePolicy
      */
     public function update(User $user, FrameworkVariantAttribute $frameworkVariantAttribute): bool
     {
-        return true;
+        return $user->can('frameworkVariantAttribute:update');
     }
 
     /**
@@ -44,7 +44,7 @@ class FrameworkVariantAttributePolicy
      */
     public function delete(User $user, FrameworkVariantAttribute $frameworkVariantAttribute): bool
     {
-        return true;
+        return $user->can('frameworkVariantAttribute:delete');
     }
 
     /**
@@ -52,7 +52,7 @@ class FrameworkVariantAttributePolicy
      */
     public function restore(User $user, FrameworkVariantAttribute $frameworkVariantAttribute): bool
     {
-        return true;
+        return $user->can('frameworkVariantAttribute:restore');
     }
 
     /**
@@ -60,7 +60,7 @@ class FrameworkVariantAttributePolicy
      */
     public function forceDelete(User $user, FrameworkVariantAttribute $frameworkVariantAttribute): bool
     {
-        return true;
+        return $user->can('frameworkVariantAttribute:forceDelete');
     }
 
     /**
@@ -68,6 +68,6 @@ class FrameworkVariantAttributePolicy
      */
     public function reorder(User $user): bool
     {
-        return true;
+        return $user->can('frameworkVariantAttribute:reorder');
     }
 }
