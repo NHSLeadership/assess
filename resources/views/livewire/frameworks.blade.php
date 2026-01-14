@@ -38,7 +38,7 @@
                 </thead>
                 <tbody class="nhsuk-table__body">
                 @foreach ($this->assessments() as $assessment)
-                    <tr class="nhsuk-table__row">
+                    <tr class="nhsuk-table__row" wire:key="assessment-{{ $assessment->id }}">
                         <td class="nhsuk-table__cell">
                             <a href="{{ !empty($assessment->submitted_at)
                                ? route('summary', ['frameworkId' => $this->framework?->id, 'assessmentId' => $assessment->id])
@@ -67,15 +67,17 @@
                                 <strong class="nhsuk-tag nhsuk-tag--green">{{ __('Completed') }}</strong>
                             @endif
                         </td>
-                        <td>
-                            <button type="button"
-                                    class="nhsuk-button nhsuk-button--small nhsuk-button--warning"
-                                    data-module="nhsuk-button"
-                                    data-prevent-double-click="true"
-                                    wire:click="deleteAssessment({{ $assessment->id }})"
-                                    onclick="confirm('Are you sure you want to delete this assessment?') || event.stopImmediatePropagation()">
-                                Delete
-                            </button>
+                        <td class="nhsuk-table__cell">
+                            @if ($this->pendingDeleteId === $assessment->id)
+                                @include('livewire.partials.confirm-delete')
+                            @else
+                                <button
+                                    type="button"
+                                    class="nhsuk-link"
+                                    wire:click.prevent="askDelete({{ $assessment->id }})">
+                                    {{ __('Delete') }}
+                                </button>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
