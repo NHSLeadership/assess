@@ -82,7 +82,7 @@ class Summary extends Component
         ]);
     }
 
-    public function confirmSubmit(): ?\Illuminate\Http\RedirectResponse
+    public function confirmSubmit(): \Illuminate\Http\RedirectResponse|\Livewire\Features\SupportRedirects\Redirector|null
     {
         try {
             $assessment = $this->assessment();
