@@ -1,69 +1,53 @@
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
 
-{{--        @if (!empty($this->assessment->framework->name))--}}
-{{--            <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-3">{{ $this->assessment->framework->name }}</h1>--}}
-{{--        @endif--}}
-
-        @if (!empty($this->assessment->id))
-{{--            <div class="nhsuk-action-link disabled">--}}
-{{--                <a class="nhsuk-action-link__link disabled"  href="{{ route('review-request', $this->assessment->id) }}">--}}
-{{--                    <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">--}}
-{{--                        <path d="M0 0h24v24H0z" fill="none"></path>--}}
-{{--                        <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>--}}
-{{--                    </svg>--}}
-{{--                    <span class="nhsuk-action-link__text">{{ __('Request 360 Review') }}</span>--}}
-{{--                </a>--}}
-{{--            </div>--}}
-        @endif
-
         @if ($this->nodes?->count())
 
             @foreach ($paginatedNodes as $node)
 
                 @if(!empty($this->headingHierarchy()))
                     @foreach ($this->headingHierarchy() as $item)
-                        <{{ $item['headingTag'] }} class="{{ $item['headingClass'] }} nhsuk-u-margin-bottom-2">
-                        @if(!empty($item['name']))
-                            <span class="nhsuk-tag--{{ $item['colour'] }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">
-                                {{ config('app.show_node_type_prefix') && !empty($item['type']) ? $item['type'] . ': ' : '' }}
-                                {{ $item['name'] }}
-                            </span>
-                        @endif
-                    </{{ $item['headingTag'] }}>
+                        <div>
+                            <{{ $item['headingTag'] }} class="{{ $item['headingClass'] }} nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0" style="background-color: {{ \App\Enums\NodeColour::from($item['colour'])?->hex() ?? 'red' }};">
+                            @if(!empty($item['name']))
+                                    {{ config('app.show_node_type_prefix') && !empty($item['type']) ? $item['type'] . ': ' : '' }}
+                                    {{ $item['name'] }}
+                            @endif
+                        </{{ $item['headingTag'] }}>
+                    </div>
                     @endforeach
                 @else
                     @if(!empty($node?->parent?->parent?->name))
-                        <h1 class="nhsuk-heading-l nhsuk-u-margin-bottom-2" >
-                            <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">
+                        <div>
+                            <h1 class="nhsuk-heading-l nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0" style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};" >
                                 {{ config('app.show_node_type_prefix') && !empty($node?->parent?->parent?->type?->name)
                                     ? $node->parent->parent->type->name . ': '
                                     : '' }}
                                 {{ $node->parent->parent->name }}
-                            </span>
-                        </h1>
+                            </h1>
+                        </div>
                    @endif
                    @if(!empty($node?->parent?->name))
-                        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">
-                            <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">
+                        <div>
+                            <h2 class="nhsuk-heading-m nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0" style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};">
                                 {{ config('app.show_node_type_prefix') && !empty($node?->parent?->type?->name)
                                     ? $node->parent->type->name . ': '
                                     : '' }}
                                 {{ $node->parent->name }}
-                            </span>
-                        </h2>
+                            </h2>
+                        </div>
                     @endif
 
 
                     @if(!empty($node?->name))
-                        <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
-                            <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">
+                        <div>
+                            <h3 class="nhsuk-heading-s nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0" style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};">
                                 {{ config('app.show_node_type_prefix') && !empty($node?->type?->name)
                                     ? $node->type->name . ': '
                                     : '' }}
                                 {{ $node->name }}
-                            </span>
-                        </h3>
+                            </h3>
+                        </div>
                     @endif
 
                 @endif
@@ -74,8 +58,6 @@
             @endforeach
 
             <hr>
-
-        {{--@livewire('summary', ['frameworkId' => $this->assessment->framework->id, 'assessmentId' => $this->assessmentId])--}}
 
         @else
             <p>{{ __('Assessment not found or has been removed.') }}</p>

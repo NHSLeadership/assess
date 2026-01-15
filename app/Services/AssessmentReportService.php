@@ -13,6 +13,8 @@ class AssessmentReportService
     public array $radarOptions = [];
     public array $radarData = [];
     public array $barCharts = [];
+    public string $chartBackgroundColor = '#ccdff1';
+    public string $chartBorderColor = '#004281';
 
     public function __construct(
         public int $frameworkId,
@@ -109,8 +111,8 @@ class AssessmentReportService
                     'datasets' => [[
                         'label' => 'Self assessment',
                         'data' => $values,
-                        'backgroundColor' => $area?->colour ?? 'rgba(79,70,229,0.5)',
-                        'borderColor' => $area?->colour ?? '#4F46E5',
+                        'backgroundColor' => $this->chartBackgroundColor,
+                        'borderColor' => $this->chartBorderColor,
                         'borderWidth' => 1,
                         'barThickness' => 50,
                     ]],
@@ -171,8 +173,8 @@ class AssessmentReportService
                 'datasets' => [[
                     'label' => 'Self assessment',
                     'data' => $values,
-                    'backgroundColor' => 'rgba(79,70,229,0.25)',
-                    'borderColor' => '#4F46E5',
+                    'backgroundColor' => $this->chartBackgroundColor,
+                    'borderColor' => $this->chartBorderColor,
                     'pointBackgroundColor' => '#4F46E5',
                     'borderWidth' => 2,
                 ]]

@@ -30,10 +30,12 @@
 
                 {{-- SECTION (top-level) --}}
                 @if (empty($node->parent))
-                    <h3 class="nhsuk-heading-m nhsuk-tag--no-border nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2">
-                        {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
-                        {{ $node->name }}
-                    </h3>
+                    <div class="nhsuk-u-padding-2">
+                        <h3 class="nhsuk-heading-m nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0" style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};">
+                            {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
+                            {{ $node->name }}
+                        </h3>
+                    </div>
 
                     {{-- BAR CHART --}}
                     @php
