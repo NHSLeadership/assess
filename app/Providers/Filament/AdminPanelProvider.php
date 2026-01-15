@@ -53,8 +53,9 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware([
-                \App\Middleware\Authenticate::class,
+                \Filament\Http\Middleware\Authenticate::class,
             ])
+            ->login()
             ->authGuard('auth0-session');
     }
 }
