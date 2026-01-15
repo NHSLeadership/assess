@@ -58,27 +58,6 @@
         "scale:viewAny", "scale:view", "scale:create", "scale:update", "scale:delete", "scale:restore", "scale:reorder",
         "signpost:viewAny", "signpost:view", "signpost:create", "signpost:update", "signpost:delete", "signpost:restore", "signpost:reorder"
       ]
-    },
-    "assess-user": {
-      "permissions": [
-        "assess:all-frameworks",
-        "assessment:viewAny", "assessment:view", "assessment:create", "assessment:update", "assessment:delete", "assessment:restore",
-        "assessmentRater:viewAny", "assessmentRater:view", "assessmentRater:create", "assessmentRater:update", "assessmentRater:delete", "assessmentRater:restore",
-        "assessmentVariantSelection:viewAny", "assessmentVariantSelection:view", "assessmentVariantSelection:create", "assessmentVariantSelection:update", "assessmentVariantSelection:delete", "assessmentVariantSelection:restore",
-        "framework:viewAny", "framework:view",
-        "frameworkVariantAttribute:viewAny", "frameworkVariantAttribute:view",
-        "frameworkVariantOption:viewAny", "frameworkVariantOption:view",
-        "node:viewAny", "node:view",
-        "nodeType:viewAny", "nodeType:view",
-        "question:viewAny", "question:view",
-        "questionVariantMatch:viewAny", "questionVariantMatch:view",
-        "questionVariant:viewAny", "questionVariant:view",
-        "rater:viewAny", "rater:view", "rater:create", "rater:update", "rater:delete", "rater:restore",
-        "response:viewAny", "response:view", "response:create", "response:update", "response:delete", "response:restore",
-        "scaleOption:viewAny", "scaleOption:view",
-        "scale:viewAny", "scale:view",
-        "signpost:viewAny", "signpost:view"
-      ]
     }
   }
 }

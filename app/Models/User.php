@@ -76,7 +76,21 @@ class User extends Model implements
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+
+        if(
+            auth()->user()->can('assessment:viewAny') ||
+            auth()->user()->can('framework:viewAny') ||
+            auth()->user()->can('node:viewAny') ||
+            auth()->user()->can('question:viewAny') ||
+            auth()->user()->can('nodeType:viewAny') ||
+            auth()->user()->can('frameworkVariantAttribute:viewAny') ||
+            auth()->user()->can('signpost:viewAny') ||
+            auth()->user()->can('scale:viewAny') ||
+            auth()->user()->can('scaleOption:viewAny')
+        ){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -102,49 +116,6 @@ class User extends Model implements
     public function raters(): HasMany
     {
         return $this->hasMany(Rater::class);
-    }
-
-
-    /**
-     * Returns Auth0 Permissions for the user
-     * @throws JsonException
-     */
-    public function getAuth0Permissions(): array
-    {
-        if (!$this->sub) {
-            return [];
-        }
-
-        $ttl = config('app.auth0_admin_permission_cache_ttl', 300) < 5
-            ? 5
-            : config('app.auth0_admin_permission_cache_ttl', 300);;
-
-        return cache()->remember("auth0_permissions_{$this->sub}", $ttl, function () {
-            $sdk = app('auth0');
-
-            $all = [];
-            $page = 0;
-
-            do {
-                $options = (new RequestOptions)->setPagination(
-                    new PaginatedRequest($page, 100)
-                );
-
-                $response = $sdk->management()->users()->getPermissions($this->sub, $options);
-
-                if (! HttpResponse::wasSuccessful($response)) {
-                    break;
-                }
-
-                $chunk = HttpResponse::decodeContent($response);
-
-                $all = array_merge($all, $chunk);
-
-                $page++;
-            } while (count($chunk) === 100);
-
-            return $all;
-        });
     }
 
 }
