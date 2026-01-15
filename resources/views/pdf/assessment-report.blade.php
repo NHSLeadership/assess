@@ -42,6 +42,10 @@
             height: 100px;
         }
 
+        .padding-8 {
+            padding: 8px;
+        }
+
         .answer-background {
             background-color: #ccdff1;
             color: #004281;
@@ -107,10 +111,12 @@ if (!empty(Auth()?->user()?->user_id)) {
         <div class="page-break"></div>
 
         <div class="section">
-            <h3 style="background: {{ $node->colour ?? '#005eb8' }}; color: white; padding: 6px;">
-                {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
-                {{ $node->name }}
-            </h3>
+            <div class="padding-8">
+                <h3 style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }}; padding:8px; display: inline-block; margin-top: 0px; margin-bottom: 0px;">
+                    {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
+                    {{ $node->name }}
+                </h3>
+            </div>
 
             {{-- BAR CHART --}}
             @php

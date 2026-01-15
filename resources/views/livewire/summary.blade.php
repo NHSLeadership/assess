@@ -14,14 +14,15 @@
 
             {{-- Top-level node --}}
             @if (empty($node->parent))
-                <h3 class="nhsuk-heading-m nhsuk-tag--no-border nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-u-padding-2">
-                    {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
-                    {{ $node->name }}
-                </h3>
-            @endif
+                <div>
+                    <h3 class="nhsuk-heading-m nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0" style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};">
+                        {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
+                        {{ $node->name }}
+                    </h3>
+                </div>
 
-            {{-- Node with children --}}
-            @if ($node->children->count())
+                {{-- Node with children --}}
+            @elseif ($node->children->count())
                 <h4 class="nhsuk-heading-s">
                     {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
                     {{ $node->name }}

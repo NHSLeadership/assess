@@ -13,9 +13,9 @@ enum NodeColour: string
     public function hex(): string
     {
         return match($this) {
-            self::GREEN =>  '#31cc93',
-            self::PURPLE => '#74aeff',
-            self::RED => '#b0b0b0',
+            self::GREEN =>  '#BDDECD',
+            self::PURPLE => '#BCCAE0',
+            self::RED => '#DECAD4',
         };
     }
 

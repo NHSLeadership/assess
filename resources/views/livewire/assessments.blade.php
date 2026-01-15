@@ -16,54 +16,73 @@
 {{--                </a>--}}
 {{--            </div>--}}
         @endif
-
+        <style>
+            .test-headers {
+                /*display: inline-block;          */
+                /*background: #e0f0ff;    */
+                /*padding: 0.25em 0.5em;   */
+                /*margin: 0;              */
+                display: inline-block;
+                background: #e0f0ff;
+                padding: 0.25em 0.5em;
+                margin: 0;
+            }
+        </style>
         @if ($this->nodes?->count())
 
             @foreach ($paginatedNodes as $node)
 
                 @if(!empty($this->headingHierarchy()))
                     @foreach ($this->headingHierarchy() as $item)
-                        <{{ $item['headingTag'] }} class="{{ $item['headingClass'] }} nhsuk-u-margin-bottom-2">
-                        @if(!empty($item['name']))
-                            <span class="nhsuk-tag--{{ $item['colour'] }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">
-                                {{ config('app.show_node_type_prefix') && !empty($item['type']) ? $item['type'] . ': ' : '' }}
-                                {{ $item['name'] }}
-                            </span>
-                        @endif
-                    </{{ $item['headingTag'] }}>
+                        <div>
+                            <{{ $item['headingTag'] }} class="{{ $item['headingClass'] }} nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0" style="background-color: {{ \App\Enums\NodeColour::from($item['colour'])?->hex() ?? 'red' }};">
+                            @if(!empty($item['name']))
+    {{--                            <span class="nhsuk-tag--{{ $item['colour'] }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">--}}
+                                    {{ config('app.show_node_type_prefix') && !empty($item['type']) ? $item['type'] . ': ' : '' }}
+                                    {{ $item['name'] }}
+    {{--                            </span>--}}
+                            @endif
+                        </{{ $item['headingTag'] }}>
+                    </div>
                     @endforeach
                 @else
                     @if(!empty($node?->parent?->parent?->name))
-                        <h1 class="nhsuk-heading-l nhsuk-u-margin-bottom-2" >
-                            <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">
+                        <div>
+                            <h1 class="nhsuk-heading-l nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0" style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};" >
+{{--                            <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">--}}
                                 {{ config('app.show_node_type_prefix') && !empty($node?->parent?->parent?->type?->name)
                                     ? $node->parent->parent->type->name . ': '
                                     : '' }}
                                 {{ $node->parent->parent->name }}
-                            </span>
-                        </h1>
+{{--                            </span>--}}
+                            </h1>
+                        </div>
                    @endif
                    @if(!empty($node?->parent?->name))
-                        <h2 class="nhsuk-heading-m nhsuk-u-margin-bottom-2">
-                            <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">
+                        <div>
+                            <h2 class="nhsuk-heading-m nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0" style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};">
+{{--                            <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">--}}
                                 {{ config('app.show_node_type_prefix') && !empty($node?->parent?->type?->name)
                                     ? $node->parent->type->name . ': '
                                     : '' }}
                                 {{ $node->parent->name }}
-                            </span>
-                        </h2>
+{{--                            </span>--}}
+                            </h2>
+                        </div>
                     @endif
 
 
                     @if(!empty($node?->name))
-                        <h3 class="nhsuk-heading-s nhsuk-u-margin-bottom-2">
-                            <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">
+                        <div>
+                            <h3 class="nhsuk-heading-s nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0" style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};">
+{{--                            <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">--}}
                                 {{ config('app.show_node_type_prefix') && !empty($node?->type?->name)
                                     ? $node->type->name . ': '
                                     : '' }}
                                 {{ $node->name }}
-                            </span>
-                        </h3>
+{{--                            </span>--}}
+                            </h3>
+                        </div>
                     @endif
 
                 @endif
