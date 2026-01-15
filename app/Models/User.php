@@ -90,6 +90,9 @@ class User extends Model implements
         ){
             return true;
         }
+        logger()->info('Unauthorised admin panel login attempt', [
+            'user_id' => auth()->user()?->user_id,
+        ]);
         return false;
     }
 
