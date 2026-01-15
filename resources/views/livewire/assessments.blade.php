@@ -49,24 +49,20 @@
                     @if(!empty($node?->parent?->parent?->name))
                         <div>
                             <h1 class="nhsuk-heading-l nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0" style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};" >
-{{--                            <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">--}}
                                 {{ config('app.show_node_type_prefix') && !empty($node?->parent?->parent?->type?->name)
                                     ? $node->parent->parent->type->name . ': '
                                     : '' }}
                                 {{ $node->parent->parent->name }}
-{{--                            </span>--}}
                             </h1>
                         </div>
                    @endif
                    @if(!empty($node?->parent?->name))
                         <div>
                             <h2 class="nhsuk-heading-m nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0" style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};">
-{{--                            <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">--}}
                                 {{ config('app.show_node_type_prefix') && !empty($node?->parent?->type?->name)
                                     ? $node->parent->type->name . ': '
                                     : '' }}
                                 {{ $node->parent->name }}
-{{--                            </span>--}}
                             </h2>
                         </div>
                     @endif
@@ -75,12 +71,10 @@
                     @if(!empty($node?->name))
                         <div>
                             <h3 class="nhsuk-heading-s nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0" style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};">
-{{--                            <span class="nhsuk-tag--{{ $node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2 nhsuk-u-display-inline-block">--}}
                                 {{ config('app.show_node_type_prefix') && !empty($node?->type?->name)
                                     ? $node->type->name . ': '
                                     : '' }}
                                 {{ $node->name }}
-{{--                            </span>--}}
                             </h3>
                         </div>
                     @endif
@@ -93,8 +87,6 @@
             @endforeach
 
             <hr>
-
-        {{--@livewire('summary', ['frameworkId' => $this->assessment->framework->id, 'assessmentId' => $this->assessmentId])--}}
 
         @else
             <p>{{ __('Assessment not found or has been removed.') }}</p>
