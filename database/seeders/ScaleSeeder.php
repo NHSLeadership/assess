@@ -17,31 +17,31 @@ class ScaleSeeder extends Seeder
         $options = [
             [
                 'label' => 'Insufficient',
-                'description' => 'I can’t do this without help.',
+                'description' => 'I can’t do this without help',
                 'value' => 1,
                 'order' => 1,
             ],
             [
                 'label' => 'Essential',
-                'description' => 'I can do parts of this but need guidance.',
+                'description' => 'I can do parts of this but need guidance',
                 'value' => 2,
                 'order' => 2,
             ],
             [
                 'label' => 'Proficient',
-                'description' => 'I can do most of this with occasional help.',
+                'description' => 'I can do most of this with occasional help',
                 'value' => 3,
                 'order' => 3,
             ],
             [
                 'label' => 'Strong',
-                'description' => 'I can do all of this independently.',
+                'description' => 'I can do all of this independently',
                 'value' => 4,
                 'order' => 4,
             ],
             [
                 'label' => 'Exemplary',
-                'description' => 'I do this effectively and can support others to do this.',
+                'description' => 'I do this effectively and can support others to do this',
                 'value' => 5,
                 'order' => 5,
             ],
