@@ -15,7 +15,7 @@
                         'class' => $question['class'] ?? null,
                         'options_list' => $this->buildScaleOptions($question),
                         'type' => $question['type'] ?? null,
-                        'hints' => [
+                        'descriptions' => [
                             $question['text'] ?? null,
                             \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $question['id']) ?? $question['hint']
                          ]
