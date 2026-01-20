@@ -69,7 +69,7 @@
                                 @elseif ($type === \App\Enums\ResponseType::TYPE_SCALE->value)
                                     <div class="nhsuk-task-list__hint">
                                         <strong class="nhsuk-tag nhsuk-tag--blue">
-                                            {{ $response->scaleOption->label }}
+                                            {{ $response->scaleOption->label }} {{ !empty($response->scaleOption->description) ? ' - ' . $response->scaleOption->description : '' }}
                                         </strong>
                                     </div>
                                 @endif

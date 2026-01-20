@@ -13,7 +13,7 @@
                     @component('components.form.' . $question['component'], [
                         'name' => $question['name'] ? 'data.' . $question['name'] : null,
                         'class' => $question['class'] ?? null,
-                        'options_list' => $question?->scale?->options()->orderBy('order')->pluck('label', 'id')?->toArray() ?? [],
+                        'options_list' => $this->buildScaleOptions($question),
                         'type' => $question['type'] ?? null,
                         'hints' => [
                             $question['text'] ?? null,

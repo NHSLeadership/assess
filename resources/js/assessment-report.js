@@ -1,5 +1,16 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+    const note = document.getElementById('mobilePdfNote');
+
+    if (window.innerWidth < 768) {
+        // Small screens no button, show note
+        document.getElementById('downloadPdfBtn').style.display = 'none';
+        note.style.display = 'block';
+    } else {
+        // Large screens, show button, hide note
+        note.style.display = 'none';
+    }
+
     /* -----------------------------
         1. RENDER RADAR CHART
     ------------------------------ */
@@ -8,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const radarCtx = document.getElementById('radarChart');
 
+    let radarChart = null;
+
     if (radarCtx) {
         radarCtx.width = 900;
         radarCtx.height = 900;
@@ -15,7 +28,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (typeof radarOptions.callback === 'string') {
             radarOptions.callback = eval('(' + radarOptions.callback + ')');
         }
-        new Chart(radarCtx, {
+
+        radarChart = new Chart(radarCtx, {
             type: 'radar',
             data: radarData,
             options: {
@@ -30,21 +44,20 @@ document.addEventListener('DOMContentLoaded', function () {
                             maxTicksLimit: 100,
                             backdropColor: 'transparent',
                             showLabelBackdrop: false,
-                            callback: radarOptions.callback ?? undefined
+                            callback: radarOptions.callback ?? undefined,
+                            z: 10,
                         },
                         grid: {
-                            color: radarOptions.gridColor
+                            color: radarOptions.gridColor,
+                            z: 12,
                         },
                         angleLines: {
                             color: radarOptions.angleLineColor
                         },
-                        pointLabels:
-                            {
-                                font: {
-                                    size: 16
-                                },
-                                color: radarOptions.pointLabelsColor
-                            },
+                        pointLabels: {
+                            font: { size: 16 },
+                            color: radarOptions.pointLabelsColor
+                        },
                     }
                 },
                 plugins: {
@@ -56,12 +69,62 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
+
+        // Mobile adjustments
+        if (window.innerWidth < 600) {
+
+            radarCtx.style.maxWidth = "100%";
+            radarCtx.style.maxHeight = "450px";
+
+            radarChart.options.scales.r.pointLabels.font.size = 10;
+            radarChart.options.scales.r.ticks.font = { size: 8 };
+
+            // radarChart.options.scales.r.ticks.callback = function(value) {
+            //
+            //     // Convert tick value to a number
+            //     const index = Number(value);
+            //     // Get the correct full label
+            //     const full = radarOptions.tickLabels[index - 1] || '';
+            //
+            //     // Trim before hyphen or en dash
+            //     return full.split(/[-–]/)[0].trim();
+            //
+            // };
+            // radarChart.options.scales.r.pointLabels.callback = function(label) {
+            //     const words = label.split(' ');
+            //     const lines = [];
+            //     let current = '';
+            //
+            //     words.forEach(word => {
+            //         if ((current + word).length > 12) {
+            //             lines.push(current.trim());
+            //             current = '';
+            //         }
+            //         current += word + ' ';
+            //     });
+            //
+            //     if (current.trim().length) lines.push(current.trim());
+            //
+            //     return lines;
+            // };
+
+            radarChart.update();
+        }
     }
+
 
     /* -----------------------------
         2. RENDER BAR CHARTS
     ------------------------------ */
     const barCharts = window.barCharts || [];
+    if (window.innerWidth < 600) {
+        barCharts.forEach(chart => {
+            const canvas = document.getElementById(chart.id);
+            if (canvas) {
+                canvas.style.height = '250px'; // adjust as needed
+            }
+        });
+    }
 
     barCharts.forEach(chart => {
         const ctx = document.getElementById(chart.id);
@@ -76,7 +139,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 plugins: {
                     legend: {
                         labels: {
-                            font: {size: 18},
+                            font: {
+                                size: window.innerWidth < 600 ? 12 : 18
+                            },
                             color: chart.options.legendLabelsColor
                         }
                     }
@@ -86,13 +151,48 @@ document.addEventListener('DOMContentLoaded', function () {
                         min: chart.options.min,
                         max: chart.options.max,
                         ticks: {
-                            color: chart.options.tickColor, font: {size: 16}
+                            color: chart.options.tickColor,
+                            font: {
+                                size: window.innerWidth < 600 ? 10 : 16
+                            },
+                            callback: function(value, index) {
+                               return chart.scaleOptions[index + 1] || '';
+                                //return full.split(/[-–]/)[0].trim();
+                            },
+                            autoSkip: false,
+
+                            stepSize: 1,
                         },
                         grid: {color: chart.options.gridColor}
                     },
                     y: {
                         ticks: {
-                            color: chart.options.tickColor, font: {size: 16}
+                            color: chart.options.tickColor,
+                            font: {
+                                size: window.innerWidth < 600 ? 10 : 16
+                            },
+                            callback: function(value) {
+
+                                // wrap the label
+                                const full = chart.data.labels[value];
+                                const words = full.split(' ');
+                                const lines = [];
+                                let current = '';
+
+                                words.forEach(word => {
+                                    if ((current + word).length > 18) { // adjust 18 if needed
+                                        lines.push(current.trim());
+                                        current = '';
+                                    }
+                                    current += word + ' ';
+                                });
+
+                                if (current.trim().length) {
+                                    lines.push(current.trim());
+                                }
+
+                                return lines; // renders arrays as multi-line labels
+                            }
                         },
                         grid: {color: chart.options.gridColor}
                     }
@@ -158,4 +258,5 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 2000);
         });
     }
+
 });

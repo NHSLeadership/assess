@@ -343,6 +343,34 @@ class Questions extends Component
         return $this->node()?->questions()?->paginate($this->perPage, pageName: $this->pageName);
     }
 
+    /**
+     * Build scale options for a question
+     *
+     * @param  mixed  $question
+     * @return array
+     */
+    public function buildScaleOptions($question): array
+    {
+        if (!$question?->scale) {
+            return [];
+        }
+
+        return $question->scale->options()
+            ->orderBy('order')
+            ->get()
+            ->mapWithKeys(function ($opt) {
+                $label = $opt->label;
+
+                if (!empty($opt->description)) {
+                    $label .= ' - ' . $opt->description;
+                }
+
+                return [$opt->id => $label];
+            })
+            ->toArray();
+    }
+
+
     public function render()
     {
         return view('livewire.questions', [
