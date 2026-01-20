@@ -14,18 +14,14 @@
             overflow-y: scroll;
         }
         h1, h2, h3, h4 { margin: 0 0 10px 0; }
-        .section { margin-bottom: 25px; }
+        .section { margin-bottom: 25px;}
+        .align-center { text-align: center; }
         .bar-chart-img, .radar-img { max-width: 100%; margin-bottom: 20px; }
         .task-list { list-style: none; padding: 0; margin: 0; }
         .task-item { padding: 10px 0; border-bottom: 1px solid #ccc; }
         .tag { display: inline-block; padding: 3px 8px; color: white; border-radius: 3px; }
         .page-break { page-break-after: always; }
 
-        canvas {
-            transform: scale(1.4);
-            transform-origin: top left;
-            image-rendering: crisp-edges;
-        }
 
         /* Reserve space for header + footer */
         @page {
@@ -51,6 +47,18 @@
             color: #004281;
             border-color: #004281;
         }
+
+        .radar-img, .bar-chart-img {
+            max-width: 100%;
+        }
+
+        canvas {
+            transform: scale(1.4);
+            transform-origin: top left;
+            image-rendering: crisp-edges;
+        }
+
+
     </style>
 </head>
 
@@ -99,8 +107,13 @@ if (!empty(Auth()?->user()?->user_id)) {
     <div class="page-break"></div>
     <h3>Average scores for standards</h3>
     <br>
-    <div class="section">
-        <img src="{{ $radarImage }}" class="radar-img" alt="Radar chart">
+    <div class="section align-center">
+        <img
+                src="{{ $radarImage }}"
+                class="radar-img"
+                alt="Radar chart"
+                @if ($isMobile) style="width: 500px; height: auto; display: block; margin: 0 auto;" @else style="width: 100%; height: auto;" @endif
+        >
     </div>
 @endif
 
@@ -112,7 +125,7 @@ if (!empty(Auth()?->user()?->user_id)) {
 
         <div class="section">
             <div class="padding-8">
-                <h3 style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }}; padding:8px; display: inline-block; margin-top: 0px; margin-bottom: 0px;">
+                <h3 style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }}; padding:8px; display: inline-block; margin-top: 0px; margin-bottom: 0px; text-align: left;">
                     {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
                     {{ $node->name }}
                 </h3>
@@ -124,7 +137,7 @@ if (!empty(Auth()?->user()?->user_id)) {
             @endphp
 
             @if ($chart && !empty(data_get($barImages, $chart['id'])))
-                <img src="{{ data_get($barImages, $chart['id']) }}" class="bar-chart-img" alt="Bar chart">
+                <img src="{{ data_get($barImages, $chart['id']) }}" class="bar-chart-img" alt="Bar chart" @if ($isMobile) style="width: auto; height: auto; max-height:90%; display: block; margin: 0 auto;" @endif>
             @endif
         </div>
 

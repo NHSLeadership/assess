@@ -120,7 +120,82 @@ class AssessmentReportService
                         'backgroundColor' => $this->chartBackgroundColor,
                         'borderColor' => $this->chartBorderColor,
                         'borderWidth' => 1,
-                        'barThickness' => 50,
+                    ]],
+                ],
+                'options' => [
+                    'min' => 1,
+                    'max' => 5,
+                    'tickColor' => '#212b32',
+                    'legendLabelsColor' => '#212b32',
+                    'gridColor' => 'rgba(0,0,0,0.1)',
+                ],
+            ];
+        }
+
+        return $this->barCharts;
+    }
+
+    /* ---------------------------------------------------------
+       BAR CHART - COMPETENCY LEVELS
+    --------------------------------------------------------- */
+    public function barChartsCompetency(): array
+    {
+        $areas = $this->nodes()->whereNull('parent_id');
+        $charts = [];
+
+        foreach ($areas as $area) {
+
+            $standards = $this->nodes()->filter(fn($n) => $n->parent_id === $area->id);
+
+            if ($standards->isEmpty()) {
+                continue;
+            }
+
+            $labels = [];
+            $values = [];
+
+            foreach ($standards as $standard) {
+
+                $leafNodes = $this->nodes()->filter(fn($n) =>
+                    $n->children->count() === 0 &&
+                    $n->parent_id === $standard->id
+                );
+
+                foreach ($leafNodes as $leaf) {
+
+                    $response = $this->responses()->first(fn($r) =>
+                        $r->question->node_id === $leaf->id &&
+                        $r->question->response_type === \App\Enums\ResponseType::TYPE_SCALE->value
+                    );
+
+                    if (!$response) {
+                        continue;
+                    }
+
+                    $labels[] = $leaf->name;
+                    $values[] = (int)($response->scaleOption->value ?? 0);
+                }
+            }
+
+            if (empty($labels)) {
+                continue;
+            }
+
+            $charts[] = [
+                'node_id' => $area->id,
+                'id' => 'barChartCompetency_' . $area->id,
+                'scaleOptions' => $this->scaleOptions(),
+                'title' => $area->name,
+                'description' => $area->description ?? '',
+                'data' => [
+                    'labels' => $labels,
+                    'datasets' => [[
+                        'label' => 'Self assessment',
+                        'data' => $values,
+                        'backgroundColor' => $this->chartBackgroundColor,
+                        'borderColor' => $this->chartBorderColor,
+                        'borderWidth' => 1,
+                        'barThickness' => 40,
                     ]],
                 ],
                 'options' => [
@@ -135,8 +210,9 @@ class AssessmentReportService
             ];
         }
 
-        return $this->barCharts;
+        return $charts;
     }
+
 
     /* ---------------------------------------------------------
        RADAR CHART
