@@ -15,10 +15,8 @@
                             'class' => $variant->class ?? null,
                             'options_list' => $variant->options->pluck('label', 'id')?->toArray() ?? [],
                             'type' => $variant->type ?? null,
-                            'hints' => [ $variant->hint_text ?? null]
+                            'description' => $variant->hint_text ?? null,
                         ])
-                            @slot('hint')
-                            @endslot
                             @slot('label')
                                 <span class="nhsuk-u-visually-hidden">Variant {{$variant->id}}</span>{{ $variant->label ?? null }}
                             @endslot

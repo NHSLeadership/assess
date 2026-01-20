@@ -8,6 +8,12 @@
         </legend>
     @endif
 
+    @if (!empty($description))
+        <div class="nhsuk-u-display-block">
+            <p>{!! $description !!}</p>
+        </div>
+    @endif
+
     @if (!empty($hints) && is_array($hints))
         <div class="nhsuk-hint">
             @foreach($hints as $hint)
