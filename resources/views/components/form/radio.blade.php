@@ -8,9 +8,11 @@
         </legend>
     @endif
 
-    @if (!empty($description))
+    @if (!empty($descriptions) && is_array($descriptions))
         <div class="nhsuk-u-display-block">
-            <p>{!! $description !!}</p>
+            @foreach($descriptions as $description)
+                <p>{!! $description !!}</p>
+            @endforeach
         </div>
     @endif
 
