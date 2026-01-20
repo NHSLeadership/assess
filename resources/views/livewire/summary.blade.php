@@ -8,7 +8,7 @@
                 {{ $this->framework->name ?? '' }}
             </h1>
             <h2 class="nhsuk-heading-l">Assessment summary</h2>
-            @if(empty($response?->assessment?->submitted_at))
+            @if(empty($this->assessment?->submitted_at))
                 <p>
                    {!! __('pages.summary.response-edit-prompt') !!}
                 </p>
