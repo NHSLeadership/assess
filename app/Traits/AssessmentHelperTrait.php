@@ -27,14 +27,15 @@ trait AssessmentHelperTrait
             return null;
         }
 
-        $requiredCount = $assessment->framework?->questions()
-            ->where('required', true)
-            ->count();
+        $totalQuestions = $assessment->framework
+            ?->questions()
+            ->count() ?? 0;
+        $responseCount = $assessment->responses()
+            ?->count() ?? 0;
+        $allAnswered = $totalQuestions > 0 && $responseCount === $totalQuestions;
 
-        $responseCount = $assessment->responses()?->count() ?? 0;
-        $allRequiredAnswered = $requiredCount > 0 && $responseCount === $requiredCount;
         $alreadySubmitted    = !is_null($assessment->submitted_at);
-        if ( (empty($edit) && $allRequiredAnswered) || $alreadySubmitted) {
+        if ((empty($edit) && $allAnswered) || $alreadySubmitted) {
             return redirect()->route('summary', [
                 'frameworkId'  => $frameworkId,
                 'assessmentId' => $assessment?->id,

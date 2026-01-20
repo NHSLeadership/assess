@@ -22,6 +22,9 @@ class Summary extends Component
 
     public ?int $frameworkId = null;
     public ?int $assessmentId = null;
+    public ?int $requiredCount = null;
+    public ?int $answeredRequiredCount = null;
+
 
     #[Computed]
     public function framework(): ?Framework
@@ -135,6 +138,23 @@ class Summary extends Component
             'frameworkId' => $this->frameworkId,
             'assessmentId' => $this->assessmentId
         ]);
+    }
+
+    #[Computed]
+    public function requiredCount()
+    {
+        return $this->assessment?->framework
+            ->questions()
+            ->where('required', 1)
+            ->count();
+    }
+
+    #[Computed]
+    public function answeredRequiredCount()
+    {
+        return $this->responses
+            ->filter(fn ($r) => $r->question?->required)
+            ->count();
     }
 
     public function render()
