@@ -46,6 +46,11 @@ class AssessmentReportService
         return $this->assessment()?->responses()->get();
     }
 
+    public function scaleOptions(): array
+    {
+        return \App\Models\ScaleOption::orderBy('value')->pluck('label', 'value')->toArray();
+    }
+
     public function rater(): ?Rater
     {
         return Rater::where('user_id', auth()->id())
@@ -104,6 +109,7 @@ class AssessmentReportService
             $this->barCharts[] = [
                 'node_id' => $area->id,
                 'id' => 'barChart_' . $area->id,
+                'scaleOptions' => $this->scaleOptions(),
                 'title' => $area->name,
                 'description' => $area->description ?? '',
                 'data' => [
@@ -152,10 +158,11 @@ class AssessmentReportService
         $labels = [];
         $values = [];
 
-        $scaleOptions = \App\Models\ScaleOption::orderBy('value')->pluck('label')->toArray();
+        $scaleOptions = $this->scaleOptions();
+        $scaleOptionsModified = array_values($scaleOptions);
         $callback = $useScaleLabels
             ? "function(value, index, values) {
-                const labels = " . json_encode($scaleOptions) . ";
+                const labels = " . json_encode($scaleOptionsModified) . ";
                 return labels[index] ?? value;
             }"
             : null;
@@ -163,10 +170,11 @@ class AssessmentReportService
         foreach ($this->barCharts as $chart) {
             // Each bar chart has multiple labels and values
             foreach ($chart['data']['labels'] as $i => $label) {
-                $labels[] = $label;
+                $labels[] = $this->wrapLabel($label);
                 $values[] = $chart['data']['datasets'][0]['data'][$i];
             }
         }
+
         return [
             'data' => [
                 'labels' => $labels,
@@ -185,9 +193,31 @@ class AssessmentReportService
                 'tickColor' => '#212b32',
                 'pointLabelsColor' => '#212b32',
                 'legendLabelsColor' => '#212b32',
-                'callback' => $callback
-            ]
+                'callback' => $callback,
+                'tickLabels' => $scaleOptions
+            ],
         ];
+    }
+
+    function wrapLabel($label, $maxLength = 12)
+    {
+        $words = explode(' ', $label);
+        $lines = [];
+        $current = '';
+
+        foreach ($words as $word) {
+            if (strlen($current . $word) > $maxLength) {
+                $lines[] = trim($current);
+                $current = '';
+            }
+            $current .= $word . ' ';
+        }
+
+        if (trim($current) !== '') {
+            $lines[] = trim($current);
+        }
+
+        return $lines;
     }
 
     private function descendantLeafNodes(Node $node): \Illuminate\Support\Collection

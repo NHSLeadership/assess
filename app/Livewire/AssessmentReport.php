@@ -124,6 +124,7 @@ class AssessmentReport extends Component
         return $this->assessment()?->responses()->get();
     }
 
+
     #[Computed]
     public function rater(): ?Rater
     {

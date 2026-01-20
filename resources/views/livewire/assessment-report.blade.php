@@ -26,96 +26,99 @@
                 <canvas id="radarChart" style="max-height: 600px;max-width: 900px;"></canvas>
             </div>
         @endif
-            @foreach ($this->nodes as $node)
+        @foreach ($this->nodes as $node)
 
-                {{-- SECTION (top-level) --}}
-                @if (empty($node->parent))
-                    <div class="nhsuk-u-padding-2">
-                        <h3 class="nhsuk-heading-m nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0" style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};">
-                            {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
-                            {{ $node->name }}
-                        </h3>
-                    </div>
-
-                    {{-- BAR CHART --}}
-                    @php
-                        $chart = collect($barCharts)->firstWhere('node_id', $node->id);
-                    @endphp
-
-                    @if ($chart)
-                        <div class="nhsuk-u-margin-bottom-5" wire:ignore>
-                            <canvas id="{{ $chart['id'] }}" style="width: 100%; max-width: 900px;"></canvas>
-                        </div>
-                    @endif
-
-                    {{-- SUBSECTION (has children) --}}
-                @elseif ($node->children->count())
-                    <h4 class="nhsuk-heading-s">
+            {{-- SECTION (top-level) --}}
+            @if (empty($node->parent))
+                <div class="nhsuk-u-padding-2">
+                    <h3 class="nhsuk-heading-m nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0" style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};">
                         {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
                         {{ $node->name }}
-                    </h4>
-                @endif
+                    </h3>
+                </div>
 
-
-
-                {{-- RESPONSES (leaf nodes only) --}}
+                {{-- BAR CHART --}}
                 @php
-                    $nodeResponses = $this->responses
-                        ?->filter(fn ($r) => $r->question?->node_id == $node->id);
+                    $chart = collect($barCharts)->firstWhere('node_id', $node->id);
                 @endphp
 
-                @if ($nodeResponses && $nodeResponses->count())
-                    <ul class="nhsuk-task-list nhsuk-list--border">
-
-                        @foreach ($nodeResponses as $response)
-                            <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link nhsuk-u-padding-left-2">
-
-                                <div class="nhsuk-task-list__name-and-hint nhsuk-u-width-three-quarters">
-
-                                    <strong>{{ $response->question->title }}</strong>
-                                    <br>
-
-                                    {!! \App\Services\QuestionTextResolver::textFor(
-                                            $this->assessment(),
-                                            $this->rater(),
-                                            $response->question->id
-                                        ) ?? $response->question?->hint !!}
-
-                                    @php
-                                        $type = $response->question?->response_type;
-                                    @endphp
-
-                                    @if ($type === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
-                                        <div class="nhsuk-task-list__hint">
-                                            {{ $response->textarea }}
-                                        </div>
-
-                                    @elseif ($type === \App\Enums\ResponseType::TYPE_SCALE->value)
-                                        <div class="nhsuk-task-list__hint">
-                                            <strong class="nhsuk-tag nhsuk-tag--blue">
-                                                {{ $response->scaleOption->label }}
-                                            </strong>
-                                        </div>
-                                    @endif
-                                </div>
-                            </li>
-                        @endforeach
-
-                    </ul>
+                @if ($chart)
+                    <div class="nhsuk-u-margin-bottom-5" wire:ignore>
+                        <canvas id="{{ $chart['id'] }}" style="width: 100%; max-width: 900px;"></canvas>
+                    </div>
                 @endif
 
-                {{-- SIGNPOSTS (always show if exist) --}}
-                @php
-                    $nodeSignposts = data_get($this->signposts, $node->id, []);
-                @endphp
+                {{-- SUBSECTION (has children) --}}
+            @elseif ($node->children->count())
+                <h4 class="nhsuk-heading-s">
+                    {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
+                    {{ $node->name }}
+                </h4>
+            @endif
 
-                <x-signpost-banner :signposts="$nodeSignposts" title="Guidance" :banner-id="$node->id" />
-            @endforeach
+
+
+            {{-- RESPONSES (leaf nodes only) --}}
+            @php
+                $nodeResponses = $this->responses
+                    ?->filter(fn ($r) => $r->question?->node_id == $node->id);
+            @endphp
+
+            @if ($nodeResponses && $nodeResponses->count())
+                <ul class="nhsuk-task-list nhsuk-list--border">
+
+                    @foreach ($nodeResponses as $response)
+                        <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link nhsuk-u-padding-left-2">
+
+                            <div class="nhsuk-task-list__name-and-hint nhsuk-u-width-three-quarters">
+
+                                <strong>{{ $response->question->title }}</strong>
+                                <br>
+
+                                {!! \App\Services\QuestionTextResolver::textFor(
+                                        $this->assessment(),
+                                        $this->rater(),
+                                        $response->question->id
+                                    ) ?? $response->question?->hint !!}
+
+                                @php
+                                    $type = $response->question?->response_type;
+                                @endphp
+
+                                @if ($type === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
+                                    <div class="nhsuk-task-list__hint">
+                                        {{ $response->textarea }}
+                                    </div>
+
+                                @elseif ($type === \App\Enums\ResponseType::TYPE_SCALE->value)
+                                    <div class="nhsuk-task-list__hint">
+                                        <strong class="nhsuk-tag nhsuk-tag--blue">
+                                            {{ $response->scaleOption?->label }} {{ !empty($response->scaleOption?->description) ? ' - ' . $response->scaleOption->description : '' }}
+                                        </strong>
+                                    </div>
+                                @endif
+                            </div>
+                        </li>
+                    @endforeach
+
+                </ul>
+            @endif
+
+            {{-- SIGNPOSTS (always show if exist) --}}
+            @php
+                $nodeSignposts = data_get($this->signposts, $node->id, []);
+            @endphp
+
+            <x-signpost-banner :signposts="$nodeSignposts" title="Guidance" :banner-id="$node->id" />
+        @endforeach
 
         <div class="nhsuk-u-margin-bottom-4">
             <button id="downloadPdfBtn" class="nhsuk-button">
                 Download PDF
             </button>
+            <p id="mobilePdfNote" class="nhsuk-body" style="display:none;">
+                PDF download is available on larger screens.
+            </p>
         </div>
     </div>
 
