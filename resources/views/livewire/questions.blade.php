@@ -22,7 +22,11 @@
 
                     ])
                         @slot('label')
-                            <span class="nhsuk-u-visually-hidden">Competency {{$question->id}}</span>{!! $this->getQuestionProgressLabel($question['id'] ?? null) . ': '. $question['title'] ?? null !!}
+                            <span class="nhsuk-u-visually-hidden">Competency {{ $question->id }}</span>
+                            {!!
+                                $this->getQuestionProgressLabel($question['id'] ?? null)
+                                . (!empty($question['hint']) ? ': ' . $question['hint'] : '')
+                            !!}
                         @endslot
                     @endcomponent
                     <hr>
