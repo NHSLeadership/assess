@@ -23,9 +23,14 @@
                     ])
                         @slot('label')
                             <span class="nhsuk-u-visually-hidden">Competency {{ $question->id }}</span>
+                            @php
+                                $title = trim($question['title'] ?? '');
+                                $nodeTitle = trim($question->node->name ?? '');
+                                $showTitle = strcasecmp($title, $nodeTitle) !== 0 && $title !== '';
+                            @endphp
                             {!!
                                 $this->getQuestionProgressLabel($question['id'] ?? null)
-                                . (!empty($question['hint']) ? ': ' . $question['hint'] : '')
+                                . ($showTitle ? ': ' . $title : '')
                             !!}
                         @endslot
                     @endcomponent
