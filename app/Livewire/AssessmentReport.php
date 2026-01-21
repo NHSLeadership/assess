@@ -26,6 +26,7 @@ class AssessmentReport extends Component
     public ?int $assessmentId = null;
 
     public array $barCharts = [];
+    public array $barChartsCompetency = [];
     public array $radarOptions = [];
     public array $radarData = [];
     /**
@@ -74,7 +75,7 @@ class AssessmentReport extends Component
         $service = new AssessmentReportService($frameworkId, $assessmentId);
 
         $this->barCharts = $service->barCharts();
-
+        $this->barChartsCompetency = $service->barChartsCompetency();
         $radar = $service->radarChart();
         $this->radarData    = $radar['data'];
         $this->radarOptions = $radar['options'];

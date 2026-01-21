@@ -22,8 +22,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let radarChart = null;
 
     if (radarCtx) {
-        radarCtx.width = 900;
-        radarCtx.height = 900;
 
         if (typeof radarOptions.callback === 'string') {
             radarOptions.callback = eval('(' + radarOptions.callback + ')');
@@ -72,42 +70,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Mobile adjustments
         if (window.innerWidth < 600) {
-
-            radarCtx.style.maxWidth = "100%";
-            radarCtx.style.maxHeight = "450px";
-
             radarChart.options.scales.r.pointLabels.font.size = 10;
             radarChart.options.scales.r.ticks.font = { size: 8 };
-
-            // radarChart.options.scales.r.ticks.callback = function(value) {
-            //
-            //     // Convert tick value to a number
-            //     const index = Number(value);
-            //     // Get the correct full label
-            //     const full = radarOptions.tickLabels[index - 1] || '';
-            //
-            //     // Trim before hyphen or en dash
-            //     return full.split(/[-–]/)[0].trim();
-            //
-            // };
-            // radarChart.options.scales.r.pointLabels.callback = function(label) {
-            //     const words = label.split(' ');
-            //     const lines = [];
-            //     let current = '';
-            //
-            //     words.forEach(word => {
-            //         if ((current + word).length > 12) {
-            //             lines.push(current.trim());
-            //             current = '';
-            //         }
-            //         current += word + ' ';
-            //     });
-            //
-            //     if (current.trim().length) lines.push(current.trim());
-            //
-            //     return lines;
-            // };
-
             radarChart.update();
         }
     }
@@ -129,6 +93,9 @@ document.addEventListener('DOMContentLoaded', function () {
     barCharts.forEach(chart => {
         const ctx = document.getElementById(chart.id);
         if (!ctx) return;
+        const barCount = chart.data.labels.length;
+
+        ctx.height = barCount * 100;
 
         new Chart(ctx, {
             type: 'bar',
@@ -157,13 +124,12 @@ document.addEventListener('DOMContentLoaded', function () {
                             },
                             callback: function(value, index) {
                                return chart.scaleOptions[index + 1] || '';
-                                //return full.split(/[-–]/)[0].trim();
                             },
                             autoSkip: false,
 
                             stepSize: 1,
                         },
-                        grid: {color: chart.options.gridColor}
+                        grid: {color: chart.options.gridColor},
                     },
                     y: {
                         ticks: {
@@ -194,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 return lines; // renders arrays as multi-line labels
                             }
                         },
-                        grid: {color: chart.options.gridColor}
+                        grid: {color: chart.options.gridColor},
                     }
                 }
             }

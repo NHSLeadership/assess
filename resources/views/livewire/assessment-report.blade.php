@@ -39,7 +39,7 @@
 
                 {{-- BAR CHART --}}
                 @php
-                    $chart = collect($barCharts)->firstWhere('node_id', $node->id);
+                    $chart = collect($barChartsCompetency)->firstWhere('node_id', $node->id);
                 @endphp
 
                 @if ($chart)
@@ -128,7 +128,7 @@
     <script>
         window.radarData = @json($radarData);
         window.radarOptions = @json($radarOptions);
-        window.barCharts = @json($barCharts);
+        window.barCharts = @json($barChartsCompetency);
         window.csrfToken = "{{ csrf_token() }}";
         window.pdfPostUrl = "/assessment-report/{{ $frameworkId }}/{{ $assessmentId }}";
     </script>

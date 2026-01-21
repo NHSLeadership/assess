@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Services\AssessmentReportService;
+use Illuminate\Support\Str;
 
 class AssessmentReportPdfController extends Controller
 {
@@ -35,8 +36,9 @@ class AssessmentReportPdfController extends Controller
             'rater'      => $service->rater(),
             'radarImage' => $request->radarImage,
             'barImages'  => $barImages,
-            'barCharts'  => $service->barCharts(),
+            'barCharts'  => $service->barChartsCompetency(),
             'signposts'  => $signposts,
+            'isMobile'   => false,
         ])->download('assessment-report.pdf');
     }
 }
