@@ -5,7 +5,9 @@
 /node_modules
 /packages
 /public/hot
-/public/storage
+#/public/storage
+/public/storage/*
+!/public/storage/media
 /public/build
 /storage/*.key
 /storage/framework/views

@@ -24,6 +24,7 @@ class FrameworkFactory extends Factory
             'description' => $this->faker->paragraph(),
             'instructions'=> $this->faker->text(100),
             'report_intro'=> $this->faker->paragraph(),
+            'report_ending'=> $this->faker->paragraph(),
         ];
 
     }

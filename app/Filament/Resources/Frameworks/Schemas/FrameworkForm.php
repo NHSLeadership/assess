@@ -28,6 +28,18 @@ class FrameworkForm
                     ->columnSpanFull(),
                 RichEditor::make('report_intro')
                     ->label('Report Introduction')
+                    ->columnSpanFull()
+                    ->fileAttachmentsDisk('public')
+                    ->fileAttachmentsDirectory('media')
+                    ->fileAttachmentsVisibility('public')
+                    ->toolbarButtons([
+                        ['bold', 'italic', 'underline', 'highlight', 'strike', 'subscript', 'superscript', 'small', 'link'],
+                        ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
+                        ['blockquote', 'bulletList', 'orderedList', 'details'],
+                        ['horizontalRule', 'table', 'grid',  'attachFiles'],
+                        ['undo', 'redo', 'clearFormatting'],
+                    ]),
+                RichEditor::make('report_ending')
                     ->columnSpanFull(),
             ]);
     }
