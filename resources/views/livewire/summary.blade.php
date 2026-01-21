@@ -36,63 +36,85 @@
 
             {{-- Compute responses ONCE --}}
             @php
-                $nodeResponses = $this->responses
-                    ->filter(fn ($r) => $r->question?->node_id == $node->id);
+                $nodeQuestions = $node->questions; // or however your relationship is named
             @endphp
 
-            {{-- Leaf node responses --}}
-            @if ($nodeResponses->count())
-                <ul class="nhsuk-task-list nhsuk-list--border">
-                    @foreach ($nodeResponses as $response)
-                        <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link nhsuk-u-padding-left-2">
 
+            {{-- Leaf node responses --}}
+            @if ($nodeQuestions->count())
+                <ul class="nhsuk-task-list nhsuk-list--border">
+                    @foreach ($nodeQuestions as $question)
+                        @php
+                            $response = $this->responses
+                                ->firstWhere('question_id', $question->id);
+                        @endphp
+
+                        <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link nhsuk-u-padding-left-2">
                             <div class="nhsuk-task-list__name-and-hint nhsuk-u-width-three-quarters">
-                                @if(!empty($response?->assessment?->submitted_at))
-                                    <strong>{!! $response->question->title !!}</strong>
+
+                                {{-- Title --}}
+                                @if(!empty($this->assessment->submitted_at))
+                                    <strong>{!! $question->title !!}</strong>
                                 @else
-                                    <a href="#" wire:click.prevent="editAnswer({{ $response->question?->node?->id ?? '' }})" class="nhsuk-link nhsuk-task-list__link">
-                                        <strong>{!! $response->question->title ?? '' !!}</strong>
+                                    <a href="#" wire:click.prevent="editAnswer({{ $question->node_id }})"
+                                       class="nhsuk-link nhsuk-task-list__link">
+                                        <strong>{!! $question->title !!}</strong>
                                     </a>
                                     <span class="nhsuk-u-visually-hidden">Click to edit this answer</span>
                                 @endif
+
                                 <br>
+
+                                {{-- Question text --}}
                                 {!! \App\Services\QuestionTextResolver::textFor(
                                     $this->assessment(),
                                     $this->rater(),
-                                    $response->question->id
+                                    $question->id
                                 ) !!}
 
-                                @php
-                                    $type = $response->question?->response_type;
-                                @endphp
+                                {{-- Response (if exists) --}}
+                                @if ($response)
+                                    @php $type = $question->response_type; @endphp
 
-                                @if ($type === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
-                                    <div class="nhsuk-task-list__hint">
-                                        {{ $response->textarea }}
-                                    </div>
+                                    @if ($type === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
+                                        <div class="nhsuk-task-list__hint">
+                                            {{ $response->textarea }}
+                                        </div>
 
-                                @elseif ($type === \App\Enums\ResponseType::TYPE_SCALE->value)
-                                    <div class="nhsuk-task-list__hint">
-                                        <strong class="nhsuk-tag nhsuk-tag--blue">
-                                            {{ $response->scaleOption->label }} {{ !empty($response->scaleOption->description) ? ' - ' . $response->scaleOption->description : '' }}
-                                        </strong>
+                                    @elseif ($type === \App\Enums\ResponseType::TYPE_SCALE->value)
+                                        <div class="nhsuk-task-list__hint">
+                                            <strong class="nhsuk-tag nhsuk-tag--blue">
+                                                {{ $response->scaleOption->label }}
+                                                {{ $response->scaleOption->description ? ' - ' . $response->scaleOption->description : '' }}
+                                            </strong>
+                                        </div>
+                                    @endif
+
+                                @else
+                                    {{-- No response yet --}}
+                                    <div class="nhsuk-task-list__hint nhsuk-u-secondary-text-color">
+                                        <em>No answer provided</em>
                                     </div>
                                 @endif
+
                             </div>
                         </li>
                     @endforeach
                 </ul>
-            @endif
 
+            @endif
         @endforeach
 
-        @if (empty($this->assessment->submitted_at)
-            && ($this->responses?->count() !== $this->assessment?->framework?->questions()->where('required', 1)->count()))
-            <button class="nhsuk-button"
-                    wire:click.prevent="continueAssessment()">
+        @php
+            $isSubmitted = (bool) $this->assessment->submitted_at;
+            $hasAllRequired = $this->answeredRequiredCount === $this->requiredCount;
+        @endphp
+
+        @if (!$isSubmitted && !$hasAllRequired)
+            <button class="nhsuk-button" wire:click.prevent="continueAssessment()">
                 Continue assessment
             </button>
-        @elseif (empty($this->assessment->submitted_at))
+        @elseif (!$isSubmitted)
             <h2 class="nhsuk-heading-m">Complete your assessment</h2>
             <p>You will not be able to change your responses after completing your assessment</p>
             <button class="nhsuk-button"
