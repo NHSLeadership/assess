@@ -15,7 +15,31 @@
                     Completed on {{ $this->assessment() ? \Carbon\Carbon::parse(data_get($this->assessment(), 'submitted_at'))->format('j F Y') : '' }}
                 </strong>
             </p>
-            <p>{!! data_get($this->framework, 'report_intro') ?? '' !!}</p>
+{{--            <p>{!! data_get($this->framework, 'report_intro') ?? '' !!}</p>--}}
+            @php
+                $content = data_get($this->framework, 'report_intro') ?? '';
+
+                // 1. Match everything between @htmlcode markers (across multiple <p> lines)
+                $content = preg_replace_callback(
+                    '/@htmlcode(.*?)@htmlcode/s',
+                    function ($matches) {
+                        $block = $matches[1];
+
+                        // 2. Remove wrapping <p> tags around each line
+                        $block = preg_replace('/<\/p>\s*<p>/', "\n", $block);   // join lines
+                        $block = preg_replace('/^<p>|<\/p>$/m', '', $block);    // strip edge <p>
+
+                        // 3. Decode HTML entities back to real tags
+                        $block = html_entity_decode($block);
+
+                        return $block; // now real HTML
+                    },
+                    $content
+                );
+            @endphp
+
+            {!! $content !!}
+
         @endif
 
 
