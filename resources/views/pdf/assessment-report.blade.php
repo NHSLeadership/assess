@@ -107,23 +107,26 @@ if (!empty(Auth()?->user()?->user_id)) {
 
     // 1. Match everything between @htmlcode markers (across multiple <p> lines)
     $content = preg_replace_callback(
-        '/@htmlcode(.*?)@htmlcode/s',
+    '/@htmlcode(.*?)@htmlcode/s',
         function ($matches) {
             $block = $matches[1];
 
-            // 2. Remove wrapping <p> tags around each line
-            $block = preg_replace('/<\/p>\s*<p>/', "\n", $block);   // join lines
-            $block = preg_replace('/^<p>|<\/p>$/m', '', $block);    // strip edge <p>
+            // 1. Remove <style>...</style>
+            $block = html_entity_decode($block);
+            $block = preg_replace('/<style\b[^>]*>[\s\S]*?<\/style>/i', '', $block);
 
-            // 3. Decode HTML entities back to real tags
+            $block = preg_replace('/<\/p>\s*<p>/', "\n", $block);
+            $block = preg_replace('/^<p>|<\/p>$/m', '', $block);
+
+            // 10. Decode HTML entities
             $block = html_entity_decode($block);
 
-            return $block; // now real HTML
+            return trim($block);
         },
         $content
     );
-@endphp
 
+@endphp
 {!! $content !!}
 
 @if (!empty($radarImage))
