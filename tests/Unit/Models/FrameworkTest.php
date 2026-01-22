@@ -12,6 +12,7 @@ test('framework has expected fillable attributes', function () {
         'description',
         'instructions',
         'report_intro',
+        'report_html',
     ]);
 });
 
