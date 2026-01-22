@@ -101,33 +101,8 @@ if (!empty(Auth()?->user()?->user_id)) {
 
 <br><br>
 
-{{--<p>{!! data_get($framework, 'report_intro') ?? '' !!}</p>--}}
-@php
-    $content = data_get($framework, 'report_intro') ?? '';
-
-    // 1. Match everything between @htmlcode markers (across multiple <p> lines)
-    $content = preg_replace_callback(
-    '/@htmlcode(.*?)@htmlcode/s',
-        function ($matches) {
-            $block = $matches[1];
-
-            // 1. Remove <style>...</style>
-            $block = html_entity_decode($block);
-            $block = preg_replace('/<style\b[^>]*>[\s\S]*?<\/style>/i', '', $block);
-
-            $block = preg_replace('/<\/p>\s*<p>/', "\n", $block);
-            $block = preg_replace('/^<p>|<\/p>$/m', '', $block);
-
-            // 10. Decode HTML entities
-            $block = html_entity_decode($block);
-
-            return trim($block);
-        },
-        $content
-    );
-
-@endphp
-{!! $content !!}
+<p>{!! data_get($framework, 'report_intro') ?? '' !!}</p>
+<p>{!! $frameworkCustomHtml ?? '' !!}</p>
 
 @if (!empty($radarImage))
     <div class="page-break"></div>

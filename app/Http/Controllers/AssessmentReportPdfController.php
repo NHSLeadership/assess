@@ -28,8 +28,9 @@ class AssessmentReportPdfController extends Controller
             }
         }
 
+        $framework = $service->framework();
         return Pdf::loadView('pdf.assessment-report', [
-            'framework'  => $service->framework(),
+            'framework'  => $framework,
             'nodes'      => $service->nodes(),
             'responses'  => $service->responses(),
             'assessment' => $service->assessment(),
@@ -39,6 +40,24 @@ class AssessmentReportPdfController extends Controller
             'barCharts'  => $service->barChartsCompetency(),
             'signposts'  => $signposts,
             'isMobile'   => false,
+            'frameworkCustomHtml'   => $this->getSanitisedHtml(data_get($framework, 'report_html')),
         ])->download('assessment-report.pdf');
     }
+
+    public function getSanitisedHtml($content)
+    {
+        // Get the raw HTML
+        if (empty($content)) {
+            return '';
+        }
+        // Decode HTML entities first (important)
+        $content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');
+        // Remove invisible Unicode characters (common from RTE)
+        $content = preg_replace('/[\x{200B}\x{200C}\x{200D}\x{FEFF}\x{00A0}]/u', '', $content);
+        // Remove ANY <style>...</style> block (multi-line, nested, malformed)
+        $content = preg_replace('/<\s*style\b[^>]*>[\s\S]*?<\s*\/\s*style\s*>/i', '', $content);
+
+        return trim($content);
+    }
+
 }
