@@ -128,7 +128,7 @@ if (!empty(Auth()?->user()?->user_id)) {
                 src="{{ $radarImage }}"
                 class="radar-img"
                 alt="Radar chart"
-                @if ($isMobile) style="width: 500px; height: auto; display: block; margin: 0 auto;" @else style="width: 100%; height: auto;" @endif
+                @if ($isMobile) style="width: 500px; height: auto; display: block; margin: 0 auto;" @else style="max-height: 600px;max-width: 900px;" @endif
         >
     </div>
 @endif
