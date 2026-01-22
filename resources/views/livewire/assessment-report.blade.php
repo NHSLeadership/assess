@@ -112,6 +112,14 @@
             <x-signpost-banner :signposts="$nodeSignposts" title="Guidance" :banner-id="$node->id" />
         @endforeach
 
+        <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
+            <div class="nhsuk-grid-column-full nhsuk-u-margin-bottom-5">
+                @if (!empty(data_get($this->framework, 'report_ending')))
+                    {!! data_get($this->framework, 'report_ending') !!}
+                @endif
+            </div>
+        </div>
+
         <div class="nhsuk-u-margin-bottom-4">
             <button id="downloadPdfBtn" class="nhsuk-button">
                 Download PDF

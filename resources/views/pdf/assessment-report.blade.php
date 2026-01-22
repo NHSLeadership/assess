@@ -195,6 +195,13 @@ if (!empty(Auth()?->user()?->user_id)) {
 
 @endforeach
 
+<section id="report-end-text">
+    @if (!empty(data_get($framework, 'report_ending')))
+        {!! data_get($framework, 'report_ending') !!}
+    @endif
+</section>
+
+
 {{-- REPEATING FOOTER --}}
 <footer style="bottom: 0; left: 0; right: 0; height: 30px; text-align: center;">
     <script type="text/php">
