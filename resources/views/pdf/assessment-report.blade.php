@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Assessment Report</title>
+    <title>Self-assessment Report</title>
 
     <style>
         html {
@@ -13,7 +13,11 @@
                     sans-serif;
             overflow-y: scroll;
         }
-        h1, h2, h3, h4 { margin: 0 0 10px 0; }
+        h1 { margin: 0 0 10px 0 !important; }
+        h2 { margin: 0 0 10px 0 !important; }
+        h3 { margin: 0 0 10px 0 !important; }
+        h4 { margin: 0 0 10px 0 !important; }
+
         .section { margin-bottom: 25px;}
         .align-center { text-align: center; }
         .bar-chart-img, .radar-img { max-width: 100%; margin-bottom: 20px; }
@@ -25,18 +29,19 @@
 
         /* Reserve space for header + footer */
         @page {
-            margin-top: 140px;
-            margin-bottom: 100px;
+            margin-top: 90px;
+            margin-bottom: 50px;
         }
 
         /* Header (repeats on every page) */
         header {
             position: fixed;
-            top: -110px;
-            left: 0;
-            right: 0;
-            height: 100px;
+            top: -70px;
+            height: 70px;
+            float: right;
         }
+
+
 
         .padding-8 {
             padding: 8px;
@@ -82,7 +87,7 @@
 
 @if (!empty($framework))
     <h1>{{ data_get($framework, 'name') }}</h1>
-    <h2>Self assessment report</h2>
+    <h2>Self-assessment report</h2>
 @endif
 
 <strong>For: {{ Auth()?->user()?->name ?? '' }}</strong>
@@ -98,10 +103,21 @@ if (!empty(Auth()?->user()?->user_id)) {
 <strong>
     Completed on {{ $assessment ? \Carbon\Carbon::parse(data_get($assessment, 'submitted_at'))->format('j F Y') : '' }}
 </strong>
-
+<br>
+<strong>
+    {{ $variantAttributeLabel }}
+</strong>
 <br><br>
 
-<p>{!! data_get($framework, 'report_intro') ?? '' !!}</p>
+@if(filled(data_get($framework, 'report_intro')))
+    <p>{!! data_get($framework, 'report_intro') !!}</p>
+@endif
+
+@if(filled($frameworkCustomHtml))
+    <div class="page-break"></div>
+    <div>{!! $frameworkCustomHtml !!}</div>
+@endif
+
 
 @if (!empty($radarImage))
     <div class="page-break"></div>
@@ -173,10 +189,9 @@ if (!empty(Auth()?->user()?->user_id)) {
                     @if (data_get($response, 'question.response_type') === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
                         <div style="margin-top: 5px;">{{ data_get($response, 'textarea') }}</div>
                     @endif
-
                     @if (data_get($response, 'question.response_type') === \App\Enums\ResponseType::TYPE_SCALE->value)
                         <div style="margin-top: 5px;">
-                            <strong class="tag answer-background">{{ data_get($response, 'scaleOption.label') }}</strong>
+                            <strong class="tag answer-background">{{ $response->scaleOption?->label }} {{ !empty($response->scaleOption?->description) ? ' - ' . $response->scaleOption->description : '' }}</strong>
                         </div>
                     @endif
                 </li>

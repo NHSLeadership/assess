@@ -35,6 +35,8 @@ class FrameworkForm
                     ->label('Report HTML')
                     ->language(Language::Html)
                     ->columnSpanFull(),
+                RichEditor::make('report_ending')
+                    ->columnSpanFull(),
             ]);
     }
 }
