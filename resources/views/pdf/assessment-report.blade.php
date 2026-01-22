@@ -101,8 +101,14 @@ if (!empty(Auth()?->user()?->user_id)) {
 
 <br><br>
 
-<p>{!! data_get($framework, 'report_intro') ?? '' !!}</p>
-<p>{!! $frameworkCustomHtml ?? '' !!}</p>
+@if(filled(data_get($framework, 'report_intro')))
+    <p>{!! data_get($framework, 'report_intro') !!}</p>
+@endif
+
+@if(filled($frameworkCustomHtml))
+    <p>{!! $frameworkCustomHtml !!}</p>
+@endif
+
 
 @if (!empty($radarImage))
     <div class="page-break"></div>
