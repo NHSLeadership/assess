@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Frameworks\Schemas;
 
+use Filament\Forms\Components\CodeEditor;
+use Filament\Forms\Components\CodeEditor\Enums\Language;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -28,6 +30,10 @@ class FrameworkForm
                     ->columnSpanFull(),
                 RichEditor::make('report_intro')
                     ->label('Report Introduction')
+                    ->columnSpanFull(),
+                CodeEditor::make('report_html')
+                    ->label('Report HTML')
+                    ->language(Language::Html)
                     ->columnSpanFull(),
             ]);
     }
