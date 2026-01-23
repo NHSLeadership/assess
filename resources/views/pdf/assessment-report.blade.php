@@ -20,7 +20,8 @@
 
         .section { margin-bottom: 25px;}
         .align-center { text-align: center; }
-        .bar-chart-img, .radar-img { max-width: 100%; margin-bottom: 20px; }
+        .bar-chart-img, .radar-img { max-width: 100%; margin-bottom: 50px; }
+
         .task-list { list-style: none; padding: 0; margin: 0; }
         .task-item { padding: 10px 0; border-bottom: 1px solid #ccc; }
         .tag { display: inline-block; padding: 3px 8px; color: white; border-radius: 3px; }
