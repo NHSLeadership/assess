@@ -65,6 +65,13 @@
         }
 
 
+        li p {
+            margin: 0 !important;
+            padding: 0 !important;
+            display: inline; /* critical for Dompdf */
+        }
+
+
     </style>
 </head>
 
@@ -156,6 +163,7 @@ if (!empty(Auth()?->user()?->user_id)) {
 
             @if ($chart && !empty(data_get($barImages, $chart['id'])))
                 <img src="{{ data_get($barImages, $chart['id']) }}" class="bar-chart-img" alt="Bar chart">
+                <div class="page-break"></div>
             @endif
         </div>
 
@@ -214,6 +222,7 @@ if (!empty(Auth()?->user()?->user_id)) {
 
 <section id="report-end-text">
     @if (!empty(data_get($framework, 'report_ending')))
+        <div class="page-break"></div>
         {!! data_get($framework, 'report_ending') !!}
     @endif
 </section>

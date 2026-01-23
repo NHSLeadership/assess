@@ -70,8 +70,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Mobile adjustments
         if (window.innerWidth < 600) {
-            radarChart.options.scales.r.pointLabels.font.size = 10;
-            radarChart.options.scales.r.ticks.font = { size: 8 };
+            radarChart.options.scales.r.pointLabels.font.size = 8;
+            radarChart.options.scales.r.ticks.font = { size: 6 };
             radarChart.update();
         }
     }

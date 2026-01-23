@@ -139,7 +139,29 @@ class FrameworkSeeder extends Seeder
 </table>
 
 </div>';
-        $report_ending = '<h3>Reflection and planning space</h3><p>The following questions may help you reflect and plan.</p><h3>Appraisal questions</h3><p>What would I like to discuss with my manager?</p><p>When is it harder to demonstrate my strengths? What do others see?</p><p>What gets in the way of addressing my development areas and how these can be</p><p>overcome?</p><p>What actions am I thinking about taking to develop my leadership and management?</p><h3>Development planning</h3><p>What are my priority development areas?</p><p>How does it link to my career aspirations?</p><p>How do these feed into my Personal Development plan?</p><p>How will I achieve my learning needs?</p><p>Who can help me with my development?</p><p>What are my timeframes?</p>';
+        $report_ending = '<h3>Reflection and planning space</h3>
+<ul>
+    <li>The following questions may help you reflect and plan.</li>
+</ul>
+
+<h3>Appraisal questions</h3>
+<ul>
+    <li>What would I like to discuss with my manager?</li>
+    <li>When is it harder to demonstrate my strengths? What do others see?</li>
+    <li>What gets in the way of addressing my development areas and how these can be overcome?</li>
+    <li>What actions am I thinking about taking to develop my leadership and management?</li>
+</ul>
+
+<h3>Development planning</h3>
+<ul>
+    <li>What are my priority development areas?</li>
+    <li>How does it link to my career aspirations?</li>
+    <li>How do these feed into my Personal Development plan?</li>
+    <li>How will I achieve my learning needs?</li>
+    <li>Who can help me with my development?</li>
+    <li>What are my timeframes?</li>
+</ul>
+';
         Framework::firstOrCreate([
             'name'        => 'Management and leadership framework',
             'slug'        => 'mlf',
