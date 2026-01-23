@@ -121,6 +121,7 @@ if (!empty(Auth()?->user()?->user_id)) {
 
 @if (!empty($radarImage))
     <div class="page-break"></div>
+    <h2>Results</h2>
     <h3>Average scores for standards</h3>
     <br>
     <div class="section align-center">
@@ -153,7 +154,7 @@ if (!empty(Auth()?->user()?->user_id)) {
             @endphp
 
             @if ($chart && !empty(data_get($barImages, $chart['id'])))
-                <img src="{{ data_get($barImages, $chart['id']) }}" class="bar-chart-img" alt="Bar chart" @if ($isMobile) style="width: auto; height: auto; max-height:90%; display: block; margin: 0 auto;" @endif>
+                <img src="{{ data_get($barImages, $chart['id']) }}" class="bar-chart-img" alt="Bar chart">
             @endif
         </div>
 

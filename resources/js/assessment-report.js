@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (window.innerWidth < 768) {
         // Small screens no button, show note
-        document.getElementById('downloadPdfBtn').style.display = 'none';
-        note.style.display = 'block';
+        // document.getElementById('downloadPdfBtn').style.display = 'none';
+        // note.style.display = 'block';
     } else {
         // Large screens, show button, hide note
         note.style.display = 'none';
@@ -93,9 +93,12 @@ document.addEventListener('DOMContentLoaded', function () {
     barCharts.forEach(chart => {
         const ctx = document.getElementById(chart.id);
         if (!ctx) return;
+        chart.data.datasets[0].barThickness =
+            window.innerWidth < 600 ? 15 : 30;
+
         const barCount = chart.data.labels.length;
 
-        ctx.height = barCount * 100;
+        ctx.height = window.innerWidth < 600 ? barCount * 40 : barCount * 100;
 
         new Chart(ctx, {
             type: 'bar',
@@ -107,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     legend: {
                         labels: {
                             font: {
-                                size: window.innerWidth < 600 ? 12 : 18
+                                size: window.innerWidth < 600 ? 8 : 18
                             },
                             color: chart.options.legendLabelsColor
                         }
@@ -120,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         ticks: {
                             color: chart.options.tickColor,
                             font: {
-                                size: window.innerWidth < 600 ? 10 : 16
+                                size: window.innerWidth < 600 ? 8 : 16
                             },
                             callback: function(value, index) {
                                return chart.scaleOptions[index + 1] || '';
@@ -135,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         ticks: {
                             color: chart.options.tickColor,
                             font: {
-                                size: window.innerWidth < 600 ? 10 : 16
+                                size: window.innerWidth < 600 ? 6 : 16
                             },
                             callback: function(value) {
 
