@@ -5,7 +5,7 @@
             <h1 class="nhsuk-heading-xl">
                 {{ $this->framework->name ?? '' }}
             </h1>
-            <h2 class="nhsuk-heading-l">Self assessment report</h2>
+            <h2 class="nhsuk-heading-l">Self-assessment report</h2>
             <p>
                 <strong>For: {{ Auth()?->user()?->name ?? '' }}</strong>
                 <br>
@@ -14,16 +14,28 @@
                 <strong>
                     Completed on {{ $this->assessment() ? \Carbon\Carbon::parse(data_get($this->assessment(), 'submitted_at'))->format('j F Y') : '' }}
                 </strong>
+                <br>
+                <strong>
+                    {{ $variantAttributeLabel }}
+                </strong>
             </p>
-            <p>{!! data_get($this->framework, 'report_intro') ?? '' !!}</p>
+            @if(!empty(data_get($this->framework, 'report_intro')))
+                <p>{!! data_get($this->framework, 'report_intro') !!}</p>
+            @endif
+
+            @if(!empty(data_get($this->framework, 'report_html')))
+                <p>{!! data_get($this->framework, 'report_html') !!}</p>
+            @endif
+
         @endif
 
 
 
         @if (!empty($radarData))
+            <h2>Results</h2>
             <div class="nhsuk-u-margin-bottom-5" wire:ignore>
                 <h3>Average scores for standards</h3>
-                <canvas id="radarChart" style="max-height: 600px;max-width: 900px;"></canvas>
+                <canvas id="radarChart" style="width: 90%"></canvas>
             </div>
         @endif
         @foreach ($this->nodes as $node)

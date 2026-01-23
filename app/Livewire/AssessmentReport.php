@@ -29,6 +29,8 @@ class AssessmentReport extends Component
     public array $barChartsCompetency = [];
     public array $radarOptions = [];
     public array $radarData = [];
+
+    public ?string $variantAttributeLabel = null;
     /**
      * @var array|mixed
      */
@@ -79,6 +81,7 @@ class AssessmentReport extends Component
         $radar = $service->radarChart();
         $this->radarData    = $radar['data'];
         $this->radarOptions = $radar['options'];
+        $this->variantAttributeLabel = $service->variantAttributeLabel();
 
         $this->signposts = [];
 

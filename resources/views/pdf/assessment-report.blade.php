@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Assessment Report</title>
+    <title>Self-assessment Report</title>
 
     <style>
         html {
@@ -13,10 +13,15 @@
                     sans-serif;
             overflow-y: scroll;
         }
-        h1, h2, h3, h4 { margin: 0 0 10px 0; }
+        h1 { margin: 0 0 10px 0 !important; }
+        h2 { margin: 0 0 10px 0 !important; }
+        h3 { margin: 0 0 10px 0 !important; }
+        h4 { margin: 0 0 10px 0 !important; }
+
         .section { margin-bottom: 25px;}
         .align-center { text-align: center; }
-        .bar-chart-img, .radar-img { max-width: 100%; margin-bottom: 20px; }
+        .bar-chart-img, .radar-img { max-width: 100%; margin-bottom: 50px; }
+
         .task-list { list-style: none; padding: 0; margin: 0; }
         .task-item { padding: 10px 0; border-bottom: 1px solid #ccc; }
         .tag { display: inline-block; padding: 3px 8px; color: white; border-radius: 3px; }
@@ -25,18 +30,19 @@
 
         /* Reserve space for header + footer */
         @page {
-            margin-top: 140px;
-            margin-bottom: 100px;
+            margin-top: 90px;
+            margin-bottom: 50px;
         }
 
         /* Header (repeats on every page) */
         header {
             position: fixed;
-            top: -110px;
-            left: 0;
-            right: 0;
-            height: 100px;
+            top: -70px;
+            height: 70px;
+            float: right;
         }
+
+
 
         .padding-8 {
             padding: 8px;
@@ -56,6 +62,13 @@
             transform: scale(1.4);
             transform-origin: top left;
             image-rendering: crisp-edges;
+        }
+
+
+        li p {
+            margin: 0 !important;
+            padding: 0 !important;
+            display: inline; /* critical for Dompdf */
         }
 
 
@@ -82,7 +95,7 @@
 
 @if (!empty($framework))
     <h1>{{ data_get($framework, 'name') }}</h1>
-    <h2>Self assessment report</h2>
+    <h2>Self-assessment report</h2>
 @endif
 
 <strong>For: {{ Auth()?->user()?->name ?? '' }}</strong>
@@ -98,13 +111,25 @@ if (!empty(Auth()?->user()?->user_id)) {
 <strong>
     Completed on {{ $assessment ? \Carbon\Carbon::parse(data_get($assessment, 'submitted_at'))->format('j F Y') : '' }}
 </strong>
-
+<br>
+<strong>
+    {{ $variantAttributeLabel }}
+</strong>
 <br><br>
 
-<p>{!! data_get($framework, 'report_intro') ?? '' !!}</p>
+@if(filled(data_get($framework, 'report_intro')))
+    <p>{!! data_get($framework, 'report_intro') !!}</p>
+@endif
+
+@if(filled($frameworkCustomHtml))
+    <div class="page-break"></div>
+    <div>{!! $frameworkCustomHtml !!}</div>
+@endif
+
 
 @if (!empty($radarImage))
     <div class="page-break"></div>
+    <h2>Results</h2>
     <h3>Average scores for standards</h3>
     <br>
     <div class="section align-center">
@@ -112,7 +137,7 @@ if (!empty(Auth()?->user()?->user_id)) {
                 src="{{ $radarImage }}"
                 class="radar-img"
                 alt="Radar chart"
-                @if ($isMobile) style="width: 500px; height: auto; display: block; margin: 0 auto;" @else style="width: 100%; height: auto;" @endif
+                @if ($isMobile) style="width: 500px; height: auto; display: block; margin: 0 auto;" @else style="max-height: 600px;max-width: 900px;" @endif
         >
     </div>
 @endif
@@ -137,7 +162,8 @@ if (!empty(Auth()?->user()?->user_id)) {
             @endphp
 
             @if ($chart && !empty(data_get($barImages, $chart['id'])))
-                <img src="{{ data_get($barImages, $chart['id']) }}" class="bar-chart-img" alt="Bar chart" @if ($isMobile) style="width: auto; height: auto; max-height:90%; display: block; margin: 0 auto;" @endif>
+                <img src="{{ data_get($barImages, $chart['id']) }}" class="bar-chart-img" alt="Bar chart">
+                <div class="page-break"></div>
             @endif
         </div>
 
@@ -173,10 +199,9 @@ if (!empty(Auth()?->user()?->user_id)) {
                     @if (data_get($response, 'question.response_type') === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
                         <div style="margin-top: 5px;">{{ data_get($response, 'textarea') }}</div>
                     @endif
-
                     @if (data_get($response, 'question.response_type') === \App\Enums\ResponseType::TYPE_SCALE->value)
                         <div style="margin-top: 5px;">
-                            <strong class="tag answer-background">{{ data_get($response, 'scaleOption.label') }}</strong>
+                            <strong class="tag answer-background">{{ $response->scaleOption?->label }} {{ !empty($response->scaleOption?->description) ? ' - ' . $response->scaleOption->description : '' }}</strong>
                         </div>
                     @endif
                 </li>
@@ -197,6 +222,7 @@ if (!empty(Auth()?->user()?->user_id)) {
 
 <section id="report-end-text">
     @if (!empty(data_get($framework, 'report_ending')))
+        <div class="page-break"></div>
         {!! data_get($framework, 'report_ending') !!}
     @endif
 </section>

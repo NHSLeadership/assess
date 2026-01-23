@@ -58,6 +58,18 @@ class AssessmentReportService
             ->first();
     }
 
+    public function variantAttributeLabel($key = 'stage')
+    {
+        $stageAttribute = $this->assessment()->framework
+            ->variantAttributes()
+            ->where('key', 'stage')
+            ->with('options')
+            ->first();
+        $stageOptions = $stageAttribute?->options ?? collect();
+        return $stageOptions?->first()?->label;
+
+    }
+
     /* ---------------------------------------------------------
        BAR CHARTS
     --------------------------------------------------------- */
@@ -195,7 +207,7 @@ class AssessmentReportService
                         'backgroundColor' => $this->chartBackgroundColor,
                         'borderColor' => $this->chartBorderColor,
                         'borderWidth' => 1,
-                        'barThickness' => 40,
+                        //'barThickness' => 20,
                     ]],
                 ],
                 'options' => [
