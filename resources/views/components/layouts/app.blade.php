@@ -20,6 +20,7 @@
 
     @livewireStyles
     @livewireScripts
+    @include('umami::script')
 </head>
 
 <body class="js-enabled">
