@@ -29,6 +29,9 @@ return [
         'title' => 'Home',
         'content' => '',
     ],
+    'questions' => [
+        'reflection-label' => 'Enter your reflections, notes, reasons and evidence for your response',
+    ],
     'stages' => [
         'title' => 'Stages',
         'content' => '',

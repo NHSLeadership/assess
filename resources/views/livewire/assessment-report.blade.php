@@ -107,6 +107,13 @@
                                         <strong class="nhsuk-tag nhsuk-tag--blue">
                                             {{ $response->scaleOption?->label }} {{ !empty($response->scaleOption?->description) ? ' - ' . $response->scaleOption->description : '' }}
                                         </strong>
+                                        @if(!empty($response->textarea))
+                                            <div class="nhsuk-u-margin-top-2">
+                                                <strong>{{ __('pages.questions.reflection-label') }}:</strong>
+                                                <br>
+                                                {{ $response->textarea }}
+                                            </div>
+                                        @endif
                                     </div>
                                 @endif
                             </div>

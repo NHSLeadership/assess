@@ -150,10 +150,10 @@ if (!empty(Auth()?->user()?->user_id)) {
 
         <div class="section">
             <div class="padding-8">
-                <h3 style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }}; padding:8px; display: inline-block; margin-top: 0px; margin-bottom: 0px; text-align: left;">
+                <h2 style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }}; padding:8px; display: inline-block; margin-top: 0px; margin-bottom: 0px; text-align: left;">
                     {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
                     {{ $node->name }}
-                </h3>
+                </h2>
             </div>
 
             {{-- BAR CHART --}}
@@ -169,10 +169,12 @@ if (!empty(Auth()?->user()?->user_id)) {
 
         {{-- SUBSECTION (has children) --}}
     @elseif ($node->children && $node->children->count())
-        <h4>
-            {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
-            {{ $node->name }}
-        </h4>
+        <div style="margin-top: 12px; display: block">
+            <h3 style="margin-bottom: 0px; text-align: left;">
+                {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
+                {{ $node->name }}
+            </h3>
+        </div>
     @endif
 
 
@@ -203,12 +205,18 @@ if (!empty(Auth()?->user()?->user_id)) {
                         <div style="margin-top: 5px;">
                             <strong class="tag answer-background">{{ $response->scaleOption?->label }} {{ !empty($response->scaleOption?->description) ? ' - ' . $response->scaleOption->description : '' }}</strong>
                         </div>
+                        @if(!empty(data_get($response, 'textarea')))
+                            <div style="margin-top: 5px;">
+                                <strong>{{ __('pages.questions.reflection-label') }}:</strong>
+                                <br>
+                                {{ data_get($response, 'textarea') }}
+                            </div>
+                        @endif
                     @endif
                 </li>
             @endforeach
         </ul>
     @endif
-
 
     {{-- SIGNPOSTS ALWAYS SHOWN, AFTER RESPONSES IF THEY EXIST --}}
     <x-signpost-banner

@@ -137,13 +137,18 @@ class Questions extends Component
             ->mapWithKeys(function ($response) {
                 $key = $response->question->name;
 
+                // TEXTAREA → only one value
                 if ($response->question->response_type === ResponseType::TYPE_TEXTAREA->value) {
-                    $value = $response->textarea ?? '';
-                } else {
-                    $value = $response->scale_option_id;
+                    return [
+                        $key => $response->textarea ?? '',
+                    ];
                 }
 
-                return [$key => $value];
+                // SCALE
+                return [
+                    $key => $response->scale_option_id,
+                    $key . '_reflection' => $response->textarea ?? '',
+                ];
             });
     }
 
@@ -193,33 +198,69 @@ class Questions extends Component
     private function validateAndSaveResponses(): void
     {
         $rules = $this->getRules();
+
         if (!empty($rules)) {
             try {
                 $this->validate($rules);
             } catch (\Illuminate\Validation\ValidationException $e) {
-                // Dispatch your event only on failure
                 $this->dispatch('scroll-to-top');
-                // Rethrow - Livewire still shows the error messages
                 throw $e;
             }
         }
 
         $questions = $this->nodeQuestions()?->keyBy('name');
-        foreach ($this->data as $name => $values) {
-            if (isset($questions[$name])) {
-                if ($questions[$name]['response_type'] === ResponseType::TYPE_TEXTAREA->value
-                    && empty(trim($values))) {
-                    continue; // skip textarea question if empty.
-                }
-                UserResponseService::updateOrCreate(
-                    $values,
-                    $questions[$name],
-                    $this->assessmentId,
-                    $this->rater()?->id
+
+        foreach ($this->data as $name => $value) {
+
+            // Skip reflection keys entirely
+            if (str_ends_with($name, '_reflection')) {
+                continue;
+            }
+
+            // Skip unknown questions
+            if (!isset($questions[$name])) {
+                continue;
+            }
+
+            $question = $questions[$name];
+
+            // Skip empty textarea responses
+            if (
+                $question['response_type'] === ResponseType::TYPE_TEXTAREA->value &&
+                empty(trim($value))
+            ) {
+                continue;
+            }
+
+            // Save main response (scale or textarea)
+            UserResponseService::updateOrCreate(
+                $value,
+                $question,
+                $this->assessmentId,
+                $this->rater()?->id
+            );
+
+            // Save optional reflection for scale questions
+            if ($question['response_type'] === ResponseType::TYPE_SCALE->value) {
+
+                $reflectionKey = $name . '_reflection';
+                $reflection = trim($this->data[$reflectionKey] ?? '');
+
+                Response::updateOrCreate(
+                    [
+                        'assessment_id' => $this->assessmentId,
+                        'question_id'   => $question->id,
+                        'rater_id'      => $this->rater()?->id,
+                    ],
+                    [
+                        'textarea'   => $reflection,
+                        'updated_at' => now(),
+                    ]
                 );
             }
         }
     }
+
 
     /**
      * Get question progress label
