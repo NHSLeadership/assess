@@ -29,6 +29,9 @@ return [
         'title' => 'Home',
         'content' => '',
     ],
+    'questions' => [
+        'reflection-label' => 'Enter your reflections, notes, reasons and evidence for your response',
+    ],
     'stages' => [
         'title' => 'Stages',
         'content' => '',
@@ -39,5 +42,6 @@ return [
     ],
     'summary' => [
         'response-edit-prompt' => 'Please check your responses below.<br/>You may click on the question titles to change your answers before completing your assessment.',
+        'reflection-label' => 'Notes',
     ],
 ];

@@ -32,9 +32,27 @@
                                 $this->getQuestionProgressLabel($question['id'] ?? null)
                                 . ($showTitle ? ': ' . $title : '')
                             !!}
+                            @if(! $question['required'] )
+                                <span class="nhsuk-tag">Optional</span>
+                            @endif
                         @endslot
                     @endcomponent
-                    <hr>
+                    <hr class="nhsuk-u-margin-top-0">
+                    @if($question['component'] === \App\Enums\ResponseType::TYPE_SCALE->component())
+                        @component('components.form.textarea', [
+                            'name' => $question['reflection'] ? 'data.' . $question['reflection'] : null,
+                            'class' => 'nhsuk-u-margin-bottom-0',
+                        ])
+                            @slot('label')
+                                <span class="nhsuk-u-visually-hidden">Reflection {{ $question['id'] }}</span>
+                                {!! __('pages.questions.reflection-label') !!}
+                                <span class="nhsuk-tag">Optional</span>
+                            @endslot
+                            @slot('hint')
+                            @endslot
+                        @endcomponent
+                    @endif
+                    <hr class="nhsuk-u-margin-top-0">
                 @endforeach
 
                 @if ($this->responses?->count())
