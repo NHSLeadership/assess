@@ -207,7 +207,7 @@ if (!empty(Auth()?->user()?->user_id)) {
                         </div>
                         @if(!empty(data_get($response, 'textarea')))
                             <div style="margin-top: 5px;">
-                                <strong>{{ __('pages.questions.reflection-label') }}:</strong>
+                                <strong>{{ __('pages.summary.reflection-label') }}</strong>
                                 <br>
                                 {{ data_get($response, 'textarea') }}
                             </div>

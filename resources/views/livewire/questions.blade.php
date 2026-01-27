@@ -37,11 +37,11 @@
                             @endif
                         @endslot
                     @endcomponent
-                    <hr>
+                    <hr class="nhsuk-u-margin-top-0">
                     @if($question['component'] === \App\Enums\ResponseType::TYPE_SCALE->component())
                         @component('components.form.textarea', [
                             'name' => $question['reflection'] ? 'data.' . $question['reflection'] : null,
-                            'class' => $question['class'] ?? null,
+                            'class' => 'nhsuk-u-margin-bottom-0',
                         ])
                             @slot('label')
                                 <span class="nhsuk-u-visually-hidden">Reflection {{ $question['id'] }}</span>
@@ -52,7 +52,7 @@
                             @endslot
                         @endcomponent
                     @endif
-                    <hr>
+                    <hr class="nhsuk-u-margin-top-0">
                 @endforeach
 
                 @if ($this->responses?->count())

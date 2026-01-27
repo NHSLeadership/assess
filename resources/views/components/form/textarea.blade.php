@@ -30,7 +30,7 @@
 
     <textarea name="{{ $name }}"
             id="{{ $name }}"
-            class="nhsuk-textarea {{ $errors->has($name) ? ' nhsuk-textarea--error' : '' }}"
+            class="nhsuk-textarea {{ $errors->has($name) ? ' nhsuk-textarea--error' : '' }} {{ $class ?? '' }}"
             placeholder="{{ $placeholder ?? '' }}"
             @if (isset($tabindex))
                 tabindex="{{ $tabindex }}"

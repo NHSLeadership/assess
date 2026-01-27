@@ -57,7 +57,7 @@
                 @livewire('questions', ['assessmentId' => $this->assessmentId, 'nodeId' => $this->nodeId, 'edit' => $this->edit ?? null])
             @endforeach
 
-            <hr>
+            <hr class="nhsuk-u-margin-top-1">
 
         @else
             <p>{{ __('Assessment not found or has been removed.') }}</p>

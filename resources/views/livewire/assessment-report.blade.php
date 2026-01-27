@@ -109,7 +109,7 @@
                                         </strong>
                                         @if(!empty($response->textarea))
                                             <div class="nhsuk-u-margin-top-2">
-                                                <strong>{{ __('pages.questions.reflection-label') }}:</strong>
+                                                <strong>{{ __('pages.summary.reflection-label') }}</strong>
                                                 <br>
                                                 {{ $response->textarea }}
                                             </div>
