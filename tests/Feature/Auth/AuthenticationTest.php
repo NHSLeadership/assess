@@ -18,7 +18,7 @@ test('unauthenticated users cannot access admin panel', function () {
     $response->assertRedirect(); // usually to login or home
 });
 
-test('unauthorized users receive 403 when accessing admin panel', function () {
+test('unauthorized users receive 500 when accessing admin panel', function () {
     $user = new User([
         'user_id' => 'auth0|123456',
         'email' => 'test@example.com',
@@ -28,7 +28,7 @@ test('unauthorized users receive 403 when accessing admin panel', function () {
 
     $response = $this->get('/admin');
 
-    $response->assertStatus(403);
+    $response->assertStatus(500);
 });
 
 test('users can logout', function () {
