@@ -2,7 +2,7 @@
  * NHS UK Frontend library
  */
 import 'nhsuk-frontend/dist/nhsuk/nhsuk.js';
-
-Livewire.on('message-displayed', () => {
-	window.scrollTo({top: 0});
-});
+import './livewire-events.js';
+import './assessment-report.js';
+import Chart from 'chart.js/auto';
+window.Chart = Chart;

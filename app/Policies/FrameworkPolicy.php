@@ -12,7 +12,7 @@ class FrameworkPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('framework:viewAny');
     }
 
     /**
@@ -20,7 +20,7 @@ class FrameworkPolicy
      */
     public function view(User $user, Framework $framework): bool
     {
-        return true;
+        return $user->can('framework:view');
     }
 
     /**
@@ -28,7 +28,7 @@ class FrameworkPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->can('framework:create');
     }
 
     /**
@@ -36,7 +36,7 @@ class FrameworkPolicy
      */
     public function update(User $user, Framework $framework): bool
     {
-        return true;
+        return $user->can('framework:update');
     }
 
     /**
@@ -44,7 +44,7 @@ class FrameworkPolicy
      */
     public function delete(User $user, Framework $framework): bool
     {
-        return true;
+        return $user->can('framework:delete');
     }
 
     /**
@@ -52,7 +52,7 @@ class FrameworkPolicy
      */
     public function restore(User $user, Framework $framework): bool
     {
-        return true;
+        return $user->can('framework:restore');
     }
 
     /**
@@ -60,6 +60,14 @@ class FrameworkPolicy
      */
     public function forceDelete(User $user, Framework $framework): bool
     {
-        return true;
+        return $user->can('framework:forceDelete');
+    }
+
+    /**
+     * Determine whether records can be reordered in a table.
+     */
+    public function reorder(User $user): bool
+    {
+        return $user->can('framework:reorder');
     }
 }

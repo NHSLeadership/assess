@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/Support/TestHelpers.php';
+
 /*
 |--------------------------------------------------------------------------
 | Test Case

@@ -3,14 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\QuestionVariantMatch;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class QuestionVariantMatchSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $matches = [
@@ -18,15 +14,118 @@ class QuestionVariantMatchSeeder extends Seeder
             ['question_variant_id' => 2, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
             ['question_variant_id' => 3, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
             ['question_variant_id' => 4, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 5, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 6, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 7, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 8, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 9, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 10, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 11, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 12, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 13, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 14, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 15, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 16, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 17, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 18, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 19, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 20, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 21, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 22, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 23, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 24, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 25, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 26, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 27, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 28, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 29, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 30, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 31, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 32, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 33, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 34, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 35, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 36, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 37, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 38, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 39, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 40, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 41, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 42, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 43, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 44, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 45, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 46, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 47, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 48, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 49, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 50, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 51, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 52, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 53, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 54, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 55, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 56, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 57, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 58, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 59, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 60, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 61, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 62, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 63, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 64, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 65, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 66, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 67, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 68, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 69, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 70, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 71, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 72, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 73, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 74, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 75, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 76, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 77, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 78, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 79, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 80, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 81, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 82, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 83, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 84, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 85, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 86, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 87, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 88, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 89, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 90, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 91, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 92, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 93, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 94, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 95, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 96, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 97, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 98, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 99, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 100, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 101, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 102, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 103, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 104, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
+            ['question_variant_id' => 105, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
+            ['question_variant_id' => 106, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
+            ['question_variant_id' => 107, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
+            ['question_variant_id' => 108, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4]
         ];
+
         foreach ($matches as $match) {
-            QuestionVariantMatch::firstOrCreate(
-                [
-                    'question_variant_id' => $match['question_variant_id'],
-                    'framework_variant_attribute_id' => $match['framework_variant_attribute_id'],
-                    'framework_variant_option_id' => $match['framework_variant_option_id'],
-                ],
-            );
+            QuestionVariantMatch::firstOrCreate([
+                'question_variant_id'            => $match['question_variant_id'],
+                'framework_variant_attribute_id' => $match['framework_variant_attribute_id'],
+                'framework_variant_option_id'    => $match['framework_variant_option_id'],
+            ]);
         }
     }
 }

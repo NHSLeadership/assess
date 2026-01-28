@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\Frameworks\Schemas;
 
+use Filament\Forms\Components\CodeEditor;
+use Filament\Forms\Components\CodeEditor\Enums\Language;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
@@ -15,15 +16,26 @@ class FrameworkForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->live(debounce: 400)
+                    ->live(onBlur: true)
                     ->afterStateUpdated(function ($state, callable $set, callable $get) {
                         $set('slug', Str::slug($state));
                     })
                     ->required(),
                 TextInput::make('slug')
                     ->required(),
-                Textarea::make('description')
+                RichEditor::make('description')
                     ->required()
+                    ->columnSpanFull(),
+                RichEditor::make('instructions')
+                    ->columnSpanFull(),
+                RichEditor::make('report_intro')
+                    ->label('Report Introduction')
+                    ->columnSpanFull(),
+                CodeEditor::make('report_html')
+                    ->label('Report HTML')
+                    ->language(Language::Html)
+                    ->columnSpanFull(),
+                RichEditor::make('report_ending')
                     ->columnSpanFull(),
             ]);
     }

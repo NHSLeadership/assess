@@ -8,15 +8,19 @@
         </legend>
     @endif
 
-    @if (isset($hint))
-        <div class="nhsuk-hint" id="{{$name}}-hint">
-            {{ $hint }}
+    @if (!empty($descriptions) && is_array($descriptions))
+        <div class="nhsuk-u-display-block">
+            @foreach($descriptions as $description)
+                <p>{!! $description !!}</p>
+            @endforeach
         </div>
     @endif
 
-    @if (isset($hints) && $hints->has($name))
-        <div class="nhsuk-hint" id="{{ $name }}-error-hint">
-            {{ $hints->first($name) }}
+    @if (!empty($hints) && is_array($hints))
+        <div class="nhsuk-hint">
+            @foreach($hints as $hint)
+                <p>{!! $hint !!}</p>
+            @endforeach
         </div>
     @endif
 

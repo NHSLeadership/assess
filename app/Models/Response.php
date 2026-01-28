@@ -15,7 +15,7 @@ class Response extends Model
         'rater_id',
         'question_id',
         'scale_option_id',
-        'free_text',
+        'textarea',
     ];
 
     public function assessment(): BelongsTo

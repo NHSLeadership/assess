@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\AssessmentReportPdfController;
+use App\Livewire\AssessmentReport;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::get('/', \App\Livewire\Home::class)->name('home');
 
@@ -17,14 +21,17 @@ Route::group([
         //'can:users:manage',
     ]
 ], function () {
-    // Route::get('/', \App\Livewire\Stages::class)->name('home');
-    Route::get('/self-assessment', \App\Livewire\Frameworks::class)->name('frameworks');
-    Route::get('/self-assessment/stage', \App\Livewire\Stages::class)->name('standards');
+    Route::get('/assessments/{frameworkId?}', \App\Livewire\Frameworks::class)->name('frameworks');
+    Route::get('/assessment-variants/{frameworkId?}/{assessmentId?}/{back?}', \App\Livewire\Variants::class)->name('variants');
+    Route::get('/framework-instructions/{frameworkId?}/{assessmentId?}', \App\Livewire\FrameworkInstructions::class)->name('instructions');
 
-//    Route::get('/frameworks/{frameworkId?}/{stageId?}', \App\Livewire\Frameworks::class)->name('frameworks');
-//    Route::get('/standards/{frameworkId?}/{stageId?}', \App\Livewire\Stages::class)->name('standards');
     Route::get('/summary/{frameworkId?}/{assessmentId?}', \App\Livewire\Summary::class)->name('summary');
-    Route::get('/assessments/{assessmentId?}', \App\Livewire\Assessments::class)->name('assessments');
+    Route::get('/assessment/{assessmentId?}/{nodeId?}/{edit?}', \App\Livewire\Assessments::class)->name('questions');
+    Route::get('/assessment-completed/{assessmentId?}', \App\Livewire\AssessmentCompleted::class)->name('assessment-completed');
+
+    Route::get('/assessment-report/{frameworkId}/{assessmentId}', AssessmentReport::class)->name('assessment-report');
+    Route::post('/assessment-report/{frameworkId}/{assessmentId}', AssessmentReportPdfController::class)
+        ->name('assessment-report-pdf');
 
     /**
      * Request review

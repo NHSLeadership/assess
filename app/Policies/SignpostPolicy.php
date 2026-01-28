@@ -12,7 +12,7 @@ class SignpostPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('signpost:viewAny');
     }
 
     /**
@@ -20,7 +20,7 @@ class SignpostPolicy
      */
     public function view(User $user, Signpost $signpost): bool
     {
-        return true;
+        return $user->can('signpost:view');
     }
 
     /**
@@ -28,7 +28,7 @@ class SignpostPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->can('signpost:create');
     }
 
     /**
@@ -36,7 +36,7 @@ class SignpostPolicy
      */
     public function update(User $user, Signpost $signpost): bool
     {
-        return true;
+        return $user->can('signpost:update');
     }
 
     /**
@@ -44,7 +44,7 @@ class SignpostPolicy
      */
     public function delete(User $user, Signpost $signpost): bool
     {
-        return true;
+        return $user->can('signpost:delete');
     }
 
     /**
@@ -52,7 +52,7 @@ class SignpostPolicy
      */
     public function restore(User $user, Signpost $signpost): bool
     {
-        return true;
+        return $user->can('signpost:restore');
     }
 
     /**
@@ -60,6 +60,14 @@ class SignpostPolicy
      */
     public function forceDelete(User $user, Signpost $signpost): bool
     {
-        return true;
+        return $user->can('signpost:forceDelete');
+    }
+
+    /**
+     * Determine whether records can be reordered in a table.
+     */
+    public function reorder(User $user): bool
+    {
+        return $user->can('signpost:reorder');
     }
 }

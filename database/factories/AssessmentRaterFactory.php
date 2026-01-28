@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Assessment;
+use App\Models\Rater;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,11 @@ class AssessmentRaterFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'assessment_id' => Assessment::factory(),
+            'rater_id'      => Rater::factory(),
+            'role'          => $this->faker->randomElement([
+                'self', 'manager', 'direct_report', 'peer', 'other'
+            ]),
         ];
     }
 }

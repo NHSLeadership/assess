@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\Frameworks\Resources\Nodes\Resources\Questions\Schemas;
 
+use App\Models\Scale;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Str;
 
 class QuestionForm
 {
@@ -26,21 +26,27 @@ class QuestionForm
                     ->nullable(),
                 Select::make('response_type')
                     ->options([
-//                            'single_choice' => 'Single choice',
-//                            'multi_choice' => 'Multiple choice',
-                            'scale' => 'Scale',
-//                            'boolean' => 'Boolean',
-                            'free_text' => 'Free text',
+                        'scale' => 'Scale',
+                        'textarea' => 'Text',
                     ])
                     ->required()
-                    ->default('scale'),
+                    ->reactive()
+                    ->default('scale')
+                    ->afterStateUpdated(function ($state, $set) {
+                        if ($state !== 'scale') {
+                            $set('scale_id', null);
+                        }
+                    }),
                 Select::make('scale_id')
-                    ->relationship(
-                        name: 'scale',
-                        titleAttribute: 'name',
-                        modifyQueryUsing: fn ($query) => $query->orderBy('name', 'asc')
-                    )
-                    ->preload(),
+                    ->label('Scale')
+                    ->options(fn () => Scale::orderBy('name', 'asc')->pluck('name', 'id')->toArray())
+                    ->preload()
+                    ->nullable()
+                    ->reactive()
+                    ->required(fn ($get) => $get('response_type') === 'scale')
+                    ->disabled(fn ($get) => $get('response_type') !== 'scale')
+                    ->dehydrateStateUsing(fn ($state, $get) => $get('response_type') === 'scale' ? $state : null)
+                    ->dehydrated(fn ($state, $get) => true),
                 Toggle::make('required')
                     ->default(true)
                     ->required(),

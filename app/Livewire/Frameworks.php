@@ -6,28 +6,67 @@ use App\Models\Assessment;
 use App\Models\Framework;
 use App\Traits\UserTrait;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\Attributes\Title;
+use App\Traits\AssessmentHelperTrait;
+use Log;
+use Throwable;
 
 class Frameworks extends Component
 {
     use UserTrait;
+    use AssessmentHelperTrait;
 
-    public ?string $frameworkId;
+    public ?string $frameworkId = null;
+    public ?int $pendingDeleteId = null;
 
-    public ?string $stageId;
+    public function mount()
+    {
+        // Set default framework if none selected
+        if (empty($this->frameworkId)) {
+            $framework = Framework::first();
+            $this->frameworkId = $framework->id;
+        }
+    }
+
+    public function askDelete(int $id): void
+    {
+        $this->pendingDeleteId = $id;
+    }
+
+    public function cancelDelete(): void
+    {
+        $this->pendingDeleteId = null;
+    }
+
+    public function confirmDelete(): void
+    {
+        $id = $this->pendingDeleteId;
+        if (! $id) {
+            return;
+        }
+
+        try {
+            $assessment = Assessment::findOrFail($id);
+            $assessment->delete();
+            session()->flash('success', __('Assessment deleted.'));
+        } catch (\Throwable $e) {
+            Log::error('Error deleting assessment', [
+                'assessment_id' => $id,
+                'message' => $e->getMessage(),
+                'exception' => $e,
+            ]);
+            session()->flash('error', __('Failed to delete assessment. Please try again.'));
+        } finally {
+            $this->pendingDeleteId = null;
+        }
+    }
 
     #[Computed]
     public function framework(): ?Framework
     {
-        if (empty($this->frameworkId)) {
-            $framework = Framework::first();
-            $this->frameworkId = $framework->id;
-
-            return $framework;
-        }
-
         return Framework::find($this->frameworkId);
     }
 
@@ -40,31 +79,133 @@ class Frameworks extends Component
     #[Computed]
     public function assessments(): ?Collection
     {
-        if (empty($this->frameworkId)) {
-            return $this->user->assessments;
-        }
 
-        return $this->user->assessments?->where('framework_id', $this->frameworkId);
+        return $this->user()
+            ->assessments()
+            ->where('framework_id', $this->frameworkId)
+            ->addSelect([
+                'last_response_at' => DB::table('responses')
+                    ->selectRaw('MAX(updated_at)')
+                    ->whereColumn('assessment_id', 'assessments.id')
+            ])
+            ->orderByDesc('last_response_at')
+            ->with('responses')
+            ->get();
     }
 
-//    public function newAssessment(): void
-//    {
-//        $assessment = new Assessment([
-//            'framework_id' => $this->frameworkId ?? null,
-//            'user_id' => $this->user->id,
-//        ]);
-//        $assessment->save();
-//
-//        if ($assessment->exists) {
-//            $this->redirect(route('assessments', $assessment->id));
-//        } else {
-//            session()->flash('message', __('Could not initialise new assessment. Please try again later.'));
-//        }
-//    }
+    /**
+     * Display the most relevant date for an assessment
+     * @param $assessment
+     * @param bool $useAmPm
+     * @param bool $showTime
+     * @return string
+     */
+    public function displayAssessmentDate($assessment, bool $useAmPm = false, bool $showTime = false): string
+    {
+        try {
+            // If submitted, always use submitted_at
+            if ($assessment->submitted_at) {
+                $date = $assessment->submitted_at;
+            } else {
+                // Otherwise, fallback to latest response date
+                $latestResponse = $assessment->responses()
+                    ->orderByDesc('updated_at')
+                    ->first();
+
+                $date = $latestResponse->updated_at
+                    ?? $assessment->updated_at
+                    ?? $assessment->created_at;
+            }
+
+            if (!$date) {
+                return 'Not available';
+            }
+
+            $format = 'j F Y';
+            if ($showTime) {
+                $format .= $useAmPm ? ', g:i a' : ', H:i';
+            }
+
+            return \Carbon\Carbon::parse($date)->format($format);
+
+        } catch (\Exception $e) {
+            return 'Not available';
+        }
+    }
+
+    /**
+     * Calculate the percentage of questions answered in a step
+     *
+     * @param Assessment|null $assessment
+     * @return string
+     */
+    public function displayProgress(?Assessment $assessment): string
+    {
+        if (!$assessment) {
+            return 'Not available';
+        }
+
+        // Count only ACTIVE questions in the framework
+        $total = (int) ($assessment->framework?->questions()
+            ->where('active', true)
+            ->count() ?? 0);
+
+        if ($total <= 0) {
+            return 'Not available';
+        }
+
+        // Count only responses that belong to ACTIVE questions
+        $answered = (int) ($assessment->responses()
+            ->whereHas('question', fn ($q) => $q->where('active', true))
+            ->count() ?? 0);
+
+        $percentage = (int) round(($answered / $total) * 100);
+
+        return sprintf('%d/%d (%d%%)', $answered, $total, $percentage);
+    }
 
     #[Title('Frameworks')]
     public function render()
     {
         return view('livewire.frameworks');
     }
+
+    public function startNewAssessment(): void
+    {
+        $months = (int) config('app.assessment_min_interval_months');
+        $latest = $this->getLatestAssessmentForFramework($this->frameworkId);
+
+        // No assessments at all → allowed
+        if (! $latest) {
+            $this->redirect(route('instructions', [
+                'frameworkId' => $this->frameworkId,
+            ]));
+            return;
+        }
+
+        // Draft exists → block
+        if (is_null($latest->submitted_at)) {
+            session()->flash('error', __('alerts.errors.assessment-in-progress'));
+            session()->flash('error-title', __('alerts.errors.assessment-in-progress-title'));
+            return;
+        }
+
+        // Completed assessment → check cooldown
+        $cooldownEnds = $latest->submitted_at->clone()->addMonths($months);
+
+        if ($cooldownEnds->isFuture()) {
+            session()->flash('error', __('alerts.errors.assessment-not-permitted-now', [
+                'months' => $months,
+                'newDate' => $cooldownEnds->format('j F Y'),
+            ]));
+            session()->flash('error-title', __('alerts.errors.assessment-not-permitted-now-title'));
+            return;
+        }
+
+        // Completed and cooldown passed → allowed
+        $this->redirect(route('instructions', [
+            'frameworkId' => $this->frameworkId,
+        ]));
+    }
+
 }

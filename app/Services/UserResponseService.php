@@ -28,7 +28,7 @@ class UserResponseService
                             'question_id'   => $question->id,
                             'rater_id'      => $raterId,
                         ],[
-                            'free_text'     => $value,
+                            'textarea'     => $value,
                             'updated_at'    => now(),
                         ]),
                         'checkbox',

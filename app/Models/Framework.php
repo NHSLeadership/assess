@@ -17,6 +17,10 @@ class Framework extends Model
         'name',
         'slug',
         'description',
+        'instructions',
+        'report_intro',
+        'report_html',
+        'report_ending',
     ];
 
     public function nodes(): HasMany
@@ -34,8 +38,4 @@ class Framework extends Model
         return $this->hasMany(FrameworkVariantAttribute::class)->orderBy('order');
     }
 
-    public function stages(): HasMany
-    {
-        return $this->hasMany(FrameworkVariantAttribute::class)->where('key', 'stage');
-    }
 }

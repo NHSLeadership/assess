@@ -14,9 +14,11 @@
         </div>
     @endif
 
-    @if (isset($hints) && $hints->has($name))
-        <div class="nhsuk-hint" id="{{ $name }}-error-hint">
-            {{ $hints->first($name) }}
+    @if (!empty($hints) && is_array($hints))
+        <div class="nhsuk-hint">
+            @foreach($hints as $hint)
+                <p>{!! $hint !!}</p>
+            @endforeach
         </div>
     @endif
 
@@ -28,7 +30,7 @@
 
     <textarea name="{{ $name }}"
             id="{{ $name }}"
-            class="nhsuk-textarea {{ $errors->has($name) ? ' nhsuk-textarea--error' : '' }}"
+            class="nhsuk-textarea {{ $errors->has($name) ? ' nhsuk-textarea--error' : '' }} {{ $class ?? '' }}"
             placeholder="{{ $placeholder ?? '' }}"
             @if (isset($tabindex))
                 tabindex="{{ $tabindex }}"
@@ -38,7 +40,7 @@
                 wire:{{ $wire_type }}="{{ $wire_name }}"
                 @endforeach
             @else
-                wire:model.live="{{ $name }}"
+                wire:model.live="{{ $name ?? null }}"
             @endif
             rows="{{ $rows ?? 5 }}"
             aria-describedby="example-hint">{{ old($name) }}</textarea><br/>

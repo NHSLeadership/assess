@@ -12,7 +12,7 @@ class ScaleOptionPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('scaleOption:viewAny');
     }
 
     /**
@@ -20,7 +20,7 @@ class ScaleOptionPolicy
      */
     public function view(User $user, ScaleOption $scaleOption): bool
     {
-        return true;
+        return $user->can('scaleOption:view');
     }
 
     /**
@@ -28,7 +28,7 @@ class ScaleOptionPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->can('scaleOption:create');
     }
 
     /**
@@ -36,7 +36,7 @@ class ScaleOptionPolicy
      */
     public function update(User $user, ScaleOption $scaleOption): bool
     {
-        return true;
+        return $user->can('scaleOption:update');
     }
 
     /**
@@ -44,7 +44,7 @@ class ScaleOptionPolicy
      */
     public function delete(User $user, ScaleOption $scaleOption): bool
     {
-        return true;
+        return $user->can('scaleOption:delete');
     }
 
     /**
@@ -52,7 +52,7 @@ class ScaleOptionPolicy
      */
     public function restore(User $user, ScaleOption $scaleOption): bool
     {
-        return true;
+        return $user->can('scaleOption:restore');
     }
 
     /**
@@ -60,6 +60,14 @@ class ScaleOptionPolicy
      */
     public function forceDelete(User $user, ScaleOption $scaleOption): bool
     {
-        return true;
+        return $user->can('scaleOption:forceDelete');
+    }
+
+    /**
+     * Determine whether records can be reordered in a table.
+     */
+    public function reorder(User $user): bool
+    {
+        return $user->can('scaleOption:reorder');
     }
 }

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Self Assessment Tools - ' . ($title ?? 'Home') )</title>
 
     <link rel="shortcut icon" href="{{ asset('media/favicons/favicon.ico', !\Illuminate\Support\Facades\App::environment('local')) }}" type="image/x-icon">
@@ -19,6 +20,7 @@
 
     @livewireStyles
     @livewireScripts
+    @include('umami::script')
 </head>
 
 <body class="js-enabled">
@@ -44,6 +46,7 @@
     <script>
         document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
     </script>
+    @stack('scripts')
 </body>
 
 </html>

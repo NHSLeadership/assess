@@ -12,7 +12,7 @@ class NodePolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('node:viewAny');
     }
 
     /**
@@ -20,7 +20,7 @@ class NodePolicy
      */
     public function view(User $user, Node $node): bool
     {
-        return true;
+        return $user->can('node:view');
     }
 
     /**
@@ -28,7 +28,7 @@ class NodePolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->can('node:create');
     }
 
     /**
@@ -36,7 +36,7 @@ class NodePolicy
      */
     public function update(User $user, Node $node): bool
     {
-        return true;
+        return $user->can('node:update');
     }
 
     /**
@@ -44,7 +44,7 @@ class NodePolicy
      */
     public function delete(User $user, Node $node): bool
     {
-        return true;
+        return $user->can('node:delete');
     }
 
     /**
@@ -52,7 +52,7 @@ class NodePolicy
      */
     public function restore(User $user, Node $node): bool
     {
-        return true;
+        return $user->can('node:restore');
     }
 
     /**
@@ -60,6 +60,14 @@ class NodePolicy
      */
     public function forceDelete(User $user, Node $node): bool
     {
-        return true;
+        return $user->can('node:forceDelete');
+    }
+
+    /**
+     * Determine whether records can be reordered in a table.
+     */
+    public function reorder(User $user): bool
+    {
+        return $user->can('node:reorder');
     }
 }

@@ -7,15 +7,17 @@
 /public/hot
 /public/storage
 /public/build
-public/css/
-public/fonts/
-public/js/
 /storage/*.key
 /storage/framework/views
 /vendor
+/coverage
+/public/coverage
+/reports
+/coverage
 .DS_Store
 .idea
 .env
+.env.testing
 .phpunit.result.cache
 .phpunit.cache
 .scribe
@@ -25,3 +27,4 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+test-output.txt

@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
+use JsonException;
 
 class User extends Model implements
     AuthenticatableContract,
@@ -26,7 +27,6 @@ class User extends Model implements
 {
     use Authenticatable;
     use Authorizable;
-    use HasFactory;
     use HasFactory;
     use Notifiable;
 
@@ -76,7 +76,24 @@ class User extends Model implements
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+
+        if(
+            auth()->user()->can('assessment:viewAny') ||
+            auth()->user()->can('framework:viewAny') ||
+            auth()->user()->can('node:viewAny') ||
+            auth()->user()->can('question:viewAny') ||
+            auth()->user()->can('nodeType:viewAny') ||
+            auth()->user()->can('frameworkVariantAttribute:viewAny') ||
+            auth()->user()->can('signpost:viewAny') ||
+            auth()->user()->can('scale:viewAny') ||
+            auth()->user()->can('scaleOption:viewAny')
+        ){
+            return true;
+        }
+        logger()->info('Unauthorised admin panel login attempt', [
+            'user_id' => auth()->user()?->user_id,
+        ]);
+        return false;
     }
 
     /**
@@ -104,16 +121,4 @@ class User extends Model implements
         return $this->hasMany(Rater::class);
     }
 
-
-    public function permissions()
-    {
-        $sdk = app('auth0');
-        $options = (new RequestOptions)->setPagination(
-            new PaginatedRequest(0, 100)
-        );
-        $response = $sdk->management()->users()->getPermissions($this->sub, $options);
-        if (HttpResponse::wasSuccessful($response)) {
-            return HttpResponse::decodeContent($response);
-        }
-    }
 }

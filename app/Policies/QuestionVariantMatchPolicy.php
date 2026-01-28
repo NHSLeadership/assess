@@ -12,7 +12,7 @@ class QuestionVariantMatchPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('questionVariantMatch:viewAny');
     }
 
     /**
@@ -20,7 +20,7 @@ class QuestionVariantMatchPolicy
      */
     public function view(User $user, QuestionVariantMatch $questionVariantMatch): bool
     {
-        return true;
+        return $user->can('questionVariantMatch:view');
     }
 
     /**
@@ -28,7 +28,7 @@ class QuestionVariantMatchPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->can('questionVariantMatch:create');
     }
 
     /**
@@ -36,7 +36,7 @@ class QuestionVariantMatchPolicy
      */
     public function update(User $user, QuestionVariantMatch $questionVariantMatch): bool
     {
-        return true;
+        return $user->can('questionVariantMatch:update');
     }
 
     /**
@@ -44,7 +44,7 @@ class QuestionVariantMatchPolicy
      */
     public function delete(User $user, QuestionVariantMatch $questionVariantMatch): bool
     {
-        return true;
+        return $user->can('questionVariantMatch:delete');
     }
 
     /**
@@ -52,7 +52,7 @@ class QuestionVariantMatchPolicy
      */
     public function restore(User $user, QuestionVariantMatch $questionVariantMatch): bool
     {
-        return true;
+        return $user->can('questionVariantMatch:restore');
     }
 
     /**
@@ -60,6 +60,14 @@ class QuestionVariantMatchPolicy
      */
     public function forceDelete(User $user, QuestionVariantMatch $questionVariantMatch): bool
     {
-        return true;
+        return $user->can('questionVariantMatch:forceDelete');
+    }
+
+    /**
+     * Determine whether records can be reordered in a table.
+     */
+    public function reorder(User $user): bool
+    {
+        return $user->can('questionVariantMatch:reorder');
     }
 }

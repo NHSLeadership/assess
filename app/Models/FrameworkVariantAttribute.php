@@ -5,13 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class FrameworkVariantAttribute extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'framework_id',
         'key',
         'label',
+        'hint_text',
         'order'
     ];
 
@@ -24,4 +28,5 @@ class FrameworkVariantAttribute extends Model
     {
         return $this->hasMany(FrameworkVariantOption::class)->orderBy('order');
     }
+    
 }

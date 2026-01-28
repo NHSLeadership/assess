@@ -42,6 +42,11 @@ class Question extends Model
         return 'question_'.$this->attributes['id'];
     }
 
+    public function getReflectionAttribute(): string
+    {
+        return 'question_' . $this->attributes['id'] . '_reflection';
+    }
+
     public function node(): BelongsTo
     {
         return $this->belongsTo(Node::class);
@@ -55,5 +60,10 @@ class Question extends Model
     public function variants(): HasMany
     {
         return $this->hasMany(QuestionVariant::class);
+    }
+
+    public function responses()
+    {
+        return $this->hasMany(Response::class, 'question_id');
     }
 }

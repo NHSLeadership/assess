@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Frameworks\Resources\FrameworkVariantAttributes\Schemas;
 
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
@@ -13,17 +14,16 @@ class FrameworkVariantAttributeForm
         return $schema
             ->components([
                 TextInput::make('key')
-                    ->live()
+                    ->live(onBlur: true)
                     ->afterStateUpdated(function ($state, callable $set,) {
                         $set('label', Str::title($state));
                     })
                     ->required(),
                 TextInput::make('label')
                     ->required(),
-                TextInput::make('order')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
+                RichEditor::make('hint_text')
+                    ->columnSpanFull()
+                    ->nullable(),
             ]);
     }
 }

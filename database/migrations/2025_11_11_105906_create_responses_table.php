@@ -26,7 +26,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained()
                 ->nullOnDelete();
-            $table->text('free_text')->nullable();
+            $table->text('textarea')->nullable();
             $table->timestamps();
             $table->unique(
                 ['assessment_id', 'question_id', 'rater_id'],

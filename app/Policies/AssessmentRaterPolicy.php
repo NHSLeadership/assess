@@ -12,7 +12,7 @@ class AssessmentRaterPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->can('assessmentRater:viewAny');
     }
 
     /**
@@ -20,7 +20,7 @@ class AssessmentRaterPolicy
      */
     public function view(User $user, AssessmentRater $assessmentRater): bool
     {
-        return true;
+        return $user->can('assessmentRater:view');
     }
 
     /**
@@ -28,7 +28,7 @@ class AssessmentRaterPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $user->can('assessmentRater:create');
     }
 
     /**
@@ -36,7 +36,7 @@ class AssessmentRaterPolicy
      */
     public function update(User $user, AssessmentRater $assessmentRater): bool
     {
-        return true;
+        return $user->can('assessmentRater:update');
     }
 
     /**
@@ -44,7 +44,7 @@ class AssessmentRaterPolicy
      */
     public function delete(User $user, AssessmentRater $assessmentRater): bool
     {
-        return true;
+        return $user->can('assessmentRater:delete');
     }
 
     /**
@@ -52,7 +52,7 @@ class AssessmentRaterPolicy
      */
     public function restore(User $user, AssessmentRater $assessmentRater): bool
     {
-        return true;
+        return $user->can('assessmentRater:restore');
     }
 
     /**
@@ -60,6 +60,14 @@ class AssessmentRaterPolicy
      */
     public function forceDelete(User $user, AssessmentRater $assessmentRater): bool
     {
-        return true;
+        return $user->can('assessmentRater:forceDelete');
+    }
+
+    /**
+     * Determine whether records can be reordered in a table.
+     */
+    public function reorder(User $user): bool
+    {
+        return $user->can('assessmentRater:reorder');
     }
 }

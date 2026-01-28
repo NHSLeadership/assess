@@ -2,11 +2,12 @@
 
 namespace App\Filament\Resources\Frameworks\Resources\Nodes\Schemas;
 
+use App\Enums\NodeColour;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Str;
 
 class NodeForm
 {
@@ -23,10 +24,14 @@ class NodeForm
                             ->required(),
                     ])
                     ->required(),
+                ToggleButtons::make('colour')
+                    ->inline()
+                    ->options(NodeColour::options())
+                    ->colors(NodeColour::colours())
+                    ->required(),
                 TextInput::make('name')
                     ->required(),
-                Textarea::make('description')
-                    ->required()
+                RichEditor::make('description')
                     ->columnSpanFull(),
             ]);
     }

@@ -4,70 +4,85 @@
         @if ($this->framework)
             <h1>{{ $this->framework->name ?? __('Framework dashboard') }}</h1>
 
-            <p>{{ $this->framework->description ?? '' }}</p>
+            <p>{!! $this->framework->description ?? '' !!}</p>
 
             <div class="nhsuk-action-link">
-                <a class="nhsuk-action-link__link" href="{{ route('standards') }}">
-{{--                <a class="nhsuk-action-link__link" href="#" wire:click.prevent="newAssessment()">--}}
-                    <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                <a class="nhsuk-action-link__link"
+                   href="#" wire:click.prevent="startNewAssessment()">
+                    <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg"
+                         viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M12 2a10 10 0 0 0-9.95 9h11.64L9.74 7.05a1 1 0 0 1 1.41-1.41l5.66 5.65a1 1 0 0 1 0 1.42l-5.66 5.65a1 1 0 0 1-1.41 0 1 1 0 0 1 0-1.41L13.69 13H2.05A10 10 0 1 0 12 2z"></path>
                     </svg>
                     <span class="nhsuk-action-link__text">{{ __('Start new self assessment') }}</span>
                 </a>
             </div>
-
-        @elseif ($this->frameworks())
-
-            <h3>{{ __('Available frameworks') }}</h3>
-
-            <ul class="nhsuk-task-list">
-                @foreach ($this->frameworks() as $framework)
-                    <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
-                        <div class="nhsuk-task-list__name-and-hint">
-                            <a href="{{ route('frameworks', ['frameworkId' => $framework->id]) }}"
-                               aria-describedby="{{ $framework->slug }}-hint"
-                               class="nhsuk-link nhsuk-task-list__link">{{ $framework->name ?? $item->label }}</a>
-                        </div>
-                        <div class="nhsuk-task-list__status nhsuk-task-list__status--completed">
-                            @if ($framework->nodes?->count())
-                                <strong class="nhsuk-tag nhsuk-tag--blue">{{ __('In Progress') }}</strong>
-                            @else
-                                <span>{{ __('Not started') }}</span>
-                            @endif
-                        </div>
-                    </li>
-                @endforeach
-            </ul>
         @else
             <p>No frameworks found.</p>
         @endif
 
+        @include('livewire.alerts')
+
         @if ($this->assessments()?->count())
-            <h3>{{ __('Started assessments') }}</h3>
+            <h3>{{ __('Assessments') }}</h3>
 
-            <ul class="nhsuk-task-list">
+            <table class="nhsuk-table">
+                <thead class="nhsuk-table__head">
+                <tr>
+                    <th scope="col" class="nhsuk-table__header">Framework</th>
+                    <th scope="col" class="nhsuk-table__header">Last updated</th>
+                    <th scope="col" class="nhsuk-table__header">Progress</th>
+                    <th scope="col" class="nhsuk-table__header">Status</th>
+                    <th scope="col" class="nhsuk-table__header">Actions</th>
+                </tr>
+                </thead>
+                <tbody class="nhsuk-table__body">
                 @foreach ($this->assessments() as $assessment)
-                    <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link">
-                        <div class="nhsuk-task-list__name-and-hint">
-                            <a href="{{ route('assessments', ['assessmentId' => $assessment->id]) }}"
+                    <tr class="nhsuk-table__row" wire:key="assessment-{{ $assessment->id }}">
+                        <td class="nhsuk-table__cell">
+                            <a href="{{ !empty($assessment->submitted_at)
+                               ? route('summary', ['frameworkId' => $this->framework?->id, 'assessmentId' => $assessment->id])
+                               : route('variants', ['frameworkId' => $assessment->framework?->id, 'assessmentId' => $assessment->id]) }}"
                                aria-describedby="{{ $assessment->slug }}-hint"
-                               class="nhsuk-link nhsuk-task-list__link">{{ $assessment->framework?->name }}</a>
-                               - {{$assessment->created_at}}
-                        </div>
-                        <div class="nhsuk-task-list__status nhsuk-task-list__status--completed">
-                            @if ($assessment->whereNull('completed_at'))
+                               class="nhsuk-link">
+                                {{ $assessment->framework?->name }} <span class="nhsuk-u-visually-hidden">{{ $this->displayAssessmentDate($assessment) }}</span>
+                            </a>
+                        </td>
+                        <td class="nhsuk-table__cell">
+                            {{ $this->displayAssessmentDate($assessment) }}
+                        </td>
+                        <td class="nhsuk-table__cell">
+                            {{ $this->displayProgress($assessment) }}
+                        </td>
+                        <td class="nhsuk-table__cell">
+                            @if (empty($assessment->submitted_at))
                                 @if ($assessment->questions)
-                                    <span>{{ __('Not started') }}</span>
+                                    <strong class="nhsuk-tag nhsuk-tag--red">{{ __('Not started') }}</strong>
+                                @elseif ($assessment->responses?->count() === $assessment?->framework?->questions?->where('required', 1)->count())
+                                    <strong class="nhsuk-tag nhsuk-tag--orange">{{ __('Ready') }}</strong>
                                 @else
-                                    <strong class="nhsuk-tag nhsuk-tag--blue">{{ __('In Progress') }}</strong>
+                                    <strong class="nhsuk-tag nhsuk-tag--blue">{{ __('Started') }}</strong>
                                 @endif
+                            @else
+                                <strong class="nhsuk-tag nhsuk-tag--green">{{ __('Completed') }}</strong>
                             @endif
-                        </div>
-                    </li>
+                        </td>
+                        <td class="nhsuk-table__cell">
+                            @if ($this->pendingDeleteId === $assessment->id)
+                                @include('livewire.partials.confirm-delete')
+                            @else
+                                <button
+                                    type="button"
+                                    class="nhsuk-link"
+                                    wire:click.prevent="askDelete({{ $assessment->id }})">
+                                    {{ __('Delete') }}
+                                </button>
+                            @endif
+                        </td>
+                    </tr>
                 @endforeach
-
-            </ul>
+                </tbody>
+            </table>
         @else
             <div class="nhsuk-inset-text nhsuk-u-margin-top-1">
                 <span class="nhsuk-u-visually-hidden">Information: </span>
@@ -77,4 +92,3 @@
 
     </div>
 </div>
-

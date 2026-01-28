@@ -4,3 +4,4 @@ sed -i 's|session.save_path = "tcp://redis:6379"|session.save_path = "tcp://drag
 
 php artisan livewire:publish --assets
 php artisan storage:link
+mkdir -p /app-shared/storage/framework/{cache,testing,views,sessions}
