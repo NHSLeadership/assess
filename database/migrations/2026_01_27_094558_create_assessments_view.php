@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         DB::statement('
-            CREATE VIEW assessments_view AS
+            CREATE OR REPLACE VIEW assessments_view AS
                 SELECT
                     a.id AS assessment_id,
                     f.name AS framework_name,
@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("DROP VIEW assessments_view");
+        DB::statement('DROP VIEW IF EXISTS assessments_view');
     }
 };
