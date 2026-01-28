@@ -127,7 +127,7 @@ class Questions extends Component
     }
 
     #[Computed]
-    public function responses(): ?Collection
+    public function responses1(): ?Collection
     {
         $assessment = $this->user->assessments()
             ->where('id', $this->assessmentId)
@@ -151,6 +151,63 @@ class Questions extends Component
                 ];
             });
     }
+
+    #[Computed]
+    public function responses(): ?Collection
+    {
+        return $this->buildResponses(false);
+    }
+
+    #[Computed]
+    public function requiredResponses(): ?Collection
+    {
+        return $this->buildResponses(true);
+    }
+
+    public function buildResponses(bool $onlyRequired = false): ?Collection
+    {
+        $assessment = $this->user->assessments()
+            ->where('id', $this->assessmentId)
+            ->with('responses.question')
+            ->first();
+
+        if (! $assessment) {
+            return null;
+        }
+
+        $responses = $assessment?->responses;
+
+
+        if ($onlyRequired) {
+            $responses = $responses->filter(function ($response) {
+                return $response->question->required ?? false;
+            });
+        }
+
+        return $responses->mapWithKeys(function ($response) use ($onlyRequired) {
+            $key = $response->question->name;
+
+            // TEXTAREA → only one value
+            if ($response->question->response_type === ResponseType::TYPE_TEXTAREA->value) {
+                return [
+                    $key => $response->textarea ?? '',
+                ];
+            }
+
+            // SCALE
+            if ($onlyRequired) {
+                return [
+                    $key => $response->scale_option_id,
+                ];
+            } else {
+                return [
+                    $key => $response->scale_option_id,
+                    $key . '_reflection' => $response->textarea ?? '',
+                ];
+            }
+        });
+    }
+
 
     public function backPage(): void
     {

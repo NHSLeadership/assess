@@ -65,9 +65,9 @@
                             <button wire:submit.prevent="storeNext" class="nhsuk-button nhsuk-u-margin-right-3" type="submit">Save and continue</button>
                         @endif
 
-                        @if ($this->responses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count() || $this->nodes()->count() === $this->nodes()->key() + 1)
+                        @if ($this->requiredResponses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count() || $this->nodes()->count() === $this->nodes()->key() + 1)
                             <button wire:click.prevent="finishAssessment" class="nhsuk-button nhsuk-u-margin-right-3" >View summary</button>
-                            @if ($this->responses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count())
+                            @if ($this->requiredResponses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count())
                                 <div class="nhsuk-inset-text">
                                     <span class="nhsuk-u-visually-hidden">Information: </span>
                                     <p>You completed all required fields, you can still navigate and change your answers or finish the assessment to receive a report.</p>
