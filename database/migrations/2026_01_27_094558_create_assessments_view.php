@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        DB::statement('DROP VIEW IF EXISTS assessments_view');
         DB::statement('
-            CREATE OR REPLACE VIEW assessments_view AS
+            CREATE VIEW assessments_view AS
                 SELECT
                     a.id AS assessment_id,
                     f.name AS framework_name,
