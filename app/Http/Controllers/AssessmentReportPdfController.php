@@ -45,7 +45,7 @@ class AssessmentReportPdfController extends Controller
         ])->download('assessment-report.pdf');
     }
 
-    public function prepareHtmlForPdf(string $content = null): string
+    public function prepareHtmlForPdf(?string $content ): string
     {
         if (empty($content)) {
             return '';
