@@ -1,29 +1,13 @@
-@extends('layouts.app')
+@extends('errors::minimal')
 
+@section('title', __('Page Expired'))
 @section('code', '419')
-
-@section('content')
-    <div class="nhsuk-width-container nhsuk-u-padding-bottom-5">
-
-        <h1 class="nhsuk-heading-xl nhsuk-u-margin-bottom-4">
-            Page expired
-        </h1>
-
-        <div class="nhsuk-u-reading-width">
-
-            <p class="nhsuk-body">
-                Your session has expired. This usually happens if the page was left open for too long.
-            </p>
-
-            <p class="nhsuk-body">
-                Please refresh the page and try again.
-            </p>
-
-            <p class="nhsuk-body">
-                <a href="{{ url()->current() }}" class="nhsuk-link">Reload this page</a>
-            </p>
-
-        </div>
-
-    </div>
+@section('message', __('Page Expired'))
+@section('explanation')
+    <p>
+        Sorry for the inconvenience.  If you entered a web address please check it was correct.
+    </p>
+    <p>
+        Please visit our <a href="https://leadershipacademy.nhs.uk/contact-us/">contact us</a> page to find help and support information.
+    </p>
 @endsection
