@@ -15,7 +15,7 @@ test('login screen redirects to Auth0', function () {
 test('unauthenticated users cannot access admin panel', function () {
     $response = $this->get('/admin');
 
-    $response->assertStatus(500);
+    $response->assertStatus(302);
 });
 
 test('unauthorized users receive 403 when accessing admin panel', function () {
