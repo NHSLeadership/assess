@@ -40,7 +40,7 @@ class ScaleSeeder extends Seeder
                 'order' => 4,
             ],
             [
-                'label' => 'Very good',
+                'label' => 'Very strong',
                 'description' => 'I do this effectively and can support others to do this',
                 'value' => 5,
                 'order' => 5,
