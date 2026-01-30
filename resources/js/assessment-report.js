@@ -1,16 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-
-    const note = document.getElementById('mobilePdfNote');
-
-    if (window.innerWidth < 768) {
-        // Small screens no button, show note
-        // document.getElementById('downloadPdfBtn').style.display = 'none';
-        // note.style.display = 'block';
-    } else {
-        // Large screens, show button, hide note
-        note.style.display = 'none';
-    }
-
     /* -----------------------------
         1. RENDER RADAR CHART
     ------------------------------ */
