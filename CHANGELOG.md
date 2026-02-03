@@ -4,6 +4,13 @@
 # Self Assessment 360 Tools
 
 ---
+
+### v1.0.1
+> Updated: 02.02.2026
+1. Improve error handling and update labels and links
+2. Fix for php deprecated issue
+3. Security and package updates
+
 ### v1.0.0
 > Updated: 23.09.2025
 1. Clean framework setup with home page
