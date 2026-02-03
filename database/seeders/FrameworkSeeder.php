@@ -162,11 +162,50 @@ class FrameworkSeeder extends Seeder
     <li>What are my timeframes?</li>
 </ul>
 ';
+        $instructions = <<<'HTML'
+<h2>Welcome to your NHS Management and Leadership assessment</h2>
+
+<p>The Management and Leadership Framework describes the behaviours, skills, and mindsets required at different stages of management and leadership.</p>
+
+<p>In this assessment you will be presented with a series of questions. To get the most value from this exercise answer these questions as accurately and honestly as you can.</p>
+
+<p>The Framework is intended to help you:</p>
+
+<ul>
+    <li>Understand what good management and leadership look like</li>
+    <li>Reflect honestly on your current capability via a self-assessment</li>
+    <li>Support development conversations with your manager</li>
+    <li>Identify targeted areas for learning and growth</li>
+</ul>
+
+<h3>Completing the assessment</h3>
+
+<p>For each of the 27 statements, rate how consistently and effectively you demonstrate the behaviour expected at your chosen stage:</p>
+
+<ol>
+    <li><strong>Insufficient</strong> – I can’t do this without help.</li>
+    <li><strong>Essential</strong> – I can do parts of this but need guidance.</li>
+    <li><strong>Proficient</strong> – I can do most of this with occasional help.</li>
+    <li><strong>Strong</strong> – I can do all of this independently.</li>
+    <li><strong>Very strong</strong> – I do this effectively and can support others to do this.</li>
+</ol>
+
+<h3>Tips for an effective self‑assessment</h3>
+
+<ul>
+    <li><strong>Be honest and objective - </strong>This tool supports your development, accuracy is far more valuable than a high score.</li>
+    <li><strong>Use real examples - </strong>Think of specific situations where you <em>did</em> or <em>did not</em> display the behaviour. You can put examples in the assessment tool and/or discuss examples with your line manager when you go through your results together.</li>
+    <li><strong>Think about impact - </strong>Consider what you did, and how it affected outcomes, people, and services.</li>
+    <li><strong>Give yourself time - </strong>Allow around 30-45 minutes to reflect properly.</li>
+    <li><strong>Assess the stage, not your job title - </strong>Focus on behaviours you demonstrate, not assumptions about your role.</li>
+</ul>
+HTML;
+
         Framework::firstOrCreate([
             'name'        => 'Management and leadership framework',
             'slug'        => 'mlf',
             'description' => '<p>The framework consists of a code of practice, standards and competencies at all levels from entry level manager to executive, and a learning and development curriculum.</p>',
-            'instructions' => '<h2>Welcome to your NHS Management and Leadership assessment</h2><p>In this assessment you will be presented with a series of questions.</p><p>To get the most value from this exercise answer these questions as accurately and honestly as you can.</p>',
+            'instructions' => $instructions,
             'report_intro' => $report_intro,
             'report_html' => $html,
             'report_ending' => $report_ending,

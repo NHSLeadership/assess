@@ -11,7 +11,6 @@
                     <p>You are now logged in to the {{ config('app.name') }}.
                         From here you can continue your assessments, review your progress.</p>
                     <div class="nhsuk-action-link">
-{{--                        <a class="nhsuk-action-link__link" href="{{ route('assessment-home') }}">--}}
                         <a class="nhsuk-action-link__link" href="{{ route('frameworks') }}">
                             <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg"
                                  viewBox="0 0 24 24" aria-hidden="true">
@@ -26,7 +25,7 @@
                     <p>If you already have an Academy Profile</p>
 
                     <div class="nhsuk-action-link">
-                        <a class="nhsuk-action-link__link" href="{{ route('frameworks') }}">
+                        <a class="nhsuk-action-link__link" href="{{ route('login') }}">
                             <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg"
                                  viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M0 0h24v24H0z" fill="none"></path>
