@@ -29,7 +29,7 @@
             <table class="nhsuk-table">
                 <thead class="nhsuk-table__head">
                 <tr>
-                    <th scope="col" class="nhsuk-table__header">Framework</th>
+                    <th scope="col" class="nhsuk-table__header">Type</th>
                     <th scope="col" class="nhsuk-table__header">Last updated</th>
                     <th scope="col" class="nhsuk-table__header">Progress</th>
                     <th scope="col" class="nhsuk-table__header">Status</th>
@@ -45,7 +45,7 @@
                                : route('variants', ['frameworkId' => $assessment->framework?->id, 'assessmentId' => $assessment->id]) }}"
                                aria-describedby="{{ $assessment->slug }}-hint"
                                class="nhsuk-link">
-                                {{ $assessment->framework?->name }} <span class="nhsuk-u-visually-hidden">{{ $this->displayAssessmentDate($assessment) }}</span>
+                                {{ ucfirst(($this->loggedInRater($assessment)?->pivot?->assessment_type) ?? 'Self assessment') }}<span class="nhsuk-u-visually-hidden">{{ $this->displayAssessmentDate($assessment) }}</span>
                             </a>
                         </td>
                         <td class="nhsuk-table__cell">
