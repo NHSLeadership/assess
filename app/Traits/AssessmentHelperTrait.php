@@ -214,7 +214,7 @@ trait AssessmentHelperTrait
             ->first();
     }
 
-    public function loggedInRater(?Assessment $assessment): ?\App\Models\Rater
+    public function loggedInRater(?Assessment $assessment = null): ?\App\Models\Rater
     {
         if (empty($assessment)) {
             return null;

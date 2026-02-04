@@ -2,7 +2,7 @@
     <div class="nhsuk-grid-column-full">
 
         @if ($this->framework)
-            <h1>{{ $this->framework->name ?? __('Framework dashboard') }}</h1>
+            <h1 class="nhsuk-heading-l">{{ $this->framework->name ?? null }} {{ strtolower(($this->loggedInRater()?->pivot?->assessment_type) ?? 'self assessment') }}</h1>
 
             <p>{!! $this->framework->description ?? '' !!}</p>
 
