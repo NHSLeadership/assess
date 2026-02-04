@@ -4,8 +4,8 @@
         @include('livewire.alerts')
 
         @if (!empty($this->framework))
-            <h1 class="nhsuk-heading-xl">
-                {{ $this->framework->name ?? '' }}
+            <h1 class="nhsuk-heading-l">
+                {{ $this->framework->name ?? null }} {{ strtolower(($this->loggedInRater($this->assessment)?->pivot?->assessment_type) ?? 'self assessment') }}
             </h1>
             <h2 class="nhsuk-heading-l">Assessment summary</h2>
             @if(empty($this->assessment?->submitted_at))

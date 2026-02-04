@@ -3,7 +3,7 @@
 
         @if (!empty($this->framework))
 
-            <h1 class="nhsuk-heading-xl">{{ $this->framework->name }}</h1>
+            <h1 class="nhsuk-heading-l">{{ $this->framework->name ?? null }} {{ strtolower(($this->loggedInRater($this->assessment)?->pivot?->assessment_type) ?? 'self assessment') }}</h1>
 
             @include('livewire.alerts')
 
