@@ -4,6 +4,9 @@
 # Self Assessment 360 Tools
 
 ---
+### v1.0.2
+> Updated: 04.02.2026
+1. Display assessment type in frameworks list
 
 ### v1.0.1
 > Updated: 02.02.2026
