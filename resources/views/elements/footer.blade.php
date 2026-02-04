@@ -18,8 +18,7 @@
                 </li>
             </ul>
             <p class="nhsuk-body-s">
-                © NHS England,
-                {{ config('app.name') }} <span class="nhsuk-u-visually-hidden">v<?php echo config('app.version'); ?></span>
+                {{ config('app.footer_copyright_text') }} <span class="nhsuk-u-visually-hidden">v<?php echo config('app.version'); ?></span>
             </p>
         </div>
     </div>
