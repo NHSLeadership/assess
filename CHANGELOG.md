@@ -9,6 +9,7 @@
 1. Display assessment type in frameworks list
 2. Include assessment type in page headings
 3. Package update
+4. Make footer copyright configurable
 
 ### v1.0.1
 > Updated: 02.02.2026
