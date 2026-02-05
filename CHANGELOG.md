@@ -10,6 +10,7 @@
 2. Include assessment type in page headings
 3. Package update
 4. Make footer copyright configurable
+5. Disable seeding in production environments
 
 ### v1.0.1
 > Updated: 02.02.2026
