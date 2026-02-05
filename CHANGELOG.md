@@ -8,6 +8,7 @@
 > Updated: 04.02.2026
 1. Display assessment type in frameworks list
 2. Include assessment type in page headings
+3. Package update
 
 ### v1.0.1
 > Updated: 02.02.2026
