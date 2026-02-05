@@ -3,7 +3,7 @@
 
         @if (!empty($this->framework))
 
-            <h1 class="nhsuk-heading-xl">{!! $this->framework?->name ?? 'Instructions' !!}</h1>
+            <h1 class="nhsuk-heading-l">{{ $this->framework->name ?? null }} {{ strtolower(($this->loggedInRater($this->assessment)?->pivot?->assessment_type) ?? 'self assessment') }}</h1>
             {!! $this->framework?->instructions ?? null !!}
              <hr>
             <a class="nhsuk-button" href="{{ route('variants', ['frameworkId' => $this->framework?->id, 'assessmentId' => $this->assessment?->id]) }}">Continue</a>

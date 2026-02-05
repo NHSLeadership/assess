@@ -34,4 +34,10 @@ class AssessmentRater extends Pivot
     {
         return $this->belongsTo(Rater::class);
     }
+
+    public function getAssessmentTypeAttribute(): string
+    {
+        return $this->is_self ? 'Self assessment' : '360';
+    }
+
 }

@@ -213,5 +213,16 @@ trait AssessmentHelperTrait
             ->orderByDesc('created_at')
             ->first();
     }
+
+    public function loggedInRater(?Assessment $assessment = null): ?\App\Models\Rater
+    {
+        if (empty($assessment)) {
+            return null;
+        }
+
+        return $assessment
+            ->raters
+            ->firstWhere('user_id', $this->user()?->user_id);
+    }
 }
 
