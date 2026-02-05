@@ -5,12 +5,13 @@
 
 ---
 ### v1.0.2
-> Updated: 04.02.2026
+> Updated: 05.02.2026
 1. Display assessment type in frameworks list
 2. Include assessment type in page headings
 3. Package update
 4. Make footer copyright configurable
 5. Disable seeding in production environments
+6. Fix payload is too deep error
 
 ### v1.0.1
 > Updated: 02.02.2026
