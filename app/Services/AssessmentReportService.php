@@ -107,7 +107,8 @@ class AssessmentReportService
                 }
 
                 $avg = round(
-                    $scaleResponses->avg(fn($r) => (int)($r->scaleOption->value ?? 0))
+                    $scaleResponses->avg(fn($r) => (int)($r->scaleOption->value ?? 0)),
+                    2
                 );
 
                 $labels[] = $standard->name;
