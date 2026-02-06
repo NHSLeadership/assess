@@ -4,6 +4,11 @@
 # Self Assessment 360 Tools
 
 ---
+### v1.0.3
+> Updated: 06.02.2026
+1. Improve radar chart scoring by using more precise average values for clearer insights
+2. Fix disappearing text in textareas
+
 ### v1.0.2
 > Updated: 05.02.2026
 1. Display assessment type in frameworks list
