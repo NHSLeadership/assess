@@ -42,9 +42,6 @@
                         @component('components.form.textarea', [
                             'name' => $question['reflection'] ? 'data.' . $question['reflection'] : null,
                             'class' => 'nhsuk-u-margin-bottom-0',
-                            'wire' => [
-                                'model.defer' => 'data.' . $question['reflection'],
-                            ],
                         ])
                             @slot('label')
                                 <span class="nhsuk-u-visually-hidden">Reflection {{ $question['id'] }}</span>
