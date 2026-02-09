@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             FrameworkVariantOptionSeeder::class,
             QuestionVariantSeeder::class,
             QuestionVariantMatchSeeder::class,
+            SignpostSeeder::class,
         ]);
     }
 }
