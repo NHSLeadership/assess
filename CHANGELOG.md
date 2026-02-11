@@ -4,7 +4,13 @@
 # Self Assessment 360 Tools
 
 ---
-### v1.0.3
+
+### v1.0.5
+> Updated: 11.02.2026
+1. Adds automated tests around assessment report
+2. Package updates
+
+### v1.0.4
 > Updated: 09.02.2026
 1. Add signpost seeder
 
