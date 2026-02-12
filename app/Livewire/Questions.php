@@ -126,31 +126,6 @@ class Questions extends Component
         return $nodesIterator;
     }
 
-    #[Computed]
-    public function responses1(): ?Collection
-    {
-        $assessment = $this->user->assessments()
-            ->where('id', $this->assessmentId)
-            ->with('responses.question')
-            ->first();
-        return $assessment?->responses
-            ->mapWithKeys(function ($response) {
-                $key = $response->question->name;
-
-                // TEXTAREA → only one value
-                if ($response->question->response_type === ResponseType::TYPE_TEXTAREA->value) {
-                    return [
-                        $key => $response->textarea ?? '',
-                    ];
-                }
-
-                // SCALE
-                return [
-                    $key => $response->scale_option_id,
-                    $key . '_reflection' => $response->textarea ?? '',
-                ];
-            });
-    }
 
     #[Computed]
     public function responses(): ?Collection
