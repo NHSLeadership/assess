@@ -9,6 +9,7 @@
 > Updated: 16.02.2026
 1. Optimise report generation
 2. Adds laravel debug bar for development environment
+3. Composer package updates
 
 ### v1.0.5
 > Updated: 13.02.2026
