@@ -1,6 +1,6 @@
 @props([
     'signposts' => collect(),
-    'title' => 'Guidance',
+    'title' => 'Development resources',
 ])
 
 @if ($signposts->isNotEmpty())

@@ -128,7 +128,7 @@
                 $nodeSignposts = data_get($this->signposts, $node->id, []);
             @endphp
 
-            <x-signpost-banner :signposts="$nodeSignposts" title="Guidance" :banner-id="$node->id" />
+            <x-signpost-banner :signposts="$nodeSignposts" title="Development resources" :banner-id="$node->id" />
         @endforeach
 
         <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
