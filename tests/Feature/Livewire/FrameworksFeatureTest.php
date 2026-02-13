@@ -13,6 +13,7 @@ use App\Models\Assessment;
 use App\Models\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
 use Livewire\Livewire;
 use function Pest\Laravel\actingAs;
 
@@ -586,6 +587,120 @@ it('allows starting when cooldown has passed', function () {
     Livewire::test(Frameworks::class, [
         'frameworkId' => $framework->id,
     ])
+        ->call('startNewAssessment')
+        ->assertRedirect(route('instructions', [
+            'frameworkId' => $framework->id,
+        ]));
+});
+
+
+it('clears pendingDeleteId when cancelDelete is called', function () {
+    $user = makeAuthUser();
+    actingAs($user);
+    $framework = Framework::factory()->create();
+    $component = Livewire::test(Frameworks::class, [
+        'frameworkId' => $framework->id,
+    ])
+        ->set('pendingDeleteId', 456);
+
+    $component->call('cancelDelete');
+
+    expect($component->get('pendingDeleteId'))->toBeNull();
+});
+
+
+it('returns early when confirmDelete is called with no pendingDeleteId', function () {
+    $user = makeAuthUser();
+    actingAs($user);
+    $framework = Framework::factory()->create();
+    $component = Livewire::test(Frameworks::class, [
+        'frameworkId' => $framework->id,
+    ]);
+
+    // Sanity: no ID set
+    expect($component->get('pendingDeleteId'))->toBeNull();
+
+    // Call confirmDelete – should early return, no flashes, still null
+    $component->call('confirmDelete');
+
+    // No success or error flash should be present
+    $component->assertSessionMissing('success');
+    $component->assertSessionMissing('error');
+
+    // State should remain unchanged
+    expect($component->get('pendingDeleteId'))->toBeNull();
+});
+
+
+it('deletes the assessment, flashes success, and clears state on confirmDelete', function () {
+    $user = makeAuthUser();
+    actingAs($user);
+    $framework = Framework::factory()->create();
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id'      => $user->id,
+    ]);
+    $this->assertDatabaseHas('assessments', ['id' => $assessment->id]);
+
+    $component = Livewire::test(Frameworks::class, [
+        'frameworkId' => $framework->id,
+    ])
+        ->set('pendingDeleteId', $assessment->id);
+
+    $component->call('confirmDelete');
+
+    // Deleted
+    $this->assertDatabaseMissing('assessments', ['id' => $assessment->id]);
+
+    // State reset
+    expect($component->get('pendingDeleteId'))->toBeNull();
+});
+
+
+it('logs and flashes error, and clears state when delete throws an exception', function () {
+    $user = makeAuthUser();
+    actingAs($user);
+    $framework = Framework::factory()->create();
+    $component = Livewire::test(Frameworks::class, [
+        'frameworkId' => $framework->id,
+    ]);
+
+    // Invalid ID to trigger exception
+    $missingId = 999999;
+    $component->set('pendingDeleteId', $missingId);
+
+    Log::spy();
+
+    $component->call('confirmDelete');
+
+    // It should log the error with the expected context keys
+    Log::shouldHaveReceived('error')
+        ->once()
+        ->withArgs(function ($message, $context) use ($missingId) {
+            expect($message)->toBe('Error deleting assessment')
+                ->and($context)->toHaveKeys(['assessment_id', 'message', 'exception'])
+                ->and($context['assessment_id'])->toBe($missingId)
+                ->and($context['exception'])->toBeInstanceOf(Throwable::class);
+            return true;
+        });
+
+    // State reset in finally{}
+    expect($component->get('pendingDeleteId'))->toBeNull();
+});
+
+
+it('redirects to instructions when no previous assessment exists', function () {
+    $user = makeAuthUser();
+    actingAs($user);
+    $framework = Framework::factory()->create();
+
+    // Act: Mount component with a frameworkId
+    $component = Livewire::test(App\Livewire\Frameworks::class, [
+        'frameworkId' => $framework->id,
+    ]);
+
+    // Assert: redirect to the instructions route
+    $component
         ->call('startNewAssessment')
         ->assertRedirect(route('instructions', [
             'frameworkId' => $framework->id,
