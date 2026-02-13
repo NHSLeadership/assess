@@ -9,6 +9,7 @@
 > Updated: 11.02.2026
 1. Adds automated tests around assessment report and questions navigation
 2. Package updates
+3. Signpost title changes in the report
 
 ### v1.0.4
 > Updated: 09.02.2026
