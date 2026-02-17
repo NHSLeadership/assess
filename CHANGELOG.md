@@ -10,6 +10,7 @@
 1. Add Laravel DebugBar
 2. Composer package updates
 3. Optimise report generation
+4. Add favicon for admin panel
 
 ### v1.0.5
 > Updated: 13.02.2026
