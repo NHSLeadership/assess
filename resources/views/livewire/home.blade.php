@@ -1,10 +1,10 @@
 <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
     <div class="nhsuk-grid-column-full">
+        <h1 class="nhsuk-heading-xl">{{ config('app.description') }}</h1>
 
         <div class="nhsuk-grid-row">
-            <div class="nhsuk-grid-column-three-quarters">
+            <div class="nhsuk-grid-column-full">
 
-                <h1 class="nhsuk-heading-xl">{{ config('app.description') }}</h1>
 
                 @if (Auth::check())
                     <p>Welcome back, {{ Auth::user()->name }}!</p>
@@ -22,7 +22,9 @@
                     </div>
                     <p>If you need to update your profile please visit the <a href="https://profile.leadershipacademy.nhs.uk" target="_blank">Academy Profile System</a>,
                 @else
-                    <p>If you already have an Academy Profile</p>
+                    <p>{{ config('app.welcome') }}</p>
+                    <hr>
+                    <p>If you already have an Academy Profile:</p>
 
                     <div class="nhsuk-action-link">
                         <a class="nhsuk-action-link__link" href="{{ route('login') }}">
@@ -35,8 +37,7 @@
                         </a>
                     </div>
 
-                    <p>Alternatively, you can <a href="https://profile.leadershipacademy.nhs.uk/register">register</a>
-                        and create a new Academy profile to start your assessment.</p>
+                    <p>Or register to create a new Academy Profile:</p>
 
                     <div class="nhsuk-action-link">
                         <a class="nhsuk-action-link__link" href="https://profile.leadershipacademy.nhs.uk/register">
