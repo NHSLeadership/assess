@@ -10,17 +10,38 @@ use Illuminate\Support\Collection;
 
 class AssessmentReportService
 {
-    public array $radarOptions = [];
-    public array $radarData = [];
     public array $barCharts = [];
     public string $chartBackgroundColor = '#ccdff1';
     public string $chartBorderColor = '#004281';
+
+
+    private ?Assessment $assessment;
+    private ?Collection $nodes;
+    private ?Rater $rater;
+
 
     public function __construct(
         public int $frameworkId,
         public int $assessmentId
     )
     {
+
+        $this->assessment = Assessment::with([
+            'responses.question.node',
+            'responses.scaleOption',
+            'framework.variantAttributes.options'
+        ])->findOrFail($assessmentId);
+
+        $this->nodes = Node::where('framework_id', $frameworkId)
+            ->orderBy('order')
+            ->orderBy('id')
+            ->get();
+
+        $this->rater = Rater::with('assessments')
+            ->where('user_id', auth()->id())
+            ->whereHas('assessments', fn($q) => $q->where('assessments.id', $assessmentId))
+            ->first();
+
     }
 
     public function framework(): ?Framework
@@ -30,20 +51,17 @@ class AssessmentReportService
 
     public function nodes(): Collection
     {
-        return Node::where('framework_id', $this->frameworkId)
-            ->orderBy('order')
-            ->orderBy('id')
-            ->get();
+        return $this->nodes;
     }
 
     public function assessment(): ?Assessment
     {
-        return Assessment::find($this->assessmentId);
+        return $this->assessment;
     }
 
     public function responses(): ?Collection
     {
-        return $this->assessment()?->responses()->get();
+        return $this->assessment->responses;
     }
 
     public function scaleOptions(): array
@@ -53,9 +71,7 @@ class AssessmentReportService
 
     public function rater(): ?Rater
     {
-        return Rater::where('user_id', auth()->id())
-            ->whereHas('assessments', fn($q) => $q->where('assessments.id', $this->assessmentId))
-            ->first();
+        return $this->rater;
     }
 
     public function variantAttributeLabel($key = 'stage')
