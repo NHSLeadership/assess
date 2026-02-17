@@ -9,6 +9,7 @@
 /public/build
 /storage/*.key
 /storage/framework/views
+/storage/debugbar
 /vendor
 /coverage
 /public/coverage

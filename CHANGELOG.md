@@ -8,6 +8,7 @@
 ### v1.0.6
 > Updated: 17.02.2026
 1. Add Laravel DebugBar
+2. Composer package updates
 
 ### v1.0.5
 > Updated: 13.02.2026
