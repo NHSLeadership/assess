@@ -74,16 +74,10 @@ class AssessmentReportService
         return $this->rater;
     }
 
-    public function variantAttributeLabel($key = 'stage')
+    public function variantAttributeLabel()
     {
-        $stageAttribute = $this->assessment()->framework
-            ->variantAttributes()
-            ->where('key', 'stage')
-            ->with('options')
-            ->first();
-        $stageOptions = $stageAttribute?->options ?? collect();
-        return $stageOptions?->first()?->label;
-
+        //@TODO: this currently assumes only one variant selection per assessment (stage)
+        return $this->assessment()->variantSelections->first()->option->label ?? null;
     }
 
     /* ---------------------------------------------------------

@@ -11,6 +11,8 @@
 2. Composer package updates
 3. Optimise report generation
 4. Add favicon for admin panel
+5. Fix career stage label in report
+6. Improve landing page
 
 ### v1.0.5
 > Updated: 13.02.2026
