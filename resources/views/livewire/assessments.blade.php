@@ -54,8 +54,14 @@
 
                 <p>{!! $currentNode->description ?? $node->description ?? '' !!}</p>
 
-                @livewire('questions', ['assessmentId' => $this->assessmentId, 'nodeId' => $this->nodeId, 'edit' => $this->edit ?? null])
-            @endforeach
+                <livewire:questions
+                        :assessmentId="$this->assessmentId"
+                        :nodeId="$this->nodeId"
+                        :edit="$this->edit ?? null"
+                        :wire:key="'questions-assessment-' . $this->assessmentId"
+                />
+
+    @endforeach
 
             <hr class="nhsuk-u-margin-top-1">
 

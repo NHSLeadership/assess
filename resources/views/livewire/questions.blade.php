@@ -3,56 +3,52 @@
         @if (!empty($questions))
             <form wire:submit.prevent="storeNext()">
                 @foreach ($questions as $question)
-{{--                    <h2 class="nhsuk-heading-m">--}}
-{{--                        <span class="nhsuk-tag--{{ $question->node->colour ?? 'blue' }} nhsuk-tag--no-border nhsuk-u-padding-2">--}}
-{{--                          {!! $question->node?->parent?->name ?? '' !!} >  {!! $question->node->name ?? '' !!}--}}
-{{--                        </span>--}}
-{{--                    </h2>--}}
+                    <div wire:key="question-{{ $question->id }}">
+                        {{-- Render each component based on type and it's properties --}}
+                        @component('components.form.' . $question['component'], [
+                            'name' => $question['name'] ? 'data.' . $question['name'] : null,
+                            'class' => $question['class'] ?? null,
+                            'options_list' => $this->buildScaleOptions($question),
+                            'type' => $question['type'] ?? null,
+                            'descriptions' => [
+                                $question['text'] ?? null,
+                                \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $question['id']) ?? $question['hint']
+                             ]
 
-                    {{-- Render each component based on type and it's properties --}}
-                    @component('components.form.' . $question['component'], [
-                        'name' => $question['name'] ? 'data.' . $question['name'] : null,
-                        'class' => $question['class'] ?? null,
-                        'options_list' => $this->buildScaleOptions($question),
-                        'type' => $question['type'] ?? null,
-                        'descriptions' => [
-                            $question['text'] ?? null,
-                            \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $question['id']) ?? $question['hint']
-                         ]
-
-                    ])
-                        @slot('label')
-                            <span class="nhsuk-u-visually-hidden">Competency {{ $question->id }}</span>
-                            @php
-                                $title = trim($question['title'] ?? '');
-                                $nodeTitle = trim($question->node->name ?? '');
-                                $showTitle = strcasecmp($title, $nodeTitle) !== 0 && $title !== '';
-                            @endphp
-                            {!!
-                                $this->getQuestionProgressLabel($question['id'] ?? null)
-                                . ($showTitle ? ': ' . $title : '')
-                            !!}
-                            @if(! $question['required'] )
-                                <span class="nhsuk-tag">Optional</span>
-                            @endif
-                        @endslot
-                    @endcomponent
-                    <hr class="nhsuk-u-margin-top-0">
-                    @if($question['component'] === \App\Enums\ResponseType::TYPE_SCALE->component())
-                        @component('components.form.textarea', [
-                            'name' => $question['reflection'] ? 'data.' . $question['reflection'] : null,
-                            'class' => 'nhsuk-u-margin-bottom-0',
                         ])
                             @slot('label')
-                                <span class="nhsuk-u-visually-hidden">Reflection {{ $question['id'] }}</span>
-                                {!! __('pages.questions.reflection-label') !!}
-                                <span class="nhsuk-tag">Optional</span>
-                            @endslot
-                            @slot('hint')
+                                <span class="nhsuk-u-visually-hidden">Competency {{ $question->id }}</span>
+                                @php
+                                    $title = trim($question['title'] ?? '');
+                                    $nodeTitle = trim($question->node->name ?? '');
+                                    $showTitle = strcasecmp($title, $nodeTitle) !== 0 && $title !== '';
+                                @endphp
+                                {!!
+                                    $this->getQuestionProgressLabel($question['id'] ?? null)
+                                    . ($showTitle ? ': ' . $title : '')
+                                !!}
+                                @if(! $question['required'] )
+                                    <span class="nhsuk-tag">Optional</span>
+                                @endif
                             @endslot
                         @endcomponent
-                    @endif
-                    <hr class="nhsuk-u-margin-top-0">
+                        <hr class="nhsuk-u-margin-top-0">
+                        @if($question['component'] === \App\Enums\ResponseType::TYPE_SCALE->component())
+                            @component('components.form.textarea', [
+                                'name' => $question['reflection'] ? 'data.' . $question['reflection'] : null,
+                                'class' => 'nhsuk-u-margin-bottom-0',
+                            ])
+                                @slot('label')
+                                    <span class="nhsuk-u-visually-hidden">Reflection {{ $question['id'] }}</span>
+                                    {!! __('pages.questions.reflection-label') !!}
+                                    <span class="nhsuk-tag">Optional</span>
+                                @endslot
+                                @slot('hint')
+                                @endslot
+                            @endcomponent
+                        @endif
+                        <hr class="nhsuk-u-margin-top-0">
+                    </div>
                 @endforeach
 
                 @if ($this->responses?->count())
