@@ -8,6 +8,8 @@
 ### v1.0.7
 > Updated: 23.02.2026
 1. Improve assessment navigation so “Save and continue” advances consistently on the first click.
+2. Composer package updates
+3. Add migration for settings tables
 
 ### v1.0.6
 > Updated: 17.02.2026
