@@ -1,7 +1,7 @@
 <footer class="nhsuk-footer" role="contentinfo">
     <div class="nhsuk-width-container">
         <div class="nhsuk-footer__meta">
-            <h2 class="nhsuk-u-visually-hidden">Support links</h2>
+            <h2 style="display:none">Support links</h2>
 
             <ul class="nhsuk-footer__list">
                 <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
@@ -18,7 +18,7 @@
                 </li>
             </ul>
             <p class="nhsuk-body-s">
-                {{ config('app.footer_copyright_text') }} <span class="nhsuk-u-visually-hidden">v<?php echo config('app.version'); ?></span>
+                {{ config('app.footer_copyright_text') }} <span style="display:none">v<?php echo config('app.version'); ?></span>
             </p>
         </div>
     </div>

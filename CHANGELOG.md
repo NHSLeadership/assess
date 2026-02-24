@@ -11,6 +11,7 @@
 2. Composer package updates
 3. Add migration for settings tables
 4. Change guidance title in PDF report
+5. Add header and footer to dashboard
 
 ### v1.0.6
 > Updated: 17.02.2026
