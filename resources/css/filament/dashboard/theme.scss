@@ -8,3 +8,8 @@
 
 @import '/resources/sass/nhs-colours.scss';
 @import '/resources/sass/nhs-additional.scss';
+
+/* Remove empty sidebar header when topbar + user menu are disabled */
+.fi-sidebar-header {
+  display: none;
+}
