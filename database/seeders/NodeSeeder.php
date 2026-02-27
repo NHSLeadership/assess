@@ -15,7 +15,7 @@ class NodeSeeder extends Seeder
         $nodes = [
             [
                 'framework_id' => 1,
-                'parent_id' => null,
+                'parent_id' => -1,
                 'node_type_id' => 1,  // Area
                 'name' => 'Personal impact',
                 'description' => null,
@@ -132,7 +132,7 @@ class NodeSeeder extends Seeder
                     ],
             [
                 'framework_id' => 1,
-                'parent_id' => null,
+                'parent_id' => -1,
                 'node_type_id' => 1,  // Area
                 'name' => 'Managing people and resources',
                 'description' => null,
@@ -249,7 +249,7 @@ class NodeSeeder extends Seeder
                     ],
             [
                 'framework_id' => 1,
-                'parent_id' => null,
+                'parent_id' => -1,
                 'node_type_id' => 1,  // Area
                 'name' => 'Delivering across health and care',
                 'description' => null,

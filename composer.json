@@ -16,6 +16,7 @@
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "livewire/volt": "^1.7.0",
+        "solution-forest/filament-tree": "^4.0",
         "symfony/yaml": "^7.3"
     },
     "require-dev": {

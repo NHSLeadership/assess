@@ -8,6 +8,11 @@
 @import '/resources/sass/nhs-colours.scss';
 @import '/node_modules/nhsuk-frontend/src/nhsuk/core/utilities/_visually-hidden.scss';
 
+@import '/vendor/solution-forest/filament-tree/resources/css/jquery.nestable.css';
+@import '/vendor/solution-forest/filament-tree/resources/css/button.css';
+@import '/vendor/solution-forest/filament-tree/resources/css/custom-nestable-item.css';
+@source '/vendor/solution-forest/filament-tree/resources/**/*.blade.php';
+
 /* Remove empty sidebar header when topbar + user menu are disabled */
 .fi-sidebar-header {
   display: none;
