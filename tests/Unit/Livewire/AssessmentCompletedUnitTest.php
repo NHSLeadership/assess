@@ -1,7 +1,5 @@
 <?php
 
-uses(Tests\TestCase::class);
-
 use App\Livewire\AssessmentCompleted;
 use Livewire\Livewire;
 

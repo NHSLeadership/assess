@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use Filament\Actions\Action;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;

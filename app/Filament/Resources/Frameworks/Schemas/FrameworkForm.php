@@ -6,6 +6,7 @@ use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\CodeEditor\Enums\Language;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
 
@@ -25,6 +26,8 @@ class FrameworkForm
                     ->required(),
                 RichEditor::make('description')
                     ->required()
+                    ->columnSpanFull(),
+                View::make('filament.frameworks.node-tree')
                     ->columnSpanFull(),
                 RichEditor::make('instructions')
                     ->columnSpanFull(),
