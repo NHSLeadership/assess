@@ -37,7 +37,7 @@ class FrameworkResource extends Resource
     public static function getRelations(): array
     {
         return [
-            'nodes' => NodesRelationManager::class,
+//            'nodes' => NodesRelationManager::class,
             'variants' => VariantAttributesRelationManager::class,
         ];
     }

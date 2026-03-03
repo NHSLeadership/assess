@@ -2,15 +2,13 @@
 
 namespace App\Filament\Resources\Frameworks\Widgets;
 
-use App\Enums\NodeColour;
+use App\Filament\Resources\Frameworks\Resources\Nodes\NodeResource;
 use App\Models\Node;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ToggleButtons;
 use Illuminate\Database\Eloquent\Model;
 use SolutionForest\FilamentTree\Actions\CreateAction;
+use SolutionForest\FilamentTree\Actions\DeleteAction;
 use SolutionForest\FilamentTree\Widgets\Tree;
+use SolutionForest\FilamentTree\Actions\EditAction;
 
 class NodeTreeWidget extends Tree
 {
@@ -27,28 +25,6 @@ class NodeTreeWidget extends Tree
         return true;
     }
 
-    protected function getFormSchema(): array
-    {
-        return [
-            Select::make('node_type_id')
-                ->relationship('type', 'name')
-                ->createOptionForm([
-                    TextInput::make('name')
-                        ->required(),
-                ])
-                ->required(),
-            TextInput::make('name')
-                ->required(),
-            ToggleButtons::make('colour')
-                ->inline()
-                ->options(NodeColour::options())
-                ->colors(NodeColour::colours())
-                ->required(),
-            RichEditor::make('description')
-                ->columnSpanFull(),
-        ];
-    }
-
     protected function getTreeToolbarActions(): array
     {
         return [
@@ -56,18 +32,31 @@ class NodeTreeWidget extends Tree
         ];
     }
 
-    protected function hasDeleteAction(): bool
-    {
-        return true;
-    }
-
     protected function hasEditAction(): bool
     {
         return true;
     }
 
-    protected function hasViewAction(): bool
+    protected function configureEditAction(EditAction $action): EditAction
+    {
+        return $action
+            ->icon('heroicon-o-pencil-square')
+            ->link()
+            ->url(fn (Node $record) => NodeResource::getUrl('edit', [
+                'framework' => $record->framework,
+                'record'    => $record,
+            ]));
+    }
+
+    protected function hasDeleteAction(): bool
     {
         return true;
+    }
+
+    protected function configureDeleteAction(DeleteAction $action): DeleteAction
+    {
+        return $action
+            ->icon('heroicon-o-trash')
+            ->link();
     }
 }
