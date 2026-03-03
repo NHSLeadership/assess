@@ -11,6 +11,7 @@ use App\Filament\Resources\Frameworks\Resources\Nodes\Schemas\NodeForm;
 use App\Filament\Resources\Frameworks\Resources\Nodes\Tables\NodesTable;
 use App\Models\Node;
 use BackedEnum;
+use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -37,8 +38,10 @@ class NodeResource extends Resource
     public static function getRelations(): array
     {
         return [
-            QuestionsRelationManager::class,
-            SignpostsRelationManager::class,
+            RelationGroup::make('Node content', [
+                QuestionsRelationManager::class,
+                SignpostsRelationManager::class,
+            ]),
         ];
     }
 

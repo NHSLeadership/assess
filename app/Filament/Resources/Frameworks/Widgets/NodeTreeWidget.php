@@ -14,6 +14,8 @@ class NodeTreeWidget extends Tree
 {
     protected static string $model = Node::class;
 
+    public ?Model $record = null;
+
     protected static int $maxDepth = 5;
 
     protected ?string $treeTitle = 'Nodes';
@@ -28,7 +30,11 @@ class NodeTreeWidget extends Tree
     protected function getTreeToolbarActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->button()
+                ->url(fn () => NodeResource::getUrl('create', [
+                    'framework' => $this->record?->getKey(),
+                ])),
         ];
     }
 
