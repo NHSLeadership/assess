@@ -82,11 +82,11 @@ return new class extends Migration
         DB::statement('UPDATE nodes SET parent_id_new = COALESCE(parent_id, -1);');
 
         Schema::table('nodes', function (Blueprint $table) {
+            $table->dropForeign(['parent_id']);
             $table->renameColumn('parent_id', 'parent_id_old');
             $table->renameColumn('parent_id_new', 'parent_id');
             $table->dropIndex('nodes_framework_id_parent_id_order_index');
             $table->index(['framework_id', 'parent_id', 'order'], 'nodes_framework_id_parent_id_order_index');
-            $table->dropForeign(['parent_id_old']);
             $table->dropColumn('parent_id_old');
         });
 
