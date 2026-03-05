@@ -83,6 +83,7 @@ return new class extends Migration
 
         Schema::table('nodes', function (Blueprint $table) {
             $table->dropForeign(['parent_id']);
+            $table->dropForeign(['framework_id']);
             $table->renameColumn('parent_id', 'parent_id_old');
             $table->renameColumn('parent_id_new', 'parent_id');
             $table->dropIndex('nodes_framework_id_parent_id_order_index');
