@@ -100,10 +100,48 @@ return new class extends Migration
     public function down(): void
     {
         $this->dropViews();
+
         Schema::table('nodes', function (Blueprint $table) {
-            $table->integer('parent_id')->nullable()->change();
+            $table->integer('parent_id_old')->nullable()->after('parent_id');
         });
-        DB::statement('UPDATE nodes SET parent_id = null WHERE parent_id = -1;');
+
+        DB::statement('
+        UPDATE nodes
+        SET parent_id_old = CASE
+            WHEN parent_id = -1 THEN NULL
+            ELSE parent_id
+        END
+    ');
+
+        Schema::table('nodes', function (Blueprint $table) {
+            $table->dropIndex('nodes_framework_id_parent_id_order_index');
+        });
+
+        Schema::table('nodes', function (Blueprint $table) {
+            $table->renameColumn('parent_id', 'parent_id_new');
+            $table->renameColumn('parent_id_old', 'parent_id');
+            $table->dropColumn('parent_id_new');
+        });
+
+        Schema::table('nodes', function (Blueprint $table) {
+            $table->index(
+                ['framework_id', 'parent_id', 'order'],
+                'nodes_framework_id_parent_id_order_index'
+            );
+        });
+
+        Schema::table('nodes', function (Blueprint $table) {
+            $table->foreign('parent_id')
+                ->references('id')
+                ->on('nodes')
+                ->nullOnDelete();
+
+            $table->foreign('framework_id')
+                ->references('id')
+                ->on('frameworks')
+                ->cascadeOnDelete();
+        });
+
         $this->createViews();
     }
 };
