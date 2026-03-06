@@ -102,16 +102,16 @@ return new class extends Migration
         $this->dropViews();
 
         Schema::table('nodes', function (Blueprint $table) {
-            $table->integer('parent_id_old')->nullable()->after('parent_id');
+            $table->unsignedBigInteger('parent_id_old')->nullable()->after('parent_id');
         });
 
-        DB::statement('
-        UPDATE nodes
-        SET parent_id_old = CASE
-            WHEN parent_id = -1 THEN NULL
-            ELSE parent_id
-        END
-    ');
+        DB::statement("
+            UPDATE `nodes`
+            SET `parent_id_old` = CASE
+                WHEN `parent_id` = -1 THEN NULL
+                ELSE `parent_id`
+            END
+        ");
 
         Schema::table('nodes', function (Blueprint $table) {
             $table->dropIndex('nodes_framework_id_parent_id_order_index');
@@ -129,6 +129,8 @@ return new class extends Migration
                 'nodes_framework_id_parent_id_order_index'
             );
         });
+
+        DB::statement("ALTER TABLE `nodes` MODIFY `parent_id` BIGINT UNSIGNED NULL");
 
         Schema::table('nodes', function (Blueprint $table) {
             $table->foreign('parent_id')
