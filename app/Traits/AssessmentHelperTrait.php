@@ -5,6 +5,8 @@ namespace App\Traits;
 use App\Models\Assessment;
 use App\Models\Framework;
 use App\Models\Node;
+use App\Models\Response;
+use App\Services\FrameworkTraversalService;
 use Illuminate\Http\RedirectResponse;
 use Livewire\Attributes\Computed;
 use Livewire\Features\SupportRedirects\Redirector;
@@ -84,50 +86,68 @@ trait AssessmentHelperTrait
      * @param bool $firstUnanswered
      * @return Node|null
      */
-    public function getAssessmentResumeNode(?int $assessmentId = null, bool $next = true, bool $firstUnanswered = true ): ?Node
-    {
 
-        if ($next) {
-            if ($firstUnanswered) {
-                return Node::with(['questions' => function ($q) {
-                    $q->where('active', true);
-                }])
-                    ->whereHas('questions', function ($q) use ($assessmentId) {
-                        $q->where('active', true)
-                            ->whereDoesntHave('responses', function ($r) use ($assessmentId) {
-                                $r->where('assessment_id', $assessmentId);
-                            });
-                    })
-                    ->orderBy('order')
-                    ->first();
-            }
-            // First unanswered and required question's node
-            return Node::with(['questions' => function ($q) {
-                $q->where('active', true);
-            }])
-                ->whereHas('questions', function ($q) use ($assessmentId) {
-                    $q->where('active', true)
-                        ->where('required', 1)
-                        ->whereDoesntHave('responses', function ($r) use ($assessmentId) {
-                            $r->where('assessment_id', $assessmentId);
-                        });
-                })
-                ->orderBy('order')
-                ->first();
+    public function getAssessmentResumeNode(?int $assessmentId = null, bool $next = true, bool $firstUnanswered = true): ?Node
+    {
+        if (! $assessmentId) {
+            return null;
         }
 
-        // Last answered node
-        return Node::with(['questions' => function ($q) {
-            $q->where('active', true);
-        }])
-            ->whereHas('questions', function ($q) use ($assessmentId) {
-                $q->where('active', true)
-                    ->whereHas('responses', function ($r) use ($assessmentId) {
-                        $r->where('assessment_id', $assessmentId);
-                    });
-            })
-            ->orderBy('order', 'desc')
-            ->first();
+        $assessment = $this->assessment();
+        if (! $assessment) {
+            return null;
+        }
+
+        $frameworkId = $assessment->framework_id;
+
+        $raterId = $this->loggedInRater($assessment)?->id;
+
+        $answeredQuestionIds = Response::query()
+            ->where('assessment_id', $assessmentId)
+            ->when($raterId, fn ($q) => $q->where('rater_id', $raterId))
+            ->pluck('question_id')
+            ->all();
+
+        $nodes = app(FrameworkTraversalService::class)
+            ->orderedNodes($frameworkId, depth: 3, withQuestions: true, activeOnly: true);
+
+        if ($next) {
+            foreach ($nodes as $node) {
+                if (! $node->relationLoaded('questions') || $node->questions->isEmpty()) {
+                    continue;
+                }
+
+                $unanswered = $node->questions->reject(
+                    fn ($q) => in_array($q->id, $answeredQuestionIds, true)
+                );
+
+                if ($firstUnanswered) {
+                    if ($unanswered->isNotEmpty()) {
+                        return $node;
+                    }
+                } else {
+                    if ($unanswered->where('required', true)->isNotEmpty()) {
+                        return $node;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        // last answered node
+        $lastAnswered = null;
+        foreach ($nodes as $node) {
+            if (! $node->relationLoaded('questions') || $node->questions->isEmpty()) {
+                continue;
+            }
+
+            if ($node->questions->contains(fn ($q) => in_array($q->id, $answeredQuestionIds, true))) {
+                $lastAnswered = $node;
+            }
+        }
+
+        return $lastAnswered;
     }
 
     #[Computed]
@@ -204,7 +224,6 @@ trait AssessmentHelperTrait
             ->addMonths($months)
             ->isPast();
     }
-
 
     public function getLatestAssessmentForFramework(int $frameworkId): ?Assessment
     {

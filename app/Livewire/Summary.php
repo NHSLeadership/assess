@@ -2,16 +2,12 @@
 
 namespace App\Livewire;
 
-use App\Models\Assessment;
 use App\Models\Framework;
-use App\Models\FrameworkVariantAttribute;
 use App\Models\Node;
 use App\Models\Rater;
-use App\Notifications\AssessmentCompleted as AssessmentCompletedNotification;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
 use Illuminate\Support\Collection;
-use League\Csv\Exception;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
@@ -59,10 +55,21 @@ class Summary extends Component
     #[Computed]
     public function nodes(): ?Collection
     {
-        return Node::where('framework_id', $this->frameworkId)->orderBy('order')->orderBy('id')->get();
-        //return Node::where('framework_id', $this->frameworkId)->orderByRaw('coalesce(parent_id, id), `order`')->orderBy('order')->get();
+        return Node::where('framework_id', $this->frameworkId)->orderBy('parent_id')->orderBy('order')->orderBy('id')->get();
     }
 
+    #[Computed]
+    public function rootNodes(): Collection
+    {
+        return Node::where('framework_id', $this->frameworkId)
+            ->whereNull('parent_id')
+            ->orderBy('order')
+            ->with([
+                'children' => fn ($q) => $q->orderBy('order'),
+                'children.children' => fn ($q) => $q->orderBy('order'),
+            ])
+            ->get();
+    }
 
     #[Computed]
     public function responses(): ?Collection

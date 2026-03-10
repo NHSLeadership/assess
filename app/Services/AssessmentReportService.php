@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Assessment;
 use App\Models\Framework;
 use App\Models\Node;
-use App\Models\Assessment;
 use App\Models\Rater;
 use Illuminate\Support\Collection;
 
@@ -14,34 +14,40 @@ class AssessmentReportService
     public string $chartBackgroundColor = '#ccdff1';
     public string $chartBorderColor = '#004281';
 
-
-    private ?Assessment $assessment;
-    private ?Collection $nodes;
+    private Assessment $assessment;
+    private Collection $nodes;
     private ?Rater $rater;
 
+    private FrameworkTraversalService $traversal;
 
     public function __construct(
         public int $frameworkId,
         public int $assessmentId
-    )
-    {
+    ) {
+        $this->traversal = app(FrameworkTraversalService::class);
 
         $this->assessment = Assessment::with([
             'responses.question.node',
             'responses.scaleOption',
-            'framework.variantAttributes.options'
+            'framework.variantAttributes.options',
+            'variantSelections.option',
         ])->findOrFail($assessmentId);
 
-        $this->nodes = Node::where('framework_id', $frameworkId)
-            ->orderBy('order')
-            ->orderBy('id')
-            ->get();
+        $this->nodes = $this->traversal->orderedNodes(
+            frameworkId: $frameworkId,
+            depth: config('app.framework_node_depth'),
+            withQuestions: true,
+                activeOnly: true
+        );
+
+        // Prefer Academy ID style user_id if present
+        $user = auth()->user();
+        $userId = $user?->user_id ?? $user?->id;
 
         $this->rater = Rater::with('assessments')
-            ->where('user_id', auth()->id())
-            ->whereHas('assessments', fn($q) => $q->where('assessments.id', $assessmentId))
+            ->where('user_id', $userId)
+            ->whereHas('assessments', fn ($q) => $q->where('assessments.id', $assessmentId))
             ->first();
-
     }
 
     public function framework(): ?Framework
@@ -54,19 +60,14 @@ class AssessmentReportService
         return $this->nodes;
     }
 
-    public function assessment(): ?Assessment
+    public function assessment(): Assessment
     {
         return $this->assessment;
     }
 
-    public function responses(): ?Collection
+    public function responses(): Collection
     {
         return $this->assessment->responses;
-    }
-
-    public function scaleOptions(): array
-    {
-        return \App\Models\ScaleOption::orderBy('value')->pluck('label', 'value')->toArray();
     }
 
     public function rater(): ?Rater
@@ -74,22 +75,28 @@ class AssessmentReportService
         return $this->rater;
     }
 
-    public function variantAttributeLabel()
+    public function scaleOptions(): array
     {
-        //@TODO: this currently assumes only one variant selection per assessment (stage)
-        return $this->assessment()->variantSelections->first()->option->label ?? null;
+        return \App\Models\ScaleOption::orderBy('value')->pluck('label', 'value')->toArray();
+    }
+
+    public function variantAttributeLabel(): ?string
+    {
+        // Assumes one variant selection per assessment
+        return $this->assessment->variantSelections?->first()?->option?->label;
     }
 
     /* ---------------------------------------------------------
-       BAR CHARTS
+       BAR CHARTS (standard-level averages per area)
     --------------------------------------------------------- */
     public function barCharts(): array
     {
-        $areas = $this->nodes()->whereNull('parent_id');
+        $areas = $this->nodes()
+            ->filter(fn (Node $n) => $n->parent_id === null)
+            ->values();
 
         foreach ($areas as $area) {
-
-            $standards = $this->nodes()->filter(fn($n) => $n->parent_id === $area->id);
+            $standards = $area->children ?? collect();
 
             if ($standards->isEmpty()) {
                 continue;
@@ -99,17 +106,17 @@ class AssessmentReportService
             $values = [];
 
             foreach ($standards as $standard) {
-
-                $leafNodes = $this->nodes()->filter(fn($n) => $n->children->count() === 0 &&
-                    $n->parent_id === $standard->id
-                );
+                $leafNodes = $this->descendantLeafNodes($standard);
 
                 if ($leafNodes->isEmpty()) {
                     continue;
                 }
 
-                $scaleResponses = $this->responses()->filter(fn($r) => $leafNodes->pluck('id')->contains($r->question->node_id) &&
-                    $r->question->response_type === \App\Enums\ResponseType::TYPE_SCALE->value
+                $leafIds = $leafNodes->pluck('id')->all();
+
+                $scaleResponses = $this->responses()->filter(fn ($r) =>
+                    in_array($r->question?->node_id, $leafIds, true) &&
+                    $r->question?->response_type === \App\Enums\ResponseType::TYPE_SCALE->value
                 );
 
                 if ($scaleResponses->isEmpty()) {
@@ -117,7 +124,7 @@ class AssessmentReportService
                 }
 
                 $avg = round(
-                    $scaleResponses->avg(fn($r) => (int)($r->scaleOption->value ?? 0)),
+                    $scaleResponses->avg(fn ($r) => (int) ($r->scaleOption?->value ?? 0)),
                     2
                 );
 
@@ -159,16 +166,18 @@ class AssessmentReportService
     }
 
     /* ---------------------------------------------------------
-       BAR CHART - COMPETENCY LEVELS
+       BAR CHART - COMPETENCY LEVELS (leaf scores per area)
     --------------------------------------------------------- */
     public function barChartsCompetency(): array
     {
-        $areas = $this->nodes()->whereNull('parent_id');
+        $areas = $this->nodes()
+            ->filter(fn (Node $n) => $n->parent_id === null)
+            ->values();
+
         $charts = [];
 
         foreach ($areas as $area) {
-
-            $standards = $this->nodes()->filter(fn($n) => $n->parent_id === $area->id);
+            $standards = $area->children ?? collect();
 
             if ($standards->isEmpty()) {
                 continue;
@@ -178,25 +187,20 @@ class AssessmentReportService
             $values = [];
 
             foreach ($standards as $standard) {
-
-                $leafNodes = $this->nodes()->filter(fn($n) =>
-                    $n->children->count() === 0 &&
-                    $n->parent_id === $standard->id
-                );
+                $leafNodes = $this->descendantLeafNodes($standard);
 
                 foreach ($leafNodes as $leaf) {
-
-                    $response = $this->responses()->first(fn($r) =>
-                        $r->question->node_id === $leaf->id &&
-                        $r->question->response_type === \App\Enums\ResponseType::TYPE_SCALE->value
+                    $response = $this->responses()->first(fn ($r) =>
+                        $r->question?->node_id === $leaf->id &&
+                        $r->question?->response_type === \App\Enums\ResponseType::TYPE_SCALE->value
                     );
 
-                    if (!$response) {
+                    if (! $response) {
                         continue;
                     }
 
                     $labels[] = $leaf->name;
-                    $values[] = (int)($response->scaleOption->value ?? 0);
+                    $values[] = (int) ($response->scaleOption?->value ?? 0);
                 }
             }
 
@@ -218,7 +222,6 @@ class AssessmentReportService
                         'backgroundColor' => $this->chartBackgroundColor,
                         'borderColor' => $this->chartBorderColor,
                         'borderWidth' => 1,
-                        //'barThickness' => 20,
                     ]],
                 ],
                 'options' => [
@@ -236,20 +239,11 @@ class AssessmentReportService
         return $charts;
     }
 
-
     /* ---------------------------------------------------------
        RADAR CHART
     --------------------------------------------------------- */
-
-    /**
-     * Generate a radar chart with one data point per standard
-     *
-     * @param bool $useScaleLabels
-     * @return array
-     */
     public function radarChart(bool $useScaleLabels = true): array
     {
-        // Ensure bar charts are generated
         if (empty($this->barCharts)) {
             $this->barCharts();
         }
@@ -259,6 +253,7 @@ class AssessmentReportService
 
         $scaleOptions = $this->scaleOptions();
         $scaleOptionsModified = array_values($scaleOptions);
+
         $callback = $useScaleLabels
             ? "function(value, index, values) {
                 const labels = " . json_encode($scaleOptionsModified) . ";
@@ -267,7 +262,6 @@ class AssessmentReportService
             : null;
 
         foreach ($this->barCharts as $chart) {
-            // Each bar chart has multiple labels and values
             foreach ($chart['data']['labels'] as $i => $label) {
                 $labels[] = $this->wrapLabel($label);
                 $values[] = $chart['data']['datasets'][0]['data'][$i];
@@ -284,7 +278,7 @@ class AssessmentReportService
                     'borderColor' => $this->chartBorderColor,
                     'pointBackgroundColor' => '#4F46E5',
                     'borderWidth' => 2,
-                ]]
+                ]],
             ],
             'options' => [
                 'min' => 1,
@@ -293,12 +287,12 @@ class AssessmentReportService
                 'pointLabelsColor' => '#212b32',
                 'legendLabelsColor' => '#212b32',
                 'callback' => $callback,
-                'tickLabels' => $scaleOptions
+                'tickLabels' => $scaleOptions,
             ],
         ];
     }
 
-    function wrapLabel($label, $maxLength = 12)
+    public function wrapLabel(string $label, int $maxLength = 12): array
     {
         $words = explode(' ', $label);
         $lines = [];
@@ -319,31 +313,24 @@ class AssessmentReportService
         return $lines;
     }
 
-    private function descendantLeafNodes(Node $node): \Illuminate\Support\Collection
+    private function descendantLeafNodes(Node $node): Collection
     {
-        $all = $this->nodes();
-        // build map: parent_id => [nodes]
-        $childrenMap = [];
-        foreach ($all as $n) {
-            $childrenMap[$n->parent_id ?? 0][] = $n;
-        }
-
-        $stack = [$node];
         $leaves = collect();
 
-        while (!empty($stack)) {
-            /** @var Node $current */
-            $current = array_pop($stack);
-            $children = $childrenMap[$current->id] ?? [];
+        $walk = function (Node $current) use (&$walk, &$leaves) {
+            $children = $current->children ?? collect();
 
-            if (empty($children)) {
+            if ($children->isEmpty()) {
                 $leaves->push($current);
-            } else {
-                foreach ($children as $child) {
-                    $stack[] = $child;
-                }
+                return;
             }
-        }
+
+            foreach ($children as $child) {
+                $walk($child);
+            }
+        };
+
+        $walk($node);
 
         return $leaves;
     }
@@ -356,11 +343,11 @@ class AssessmentReportService
             return null;
         }
 
-        $leafIds = $leafNodes->pluck('id')->toArray();
+        $leafIds = $leafNodes->pluck('id')->all();
 
-        $scaleResponses = $this->responses()->filter(fn($r) =>
-            in_array($r->question->node_id, $leafIds, true) &&
-            $r->question->response_type === \App\Enums\ResponseType::TYPE_SCALE->value
+        $scaleResponses = $this->responses()->filter(fn ($r) =>
+            in_array($r->question?->node_id, $leafIds, true) &&
+            $r->question?->response_type === \App\Enums\ResponseType::TYPE_SCALE->value
         );
 
         if ($scaleResponses->isEmpty()) {
@@ -368,7 +355,7 @@ class AssessmentReportService
         }
 
         return round(
-            $scaleResponses->avg(fn($r) => (int)($r->scaleOption->value ?? 0)),
+            $scaleResponses->avg(fn ($r) => (int) ($r->scaleOption?->value ?? 0)),
             1
         );
     }
@@ -376,12 +363,13 @@ class AssessmentReportService
     public function signpostsForNode(Node $node): array
     {
         $avg = $this->averageForNode($node);
+
         if ($avg === null) {
             return [];
         }
 
-        $selectedOptionIds = $this->assessment()?->variantSelections()
-            ? $this->assessment()->variantSelections()->pluck('framework_variant_option_id')->toArray()
+        $selectedOptionIds = $this->assessment->variantSelections()
+            ? $this->assessment->variantSelections()->pluck('framework_variant_option_id')->toArray()
             : [];
 
         $query = \App\Models\Signpost::query()
@@ -391,7 +379,7 @@ class AssessmentReportService
             ->orderBy('min_value')
             ->orderBy('max_value');
 
-        if (!empty($selectedOptionIds)) {
+        if (! empty($selectedOptionIds)) {
             $query->where(function ($q) use ($selectedOptionIds) {
                 $q->whereNull('framework_variant_option_id')
                     ->orWhereIn('framework_variant_option_id', $selectedOptionIds);
@@ -400,7 +388,6 @@ class AssessmentReportService
             $query->whereNull('framework_variant_option_id');
         }
 
-        // return array of Signpost models for this specific node
         return $query->get()->all();
     }
 }

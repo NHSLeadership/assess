@@ -3,23 +3,20 @@
 namespace App\Livewire;
 
 use App\Enums\ResponseType;
-use App\Models\AssessmentRater;
 use App\Models\Node;
-use App\Models\Assessment;
 use App\Models\Rater;
 use App\Models\Response;
 use App\Services\UserResponseService;
+use App\Traits\AssessmentHelperTrait;
 use App\Traits\FormFieldValidationRulesTrait;
 use App\Traits\UserTrait;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
-use Livewire\WithoutUrlPagination;
 use Livewire\WithPagination;
-use App\Traits\AssessmentHelperTrait;
+use Livewire\WithoutUrlPagination;
 
 class Questions extends Component
 {
@@ -29,103 +26,132 @@ class Questions extends Component
     use UserTrait;
     use AssessmentHelperTrait;
 
-    public $assessmentId;
-
-    protected $perPage = 3;
-    protected $pageName = 'questionId';
-
-    public ?array $data;
-    public ?int $nodeKeyId;
-    public ?int $nodeId;
-
+    public int $assessmentId;
+    public ?int $nodeId = null;
     public ?string $edit = null;
+
+    protected int $perPage = 3;
+    protected string $pageName = 'questionId';
+
+    public ?array $data = [];
 
     public function mount(): void
     {
-        //Redirect if not permitted to do an assessment for this framework now
-        $this->redirectIfAssessmentNotPermitted($this->assessment?->framework?->id, $this->assessmentId);
+        // Redirect if not permitted to do an assessment for this framework
+        $this->redirectIfAssessmentNotPermitted($this->assessment()?->framework?->id, $this->assessmentId);
 
-        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment?->framework->id, $this->edit);
+        // Redirect submitted/finished assessments to summary page
+        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework?->id, $this->edit);
 
-        /**
-         * Pre-populate forms with defaults
-         */
-        $this->data = $this->responses()?->toArray();
-        if (empty($this->data) && $this->nodeQuestions()) {
+        // Pre-populate form data with existing responses
+        $this->data = $this->responses()?->toArray() ?? [];
+
+        // If there are no stored responses yet, initialise defaults for visible questions
+        if (empty($this->data) && $this->nodeQuestions()->count()) {
             foreach ($this->nodeQuestions() as $question) {
                 $defaults = null;
-                // This may be a match/switch expression in future based on multiple response_types
-                if($question->response_type !== ResponseType::TYPE_TEXTAREA->value){
-                    $defaults = unserialize($question['defaults']) ?? null;
+
+                if ($question->response_type !== ResponseType::TYPE_TEXTAREA->value) {
+                    $defaults = unserialize($question->defaults) ?? null;
                 }
-                $this->data["question_{$question->id}"] = $defaults;
+
+                $this->data[$question->name] = $defaults;
+            }
+            $this->resumeToFirstUnansweredQuestion();
+        }
+    }
+
+    protected function resumeToFirstUnansweredQuestion(): void
+    {
+        $questions = $this->nodeQuestions();
+
+        if ($questions->isEmpty()) {
+            return;
+        }
+
+        $firstUnansweredIndex = null;
+
+        foreach ($questions as $i => $question) {
+            $key = $question->name;
+
+            $value = $this->data[$key] ?? null;
+
+            $answered = match ($question->response_type) {
+                \App\Enums\ResponseType::TYPE_TEXTAREA->value =>
+                    is_string($value) && trim($value) !== '',
+
+                default =>
+                    !is_null($value) && $value !== '',
+            };
+
+            if (! $answered) {
+                $firstUnansweredIndex = $i;
+                break;
             }
         }
 
-        if (!empty($this->nodeId)) {
-            $this->goToNodeById($this->nodeId);
+        if (is_null($firstUnansweredIndex)) {
+            $this->resetPage(pageName: $this->pageName);
+            return;
         }
+
+        $targetPage = intdiv($firstUnansweredIndex, $this->perPage) + 1;
+
+        $this->gotoPage($targetPage, $this->pageName);
+    }
+
+    #[Computed]
+    public function assessmentIsComplete(): bool
+    {
+        $requiredTotal = $this->assessment()?->framework
+            ?->questions()
+            ->where('required', 1)
+            ->count() ?? 0;
+
+        $requiredAnswered = $this->requiredResponses()?->count() ?? 0;
+
+        return $requiredTotal > 0 && $requiredAnswered === $requiredTotal;
+    }
+
+    #[Computed]
+    public function node(): ?Node
+    {
+        if (! $this->nodeId) {
+            return null;
+        }
+
+        return Node::query()
+            ->with([
+                'questions' => fn ($q) => $q->where('active', true)->orderBy('order'),
+            ])
+            ->find($this->nodeId);
     }
 
     public function nodeQuestions(): Collection
     {
-        return $this->node()?->questions()->get();
+        return $this->node?->questions?->values() ?? collect();
     }
 
     protected function messages(): array
     {
+        $messages = [];
+
         foreach ($this->nodeQuestions() as $question) {
-            $messages['data.' . $question['name'] . '.numeric'] = 'Select one of the following options';
+            $messages['data.' . $question->name . '.numeric'] = 'Select one of the following options';
+
             if ($question->response_type !== ResponseType::TYPE_TEXTAREA->value) {
-                $messages['data.' . $question['name'] . '.required'] = 'Select one of the following options';
+                $messages['data.' . $question->name . '.required'] = 'Select one of the following options';
             } else {
-                $messages['data.' . $question['name'] . '.required'] = 'Enter your response';
-                $messages['data.' . $question['name'] . '.max'] =
+                $messages['data.' . $question->name . '.required'] = 'Enter your response';
+                $messages['data.' . $question->name . '.max'] =
                     'Your response must be less than ' .
-                    $this->getMaxLengthForType(ResponseType::TYPE_TEXTAREA->value) . ' characters';
+                    $this->getMaxLengthForType(ResponseType::TYPE_TEXTAREA->value) .
+                    ' characters';
             }
         }
 
-        return $messages ?? [];
+        return $messages;
     }
-
-    public function node(): ?Node
-    {
-        return $this->nodes()->current();
-    }
-
-    #[Computed]
-    public function nodes(): ?\ArrayIterator
-    {
-        if (empty($this->assessment)) {
-            return null;
-        }
-
-        /**
-         * Take all nodes that have at least one active question
-         */
-        $nodes = $this->assessment?->framework?->nodes()
-            ->whereHas('questions', function ($q) {
-                $q->where('active', true);
-            })
-            ->with(['questions' => function ($q) {
-                $q->where('active', true);
-            }])
-            ->orderBy('order')
-            ->orderBy('id')
-            ->get();
-        /**
-         * Convert collection to iterator
-         */
-        $nodesIterator = $nodes->getIterator();
-        if (empty($this->nodeKeyId)) {
-            $this->nodeKeyId = $nodesIterator->key() ?? 0;
-        }
-        $nodesIterator->seek($this->nodeKeyId);
-
-        return $nodesIterator;
-    }
-
 
     #[Computed]
     public function responses(): ?Collection
@@ -150,121 +176,132 @@ class Questions extends Component
             return null;
         }
 
-        $responses = $assessment?->responses;
-
+        $responses = $assessment->responses;
 
         if ($onlyRequired) {
-            $responses = $responses->filter(function ($response) {
-                return $response->question->required ?? false;
-            });
+            $responses = $responses->filter(fn ($response) => (bool) ($response->question->required ?? false));
         }
 
         return $responses->mapWithKeys(function ($response) use ($onlyRequired) {
             $key = $response->question->name;
 
-            // TEXTAREA → only one value
             if ($response->question->response_type === ResponseType::TYPE_TEXTAREA->value) {
-                return [
-                    $key => $response->textarea ?? '',
-                ];
+                return [$key => $response->textarea ?? ''];
             }
 
-            // SCALE
             if ($onlyRequired) {
-                return [
-                    $key => $response->scale_option_id,
-                ];
-            } else {
-                return [
-                    $key => $response->scale_option_id,
-                    $key . '_reflection' => $response->textarea ?? '',
-                ];
+                return [$key => $response->scale_option_id];
             }
+
+            return [
+                $key => $response->scale_option_id,
+                $key . '_reflection' => $response->textarea ?? '',
+            ];
         });
     }
 
-
-    public function backPage(): void
+    protected function paginatedQuestions(): ?LengthAwarePaginator
     {
-        $this->previousPage();
+        if (! $this->node) {
+            return null;
+        }
+
+        return $this->node
+            ->questions()
+            ->where('active', true)
+            ->orderBy('order')
+            ->paginate($this->perPage, pageName: $this->pageName);
     }
 
     public function getRules(): array
     {
         $rules = [];
-        foreach ($this->paginatedQuestions() as $question) {
-            $rules['data.' . $question['name']] = $this->getRulesForType($question);
+
+        $paginator = $this->paginatedQuestions();
+        if (! $paginator) {
+            return $rules;
         }
 
-        return $rules ?? [];
+        foreach ($paginator as $question) {
+            $rules['data.' . $question->name] = $this->getRulesForType($question);
+        }
+
+        return $rules;
     }
 
-    public function rater()
+    public function rater(): ?Rater
     {
         return $this->assessment()?->raters()?->first();
     }
 
-    /**
-     * Store responses and go to next question or node
-     */
     public function storeNext(): void
     {
         $this->validateAndSaveResponses();
 
-        if ($this->paginatedQuestions()->hasMorePages()) {
+        $paginator = $this->paginatedQuestions();
+
+        if ($paginator && $paginator->hasMorePages()) {
             $this->nextPage(pageName: $this->pageName);
-        } else {
-            $this->resetPage(pageName: $this->pageName);
-            $this->nodes->next();
-            $this->nodeKeyId = $this->nodes->key();
+            $this->dispatch('scroll-to-top');
+            return;
         }
 
-        $this->dispatch('questions-next-node', $this->node()?->id);
+        if ($this->assessmentIsComplete) {
+            $this->dispatch('scroll-to-top');
+            return;
+        }
+
+        $this->resetPage(pageName: $this->pageName);
+        $this->dispatch('assessment-next-node');
         $this->dispatch('scroll-to-top');
     }
 
-    /**
-     * Validate and save user responses
-     * @throws ValidationException
-     */
+    public function goPrevious(): void
+    {
+        if ($this->getPage($this->pageName) > 1) {
+            $this->previousPage(pageName: $this->pageName);
+            $this->dispatch('scroll-to-top');
+            return;
+        }
+
+        $this->dispatch('assessment-prev-node');
+        $this->dispatch('scroll-to-top');
+    }
+
     private function validateAndSaveResponses(): void
     {
         $rules = $this->getRules();
 
-        if (!empty($rules)) {
+        if (! empty($rules)) {
             try {
                 $this->validate($rules);
-            } catch (\Illuminate\Validation\ValidationException $e) {
+            } catch (ValidationException $e) {
                 $this->dispatch('scroll-to-top');
                 throw $e;
             }
         }
 
-        $questions = $this->nodeQuestions()?->keyBy('name');
+        $questions = $this->nodeQuestions()->keyBy('name');
 
         foreach ($this->data as $name => $value) {
 
-            // Skip reflection keys entirely
             if (str_ends_with($name, '_reflection')) {
                 continue;
             }
 
-            // Skip unknown questions
-            if (!isset($questions[$name])) {
+            if (! isset($questions[$name])) {
                 continue;
             }
 
             $question = $questions[$name];
 
-            // Skip empty textarea responses
             if (
-                $question['response_type'] === ResponseType::TYPE_TEXTAREA->value &&
-                empty(trim($value))
+                $question->response_type === ResponseType::TYPE_TEXTAREA->value &&
+                empty(trim((string) $value))
             ) {
                 continue;
             }
 
-            // Save main response (scale or textarea)
             UserResponseService::updateOrCreate(
                 $value,
                 $question,
@@ -272,11 +309,9 @@ class Questions extends Component
                 $this->rater()?->id
             );
 
-            // Save optional reflection for scale questions
-            if ($question['response_type'] === ResponseType::TYPE_SCALE->value) {
-
+            if ($question->response_type === ResponseType::TYPE_SCALE->value) {
                 $reflectionKey = $name . '_reflection';
-                $reflection = trim($this->data[$reflectionKey] ?? '');
+                $reflection = trim((string) ($this->data[$reflectionKey] ?? ''));
 
                 Response::updateOrCreate(
                     [
@@ -286,145 +321,96 @@ class Questions extends Component
                     ],
                     [
                         'textarea'   => $reflection,
-                        'updated_at' => now(),
                     ]
                 );
             }
         }
     }
 
+    #[Computed]
+    public function orderedQuestionIds(): Collection
+    {
+        $frameworkId = $this->assessment()?->framework_id;
+        if (! $frameworkId) {
+            return collect();
+        }
 
-    /**
-     * Get question progress label
-     *
-     * @param int|null $questionId
-     * @return string
-     */
+        $roots = Node::query()
+            ->where('framework_id', $frameworkId)
+            ->whereNull('parent_id')
+            ->orderBy('order')
+            ->orderBy('id')
+            ->with([
+                'questions' => fn ($q) => $q->where('active', true)->orderBy('order'),
+                'children' => fn ($q) => $q->orderBy('order')->orderBy('id')->with([
+                    'questions' => fn ($q) => $q->where('active', true)->orderBy('order'),
+                    'children' => fn ($q) => $q->orderBy('order')->orderBy('id')->with([
+                        'questions' => fn ($q) => $q->where('active', true)->orderBy('order'),
+                    ]),
+                ]),
+            ])
+            ->get();
+
+        $ids = collect();
+
+        $walk = function (Collection $nodes) use (&$walk, &$ids) {
+            foreach ($nodes as $node) {
+                foreach ($node->questions as $q) {
+                    $ids->push($q->id);
+                }
+
+                if ($node->relationLoaded('children') && $node->children->isNotEmpty()) {
+                    $walk($node->children);
+                }
+            }
+        };
+
+        $walk($roots);
+
+        return $ids;
+    }
+
     public function getQuestionProgressLabel(?int $questionId = null): string
     {
-        $nodes = $this->nodes()->getArrayCopy();
-
-        $currentQuestion = $this->assessment?->framework
-            ->questions()
-            ->where('questions.id', $questionId)
-            ->first();
-
-        if (!$currentQuestion) {
+        if (! $questionId) {
             return '';
         }
 
-        $questionCounter = 0;
+        $ids = $this->orderedQuestionIds;
+        $index = $ids->search($questionId);
 
-        foreach ($nodes as $node) {
-            if ($node->id === $currentQuestion->node_id) {
-                $offset = $node->questions()
-                    ->orderBy('order')
-                    ->pluck('id')
-                    ->search($questionId);
-
-                $questionCounter += ($offset !== false ? $offset : 0);
-                break;
-            }
-
-            $questionCounter += $node->questions()->count();
+        if ($index === false) {
+            return '';
         }
 
-        $currentNumber = $questionCounter + 1;
-        $total = $this->assessment?->framework
-            ->questions()
-            ->where('active', true)
-            ->count() ?? 0;
+        $currentNumber = $index + 1;
+        $total = $ids->count();
 
         return "<strong>Response {$currentNumber} of {$total}</strong>";
     }
 
-    /**
-     * Go to previous question or node
-     */
-    public function goPrevious(): void
-    {
-        $this->resetPage(pageName: $this->pageName);
-
-        if ($this->nodeKeyId > 0) {
-            $this->nodes->seek($this->nodeKeyId - 1);
-            $this->nodeKeyId = $this->nodes->key();
-        } else {
-            $this->goToVariantSelection();
-        }
-
-        $this->dispatch('questions-next-node', $this->node()?->id);
-        $this->dispatch('scroll-to-top');
-    }
-
-    /**
-     * Finish the assessment and go to summary page
-     */
     public function finishAssessment()
     {
         $this->validateAndSaveResponses();
 
-        // Additional logic for finishing the assessment can be added here
-        return redirect()->route(
-            'summary',
-            ['frameworkId' => $this->assessment?->framework->id, 'assessmentId' => $this->assessmentId]
-        );
+        return redirect()->route('summary', [
+            'frameworkId'  => $this->assessment()?->framework?->id,
+            'assessmentId' => $this->assessmentId,
+        ]);
     }
 
-    /**
-     * Go to variant selection page
-     */
     public function goToVariantSelection()
     {
-        return redirect()
-            ->route(
-                'variants',
-                [
-                    'frameworkId' => $this->assessment?->framework->id,
-                    'assessmentId' => $this->assessmentId,
-                    'back' => 1
-                ]
-            );
+        return redirect()->route('variants', [
+            'frameworkId'  => $this->assessment()?->framework?->id,
+            'assessmentId' => $this->assessmentId,
+            'back'         => 1,
+        ]);
     }
 
-    /**
-     * Go to a specific node by its id
-     * @param int $nodeId
-     * @return void
-     */
-    public function goToNodeById(int $nodeId): void
-    {
-        if (empty($nodeId)) {
-            return;
-        }
-        $this->resetPage(pageName: $this->pageName);
-
-        $nodes = $this->nodes();
-        foreach ($nodes as $index => $node) {
-            if ($node->id === $nodeId) {
-                $nodes->seek($index);
-                $this->nodeKeyId = $index;
-                break;
-            }
-        }
-
-        $this->dispatch('questions-next-node', $this->node()?->id);
-        $this->dispatch('scroll-to-top');
-    }
-
-    protected function paginatedQuestions(): ?LengthAwarePaginator
-    {
-        return $this->node()?->questions()?->paginate($this->perPage, pageName: $this->pageName);
-    }
-
-    /**
-     * Build scale options for a question
-     *
-     * @param  mixed  $question
-     * @return array
-     */
     public function buildScaleOptions($question): array
     {
-        if (!$question?->scale) {
+        if (! $question?->scale) {
             return [];
         }
 
@@ -434,7 +420,7 @@ class Questions extends Component
             ->mapWithKeys(function ($opt) {
                 $label = $opt->label;
 
-                if (!empty($opt->description)) {
+                if (! empty($opt->description)) {
                     $label .= ' - ' . $opt->description;
                 }
 
@@ -442,7 +428,6 @@ class Questions extends Component
             })
             ->toArray();
     }
-
 
     public function render()
     {

@@ -8,9 +8,9 @@ use App\Exceptions\AssessmentNotSubmittedException;
 use App\Exceptions\FrameworkNotFoundException;
 use App\Models\Assessment;
 use App\Models\Framework;
-use App\Models\Node;
 use App\Models\Rater;
 use App\Services\AssessmentReportService;
+use App\Services\FrameworkTraversalService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
 use Illuminate\Support\Collection;
@@ -72,8 +72,6 @@ class AssessmentReport extends Component
             );
         }
 
-
-        // Use the shared service for all report data
         $service = new AssessmentReportService($frameworkId, $assessmentId);
 
         $this->barCharts = $service->barCharts();
@@ -95,7 +93,7 @@ class AssessmentReport extends Component
 
     #[Computed]
     public function framework(): ?Framework
-{
+    {
         if (empty($this->frameworkId)) {
             return null;
         }
@@ -104,12 +102,14 @@ class AssessmentReport extends Component
     }
 
     #[Computed]
-    public function nodes(): ?Collection
+    public function nodes(): Collection
     {
-        return Node::where('framework_id', $this->frameworkId)
-            ->orderBy('order')
-            ->orderBy('id')
-            ->get();
+        if (! $this->frameworkId) {
+            return collect();
+        }
+
+        return app(FrameworkTraversalService::class)
+            ->orderedNodes($this->frameworkId, depth: config('app.framework_node_depth'), withQuestions: true, activeOnly: true);
     }
 
     #[Computed]

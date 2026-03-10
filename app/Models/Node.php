@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Openplain\FilamentTreeView\Concerns\HasTreeStructure;
 
 class Node extends Model
 {
     use HasFactory;
+    use HasTreeStructure;
 
     protected $fillable = [
         'framework_id',

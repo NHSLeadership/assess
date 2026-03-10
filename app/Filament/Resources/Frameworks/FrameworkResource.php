@@ -5,7 +5,6 @@ namespace App\Filament\Resources\Frameworks;
 use App\Filament\Resources\Frameworks\Pages\CreateFramework;
 use App\Filament\Resources\Frameworks\Pages\EditFramework;
 use App\Filament\Resources\Frameworks\Pages\ListFrameworks;
-use App\Filament\Resources\Frameworks\RelationManagers\NodesRelationManager;
 use App\Filament\Resources\Frameworks\RelationManagers\VariantAttributesRelationManager;
 use App\Filament\Resources\Frameworks\Schemas\FrameworkForm;
 use App\Filament\Resources\Frameworks\Tables\FrameworksTable;
@@ -37,7 +36,6 @@ class FrameworkResource extends Resource
     public static function getRelations(): array
     {
         return [
-            'nodes' => NodesRelationManager::class,
             'variants' => VariantAttributesRelationManager::class,
         ];
     }
@@ -48,6 +46,7 @@ class FrameworkResource extends Resource
             'index' => ListFrameworks::route('/'),
             'create' => CreateFramework::route('/create'),
             'edit' => EditFramework::route('/{record}/edit'),
+            'nodes' => Pages\FrameworkNodes::route('/{record}/nodes'),
         ];
     }
 }
