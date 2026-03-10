@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/Support/TestHelpers.php';
-
+uses(Tests\TestCase::class)->in('Unit');
 /*
 |--------------------------------------------------------------------------
 | Test Case
