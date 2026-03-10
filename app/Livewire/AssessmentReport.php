@@ -109,7 +109,7 @@ class AssessmentReport extends Component
         }
 
         return app(FrameworkTraversalService::class)
-            ->orderedNodes($this->frameworkId, depth: config('app.framework_node_depth'), withQuestions: true, activeOnly: true);
+            ->orderedNodes($this->frameworkId, withQuestions: true, activeOnly: true);
     }
 
     #[Computed]

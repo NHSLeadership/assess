@@ -29,8 +29,8 @@ trait AssessmentHelperTrait
             return null;
         }
 
-        $totalQuestions = $assessment->framework
-            ?->questions()
+        $totalQuestions = app(FrameworkTraversalService::class)
+            ->orderedQuestionIds($assessment->framework_id)
             ->count() ?? 0;
         $responseCount = $assessment->responses()
             ?->count() ?? 0;
@@ -109,7 +109,7 @@ trait AssessmentHelperTrait
             ->all();
 
         $nodes = app(FrameworkTraversalService::class)
-            ->orderedNodes($frameworkId, depth: 3, withQuestions: true, activeOnly: true);
+            ->orderedNodes($frameworkId, withQuestions: true, activeOnly: true);
 
         if ($next) {
             foreach ($nodes as $node) {

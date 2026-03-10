@@ -6,6 +6,7 @@ use App\Enums\ResponseType;
 use App\Models\Node;
 use App\Models\Rater;
 use App\Models\Response;
+use App\Services\FrameworkTraversalService;
 use App\Services\UserResponseService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\FormFieldValidationRulesTrait;
@@ -37,26 +38,37 @@ class Questions extends Component
 
     public function mount(): void
     {
-        // Redirect if not permitted to do an assessment for this framework
-        $this->redirectIfAssessmentNotPermitted($this->assessment()?->framework?->id, $this->assessmentId);
+        $this->redirectIfAssessmentNotPermitted(
+            $this->assessment()?->framework?->id,
+            $this->assessmentId
+        );
 
-        // Redirect submitted/finished assessments to summary page
-        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework?->id, $this->edit);
+        $this->redirectIfSubmittedOrFinished(
+            $this->assessment(),
+            $this->assessment()?->framework?->id,
+            $this->edit
+        );
 
-        // Pre-populate form data with existing responses
+        // Existing answers
         $this->data = $this->responses()?->toArray() ?? [];
 
-        // If there are no stored responses yet, initialise defaults for visible questions
-        if (empty($this->data) && $this->nodeQuestions()->count()) {
+        // Ensure defaults exist for any missing question keys (even if some answers already exist)
+        if ($this->nodeQuestions()->count()) {
             foreach ($this->nodeQuestions() as $question) {
-                $defaults = null;
+                $key = $question->name;
 
-                if ($question->response_type !== ResponseType::TYPE_TEXTAREA->value) {
-                    $defaults = unserialize($question->defaults) ?? null;
+                if (! array_key_exists($key, $this->data)) {
+                    $defaults = null;
+
+                    if ($question->response_type !== ResponseType::TYPE_TEXTAREA->value) {
+                        $defaults = unserialize($question->defaults) ?? null;
+                    }
+
+                    $this->data[$key] = $defaults;
                 }
-
-                $this->data[$question->name] = $defaults;
             }
+
+            // Always resume within this node
             $this->resumeToFirstUnansweredQuestion();
         }
     }
@@ -331,43 +343,12 @@ class Questions extends Component
     public function orderedQuestionIds(): Collection
     {
         $frameworkId = $this->assessment()?->framework_id;
+
         if (! $frameworkId) {
             return collect();
         }
 
-        $roots = Node::query()
-            ->where('framework_id', $frameworkId)
-            ->whereNull('parent_id')
-            ->orderBy('order')
-            ->orderBy('id')
-            ->with([
-                'questions' => fn ($q) => $q->where('active', true)->orderBy('order'),
-                'children' => fn ($q) => $q->orderBy('order')->orderBy('id')->with([
-                    'questions' => fn ($q) => $q->where('active', true)->orderBy('order'),
-                    'children' => fn ($q) => $q->orderBy('order')->orderBy('id')->with([
-                        'questions' => fn ($q) => $q->where('active', true)->orderBy('order'),
-                    ]),
-                ]),
-            ])
-            ->get();
-
-        $ids = collect();
-
-        $walk = function (Collection $nodes) use (&$walk, &$ids) {
-            foreach ($nodes as $node) {
-                foreach ($node->questions as $q) {
-                    $ids->push($q->id);
-                }
-
-                if ($node->relationLoaded('children') && $node->children->isNotEmpty()) {
-                    $walk($node->children);
-                }
-            }
-        };
-
-        $walk($roots);
-
-        return $ids;
+        return app(FrameworkTraversalService::class)->orderedQuestionIds($frameworkId);
     }
 
     public function getQuestionProgressLabel(?int $questionId = null): string

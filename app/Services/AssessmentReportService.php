@@ -35,7 +35,6 @@ class AssessmentReportService
 
         $this->nodes = $this->traversal->orderedNodes(
             frameworkId: $frameworkId,
-            depth: config('app.framework_node_depth'),
             withQuestions: true,
                 activeOnly: true
         );

@@ -96,7 +96,7 @@ class Assessments extends Component
         }
 
         return app(FrameworkTraversalService::class)
-            ->orderedQuestionNodes($frameworkId, depth: config('app.framework_node_depth'));
+            ->orderedQuestionNodes($frameworkId);
     }
 
     #[Computed]
