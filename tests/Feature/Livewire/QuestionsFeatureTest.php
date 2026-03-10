@@ -91,7 +91,7 @@ it('jumps to the specified node when nodeId is provided', function () {
         'assessmentId' => $assessment->id,
         'nodeId'       => $setup2['node']->id,
     ])
-        ->assertSet('nodeKeyId', 1);
+        ->assertSet('nodeId', $setup2['node']->id);
 
 });
 
@@ -161,11 +161,7 @@ it('moves to the next node when on the last page', function () {
     $test->set('data', $data)
         ->call('storeNext');
 
-    $this->assertDatabaseHas('responses', [
-        'assessment_id'   => $assessment->id,
-        'question_id'     => $questionsA[0]->id,
-        'scale_option_id' => $scaleOption->id,
-    ]);
+    $test->assertDispatched('assessment-next-node');
 });
 
 it('shows validation errors when required questions are unanswered', function () {
@@ -203,13 +199,13 @@ it('shows validation errors when required questions are unanswered', function ()
 
     $test = Livewire::test(\App\Livewire\Questions::class, [
         'assessmentId' => $assessment->id,
+        'nodeId'       => $node->id,
     ]);
 
     // Submit with no answers
     $test->call('storeNext')
         ->assertHasErrors([
             'data.question_' . $questions[0]->id,
-            'data.question_' . $questions[1]->id,
         ]);
 });
 

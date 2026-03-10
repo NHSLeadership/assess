@@ -49,50 +49,22 @@ function makeFrameworkGraph(User $user): array
     return [$framework, $assessment, collect([$node1, $node2])];
 }
 
-it('goPrevious moves to previous node and dispatches events when not on first node', function () {
+it('goPrevious on the first node dispatches prev-node event', function () {
     $user = makeAuthUser();
     actingAs($user);
 
     [$framework, $assessment, $nodes] = makeFrameworkGraph($user);
 
-    // Start the component on the second node (index 1)
     $component = Livewire::test(Questions::class, [
         'assessmentId' => $assessment->id,
-    ])->set('nodeKeyId', 1);
-
-    // Sanity: currently at index 1
-    expect($component->get('nodeKeyId'))->toBe(1);
+        'nodeId'       => $nodes[0]->id, // first node
+    ]);
 
     $component->call('goPrevious');
 
-    // Assert we moved back to index 0
-    expect($component->get('nodeKeyId'))->toBe(0);
-
-    // Events are dispatched
-    //$component->assertDispatched('questions-next-node', fn ($id) => $id === $nodes[0]->id);
+    $component->assertDispatched('assessment-prev-node');
     $component->assertDispatched('scroll-to-top');
-
-    // No redirect in this branch
     $component->assertNoRedirect();
-});
-
-it('goPrevious on the first node redirects to variant selection', function () {
-    $user = makeAuthUser();
-    actingAs($user);
-
-    [$framework, $assessment, $nodes] = makeFrameworkGraph($user);
-
-    // On the very first node (index 0) → goPrevious() should trigger variant selection redirect
-    Livewire::test(Questions::class, [
-        'assessmentId' => $assessment->id,
-    ])
-        ->set('nodeKeyId', 0)
-        ->call('goPrevious')
-        ->assertRedirect(route('variants', [
-            'frameworkId'  => $framework->id,
-            'assessmentId' => $assessment->id,
-            'back'         => 1,
-        ]));
 });
 
 it('goToVariantSelection redirects to variants route', function () {

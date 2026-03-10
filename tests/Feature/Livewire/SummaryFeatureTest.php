@@ -74,8 +74,10 @@ it('redirects to questions when a resume node exists', function () {
         ->create();
 
     // Create a node + question graph using the shared helper
-    $setup = createNodeWithQuestions(1, 'scale');
-    $framework = $setup['framework'];
+    $setup = createNodeWithQuestions(1, 'scale', [
+        'framework' => $framework,
+    ]);
+
     $node = $setup['node'];
     $question = $setup['questions']->first();
 
