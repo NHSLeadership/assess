@@ -1,0 +1,14 @@
+@import '/node_modules/nhsuk-frontend/src/nhsuk/components/header/_index.scss';
+@import '/node_modules/nhsuk-frontend/src/nhsuk/components/footer/_index.scss';
+
+@import '/node_modules/nhsuk-frontend/src/nhsuk/core/settings/_colours.scss';
+
+@import '/public/css/filament/filament/app.css';
+
+@import '/resources/sass/nhs-colours.scss';
+@import '/node_modules/nhsuk-frontend/src/nhsuk/core/utilities/_visually-hidden.scss';
+
+/* Remove empty sidebar header when topbar + user menu are disabled */
+.fi-sidebar-header {
+  display: none;
+}

@@ -5,6 +5,14 @@
 
 ---
 
+### v1.0.7
+> Updated: 11.03.2026
+1. Improve assessment navigation so “Save and continue” advances consistently on the first click.
+2. Security and dependency updates (composer & npm)
+3. Add migration for settings tables
+4. Change guidance title in PDF report
+5. Add header and footer to dashboard
+
 ### v1.0.6
 > Updated: 17.02.2026
 1. Add Laravel DebugBar

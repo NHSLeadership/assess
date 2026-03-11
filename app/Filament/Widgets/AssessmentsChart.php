@@ -14,7 +14,7 @@ use Flowframe\Trend\TrendValue;
 class AssessmentsChart extends ChartWidget
 {
     use HasFiltersSchema;
-
+    protected static ?int $sort = 2;
     public function filtersSchema(Schema $schema): Schema
     {
         return $schema->components([

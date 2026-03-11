@@ -221,7 +221,7 @@ if (!empty(Auth()?->user()?->user_id)) {
     {{-- SIGNPOSTS ALWAYS SHOWN, AFTER RESPONSES IF THEY EXIST --}}
     <x-signpost-banner
             :signposts="$nodeSignposts"
-            title="Guidance"
+            title="Development resources"
             :banner-id="$node->id"
             :pdf="true"
     />
