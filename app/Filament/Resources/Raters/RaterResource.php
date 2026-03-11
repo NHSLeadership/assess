@@ -18,9 +18,7 @@ class RaterResource extends Resource
 {
     protected static ?string $model = Rater::class;
 
-    protected static string|null|\UnitEnum $navigationGroup = 'Authoring';
-
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
     public static function form(Schema $schema): Schema
     {
