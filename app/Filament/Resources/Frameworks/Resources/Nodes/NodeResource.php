@@ -15,6 +15,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Openplain\FilamentTreeView\Fields\TextField;
+use Openplain\FilamentTreeView\Tree;
 
 class NodeResource extends Resource
 {
@@ -27,6 +29,16 @@ class NodeResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return NodeForm::configure($schema);
+    }
+
+    public static function tree(Tree $tree): Tree
+    {
+        return $tree->fields([
+            TextField::make('name')
+                ->formatStateUsing(fn ($state, $record) =>
+                "{$record->type?->name}: {$state}"
+                ),
+        ]);
     }
 
     public static function table(Table $table): Table
