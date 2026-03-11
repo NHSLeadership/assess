@@ -15,8 +15,6 @@ class NodeForm
     {
         return $schema
             ->components([
-                Select::make('parent_id')
-                    ->relationship('parent', 'name'),
                 Select::make('node_type_id')
                     ->relationship('type', 'name')
                     ->createOptionForm([
