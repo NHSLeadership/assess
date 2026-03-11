@@ -70,20 +70,18 @@
                 {{-- Navigation buttons --}}
                 <div class="nhsuk-u-margin-top-3">
 
-                    {{-- Previous question (within this node only) --}}
-                    @if ($questions->currentPage() > 1)
-                        <button
-                                wire:click.prevent="goPrevious"
-                                type="button"
-                                class="nhsuk-button nhsuk-u-margin-right-3">
-                            Previous question
-                        </button>
-                    @endif
+                    {{-- Previous page (always smart) --}}
+                    <button
+                            wire:click.prevent="goPrevious"
+                            type="button"
+                            class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-3">
+                        Previous page
+                    </button>
 
-                    {{-- Primary action --}}
-                    @if ($this->assessmentIsComplete)
+                    {{-- Single primary forward action --}}
+                    @if ($this->isLastQuestion)
                         <button
-                                wire:click.prevent="finishAssessment"
+                                wire:click.prevent="storeAndFinish"
                                 type="button"
                                 class="nhsuk-button nhsuk-u-margin-right-3">
                             View summary
@@ -94,18 +92,6 @@
                                 class="nhsuk-button nhsuk-u-margin-right-3">
                             Save and continue
                         </button>
-                    @endif
-
-                    {{-- Completion message (shown whenever assessment is complete) --}}
-                    @if ($this->assessmentIsComplete)
-                        <div class="nhsuk-inset-text nhsuk-u-margin-top-3">
-                            <span class="nhsuk-u-visually-hidden">Information:</span>
-                            <p>
-                                You’ve completed all required questions. You can still review
-                                and change your answers, or finish the assessment to receive
-                                your report.
-                            </p>
-                        </div>
                     @endif
 
                 </div>

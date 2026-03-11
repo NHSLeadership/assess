@@ -7,11 +7,13 @@ use App\Services\FrameworkTraversalService;
 use App\Traits\FormFieldValidationRulesTrait;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\Features\SupportRedirects\Redirector;
 use Livewire\WithPagination;
 
 class Assessments extends Component
@@ -81,10 +83,23 @@ class Assessments extends Component
     }
 
     #[On('assessment-prev-node')]
-    public function previousNode(): void
+    public function previousNode(): Redirector|RedirectResponse|null
     {
+        // If we’re already on the first node page, go back to variant selection
+        if ($this->getPage($this->pageName) <= 1) {
+            return redirect()->route('variants', [
+                'frameworkId'  => $this->assessment()?->framework?->id,
+                'assessmentId' => $this->assessmentId,
+                'back'         => 1,
+            ]);
+        }
+
+        // Otherwise, move to the previous node
         $this->previousPage(pageName: $this->pageName);
+
+        return null;
     }
+
 
     #[Computed]
     public function questionNodes(): Collection

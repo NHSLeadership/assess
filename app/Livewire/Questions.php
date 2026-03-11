@@ -113,6 +113,33 @@ class Questions extends Component
     }
 
     #[Computed]
+    public function getIsLastQuestionProperty(): bool
+    {
+        // We only ever show "View summary" once the assessment is complete
+        if (! $this->assessmentIsComplete) {
+            return false;
+        }
+
+        // And only when we're on the last page of the current question paginator
+        $paginator = $this->paginatedQuestions();
+
+        if (! $paginator) {
+            return false;
+        }
+
+        return $this->getPage($this->pageName) >= $paginator->lastPage();
+    }
+
+    public function storeAndFinish(): void
+    {
+        // Save answers exactly the same way as normal
+        $this->storeNext();
+
+        // Then go to summary
+        $this->finishAssessment();
+    }
+
+    #[Computed]
     public function assessmentIsComplete(): bool
     {
         $requiredTotal = $this->assessment()?->framework
@@ -270,14 +297,29 @@ class Questions extends Component
 
     public function goPrevious(): void
     {
+        // 1️⃣ Previous page within the same node
         if ($this->getPage($this->pageName) > 1) {
             $this->previousPage(pageName: $this->pageName);
             $this->dispatch('scroll-to-top');
             return;
         }
 
+        // 2️⃣ If this Questions instance was NOT mounted with a node,
+        //     we're at the very beginning → go back to variant selection
+        if (! $this->nodeId) {
+            $this->goToVariantSelection();
+            return;
+        }
+
+        // 3️⃣ Otherwise, delegate to parent for node traversal
         $this->dispatch('assessment-prev-node');
         $this->dispatch('scroll-to-top');
+    }
+
+    protected function canGoToPreviousNode(): bool
+    {
+        return $this->node !== null
+            && $this->nodes()->key() > 0;
     }
 
     private function validateAndSaveResponses(): void
