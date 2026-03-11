@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Enums\ResponseType;
-use App\Models\Assessment;
 use App\Models\Node;
 use App\Models\Response;
 use App\Services\UserResponseService;
@@ -50,7 +49,7 @@ class Questions extends Component
         /**
          * Pre-populate forms with defaults
          */
-        $this->data = $this->responses()?->toArray();
+        $this->data = $this->responses()?->toArray() ?? [];
         if (empty($this->data) && $this->nodeQuestions()) {
             foreach ($this->nodeQuestions() as $question) {
                 $defaults = null;
@@ -66,10 +65,17 @@ class Questions extends Component
             $this->goToNodeById($this->nodeId);
         }
     }
+    protected function orderedQuestions(?Node $node)
+    {
+        return $node?->questions()
+            ->where('active', true)
+            ->orderBy('order')
+            ->orderBy('id');
+    }
 
     public function nodeQuestions(): Collection
     {
-        return $this->node()?->questions()->get();
+        return $this->orderedQuestions($this->node())?->get() ?? collect();
     }
 
     protected function messages(): array
@@ -213,6 +219,12 @@ class Questions extends Component
         } else {
             $this->resetPage(pageName: $this->pageName);
             $this->nodes->next();
+
+            if (! $this->nodes->valid()) {
+                $this->finishAssessment();
+                return;
+            }
+
             $this->nodeKeyId = $this->nodes->key();
         }
 
@@ -240,7 +252,7 @@ class Questions extends Component
 
         $questions = $this->nodeQuestions()?->keyBy('name');
 
-        foreach ($this->data as $name => $value) {
+        foreach (($this->data ?? []) as $name => $value) {
 
             // Skip reflection keys entirely
             if (str_ends_with($name, '_reflection')) {
@@ -284,7 +296,6 @@ class Questions extends Component
                     ],
                     [
                         'textarea' => $reflection,
-                        'updated_at' => now(),
                     ]
                 );
             }
@@ -300,6 +311,7 @@ class Questions extends Component
 
         $currentQuestion = $this->assessment?->framework
             ->questions()
+            ->where('active', true)
             ->where('questions.id', $questionId)
             ->first();
 
@@ -311,16 +323,15 @@ class Questions extends Component
 
         foreach ($nodes as $node) {
             if ($node->id === $currentQuestion->node_id) {
-                $offset = $node->questions()
-                    ->orderBy('order')
+                $offset = $this->orderedQuestions($node)
                     ->pluck('id')
-                    ->search($questionId);
+                    ->search(fn ($id) => (int) $id === (int) $questionId);
 
                 $questionCounter += ($offset !== false ? $offset : 0);
                 break;
             }
 
-            $questionCounter += $node->questions()->count();
+            $questionCounter += $this->orderedQuestions($node)->count();
         }
 
         $currentNumber = $questionCounter + 1;
@@ -405,7 +416,8 @@ class Questions extends Component
 
     protected function paginatedQuestions(): ?LengthAwarePaginator
     {
-        return $this->node()?->questions()?->paginate($this->perPage, pageName: $this->pageName);
+        return $this->orderedQuestions($this->node())
+            ?->paginate($this->perPage, pageName: $this->pageName);
     }
 
     /**
