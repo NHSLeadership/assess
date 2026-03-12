@@ -1,13 +1,13 @@
 <?php
 
 use App\Models\Framework;
-use App\Models\NodeType;
+use App\Models\FrameworkVariantAttribute;
+use App\Models\FrameworkVariantOption;
 use App\Models\Node;
+use App\Models\NodeType;
 use App\Models\Question;
 use App\Models\QuestionVariant;
 use App\Models\QuestionVariantMatch;
-use App\Models\FrameworkVariantAttribute;
-use App\Models\FrameworkVariantOption;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -15,15 +15,16 @@ uses(RefreshDatabase::class);
 /**
  * Helper to build a QuestionVariant with its dependencies.
  */
-function makeQuestionVariant(): QuestionVariant {
+function makeQuestionVariant(): QuestionVariant
+{
     $framework = Framework::factory()->create();
-    $nodeType  = NodeType::factory()->create();
+    $nodeType = NodeType::factory()->create();
 
     $node = Node::factory()->create([
         'framework_id' => $framework->id,
         'node_type_id' => $nodeType->id,
-        'name'         => 'Root Node',
-        'description'  => 'Top level node',
+        'name' => 'Root Node',
+        'description' => 'Top level node',
     ]);
 
     $question = Question::factory()->create(['node_id' => $node->id]);
@@ -34,22 +35,23 @@ function makeQuestionVariant(): QuestionVariant {
 /**
  * Helper to attach a match to a variant with given key/value.
  */
-function attachMatch(QuestionVariant $variant, string $key, string $value): QuestionVariantMatch {
+function attachMatch(QuestionVariant $variant, string $key, string $value): QuestionVariantMatch
+{
     $attribute = FrameworkVariantAttribute::factory()->create([
         'framework_id' => $variant->question->node->framework_id,
-        'key'          => $key,
-        'order'        => 1,
+        'key' => $key,
+        'order' => 1,
     ]);
 
     $option = FrameworkVariantOption::factory()->create([
         'framework_variant_attribute_id' => $attribute->id,
-        'value'                          => $value,
+        'value' => $value,
     ]);
 
     return QuestionVariantMatch::factory()->create([
-        'question_variant_id'            => $variant->id,
+        'question_variant_id' => $variant->id,
         'framework_variant_attribute_id' => $attribute->id,
-        'framework_variant_option_id'    => $option->id,
+        'framework_variant_option_id' => $option->id,
     ]);
 }
 

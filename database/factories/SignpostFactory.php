@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Signpost;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Signpost>
+ * @extends Factory<Signpost>
  */
 class SignpostFactory extends Factory
 {

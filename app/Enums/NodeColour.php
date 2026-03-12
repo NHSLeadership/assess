@@ -12,8 +12,8 @@ enum NodeColour: string
 
     public function hex(): string
     {
-        return match($this) {
-            self::GREEN =>  '#BDDECD',
+        return match ($this) {
+            self::GREEN => '#BDDECD',
             self::PURPLE => '#BCCAE0',
             self::RED => '#DECAD4',
         };
@@ -21,7 +21,7 @@ enum NodeColour: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::GREEN => 'Green',
             self::PURPLE => 'Purple',
             self::RED => 'Red',
@@ -30,7 +30,7 @@ enum NodeColour: string
 
     public function colour(): array
     {
-        return match($this) {
+        return match ($this) {
             self::GREEN => Color::Green,
             self::PURPLE => Color::Purple,
             self::RED => Color::Red,
@@ -53,6 +53,7 @@ enum NodeColour: string
         foreach (self::cases() as $case) {
             $colours[$case->value] = $case->colour();
         }
+
         return $colours;
     }
 }

@@ -3,7 +3,7 @@
 use App\Models\Scale;
 
 test('scale has expected fillable attributes', function () {
-    $scale = new Scale();
+    $scale = new Scale;
 
     expect($scale->getFillable())->toEqual([
         'name',

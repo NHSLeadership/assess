@@ -1,8 +1,8 @@
 <?php
 
-
 use App\Livewire\Home;
 use Livewire\Livewire;
+
 use function Pest\Laravel\actingAs;
 
 it('renders page normally for guests without redirect', function () {
@@ -10,7 +10,6 @@ it('renders page normally for guests without redirect', function () {
         ->assertViewIs('livewire.home')
         ->assertNoRedirect();
 });
-
 
 it('redirects authenticated users to frameworks route', function () {
     $user = makeAuthUser();

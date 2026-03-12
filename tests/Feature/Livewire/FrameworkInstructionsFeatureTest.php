@@ -1,18 +1,8 @@
 <?php
 
-use App\Livewire\Variants;
-use App\Models\Assessment;
+use App\Livewire\FrameworkInstructions;
 use App\Models\Framework;
-use App\Models\Node;
-use App\Models\NodeType;
-use App\Models\Question;
-use App\Models\Rater;
-use App\Models\Response;
-use App\Models\Scale;
-use App\Models\ScaleOption;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Carbon;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -23,12 +13,12 @@ it('loads the framework when frameworkId is provided', function () {
 
     $framework = Framework::factory()->create();
 
-    Livewire::partialMock(\App\Livewire\FrameworkInstructions::class, function ($mock) {
+    Livewire::partialMock(FrameworkInstructions::class, function ($mock) {
         $mock->shouldReceive('redirectIfAssessmentNotPermitted')->andReturn(null);
         $mock->shouldReceive('redirectIfInvalidAssessment')->andReturn(null);
     });
 
-    Livewire::test(\App\Livewire\FrameworkInstructions::class, [
+    Livewire::test(FrameworkInstructions::class, [
         'frameworkId' => $framework->id,
     ])
         ->tap(function ($test) use ($framework) {
@@ -42,12 +32,12 @@ it('renders the framework instructions view', function () {
 
     $framework = Framework::factory()->create();
 
-    Livewire::partialMock(\App\Livewire\FrameworkInstructions::class, function ($mock) {
+    Livewire::partialMock(FrameworkInstructions::class, function ($mock) {
         $mock->shouldReceive('redirectIfAssessmentNotPermitted')->andReturn(null);
         $mock->shouldReceive('redirectIfInvalidAssessment')->andReturn(null);
     });
 
-    Livewire::test(\App\Livewire\FrameworkInstructions::class, [
+    Livewire::test(FrameworkInstructions::class, [
         'frameworkId' => $framework->id,
     ])
         ->assertViewIs('livewire.framework-instructions');

@@ -1,13 +1,18 @@
 <?php
 
+use App\Models\Assessment;
+use App\Models\Framework;
+use App\Models\Node;
+use App\Models\NodeType;
+use App\Models\Question;
+use App\Models\Rater;
+use App\Models\Response;
+use App\Models\Scale;
+use App\Models\ScaleOption;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\Support\AssessmentHelperFake;
-use App\Models\Framework;
-use App\Models\Assessment;
-use App\Models\Question;
-use App\Models\Response;
 
 uses(RefreshDatabase::class);
 
@@ -19,8 +24,6 @@ test('redirectIfInvalidAssessment redirects when frameworkId is invalid', functi
     expect($response->getTargetUrl())->toBe(route('frameworks'));
 });
 
-
-
 test('redirectIfInvalidAssessment redirects when assessmentId is invalid', function () {
     $framework = Framework::factory()->create();
 
@@ -30,7 +33,6 @@ test('redirectIfInvalidAssessment redirects when assessmentId is invalid', funct
 
     expect($response->getTargetUrl())->toBe(route('frameworks'));
 });
-
 
 test('redirectIfInvalidAssessment returns null when IDs are valid', function () {
     $user = makeAuthUser(['user_id' => '1000000000']);
@@ -44,7 +46,6 @@ test('redirectIfInvalidAssessment returns null when IDs are valid', function () 
     expect($result)->toBeNull();
 });
 
-
 test('redirectIfSubmittedOrFinished redirects when all required questions are answered', function () {
     $user = makeAuthUser(['user_id' => '1000000000']);
     $framework = Framework::factory()->create();
@@ -53,12 +54,12 @@ test('redirectIfSubmittedOrFinished redirects when all required questions are an
         'user_id' => $user->id,
     ]);
 
-    $rater = \App\Models\Rater::factory()->create([
+    $rater = Rater::factory()->create([
         'user_id' => $user->user_id,
     ]);
 
-    $nodeType = \App\Models\NodeType::factory()->create();
-    $node     = \App\Models\Node::factory()->create([
+    $nodeType = NodeType::factory()->create();
+    $node = Node::factory()->create([
         'framework_id' => $framework->id,
         'node_type_id' => $nodeType->id,
     ]);
@@ -67,14 +68,14 @@ test('redirectIfSubmittedOrFinished redirects when all required questions are an
         'node_id' => $node->id,
         'required' => true,
     ]);
-    $scale       = \App\Models\Scale::factory()->create();
-    $scaleOption = \App\Models\ScaleOption::factory()->create(['scale_id' => $scale->id]);
+    $scale = Scale::factory()->create();
+    $scaleOption = ScaleOption::factory()->create(['scale_id' => $scale->id]);
 
     foreach ($questions as $q) {
         Response::factory()->create([
-            'assessment_id'   => $assessment->id,
-            'rater_id'        => $rater->id,
-            'question_id'     => $q->id,
+            'assessment_id' => $assessment->id,
+            'rater_id' => $rater->id,
+            'question_id' => $q->id,
             'scale_option_id' => $scaleOption->id,
         ]);
     }

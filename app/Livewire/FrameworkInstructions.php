@@ -3,16 +3,17 @@
 namespace App\Livewire;
 
 use App\Models\Assessment;
-use Livewire\Attributes\Computed;
-use Livewire\Component;
 use App\Models\Framework;
 use App\Traits\AssessmentHelperTrait;
+use Livewire\Attributes\Computed;
+use Livewire\Component;
 
 class FrameworkInstructions extends Component
 {
     use AssessmentHelperTrait;
 
     public ?int $frameworkId = null;
+
     public ?int $assessmentId = null;
 
     public function mount(?int $frameworkId = null, ?int $assessmentId = null)
@@ -20,7 +21,7 @@ class FrameworkInstructions extends Component
         $this->frameworkId = $frameworkId;
         $this->assessmentId = $assessmentId;
 
-        //Redirect if not permitted to do an assessment for this framework now
+        // Redirect if not permitted to do an assessment for this framework now
         $this->redirectIfAssessmentNotPermitted($this->frameworkId, $this->assessmentId);
 
         $this->redirectIfInvalidAssessment($frameworkId, $assessmentId);
@@ -33,7 +34,6 @@ class FrameworkInstructions extends Component
             ? Framework::find($this->frameworkId)
             : null;
     }
-    
 
     public function render()
     {

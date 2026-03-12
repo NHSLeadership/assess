@@ -12,9 +12,9 @@ test('framework variant attribute belongs to a framework', function () {
 
     $attr = FrameworkVariantAttribute::factory()->create([
         'framework_id' => $framework->id,
-        'key'          => 'size',
-        'label'        => 'Size',
-        'order'        => 1,
+        'key' => 'size',
+        'label' => 'Size',
+        'order' => 1,
     ]);
 
     expect($attr->framework->id)->toEqual($framework->id);
@@ -25,9 +25,9 @@ test('framework variant attribute has many options ordered by order', function (
 
     $attr = FrameworkVariantAttribute::factory()->create([
         'framework_id' => $framework->id,
-        'key'          => 'color',
-        'label'        => 'Color',
-        'order'        => 1,
+        'key' => 'color',
+        'label' => 'Color',
+        'order' => 1,
     ]);
 
     $option1 = FrameworkVariantOption::factory()->create([
@@ -43,14 +43,14 @@ test('framework variant attribute has many options ordered by order', function (
     $options = $attr->options()->get();
 
     expect($options->first()->id)->toEqual($option2->id) // order=1 comes first
-    ->and($options->last()->id)->toEqual($option1->id);
+        ->and($options->last()->id)->toEqual($option1->id);
 });
 test('framework variant attribute has fillable attributes', function () {
     $attr = new FrameworkVariantAttribute([
         'framework_id' => 1,
-        'key'          => 'color',
-        'label'        => 'Color',
-        'order'        => 2,
+        'key' => 'color',
+        'label' => 'Color',
+        'order' => 2,
     ]);
 
     expect($attr->framework_id)->toEqual(1)

@@ -1,20 +1,15 @@
 <?php
 
 use App\Livewire\Frameworks;
-use App\Models\Framework;
-use App\Models\Node;
-use App\Models\NodeType;
-use App\Models\Question;
-use App\Models\Rater;
-use App\Models\Scale;
-use App\Models\ScaleOption;
-use App\Models\User;
 use App\Models\Assessment;
+use App\Models\Framework;
 use App\Models\Response;
-use Illuminate\Support\Carbon;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Livewire\Livewire;
+
 use function Pest\Laravel\actingAs;
 
 uses(RefreshDatabase::class);
@@ -22,12 +17,11 @@ uses(RefreshDatabase::class);
 // Helper functions like makeAuthUser(), raterForUser(), and createFrameworkWithNodeAndQuestions()
 // are provided globally by tests/Support/TestHelpers.php
 
-
 test('mount sets default framework when none is provided', function () {
     $user = makeAuthUser();
     Framework::factory()->count(2)->create();
     Livewire::actingAs($user)
-        ->test(\App\Livewire\Frameworks::class)
+        ->test(Frameworks::class)
         ->assertSet('frameworkId', Framework::first()->id);
 });
 
@@ -183,17 +177,17 @@ test('assessments are ordered by last response date descending', function () {
     // Add responses with different timestamps
     Response::factory()->for($assessmentOld)->create([
         'updated_at' => Carbon::now()->subDays(5),
-        'assessment_id'   => $assessmentOld->id,
-        'rater_id'        => $rater->id,
-        'question_id'     => $question->id,
+        'assessment_id' => $assessmentOld->id,
+        'rater_id' => $rater->id,
+        'question_id' => $question->id,
         'scale_option_id' => $scaleOption->id,
     ]);
 
     Response::factory()->for($assessmentNew)->create([
         'updated_at' => Carbon::now()->subDay(),
-        'assessment_id'   => $assessmentNew->id,
-        'rater_id'        => $rater->id,
-        'question_id'     => $question->id,
+        'assessment_id' => $assessmentNew->id,
+        'rater_id' => $rater->id,
+        'question_id' => $question->id,
         'scale_option_id' => $scaleOption->id,
     ]);
 
@@ -229,18 +223,18 @@ test('assessments include responses relationship', function () {
     // Add responses
     $responses = collect([
         Response::factory()->for($assessment)->create([
-            'updated_at'      => Carbon::now()->subDay(),
-            'assessment_id'   => $assessment->id,
-            'rater_id'        => $rater->id,
-            'question_id'     => $question1->id,
+            'updated_at' => Carbon::now()->subDay(),
+            'assessment_id' => $assessment->id,
+            'rater_id' => $rater->id,
+            'question_id' => $question1->id,
             'scale_option_id' => $scaleOption->id,
         ]),
 
         Response::factory()->for($assessment)->create([
-            'updated_at'      => Carbon::now()->subDay(),
-            'assessment_id'   => $assessment->id,
-            'rater_id'        => $rater->id,
-            'question_id'     => $question2->id,
+            'updated_at' => Carbon::now()->subDay(),
+            'assessment_id' => $assessment->id,
+            'rater_id' => $rater->id,
+            'question_id' => $question2->id,
             'scale_option_id' => $scaleOption->id,
         ]),
     ]);
@@ -248,7 +242,7 @@ test('assessments include responses relationship', function () {
     Livewire::actingAs($user)
         ->test(Frameworks::class, ['frameworkId' => $framework->id])
         ->assertOk()
-        ->tap(function ($component) use ($responses) {
+        ->tap(function ($component) {
             $computed = $component->get('assessments');
 
             $first = $computed->first();
@@ -309,18 +303,18 @@ test('displayAssessmentDate uses latest response date when submitted_at is null'
 
     // Add responses
     Response::factory()->for($assessment)->create([
-        'assessment_id'   => $assessment->id,
-        'rater_id'        => $rater->id,
-        'question_id'     => $question1->id,
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'question_id' => $question1->id,
         'scale_option_id' => $scaleOption->id,
-        'updated_at'      => $older,
+        'updated_at' => $older,
     ]);
 
     Response::factory()->for($assessment)->create([
-        'updated_at'      => $newer,
-        'assessment_id'   => $assessment->id,
-        'rater_id'        => $rater->id,
-        'question_id'     => $question2->id,
+        'updated_at' => $newer,
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'question_id' => $question2->id,
         'scale_option_id' => $scaleOption->id,
     ]);
 
@@ -529,7 +523,7 @@ it('blocks starting when a draft exists', function () {
 
     Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id'      => $user->user_id,
+        'user_id' => $user->user_id,
         'submitted_at' => null,
     ]);
 
@@ -552,10 +546,10 @@ it('blocks starting when cooldown is active', function () {
 
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id'      => $user->user_id,
+        'user_id' => $user->user_id,
         'submitted_at' => $submittedAt,
-        'created_at'   => $submittedAt,   // ensure ordering matches
-        'updated_at'   => $submittedAt,
+        'created_at' => $submittedAt,   // ensure ordering matches
+        'updated_at' => $submittedAt,
     ]);
 
     Livewire::test(Frameworks::class, [
@@ -578,10 +572,10 @@ it('allows starting when cooldown has passed', function () {
 
     Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id'      => $user->id,
+        'user_id' => $user->id,
         'submitted_at' => $submittedAt,
-        'created_at'   => $submittedAt,
-        'updated_at'   => $submittedAt,
+        'created_at' => $submittedAt,
+        'updated_at' => $submittedAt,
     ]);
 
     Livewire::test(Frameworks::class, [
@@ -592,7 +586,6 @@ it('allows starting when cooldown has passed', function () {
             'frameworkId' => $framework->id,
         ]));
 });
-
 
 it('clears pendingDeleteId when cancelDelete is called', function () {
     $user = makeAuthUser();
@@ -607,7 +600,6 @@ it('clears pendingDeleteId when cancelDelete is called', function () {
 
     expect($component->get('pendingDeleteId'))->toBeNull();
 });
-
 
 it('returns early when confirmDelete is called with no pendingDeleteId', function () {
     $user = makeAuthUser();
@@ -631,14 +623,13 @@ it('returns early when confirmDelete is called with no pendingDeleteId', functio
     expect($component->get('pendingDeleteId'))->toBeNull();
 });
 
-
 it('deletes the assessment, flashes success, and clears state on confirmDelete', function () {
     $user = makeAuthUser();
     actingAs($user);
     $framework = Framework::factory()->create();
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id'      => $user->id,
+        'user_id' => $user->id,
     ]);
     $this->assertDatabaseHas('assessments', ['id' => $assessment->id]);
 
@@ -655,7 +646,6 @@ it('deletes the assessment, flashes success, and clears state on confirmDelete',
     // State reset
     expect($component->get('pendingDeleteId'))->toBeNull();
 });
-
 
 it('logs and flashes error, and clears state when delete throws an exception', function () {
     $user = makeAuthUser();
@@ -681,6 +671,7 @@ it('logs and flashes error, and clears state when delete throws an exception', f
                 ->and($context)->toHaveKeys(['assessment_id', 'message', 'exception'])
                 ->and($context['assessment_id'])->toBe($missingId)
                 ->and($context['exception'])->toBeInstanceOf(Throwable::class);
+
             return true;
         });
 
@@ -688,14 +679,13 @@ it('logs and flashes error, and clears state when delete throws an exception', f
     expect($component->get('pendingDeleteId'))->toBeNull();
 });
 
-
 it('redirects to instructions when no previous assessment exists', function () {
     $user = makeAuthUser();
     actingAs($user);
     $framework = Framework::factory()->create();
 
     // Act: Mount component with a frameworkId
-    $component = Livewire::test(App\Livewire\Frameworks::class, [
+    $component = Livewire::test(Frameworks::class, [
         'frameworkId' => $framework->id,
     ]);
 

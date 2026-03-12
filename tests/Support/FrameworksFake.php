@@ -3,17 +3,18 @@
 namespace Tests\Support;
 
 use App\Livewire\Frameworks;
+use App\Models\User;
 
 class FrameworksFake extends Frameworks
 {
-    public ?\App\Models\User $mockedUser;
+    public ?User $mockedUser;
 
     public function setUser($user): void
     {
         $this->mockedUser = $user;
     }
 
-    public function user(): ?\App\Models\User
+    public function user(): ?User
     {
         return $this->mockedUser;
     }

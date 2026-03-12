@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Services\AssessmentReportService;
-use Illuminate\Support\Str;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class AssessmentReportPdfController extends Controller
 {
-    public function __invoke($frameworkId, $assessmentId, Request $request): \Illuminate\Http\Response
+    public function __invoke($frameworkId, $assessmentId, Request $request): Response
     {
         $service = new AssessmentReportService($frameworkId, $assessmentId);
 
@@ -29,23 +29,24 @@ class AssessmentReportPdfController extends Controller
         }
 
         $framework = $service->framework();
+
         return Pdf::loadView('pdf.assessment-report', [
-            'framework'  => $framework,
-            'nodes'      => $service->nodes(),
-            'responses'  => $service->responses(),
+            'framework' => $framework,
+            'nodes' => $service->nodes(),
+            'responses' => $service->responses(),
             'assessment' => $service->assessment(),
-            'rater'      => $service->rater(),
+            'rater' => $service->rater(),
             'radarImage' => $request->radarImage,
-            'barImages'  => $barImages,
-            'barCharts'  => $service->barChartsCompetency(),
-            'signposts'  => $signposts,
-            'isMobile'   => false,
-            'frameworkCustomHtml'   => $this->prepareHtmlForPdf(data_get($framework, 'report_html')),
+            'barImages' => $barImages,
+            'barCharts' => $service->barChartsCompetency(),
+            'signposts' => $signposts,
+            'isMobile' => false,
+            'frameworkCustomHtml' => $this->prepareHtmlForPdf(data_get($framework, 'report_html')),
             'variantAttributeLabel' => $service->variantAttributeLabel(),
         ])->download('assessment-report.pdf');
     }
 
-    public function prepareHtmlForPdf(?string $content ): string
+    public function prepareHtmlForPdf(?string $content): string
     {
         if (empty($content)) {
             return '';
@@ -65,17 +66,16 @@ class AssessmentReportPdfController extends Controller
             '/<img([^>]*)src=[\'"]\/media\/([^\'"]+)[\'"]([^>]*)>/i',
             function ($m) {
                 $before = $m[1];   // attributes before src
-                $file   = $m[2];   // wheel.png
-                $after  = $m[3];   // attributes after src
+                $file = $m[2];   // wheel.png
+                $after = $m[3];   // attributes after src
 
-                $path = public_path('media/' . $file);
+                $path = public_path('media/'.$file);
 
-                return '<img' . $before . 'src="' . $path . '" style="width:350px; height:auto; display:block; margin-left:auto; margin-right:auto;"' . $after . '>';
+                return '<img'.$before.'src="'.$path.'" style="width:350px; height:auto; display:block; margin-left:auto; margin-right:auto;"'.$after.'>';
             },
             $content
         );
+
         return trim($content);
     }
-
-
 }

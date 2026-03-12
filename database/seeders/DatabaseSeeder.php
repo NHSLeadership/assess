@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         if (! app()->environment(['local', 'development', 'staging'])) {
             $this->command?->error('Seeding is disabled in production.');
             Log::warning('Database seeding attempted in production and was skipped.');
+
             return;
         }
         $this->call([

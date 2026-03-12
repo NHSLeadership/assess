@@ -32,6 +32,7 @@ class ResponseForm
                                     $rater->email,
                                 ]);
                                 $label = implode(' | ', $parts);
+
                                 return [$rater->id => $label];
                             })
                             ->toArray();
@@ -52,8 +53,11 @@ class ResponseForm
                     ->disabled(fn (Get $get) => blank($get('rater_id')))
                     ->options(function (Get $get, $livewire) {
                         $assessment = $livewire->getParentRecord();
-                        if (! $assessment) return [];
+                        if (! $assessment) {
+                            return [];
+                        }
                         $rater = Rater::find($get('rater_id'));
+
                         return QuestionTextResolver::optionsFor($assessment, $rater);
                     })
                     ->required()
@@ -66,11 +70,16 @@ class ResponseForm
                     ->disabled(fn (Get $get) => blank($get('question_id')))
                     ->options(function (Get $get): array {
                         $questionId = $get('question_id');
-                        if (! $questionId) return [];
+                        if (! $questionId) {
+                            return [];
+                        }
                         $scaleId = Question::query()
                             ->whereKey($questionId)
                             ->value('scale_id');
-                        if (! $scaleId) return [];
+                        if (! $scaleId) {
+                            return [];
+                        }
+
                         return ScaleOption::query()
                             ->where('scale_id', $scaleId)
                             ->orderBy('order')

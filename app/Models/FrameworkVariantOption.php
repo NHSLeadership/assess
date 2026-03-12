@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class FrameworkVariantOption extends Model
 {
@@ -15,7 +15,7 @@ class FrameworkVariantOption extends Model
         'framework_variant_attribute_id',
         'value',
         'label',
-        'order'
+        'order',
     ];
 
     public function attribute(): BelongsTo

@@ -4,7 +4,7 @@ use App\Models\Framework;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 test('framework has expected fillable attributes', function () {
-    $framework = new Framework();
+    $framework = new Framework;
 
     expect($framework->getFillable())->toEqual([
         'name',

@@ -17,8 +17,7 @@ class QuestionVariantsTable
         return $table
             ->reorderable('priority')
             ->defaultSort('priority')
-            ->modifyQueryUsing(fn (Builder $query) =>
-            $query->with(['matches.attribute', 'matches.option'])
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['matches.attribute', 'matches.option'])
             )
             ->columns([
                 TextColumn::make('conditions_summary')

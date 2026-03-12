@@ -3,7 +3,7 @@
 use App\Models\ScaleOption;
 
 test('scale option has expected fillable attributes', function () {
-    $option = new ScaleOption();
+    $option = new ScaleOption;
 
     expect($option->getFillable())->toEqual([
         'scale_id',
@@ -15,7 +15,7 @@ test('scale option has expected fillable attributes', function () {
 });
 
 test('scale option casts value and order to integers', function () {
-    $option = new ScaleOption();
+    $option = new ScaleOption;
 
     expect($option->getCasts())->toHaveKey('value')
         ->and($option->getCasts()['value'])->toEqual('integer')

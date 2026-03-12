@@ -1,11 +1,9 @@
 <?php
 
-use Tests\Support\{
-    QuestionsFakes,
-    FakeNode,
-    FakeFramework,
-    QuestionsProgressLabelFake
-};
+use Tests\Support\FakeFramework;
+use Tests\Support\FakeNode;
+use Tests\Support\QuestionsFakes;
+use Tests\Support\QuestionsProgressLabelFake;
 
 it('returns correct progress label for a question', function () {
 
@@ -21,7 +19,7 @@ it('returns correct progress label for a question', function () {
         questions: [$q1, $q2, $q3]
     );
 
-    $assessment = new \stdClass();
+    $assessment = new stdClass;
     $assessment->framework = $framework;
 
     $component = new QuestionsProgressLabelFake($assessment);

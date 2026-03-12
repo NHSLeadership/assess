@@ -1,15 +1,16 @@
 <?php
 
-use App\Models\Response;
 use App\Models\Assessment;
 use App\Models\Framework;
-use App\Models\Rater;
-use App\Models\User;
 use App\Models\Node;
 use App\Models\NodeType;
 use App\Models\Question;
+use App\Models\Rater;
+use App\Models\Response;
 use App\Models\Scale;
 use App\Models\ScaleOption;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -17,7 +18,7 @@ uses(RefreshDatabase::class);
 /**
  * Helper to create a minimal valid Response with all dependencies.
  */
-function makeResponse(): \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+function makeResponse(): Collection|Model
 {
     $user = makeAuthUser(['user_id' => '1000000000']);
 
@@ -26,15 +27,15 @@ function makeResponse(): \Illuminate\Database\Eloquent\Collection|\Illuminate\Da
     ]);
 
     // Framework + Assessment
-    $framework  = Framework::factory()->create();
+    $framework = Framework::factory()->create();
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id'      => $rater->user_id,
+        'user_id' => $rater->user_id,
     ]);
 
     // Node + Question
     $nodeType = NodeType::factory()->create();
-    $node     = Node::factory()->create([
+    $node = Node::factory()->create([
         'framework_id' => $framework->id,
         'node_type_id' => $nodeType->id,
     ]);
@@ -44,16 +45,16 @@ function makeResponse(): \Illuminate\Database\Eloquent\Collection|\Illuminate\Da
     ]);
 
     // Scale + Option
-    $scale       = Scale::factory()->create();
+    $scale = Scale::factory()->create();
     $scaleOption = ScaleOption::factory()->create(['scale_id' => $scale->id]);
 
     // Response
     return Response::factory()->create([
-        'assessment_id'   => $assessment->id,
-        'rater_id'        => $rater->id,
-        'question_id'     => $question->id,
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'question_id' => $question->id,
         'scale_option_id' => $scaleOption->id,
-        'textarea'        => 'Sample text',
+        'textarea' => 'Sample text',
     ]);
 }
 
