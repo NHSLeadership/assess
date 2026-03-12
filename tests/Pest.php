@@ -1,6 +1,8 @@
 <?php
 
-require_once __DIR__ . '/Support/TestHelpers.php';
+use Tests\TestCase;
+
+require_once __DIR__.'/Support/TestHelpers.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -14,12 +16,12 @@ require_once __DIR__ . '/Support/TestHelpers.php';
 */
 
 pest()
-    ->extend(\Tests\TestCase::class)
-    ->in(__DIR__ . '/Feature');
+    ->extend(TestCase::class)
+    ->in(__DIR__.'/Feature');
 
 pest()
-    ->extend(\PHPUnit\Framework\TestCase::class)
-    ->in(__DIR__ . '/Unit');
+    ->extend(PHPUnit\Framework\TestCase::class)
+    ->in(__DIR__.'/Unit');
 /*
 |--------------------------------------------------------------------------
 | Expectations
