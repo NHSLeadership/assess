@@ -4,6 +4,9 @@
 # Self Assessment 360 Tools
 
 ---
+### v1.0.8
+> Updated: 12.03.2026
+1. Add code analysis tooling (PHPStan, Pint, Rector)
 
 ### v1.0.7
 > Updated: 11.03.2026
