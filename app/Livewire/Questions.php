@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Enums\ResponseType;
 use App\Models\Node;
 use App\Models\Response;
+use App\Services\FrameworkTraversalService;
 use App\Services\UserResponseService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\FormFieldValidationRulesTrait;
@@ -31,11 +32,11 @@ class Questions extends Component
 
     protected $pageName = 'questionId';
 
-    public ?array $data;
+    public ?array $data = [];
 
-    public ?int $nodeKeyId;
+    public ?int $nodeKeyId = null;
 
-    public ?int $nodeId;
+    public ?int $nodeId = null;
 
     public ?string $edit = null;
 
@@ -61,9 +62,18 @@ class Questions extends Component
             }
         }
 
-        if (! empty($this->nodeId)) {
+        if (! empty($this->nodeId) && $this->edit === 'edit') {
+            // Explicit edit link from Summary -> honour it
             $this->goToNodeById($this->nodeId);
+        } else {
+            // Normal flow (new or existing): always resume to first unanswered in traversal order
+            $resumeNodeId = $this->findResumeNodeId();
+            if ($resumeNodeId) {
+                $this->goToNodeById($resumeNodeId);
+            }
         }
+
+        $this->dispatch('questions-next-node', $this->node()?->id);
     }
     protected function orderedQuestions(?Node $node)
     {
@@ -103,30 +113,21 @@ class Questions extends Component
     #[Computed]
     public function nodes(): ?\ArrayIterator
     {
-        if (empty($this->assessment)) {
+        if (empty($this->assessment?->framework)) {
             return null;
         }
 
-        /**
-         * Take all nodes that have at least one active question
-         */
-        $nodes = $this->assessment?->framework?->nodes()
-            ->whereHas('questions', function ($q) {
-                $q->where('active', true);
-            })
-            ->with(['questions' => function ($q) {
-                $q->where('active', true);
-            }])
-            ->orderBy('order')
-            ->orderBy('id')
-            ->get();
-        /**
-         * Convert collection to iterator
-         */
-        $nodesIterator = $nodes->getIterator();
-        if (empty($this->nodeKeyId)) {
+        // Single source of truth: depth-first, sibling-ordered, question-bearing nodes
+        $nodes = app(FrameworkTraversalService::class)
+            ->orderedQuestionNodes($this->assessment->framework->id);
+
+        $nodesIterator = $nodes->values()->getIterator();
+
+        // Initialise pointer (nodeKeyId is the index in the ordered list)
+        if ($this->nodeKeyId === null) {
             $this->nodeKeyId = $nodesIterator->key() ?? 0;
         }
+
         $nodesIterator->seek($this->nodeKeyId);
 
         return $nodesIterator;
@@ -391,6 +392,36 @@ class Questions extends Component
             );
     }
 
+    protected function findResumeNodeId(): ?int
+    {
+        $framework = $this->assessment?->framework;
+
+        if (! $framework) {
+            return null;
+        }
+
+        $orderedNodes = app(FrameworkTraversalService::class)
+            ->orderedQuestionNodes($framework->id);
+
+        // Question IDs already answered in this assessment
+        $answeredQuestionIds = Response::where('assessment_id', $this->assessmentId)
+            ->pluck('question_id')
+            ->all();
+
+        foreach ($orderedNodes as $node) {
+            $questionIds = $this->orderedQuestions($node)
+                ->pluck('id')
+                ->all();
+
+            // if any question in this node is unanswered, resume here
+            if (count(array_diff($questionIds, $answeredQuestionIds)) > 0) {
+                return $node->id;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Go to a specific node by its id
      */
@@ -402,6 +433,13 @@ class Questions extends Component
         $this->resetPage(pageName: $this->pageName);
 
         $nodes = $this->nodes();
+
+        if (! $nodes) {
+            return;
+        }
+
+        $nodes->rewind();
+
         foreach ($nodes as $index => $node) {
             if ($node->id === $nodeId) {
                 $nodes->seek($index);

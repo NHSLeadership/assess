@@ -2,11 +2,12 @@
 
 namespace App\Livewire;
 
-use App\Models\Assessment;
 use App\Models\Node;
+use App\Services\FrameworkTraversalService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\FormFieldValidationRulesTrait;
 use App\Traits\UserTrait;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -50,24 +51,50 @@ class Assessments extends Component
         // Redirect already submitted assignments to summary page
         $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment?->framework?->id, $this->edit);
 
+        // Set initial current node so headings are correct on first render
+        $nodes = $this->nodes();
+
+        if ($nodes && $nodes->isNotEmpty()) {
+            $this->currentNode = $this->nodeId
+                ? $nodes->firstWhere('id', $this->nodeId)
+                : $nodes->first();
+        }
     }
 
     #[Computed]
-    public function nodes()
+    public function nodes(): ?Collection
     {
-        if (empty($this->assessment)) {
+        if (empty($this->assessment?->framework)) {
             return null;
         }
 
-        return $this->assessment?->framework?->nodes()
-            ->whereHas('questions', function ($q) {
-                $q->where('active', true);
-            })
-            ->with(['questions' => function ($q) {
-                $q->where('active', true);
-            }])
-            ->orderBy('order')
-            ->orderBy('id');
+        return app(FrameworkTraversalService::class)
+            ->orderedQuestionNodes($this->assessment->framework->id);
+    }
+
+    protected function paginatedNodes(): ?LengthAwarePaginator
+    {
+        $nodes = $this->nodes();
+
+        if (! $nodes || $nodes->isEmpty()) {
+            return null;
+        }
+
+        $page = LengthAwarePaginator::resolveCurrentPage($this->pageName);
+
+        $items = $nodes->forPage($page, $this->perPage)->values();
+
+        return new LengthAwarePaginator(
+            $items,
+            $nodes->count(),
+            $this->perPage,
+            $page,
+            [
+                'pageName' => $this->pageName,
+                'path' => request()->url(),
+                'query' => request()->query(),
+            ]
+        );
     }
 
     #[Computed]
@@ -88,7 +115,7 @@ class Assessments extends Component
     #[On('questions-next-node')]
     public function currentQuestionNode($nodeId = null): void
     {
-        // Keeps node within current framework
+        // Keep node within current framework
         if (! $nodeId || ! $this->assessment?->framework) {
             $this->currentNode = null;
             return;
@@ -150,7 +177,7 @@ class Assessments extends Component
     public function render()
     {
         return view('livewire.assessments', [
-            'paginatedNodes' => $this->nodes()?->paginate($this->perPage, pageName: $this->pageName),
+            'paginatedNodes' => $this->paginatedNodes(),
         ]);
     }
 }
