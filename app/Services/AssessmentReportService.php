@@ -257,12 +257,6 @@ class AssessmentReportService
 
         $scaleOptions = $this->scaleOptions();
         $scaleOptionsModified = array_values($scaleOptions);
-        $callback = $useScaleLabels
-            ? 'function(value, index, values) {
-                const labels = '.json_encode($scaleOptionsModified).';
-                return labels[index] ?? value;
-            }'
-            : null;
 
         foreach ($this->barCharts as $chart) {
             // Each bar chart has multiple labels and values
@@ -290,8 +284,8 @@ class AssessmentReportService
                 'tickColor' => '#212b32',
                 'pointLabelsColor' => '#212b32',
                 'legendLabelsColor' => '#212b32',
-                'callback' => $callback,
-                'tickLabels' => $scaleOptions,
+                'useScaleLabels' => $useScaleLabels,
+                'tickLabels' => $scaleOptionsModified,
             ],
         ];
     }
