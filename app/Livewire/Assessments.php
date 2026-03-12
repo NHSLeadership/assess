@@ -22,11 +22,8 @@ class Assessments extends Component
 
     public ?int $assessmentId;
 
-    protected ?int $perPage = 1;
-
-    protected ?string $pageName = 'assessmentId';
-
-    protected ?bool $simplePagination = true;
+    protected int $perPage = 1;
+    protected string $pageName = 'nodePage';
 
     public ?Node $currentNode = null;
 
@@ -34,10 +31,17 @@ class Assessments extends Component
 
     public ?string $edit = null;
 
-    public function mount($assessmentId, $nodeId = null, $edit = null)
+    public function mount($assessmentId, $nodeId = null, $edit = null): void
     {
+
+        // Assign parameters to public properties
+        $this->assessmentId = (int) $assessmentId;
+        $this->nodeId = $nodeId ? (int) $nodeId : null;
+        $this->edit = $edit;
+
         if (empty($this->assessmentId) || ! is_numeric($this->assessmentId)) {
-            return redirect()->route('frameworks');
+            redirect()->route('frameworks');
+            return;
         }
 
         // Redirect if not permitted to do an assessment for this framework now
@@ -62,7 +66,8 @@ class Assessments extends Component
             ->with(['questions' => function ($q) {
                 $q->where('active', true);
             }])
-            ->orderBy('order');
+            ->orderBy('order')
+            ->orderBy('id');
     }
 
     #[Computed]
@@ -80,16 +85,20 @@ class Assessments extends Component
         $this->previousPage();
     }
 
-    #[Computed]
-    public function responses(): Collection
-    {
-        return $this->user->assessments()->where('id', $this->assessmentId)->get();
-    }
-
     #[On('questions-next-node')]
-    public function currentQuestionNode($nodeId = null)
+    public function currentQuestionNode($nodeId = null): void
     {
-        $this->currentNode = Node::find($nodeId);
+        // Keeps node within current framework
+        if (! $nodeId || ! $this->assessment?->framework) {
+            $this->currentNode = null;
+            return;
+        }
+
+        $this->currentNode = $this->assessment
+            ->framework
+            ->nodes()
+            ->whereKey($nodeId)
+            ->first();
     }
 
     /**
