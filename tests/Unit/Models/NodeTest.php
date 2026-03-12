@@ -3,7 +3,7 @@
 use App\Models\Node;
 
 test('node has expected fillable attributes', function () {
-    $node = new Node();
+    $node = new Node;
 
     expect($node->getFillable())->toEqual([
         'framework_id',

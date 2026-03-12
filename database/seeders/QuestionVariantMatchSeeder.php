@@ -117,14 +117,14 @@ class QuestionVariantMatchSeeder extends Seeder
             ['question_variant_id' => 105, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 1],
             ['question_variant_id' => 106, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 2],
             ['question_variant_id' => 107, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 3],
-            ['question_variant_id' => 108, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4]
+            ['question_variant_id' => 108, 'framework_variant_attribute_id' => 1, 'framework_variant_option_id' => 4],
         ];
 
         foreach ($matches as $match) {
             QuestionVariantMatch::firstOrCreate([
-                'question_variant_id'            => $match['question_variant_id'],
+                'question_variant_id' => $match['question_variant_id'],
                 'framework_variant_attribute_id' => $match['framework_variant_attribute_id'],
-                'framework_variant_option_id'    => $match['framework_variant_option_id'],
+                'framework_variant_option_id' => $match['framework_variant_option_id'],
             ]);
         }
     }

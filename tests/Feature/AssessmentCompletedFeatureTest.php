@@ -1,11 +1,9 @@
 <?php
 
 use App\Livewire\AssessmentCompleted;
-use App\Models\Assessment;
-use App\Models\Framework;
-use Livewire\Livewire;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
@@ -20,10 +18,7 @@ it('throws ModelNotFoundException when assessment is missing', function () {
 
     $this->expectException(ModelNotFoundException::class);
 
-    Livewire::test(\App\Livewire\AssessmentCompleted::class, [
+    Livewire::test(AssessmentCompleted::class, [
         'assessmentId' => 123,
     ]);
 });
-
-
-

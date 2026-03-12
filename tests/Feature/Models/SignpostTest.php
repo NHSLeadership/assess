@@ -1,11 +1,13 @@
 <?php
 
-use App\Models\Signpost;
-use App\Models\Node;
-use App\Models\NodeType;
 use App\Models\Framework;
 use App\Models\FrameworkVariantAttribute;
 use App\Models\FrameworkVariantOption;
+use App\Models\Node;
+use App\Models\NodeType;
+use App\Models\Signpost;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -13,11 +15,11 @@ uses(RefreshDatabase::class);
 /**
  * Helper to create a minimal valid Signpost with its dependencies.
  */
-function makeSignpost(): \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+function makeSignpost(): Collection|Model
 {
     // Framework + Node
     $framework = Framework::factory()->create();
-    $nodeType  = NodeType::factory()->create();
+    $nodeType = NodeType::factory()->create();
 
     $node = Node::factory()->create([
         'framework_id' => $framework->id,
@@ -35,11 +37,11 @@ function makeSignpost(): \Illuminate\Database\Eloquent\Collection|\Illuminate\Da
 
     // Signpost
     return Signpost::factory()->create([
-        'node_id'                       => $node->id,
-        'framework_variant_option_id'   => $option->id,
-        'min_value'                     => 1,
-        'max_value'                     => 5,
-        'guidance'                      => 'Example guidance text',
+        'node_id' => $node->id,
+        'framework_variant_option_id' => $option->id,
+        'min_value' => 1,
+        'max_value' => 5,
+        'guidance' => 'Example guidance text',
     ]);
 }
 

@@ -1,10 +1,13 @@
 <?php
-use App\Models\Scale;
-use App\Models\ScaleOption;
-use App\Models\Question;
+
 use App\Models\Framework;
 use App\Models\Node;
 use App\Models\NodeType;
+use App\Models\Question;
+use App\Models\Scale;
+use App\Models\ScaleOption;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -12,10 +15,10 @@ uses(RefreshDatabase::class);
 /**
  * Helper to create a minimal valid Scale.
  */
-function makeScale(): \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+function makeScale(): Collection|Model
 {
     return Scale::factory()->create([
-        'name'        => 'Performance Scale',
+        'name' => 'Performance Scale',
         'description' => 'Used for rating performance',
     ]);
 }
@@ -32,15 +35,15 @@ test('scale can have many options', function () {
 
     ScaleOption::factory()->create([
         'scale_id' => $scale->id,
-        'value'    => 1,
+        'value' => 1,
     ]);
     ScaleOption::factory()->create([
         'scale_id' => $scale->id,
-        'value'    => 2,
+        'value' => 2,
     ]);
     ScaleOption::factory()->create([
         'scale_id' => $scale->id,
-        'value'    => 3,
+        'value' => 3,
     ]);
 
     expect($scale->options)->toHaveCount(3)
@@ -51,14 +54,14 @@ test('scale can have many questions', function () {
     $scale = makeScale();
 
     $framework = Framework::factory()->create();
-    $nodeType  = NodeType::factory()->create();
-    $node      = Node::factory()->create([
+    $nodeType = NodeType::factory()->create();
+    $node = Node::factory()->create([
         'framework_id' => $framework->id,
         'node_type_id' => $nodeType->id,
     ]);
 
     Question::factory()->count(2)->create([
-        'node_id'  => $node->id,
+        'node_id' => $node->id,
         'scale_id' => $scale->id,
     ]);
 

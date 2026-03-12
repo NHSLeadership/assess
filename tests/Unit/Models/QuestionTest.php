@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\Question;
 use App\Enums\ResponseType;
+use App\Models\Question;
 
 test('question has expected fillable attributes', function () {
-    $question = new Question();
+    $question = new Question;
 
     expect($question->getFillable())->toEqual([
         'node_id',
@@ -21,7 +21,7 @@ test('question has expected fillable attributes', function () {
 });
 
 test('question casts required and active to boolean', function () {
-    $question = new Question();
+    $question = new Question;
 
     expect($question->getCasts())->toHaveKey('required')
         ->and($question->getCasts()['required'])->toEqual('boolean')
@@ -49,7 +49,7 @@ test('question component accessor returns expected component name', function () 
 });
 
 test('question name accessor returns question_id prefixed name', function () {
-    $question = new Question();
+    $question = new Question;
     $question->setRawAttributes(['id' => 42]);
 
     expect($question->name)->toEqual('question_42');

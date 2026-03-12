@@ -7,12 +7,13 @@ use Exception;
 class AssessmentFrameworkMismatchException extends Exception
 {
     public ?int $assessmentId;
+
     public ?int $frameworkId;
 
     public function __construct(
         ?int $assessmentId = null,
         ?int $frameworkId = null,
-        string $message = null
+        ?string $message = null
     ) {
         $this->assessmentId = $assessmentId;
         $this->frameworkId = $frameworkId;

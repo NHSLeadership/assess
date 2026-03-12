@@ -8,7 +8,7 @@ class AssessmentNotSubmittedException extends Exception
 {
     public ?int $assessmentId;
 
-    public function __construct(?int $assessmentId = null, string $message = null)
+    public function __construct(?int $assessmentId = null, ?string $message = null)
     {
         $this->assessmentId = $assessmentId;
 

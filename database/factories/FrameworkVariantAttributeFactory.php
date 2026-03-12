@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\FrameworkVariantAttribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\FrameworkVariantAttribute>
+ * @extends Factory<FrameworkVariantAttribute>
  */
 class FrameworkVariantAttributeFactory extends Factory
 {

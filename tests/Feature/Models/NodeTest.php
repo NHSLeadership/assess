@@ -1,25 +1,26 @@
 <?php
 
 use App\Models\Framework;
+use App\Models\FrameworkVariantAttribute;
+use App\Models\FrameworkVariantOption;
 use App\Models\Node;
 use App\Models\NodeType;
 use App\Models\Question;
 use App\Models\Signpost;
-use App\Models\FrameworkVariantAttribute;
-use App\Models\FrameworkVariantOption;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-
-function makeNode(array $overrides = []): \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+function makeNode(array $overrides = []): Collection|Model
 {
     $framework = Framework::factory()->create();
-    $nodeType  = NodeType::factory()->create();
+    $nodeType = NodeType::factory()->create();
 
     return Node::factory()->create(array_merge([
-        'name'         => 'Root Node',
-        'description'  => 'Top level node',
+        'name' => 'Root Node',
+        'description' => 'Top level node',
         'framework_id' => $framework->id,
         'node_type_id' => $nodeType->id,
     ], $overrides));
@@ -48,7 +49,7 @@ test('node belongs to a node type', function () {
 
 test('node can have a parent and children', function () {
     $parent = makeNode(['name' => 'Parent Node']);
-    $child  = makeNode(['parent_id' => $parent->id, 'name' => 'Child Node']);
+    $child = makeNode(['parent_id' => $parent->id, 'name' => 'Child Node']);
 
     expect($child->parent)->toBeInstanceOf(Node::class)
         ->and($child->parent->id)->toEqual($parent->id);
@@ -66,12 +67,12 @@ test('node can have many questions', function () {
 });
 
 test('node can have many signposts', function () {
-    $node     = makeNode();
-    $attr     = FrameworkVariantAttribute::factory()->create(['framework_id' => $node->framework_id]);
-    $option   = FrameworkVariantOption::factory()->create(['framework_variant_attribute_id' => $attr->id]);
+    $node = makeNode();
+    $attr = FrameworkVariantAttribute::factory()->create(['framework_id' => $node->framework_id]);
+    $option = FrameworkVariantOption::factory()->create(['framework_variant_attribute_id' => $attr->id]);
 
     Signpost::factory()->count(2)->create([
-        'node_id'                   => $node->id,
+        'node_id' => $node->id,
         'framework_variant_option_id' => $option->id,
     ]);
 

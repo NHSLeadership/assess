@@ -4,31 +4,34 @@ namespace App\Livewire;
 
 use App\Models\Assessment;
 use App\Models\Node;
-use App\Traits\FormFieldValidationRulesTrait;
 use App\Traits\AssessmentHelperTrait;
+use App\Traits\FormFieldValidationRulesTrait;
 use App\Traits\UserTrait;
+use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
-use Illuminate\Support\Collection;
 use Livewire\WithPagination;
 
 class Assessments extends Component
 {
-    use FormFieldValidationRulesTrait;
-    use WithPagination;
-    use UserTrait;
     use AssessmentHelperTrait;
+    use FormFieldValidationRulesTrait;
+    use UserTrait;
+    use WithPagination;
 
     public ?int $assessmentId;
 
     protected ?int $perPage = 1;
+
     protected ?string $pageName = 'assessmentId';
+
     protected ?bool $simplePagination = true;
 
-    public Node|null $currentNode = null;
+    public ?Node $currentNode = null;
 
     public ?int $nodeId = null;
+
     public ?string $edit = null;
 
     public function mount($assessmentId, $nodeId = null, $edit = null)
@@ -37,10 +40,10 @@ class Assessments extends Component
             return redirect()->route('frameworks');
         }
 
-        //Redirect if not permitted to do an assessment for this framework now
+        // Redirect if not permitted to do an assessment for this framework now
         $this->redirectIfAssessmentNotPermitted($this->assessment?->framework?->id, $this->assessmentId);
 
-        //Redirect already submitted assignments to summary page
+        // Redirect already submitted assignments to summary page
         $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment?->framework?->id, $this->edit);
 
     }
@@ -51,6 +54,7 @@ class Assessments extends Component
         if (empty($this->assessment)) {
             return null;
         }
+
         return $this->assessment?->framework?->nodes()
             ->whereHas('questions', function ($q) {
                 $q->where('active', true);
@@ -90,8 +94,6 @@ class Assessments extends Component
 
     /**
      * Build the heading hierarchy for the current node
-     *
-     * @return array
      */
     #[Computed]
     protected function headingHierarchy(): array
@@ -127,11 +129,11 @@ class Assessments extends Component
             };
 
             return [
-                'name'        => $n->name ?? '',
-                'colour'      => $n->colour ?? 'blue',
-                'headingTag'  => $headingTag,
-                'headingClass'=> $headingClass,
-                'type'        => $n->type?->name ?? '',
+                'name' => $n->name ?? '',
+                'colour' => $n->colour ?? 'blue',
+                'headingTag' => $headingTag,
+                'headingClass' => $headingClass,
+                'type' => $n->type?->name ?? '',
             ];
         })->toArray();
     }

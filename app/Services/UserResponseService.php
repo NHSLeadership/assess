@@ -10,7 +10,7 @@ class UserResponseService
 {
     public static function updateOrCreate(mixed $values, Question $question, int $assessmentId, int $raterId): void
     {
-        if (!is_array($values)) {
+        if (! is_array($values)) {
             $values = [$values];
         }
 
@@ -25,21 +25,21 @@ class UserResponseService
                         'text',
                         'textarea' => Response::updateOrCreate([
                             'assessment_id' => $assessmentId,
-                            'question_id'   => $question->id,
-                            'rater_id'      => $raterId,
-                        ],[
-                            'textarea'     => $value,
-                            'updated_at'    => now(),
+                            'question_id' => $question->id,
+                            'rater_id' => $raterId,
+                        ], [
+                            'textarea' => $value,
+                            'updated_at' => now(),
                         ]),
                         'checkbox',
                         'radio',
                         'select' => Response::updateOrCreate([
-                            'assessment_id'   => $assessmentId,
-                            'question_id'     => $question->id,
-                            'rater_id'        => $raterId,
-                        ],[
+                            'assessment_id' => $assessmentId,
+                            'question_id' => $question->id,
+                            'rater_id' => $raterId,
+                        ], [
                             'scale_option_id' => $value,
-                            'updated_at'      => now(),
+                            'updated_at' => now(),
                         ]),
 
                         default => throw new \InvalidArgumentException(
@@ -49,7 +49,7 @@ class UserResponseService
                 } catch (\Throwable $e) {
                     Log::error('Error saving form field {field_id}. {details}', [
                         'question_id' => $question->id,
-                        'details' => $e->getMessage()
+                        'details' => $e->getMessage(),
                     ]);
                 }
             }

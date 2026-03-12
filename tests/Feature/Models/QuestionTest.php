@@ -1,13 +1,17 @@
 <?php
 
+use App\Enums\ResponseType;
+use App\Models\Assessment;
 use App\Models\Framework;
-use App\Models\NodeType;
 use App\Models\Node;
-use App\Models\Scale;
+use App\Models\NodeType;
 use App\Models\Question;
 use App\Models\QuestionVariant;
+use App\Models\Rater;
 use App\Models\Response;
-use App\Enums\ResponseType;
+use App\Models\Scale;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -15,10 +19,10 @@ uses(RefreshDatabase::class);
 /**
  * Helper to create a Question with all required dependencies.
  */
-function makeQuestion(): \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+function makeQuestion(): Collection|Model
 {
     $framework = Framework::factory()->create();
-    $nodeType  = NodeType::factory()->create();
+    $nodeType = NodeType::factory()->create();
 
     $node = Node::factory()->create([
         'framework_id' => $framework->id,
@@ -26,7 +30,7 @@ function makeQuestion(): \Illuminate\Database\Eloquent\Collection|\Illuminate\Da
     ]);
 
     return Question::factory()->create([
-        'node_id'       => $node->id,
+        'node_id' => $node->id,
         'response_type' => ResponseType::TYPE_TEXTAREA->value,
     ]);
 }
@@ -47,7 +51,7 @@ test('question belongs to a node', function () {
 
 test('question belongs to a scale', function () {
     $question = makeQuestion();
-    $scale    = Scale::factory()->create();
+    $scale = Scale::factory()->create();
 
     $question->update(['scale_id' => $scale->id]);
 
@@ -72,16 +76,16 @@ test('question can have many responses', function () {
     $question = $setup['questions']->first();
 
     $user = makeAuthUser(['user_id' => '1000000000']);
-    $assessment1 = \App\Models\Assessment::factory()->create([
+    $assessment1 = Assessment::factory()->create([
         'framework_id' => $setup['framework']->id,
-        'user_id'      => $user->id,
+        'user_id' => $user->id,
     ]);
-    $assessment2 = \App\Models\Assessment::factory()->create([
+    $assessment2 = Assessment::factory()->create([
         'framework_id' => $setup['framework']->id,
-        'user_id'      => $user->id,
+        'user_id' => $user->id,
     ]);
 
-    $rater = \App\Models\Rater::factory()->create(['user_id' => $user->user_id]);
+    $rater = Rater::factory()->create(['user_id' => $user->user_id]);
     $scaleSetup = createScaleWithOption();
     $scaleOption = $scaleSetup['scaleOption'];
 

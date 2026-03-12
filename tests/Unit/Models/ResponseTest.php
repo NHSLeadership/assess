@@ -3,7 +3,7 @@
 use App\Models\Response;
 
 test('response has expected fillable attributes', function () {
-    $response = new Response();
+    $response = new Response;
 
     expect($response->getFillable())->toEqual([
         'assessment_id',

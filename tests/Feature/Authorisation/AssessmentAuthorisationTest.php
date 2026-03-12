@@ -1,12 +1,17 @@
 <?php
 
+use App\Models\Assessment;
+use App\Models\Framework;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
     // A test user that mocks Auth0 permissions
-    $this->user = new class extends \App\Models\User {
+    $this->user = new class extends User
+    {
         public array $fakePermissions = [];
 
         public function can($ability, $arguments = [])
@@ -22,9 +27,9 @@ beforeEach(function () {
     };
 
     // Create framework + assessment
-    $this->framework = \App\Models\Framework::factory()->create();
+    $this->framework = Framework::factory()->create();
 
-    $this->assessment = \App\Models\Assessment::factory()->create([
+    $this->assessment = Assessment::factory()->create([
         'user_id' => 1,
         'framework_id' => $this->framework->id,
     ]);
@@ -33,7 +38,7 @@ beforeEach(function () {
 test('denies update when user lacks permission', function () {
     $this->user->fakePermissions = [];
 
-    expect(\Illuminate\Support\Facades\Gate::forUser($this->user)->allows('update', $this->assessment))
+    expect(Gate::forUser($this->user)->allows('update', $this->assessment))
         ->toBeFalse();
 });
 
@@ -42,6 +47,6 @@ test('allows update when user has assessment:update permission', function () {
         ['permission_name' => 'assessment:update'],
     ];
 
-    expect(\Illuminate\Support\Facades\Gate::forUser($this->user)->allows('update', $this->assessment))
+    expect(Gate::forUser($this->user)->allows('update', $this->assessment))
         ->toBeTrue();
 });

@@ -1,16 +1,18 @@
 <?php
 
-use App\Models\Rater;
-use App\Models\User;
-use App\Models\Framework;
 use App\Models\Assessment;
 use App\Models\AssessmentRater;
+use App\Models\Framework;
+use App\Models\Node;
+use App\Models\NodeType;
+use App\Models\Question;
+use App\Models\Rater;
 use App\Models\Response;
 use App\Models\Scale;
 use App\Models\ScaleOption;
-use App\Models\Question;
-use App\Models\Node;
-use App\Models\NodeType;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -18,7 +20,7 @@ uses(RefreshDatabase::class);
 /**
  * Helper to create a Rater with a linked User.
  */
-function makeRater(): \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+function makeRater(): Collection|Model
 {
     $user = makeAuthUser(['user_id' => '1000000000']);
 
@@ -50,12 +52,12 @@ test('rater can belong to many assessments with pivot data', function () {
 
     // Attach with pivot data
     $rater->assessments()->attach($assessment1->id, [
-        'role'    => 'manager',
+        'role' => 'manager',
         'is_self' => false,
     ]);
 
     $rater->assessments()->attach($assessment2->id, [
-        'role'    => 'self',
+        'role' => 'self',
         'is_self' => true,
     ]);
 
@@ -70,8 +72,8 @@ test('rater can have many responses', function () {
 
     // Minimal valid setup for a Response
     $framework = Framework::factory()->create();
-    $nodeType  = NodeType::factory()->create();
-    $node      = Node::factory()->create([
+    $nodeType = NodeType::factory()->create();
+    $node = Node::factory()->create([
         'framework_id' => $framework->id,
         'node_type_id' => $nodeType->id,
     ]);
@@ -80,26 +82,26 @@ test('rater can have many responses', function () {
 
     $assessment1 = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id'      => $rater->user_id,
+        'user_id' => $rater->user_id,
     ]);
     $assessment2 = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id'      => $rater->user_id,
+        'user_id' => $rater->user_id,
     ]);
 
     $scale = Scale::factory()->create();
     $scaleOption = ScaleOption::factory()->create(['scale_id' => $scale->id]);
 
     $response1 = Response::factory()->create([
-        'question_id'     => $question->id,
-        'assessment_id'   => $assessment1->id,
-        'rater_id'        => $rater->id,
+        'question_id' => $question->id,
+        'assessment_id' => $assessment1->id,
+        'rater_id' => $rater->id,
         'scale_option_id' => $scaleOption->id,
     ]);
     $response2 = Response::factory()->create([
-        'question_id'     => $question->id,
-        'assessment_id'   => $assessment2->id,
-        'rater_id'        => $rater->id,
+        'question_id' => $question->id,
+        'assessment_id' => $assessment2->id,
+        'rater_id' => $rater->id,
         'scale_option_id' => $scaleOption->id,
     ]);
 

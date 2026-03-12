@@ -72,6 +72,7 @@ class QuestionVariantResource extends Resource
         $variantId = request()->route('record');
         if ($variantId) {
             $variant = QuestionVariant::query()->with('question:id,node_id')->find($variantId);
+
             return $variant?->question?->id;
         }
 
@@ -87,6 +88,7 @@ class QuestionVariantResource extends Resource
             $variant = QuestionVariant::query()
                 ->with('question.node:id,framework_id')
                 ->find($variantId);
+
             return $variant?->question?->node?->framework_id;
         }
 
@@ -94,6 +96,7 @@ class QuestionVariantResource extends Resource
             $question = Question::query()
                 ->with('node:id,framework_id')
                 ->find($questionId);
+
             return $question?->node?->framework_id;
         }
 

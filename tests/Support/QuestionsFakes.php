@@ -63,7 +63,7 @@ class QuestionsProgressLabelFake extends Questions
         $currentQuestion = collect($this->assessment->framework->questions)
             ->firstWhere('id', $questionId);
 
-        if (!$currentQuestion) {
+        if (! $currentQuestion) {
             return '';
         }
 

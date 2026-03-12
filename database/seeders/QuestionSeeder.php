@@ -62,14 +62,14 @@ class QuestionSeeder extends Seeder
 
         foreach ($questions as $question) {
             Question::firstOrCreate([
-                'node_id'       => $question['node_id'],
-                'title'         => $question['title'],
-                'text'          => $question['text'],
+                'node_id' => $question['node_id'],
+                'title' => $question['title'],
+                'text' => $question['text'],
                 'response_type' => $question['response_type'],
-                'scale_id'      => $question['scale_id'],
-                'required'      => $question['required'],
-                'order'         => $question['order'],
-                'active'        => $question['active'],
+                'scale_id' => $question['scale_id'],
+                'required' => $question['required'],
+                'order' => $question['order'],
+                'active' => $question['active'],
             ]);
         }
     }

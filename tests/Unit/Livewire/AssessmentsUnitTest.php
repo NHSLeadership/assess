@@ -4,7 +4,8 @@ use App\Livewire\Assessments;
 use App\Models\Node;
 
 test('headingHierarchy returns empty array when no currentNode', function () {
-    $component = new class extends Assessments {
+    $component = new class extends Assessments
+    {
         public function exposeHeadingHierarchy()
         {
             return $this->headingHierarchy();
@@ -38,7 +39,8 @@ test('headingHierarchy builds correct hierarchy for parent chain', function () {
     $child->type = null;
 
     // Fake component exposing protected method
-    $component = new class($child) extends Assessments {
+    $component = new class($child) extends Assessments
+    {
         public function __construct($node)
         {
             $this->currentNode = $node;

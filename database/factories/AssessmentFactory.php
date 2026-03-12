@@ -2,11 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Assessment;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Assessment>
+ * @extends Factory<Assessment>
  */
 class AssessmentFactory extends Factory
 {
@@ -19,14 +20,14 @@ class AssessmentFactory extends Factory
     {
 
         $minDate = Carbon::parse('2026-01-01');
-        $now     = now();
+        $now = now();
 
         return [
-//            'user_id' => $this->faker->unique()->numberBetween(1000000000, 9999999999),
-//            'framework_id' => 1,
-//            'submitted_at' => $this->faker->optional(0.6)->dateTimeBetween($minDate, $now),
-//            'created_at' => $this->faker->dateTimeBetween($minDate, $now),
-//            'updated_at' => $this->faker->dateTimeBetween($minDate, $now),
+            //            'user_id' => $this->faker->unique()->numberBetween(1000000000, 9999999999),
+            //            'framework_id' => 1,
+            //            'submitted_at' => $this->faker->optional(0.6)->dateTimeBetween($minDate, $now),
+            //            'created_at' => $this->faker->dateTimeBetween($minDate, $now),
+            //            'updated_at' => $this->faker->dateTimeBetween($minDate, $now),
         ];
     }
 }

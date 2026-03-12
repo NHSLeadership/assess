@@ -13,9 +13,9 @@ test('assessment rater casts is_self to boolean', function () {
 test('assessment rater has fillable attributes', function () {
     $pivot = new AssessmentRater([
         'assessment_id' => 10,
-        'rater_id'      => 20,
-        'role'          => 'manager',
-        'is_self'       => true,
+        'rater_id' => 20,
+        'role' => 'manager',
+        'is_self' => true,
     ]);
 
     expect($pivot->assessment_id)->toEqual(10)

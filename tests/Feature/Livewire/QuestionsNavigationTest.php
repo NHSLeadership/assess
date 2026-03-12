@@ -12,6 +12,7 @@ use App\Models\ScaleOption;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+
 use function Pest\Laravel\actingAs;
 
 uses(RefreshDatabase::class);
@@ -21,24 +22,24 @@ function makeFrameworkGraph(User $user): array
     $framework = Framework::factory()->create();
     $nodeType = NodeType::factory()->create();
 
-    $node1 = Node::factory()->for($framework)->create(['order' => 1, 'node_type_id' => $nodeType->id,]);
-    $node2 = Node::factory()->for($framework)->create(['order' => 2, 'node_type_id' => $nodeType->id,]);
+    $node1 = Node::factory()->for($framework)->create(['order' => 1, 'node_type_id' => $nodeType->id]);
+    $node2 = Node::factory()->for($framework)->create(['order' => 2, 'node_type_id' => $nodeType->id]);
 
     $scale = Scale::factory()->create();
     $scaleOption = ScaleOption::factory()->create(['scale_id' => $scale->id]);
 
     // Create 2 required questions
     Question::factory()->create([
-        'node_id'        => $node1->id,
-        'response_type'  => ResponseType::TYPE_SCALE->value,
-        'scale_id'       => $scale->id,
-        'required'       => 1,
+        'node_id' => $node1->id,
+        'response_type' => ResponseType::TYPE_SCALE->value,
+        'scale_id' => $scale->id,
+        'required' => 1,
     ]);
     Question::factory()->create([
-        'node_id'        => $node2->id,
-        'response_type'  => ResponseType::TYPE_SCALE->value,
-        'scale_id'       => $scale->id,
-        'required'       => 1,
+        'node_id' => $node2->id,
+        'response_type' => ResponseType::TYPE_SCALE->value,
+        'scale_id' => $scale->id,
+        'required' => 1,
     ]);
 
     $assessment = Assessment::factory()
@@ -69,7 +70,7 @@ it('goPrevious moves to previous node and dispatches events when not on first no
     expect($component->get('nodeKeyId'))->toBe(0);
 
     // Events are dispatched
-    //$component->assertDispatched('questions-next-node', fn ($id) => $id === $nodes[0]->id);
+    // $component->assertDispatched('questions-next-node', fn ($id) => $id === $nodes[0]->id);
     $component->assertDispatched('scroll-to-top');
 
     // No redirect in this branch
@@ -89,9 +90,9 @@ it('goPrevious on the first node redirects to variant selection', function () {
         ->set('nodeKeyId', 0)
         ->call('goPrevious')
         ->assertRedirect(route('variants', [
-            'frameworkId'  => $framework->id,
+            'frameworkId' => $framework->id,
             'assessmentId' => $assessment->id,
-            'back'         => 1,
+            'back' => 1,
         ]));
 });
 
@@ -105,8 +106,8 @@ it('goToVariantSelection redirects to variants route', function () {
         'assessmentId' => $assessment->id,
     ])->call('goToVariantSelection')
         ->assertRedirect(route('variants', [
-            'frameworkId'  => $framework->id,
+            'frameworkId' => $framework->id,
             'assessmentId' => $assessment->id,
-            'back'         => 1,
+            'back' => 1,
         ]));
 });

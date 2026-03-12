@@ -59,7 +59,7 @@ test('getRulesForType returns empty array for unknown component', function () {
 
     $rules = $fake->getRulesForType(['component' => 'unknown']);
 
-    expect($rules)->toBe(['sometimes','nullable']);
+    expect($rules)->toBe(['sometimes', 'nullable']);
 });
 
 test('getMaxLengthForType returns correct max length', function () {
@@ -77,4 +77,3 @@ test('getMaxLengthForType returns null when no max rule exists', function () {
 
     expect($max)->toBeNull();
 });
-

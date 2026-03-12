@@ -1,32 +1,33 @@
 <?php
 
 namespace App\Enums;
+
 enum ResponseType: string
 {
     case TYPE_SINGLE_CHOICE = 'single_choice';
-    case TYPE_MULTI_CHOICE  = 'multi_choice';
-    case TYPE_SCALE         = 'scale';
-    case TYPE_BOOLEAN       = 'boolean';
-    case TYPE_TEXTAREA     = 'textarea';
+    case TYPE_MULTI_CHOICE = 'multi_choice';
+    case TYPE_SCALE = 'scale';
+    case TYPE_BOOLEAN = 'boolean';
+    case TYPE_TEXTAREA = 'textarea';
 
     public function label(): string
     {
-        return match($this) {
-            self::TYPE_BOOLEAN       => 'boolean',
-            self::TYPE_TEXTAREA     => 'textarea',
-            self::TYPE_MULTI_CHOICE  => 'multi_choice',
-            self::TYPE_SCALE         => 'scale',
+        return match ($this) {
+            self::TYPE_BOOLEAN => 'boolean',
+            self::TYPE_TEXTAREA => 'textarea',
+            self::TYPE_MULTI_CHOICE => 'multi_choice',
+            self::TYPE_SCALE => 'scale',
             self::TYPE_SINGLE_CHOICE => 'single_choice',
-            default                  => 'text',
+            default => 'text',
         };
     }
 
     public function component(): string
     {
-        return match($this) {
+        return match ($this) {
             self::TYPE_BOOLEAN,
-            self::TYPE_TEXTAREA     => 'textarea',
-            self::TYPE_MULTI_CHOICE  => 'checkbox',
+            self::TYPE_TEXTAREA => 'textarea',
+            self::TYPE_MULTI_CHOICE => 'checkbox',
             self::TYPE_SCALE,
             self::TYPE_SINGLE_CHOICE => 'radio',
             default => 'text',

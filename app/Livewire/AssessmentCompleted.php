@@ -2,8 +2,8 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
 use App\Traits\AssessmentHelperTrait;
+use Livewire\Component;
 
 class AssessmentCompleted extends Component
 {
@@ -27,9 +27,10 @@ class AssessmentCompleted extends Component
     {
         return redirect()->route('assessment-report', [
             'frameworkId' => $this->assessment?->framework?->id,
-            'assessmentId' => $this->assessmentId
+            'assessmentId' => $this->assessmentId,
         ]);
     }
+
     public function render()
     {
         return view('livewire.assessment-completed');

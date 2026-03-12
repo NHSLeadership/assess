@@ -1,10 +1,9 @@
 <?php
 
 use App\Models\Assessment;
-use App\Models\Framework;
-use App\Models\User;
-use App\Models\Rater;
 use App\Models\AssessmentRater;
+use App\Models\Framework;
+use App\Models\Rater;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -14,7 +13,7 @@ beforeEach(function () {
     $this->framework = Framework::factory()->create();
     $this->assessment = Assessment::factory()->create([
         'framework_id' => $this->framework->id,
-        'user_id'      => $this->user->id,
+        'user_id' => $this->user->id,
     ]);
     $this->rater = Rater::factory()->create(['user_id' => $this->user->user_id]);
 });
@@ -22,9 +21,9 @@ beforeEach(function () {
 test('assessment rater pivot persists correctly', function () {
     $pivot = AssessmentRater::create([
         'assessment_id' => $this->assessment->id,
-        'rater_id'      => $this->rater->id,
-        'role'          => 'manager',
-        'is_self'       => false,
+        'rater_id' => $this->rater->id,
+        'role' => 'manager',
+        'is_self' => false,
     ]);
 
     expect($pivot->exists)->toBeTrue()
@@ -35,9 +34,9 @@ test('assessment rater pivot persists correctly', function () {
 test('assessment rater belongs to assessment and rater', function () {
     $pivot = AssessmentRater::create([
         'assessment_id' => $this->assessment->id,
-        'rater_id'      => $this->rater->id,
-        'role'          => 'manager',
-        'is_self'       => true,
+        'rater_id' => $this->rater->id,
+        'role' => 'manager',
+        'is_self' => true,
     ]);
 
     expect($pivot->assessment->id)->toEqual($this->assessment->id)
@@ -46,9 +45,9 @@ test('assessment rater belongs to assessment and rater', function () {
 test('assessment rater can be retrieved from assessment', function () {
     $pivot = AssessmentRater::create([
         'assessment_id' => $this->assessment->id,
-        'rater_id'      => $this->rater->id,
-        'role'          => 'peer',
-        'is_self'       => false,
+        'rater_id' => $this->rater->id,
+        'role' => 'peer',
+        'is_self' => false,
     ]);
 
     $retrievedPivot = AssessmentRater::where('assessment_id', $this->assessment->id)
@@ -62,13 +61,13 @@ test('assessment rater can be retrieved from assessment', function () {
 
 test('assessment rater can be updated', function () {
     $this->assessment->raters()->attach($this->rater->id, [
-        'role'    => 'direct_report',
+        'role' => 'direct_report',
         'is_self' => false,
     ]);
 
     // Update via relationship
     $this->assessment->raters()->updateExistingPivot($this->rater->id, [
-        'role'    => 'manager',
+        'role' => 'manager',
         'is_self' => true,
     ]);
 

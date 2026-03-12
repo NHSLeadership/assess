@@ -3,11 +3,17 @@
 use App\Exceptions\AssessmentFrameworkMismatchException;
 use App\Exceptions\AssessmentNotFoundException;
 use App\Exceptions\AssessmentNotSubmittedException;
+use App\Exceptions\FrameworkNotFoundException;
 use App\Livewire\AssessmentReport;
 use App\Models\Assessment;
 use App\Models\Framework;
-use App\Exceptions\FrameworkNotFoundException;
 use App\Models\Node;
+use App\Models\NodeType;
+use App\Models\Question;
+use App\Models\Rater;
+use App\Models\Response;
+use App\Models\Scale;
+use App\Models\ScaleOption;
 use App\Services\AssessmentReportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -22,7 +28,7 @@ it('throws FrameworkNotFoundException when framework does not exist', function (
         'submitted_at' => now(),
     ]);
 
-    $component = new AssessmentReport();
+    $component = new AssessmentReport;
 
     $this->expectException(FrameworkNotFoundException::class);
 
@@ -37,7 +43,7 @@ it('throws AssessmentNotFoundException when assessment does not exist', function
 
     $nonExistentAssessmentId = 999;
 
-    $component = new AssessmentReport();
+    $component = new AssessmentReport;
 
     $this->expectException(AssessmentNotFoundException::class);
 
@@ -57,7 +63,7 @@ it('throws AssessmentFrameworkMismatchException when assessment belongs to a dif
         'submitted_at' => now(),
     ]);
 
-    $component = new AssessmentReport();
+    $component = new AssessmentReport;
 
     $this->expectException(AssessmentFrameworkMismatchException::class);
 
@@ -76,7 +82,7 @@ it('throws AssessmentNotSubmittedException when assessment is not submitted', fu
         'submitted_at' => null, // key condition
     ]);
 
-    $component = new AssessmentReport();
+    $component = new AssessmentReport;
 
     $this->expectException(AssessmentNotSubmittedException::class);
 
@@ -96,16 +102,16 @@ it('populates report data when framework and assessment are valid and submitted'
     ]);
 
     // Create a valid node type to satisfy FK
-    $nodeType = \App\Models\NodeType::factory()->create();
+    $nodeType = NodeType::factory()->create();
 
     // Create a node that belongs to the framework and has a valid node_type_id
-    $node = \App\Models\Node::factory()->create([
+    $node = Node::factory()->create([
         'framework_id' => $framework->id,
         'node_type_id' => $nodeType->id,
     ]);
 
     // Mock the service that mount() instantiates
-    $service = Mockery::mock('overload:' . AssessmentReportService::class);
+    $service = Mockery::mock('overload:'.AssessmentReportService::class);
     $service->shouldReceive('barCharts')->andReturn(['bar']);
     $service->shouldReceive('barChartsCompetency')->andReturn(['competency']);
     $service->shouldReceive('radarChart')->andReturn([
@@ -116,7 +122,7 @@ it('populates report data when framework and assessment are valid and submitted'
     $service->shouldReceive('nodes')->andReturn(collect([$node]));
     $service->shouldReceive('signpostsForNode')->with($node)->andReturn(['signpost']);
 
-    $component = new AssessmentReport();
+    $component = new AssessmentReport;
     $component->mount($framework->id, $assessment->id);
 
     expect($component->barCharts)->toBe(['bar'])
@@ -133,29 +139,29 @@ it('returns nodes for the framework in the correct order', function () {
     $frameworkA = Framework::factory()->create();
     $frameworkB = Framework::factory()->create();
 
-    $nodeType = \App\Models\NodeType::factory()->create();
+    $nodeType = NodeType::factory()->create();
 
     // Nodes for framework A (should be returned)
-    $node1 = \App\Models\Node::factory()->create([
+    $node1 = Node::factory()->create([
         'framework_id' => $frameworkA->id,
         'node_type_id' => $nodeType->id,
         'order' => 2,
     ]);
 
-    $node2 = \App\Models\Node::factory()->create([
+    $node2 = Node::factory()->create([
         'framework_id' => $frameworkA->id,
         'node_type_id' => $nodeType->id,
         'order' => 1,
     ]);
 
     // Node for framework B (should NOT be returned)
-    \App\Models\Node::factory()->create([
+    Node::factory()->create([
         'framework_id' => $frameworkB->id,
         'node_type_id' => $nodeType->id,
         'order' => 1,
     ]);
 
-    $component = new AssessmentReport();
+    $component = new AssessmentReport;
     $component->frameworkId = $frameworkA->id;
 
     $nodes = $component->nodes();
@@ -176,38 +182,38 @@ it('returns responses for the assessment', function () {
         'submitted_at' => now(),
     ]);
 
-    $nodeType = \App\Models\NodeType::factory()->create();
+    $nodeType = NodeType::factory()->create();
 
-    $node = \App\Models\Node::factory()->create([
+    $node = Node::factory()->create([
         'framework_id' => $framework->id,
         'node_type_id' => $nodeType->id,
     ]);
 
-    $questionA = \App\Models\Question::factory()->create([
+    $questionA = Question::factory()->create([
         'node_id' => $node->id,
     ]);
 
-    $questionB = \App\Models\Question::factory()->create([
+    $questionB = Question::factory()->create([
         'node_id' => $node->id,
     ]);
 
-    $scale = \App\Models\Scale::factory()->create();
-    $scaleOption = \App\Models\ScaleOption::factory()->create([
+    $scale = Scale::factory()->create();
+    $scaleOption = ScaleOption::factory()->create([
         'scale_id' => $scale->id,
     ]);
 
-    $rater = \App\Models\Rater::factory()->create([
+    $rater = Rater::factory()->create([
         'user_id' => 1,
     ]);
 
-    $responseA = \App\Models\Response::factory()->create([
+    $responseA = Response::factory()->create([
         'assessment_id' => $assessment->id,
         'rater_id' => $rater->id,
         'question_id' => $questionA->id,
         'scale_option_id' => $scaleOption->id,
     ]);
 
-    $responseB = \App\Models\Response::factory()->create([
+    $responseB = Response::factory()->create([
         'assessment_id' => $assessment->id,
         'rater_id' => $rater->id,
         'question_id' => $questionB->id,
@@ -221,14 +227,14 @@ it('returns responses for the assessment', function () {
         'submitted_at' => now(),
     ]);
 
-    \App\Models\Response::factory()->create([
+    Response::factory()->create([
         'assessment_id' => $otherAssessment->id,
         'rater_id' => $rater->id,
         'question_id' => $questionA->id,
         'scale_option_id' => $scaleOption->id,
     ]);
 
-    $component = new AssessmentReport();
+    $component = new AssessmentReport;
     $component->assessmentId = $assessment->id;
 
     $responses = $component->responses();
@@ -256,19 +262,17 @@ it('returns the rater for the assessment', function () {
     ]);
 
     // Rater linked to the same "user"
-    $rater = \App\Models\Rater::factory()->create([
+    $rater = Rater::factory()->create([
         'user_id' => $user->user_id,
     ]);
 
     // Pivot: rater ↔ assessment
     $rater->assessments()->attach($assessment->id);
 
-    $component = new AssessmentReport();
+    $component = new AssessmentReport;
     $component->assessmentId = $assessment->id;
 
     $result = $component->rater();
 
     expect($result?->id)->toBe($rater->id);
 });
-
-

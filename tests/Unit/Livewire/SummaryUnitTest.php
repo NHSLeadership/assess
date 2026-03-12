@@ -9,4 +9,3 @@ it('returns null when editAnswer receives a non-numeric nodeId', function () {
 
     expect($result)->toBeNull();
 });
-

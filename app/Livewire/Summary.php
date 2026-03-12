@@ -2,29 +2,30 @@
 
 namespace App\Livewire;
 
-use App\Models\Assessment;
 use App\Models\Framework;
-use App\Models\FrameworkVariantAttribute;
 use App\Models\Node;
 use App\Models\Rater;
 use App\Notifications\AssessmentCompleted as AssessmentCompletedNotification;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
-use League\Csv\Exception;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use Livewire\Features\SupportRedirects\Redirector;
 
 class Summary extends Component
 {
-    use UserTrait;
     use AssessmentHelperTrait;
+    use UserTrait;
 
     public ?int $frameworkId = null;
-    public ?int $assessmentId = null;
-    public ?int $requiredCount = null;
-    public ?int $answeredRequiredCount = null;
 
+    public ?int $assessmentId = null;
+
+    public ?int $requiredCount = null;
+
+    public ?int $answeredRequiredCount = null;
 
     #[Computed]
     public function framework(): ?Framework
@@ -45,11 +46,11 @@ class Summary extends Component
     public function continueAssessment()
     {
         $node = $this->getAssessmentResumeNode($this->assessmentId);
-        if (!empty($node)) {
+        if (! empty($node)) {
             // There are unanswered questions, so we should resume there
             $this->redirect(route('questions', [
                 'assessmentId' => $this->assessmentId,
-                'nodeId' => $node?->id
+                'nodeId' => $node?->id,
             ]));
         } else {
             $this->redirect(route('frameworks'));
@@ -60,9 +61,8 @@ class Summary extends Component
     public function nodes(): ?Collection
     {
         return Node::where('framework_id', $this->frameworkId)->orderBy('order')->orderBy('id')->get();
-        //return Node::where('framework_id', $this->frameworkId)->orderByRaw('coalesce(parent_id, id), `order`')->orderBy('order')->get();
+        // return Node::where('framework_id', $this->frameworkId)->orderByRaw('coalesce(parent_id, id), `order`')->orderBy('order')->get();
     }
-
 
     #[Computed]
     public function responses(): ?Collection
@@ -75,9 +75,10 @@ class Summary extends Component
      */
     public function editAnswer($nodeId)
     {
-        if (!is_numeric($nodeId)) {
+        if (! is_numeric($nodeId)) {
             return null;
         }
+
         return redirect()->route('questions', [
             'assessmentId' => $this->assessmentId,
             'nodeId' => $nodeId,
@@ -85,13 +86,14 @@ class Summary extends Component
         ]);
     }
 
-    public function confirmSubmit(): \Illuminate\Http\RedirectResponse|\Livewire\Features\SupportRedirects\Redirector|null
+    public function confirmSubmit(): RedirectResponse|Redirector|null
     {
         try {
             $assessment = $this->assessment();
             if (! $assessment) {
                 session()->flash('error', __('alerts.errors.assessment-not-found'));
                 $this->dispatch('scroll-to-top');
+
                 return null;
 
             }
@@ -99,6 +101,7 @@ class Summary extends Component
             if (! is_null($assessment->submitted_at)) {
                 session()->flash('error', __('alerts.errors.assessment-already-submitted'));
                 $this->dispatch('scroll-to-top');
+
                 return null;
             }
 
@@ -106,7 +109,7 @@ class Summary extends Component
             $assessment->save();
 
             // Disable notifications for now.
-            //$this->user?->notify(new AssessmentCompletedNotification($assessment));
+            // $this->user?->notify(new AssessmentCompletedNotification($assessment));
 
             return redirect()->route(
                 'assessment-completed', ['assessmentId' => $assessment?->id]
@@ -115,6 +118,7 @@ class Summary extends Component
             report($e); // log the error for debugging
             session()->flash('error', $e->getMessage());
             $this->dispatch('scroll-to-top');
+
             return null;
         }
     }
@@ -125,6 +129,7 @@ class Summary extends Component
         if (empty($this->assessmentId) || empty($this->user()?->user_id)) {
             return null;
         }
+
         return Rater::where('user_id', $this->user()?->user_id)
             ->whereHas('assessments', function ($q) {
                 $q->where('assessments.id', $this->assessmentId);
@@ -136,7 +141,7 @@ class Summary extends Component
     {
         return redirect()->route('assessment-report', [
             'frameworkId' => $this->frameworkId,
-            'assessmentId' => $this->assessmentId
+            'assessmentId' => $this->assessmentId,
         ]);
     }
 
@@ -160,7 +165,7 @@ class Summary extends Component
     public function render()
     {
         return view('livewire.summary', [
-            'title' => 'Areas'
+            'title' => 'Areas',
         ]);
     }
 }

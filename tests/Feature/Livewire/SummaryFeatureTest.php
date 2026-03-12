@@ -4,15 +4,15 @@ use App\Livewire\Summary;
 use App\Models\Assessment;
 use App\Models\AssessmentRater;
 use App\Models\Framework;
+use App\Models\Node;
 use App\Models\NodeType;
 use App\Models\Question;
 use App\Models\Rater;
 use App\Models\Response;
 use App\Models\Scale;
 use App\Models\ScaleOption;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
-use App\Models\Node;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -270,15 +270,15 @@ it('returns the correct framework for the assessment', function () {
     $this->be($user);
 
     // Framework + Assessment
-    $framework  = Framework::factory()->create();
+    $framework = Framework::factory()->create();
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id'      => $user->user_id,
+        'user_id' => $user->user_id,
     ]);
 
     Livewire::test(Summary::class, [
         'assessmentId' => $assessment->id,
-        'frameworkId'  => $framework->id,
+        'frameworkId' => $framework->id,
     ])
         ->assertSet('framework.id', $framework->id);
 });
@@ -288,15 +288,15 @@ it('returns null when no frameworkId is provided', function () {
     $user = makeAuthUser();
 
     $this->be($user);
-    $framework  = Framework::factory()->create();
+    $framework = Framework::factory()->create();
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id'      => $user->user_id,
+        'user_id' => $user->user_id,
     ]);
 
     Livewire::test(Summary::class, [
         'assessmentId' => $assessment->id,
-        'frameworkId'  => null,
+        'frameworkId' => null,
     ])
         ->assertSet('framework', null);
 });
@@ -304,10 +304,10 @@ it('returns null when no frameworkId is provided', function () {
 it('returns all responses for the assessment', function () {
 
     foreach ([
-                 \App\Models\Response::class,
-                 \App\Models\Assessment::class,
-                 \App\Models\AssessmentRater::class,
-             ] as $model) {
+        Response::class,
+        Assessment::class,
+        AssessmentRater::class,
+    ] as $model) {
         $model::query()->delete();
     }
     // User is NOT persisted — using make()
@@ -364,7 +364,7 @@ it('returns all responses for the assessment', function () {
     // Response for a DIFFERENT assessment (should NOT appear)
     $framework1 = Framework::factory()->create();
     Response::factory()->create([
-        'assessment_id' => Assessment::factory()->create(['framework_id' => $framework1->id, 'user_id' => $rater->user_id,])->id,
+        'assessment_id' => Assessment::factory()->create(['framework_id' => $framework1->id, 'user_id' => $rater->user_id])->id,
         'rater_id' => $rater->id,
         'question_id' => $question2->id,
         'scale_option_id' => $scaleOption->id,
@@ -372,7 +372,7 @@ it('returns all responses for the assessment', function () {
 
     $component = Livewire::test(Summary::class, [
         'assessmentId' => $assessment->id,
-        'frameworkId'  => $framework->id,
+        'frameworkId' => $framework->id,
     ]);
     $responses = $component->get('responses');
     $expectedIds = Response::where('assessment_id', $assessment->id)
@@ -387,8 +387,6 @@ it('returns all responses for the assessment', function () {
         ->values()
         ->toArray();
 
-
     $this->assertCount(2, $responses);
     $this->assertSame($expectedIds, $actualIds);
 });
-

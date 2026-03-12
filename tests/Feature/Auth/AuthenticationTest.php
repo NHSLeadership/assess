@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Support\Facades\Gate;
 use Livewire\Livewire;
 
 test('login screen redirects to Auth0', function () {

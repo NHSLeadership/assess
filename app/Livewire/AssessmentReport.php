@@ -23,14 +23,19 @@ class AssessmentReport extends Component
     use UserTrait;
 
     public ?int $frameworkId = null;
+
     public ?int $assessmentId = null;
 
     public array $barCharts = [];
+
     public array $barChartsCompetency = [];
+
     public array $radarOptions = [];
+
     public array $radarData = [];
 
     public ?string $variantAttributeLabel = null;
+
     /**
      * @var array|mixed
      */
@@ -44,16 +49,16 @@ class AssessmentReport extends Component
      */
     public function mount(int $frameworkId, int $assessmentId): void
     {
-        $this->frameworkId  = $frameworkId;
+        $this->frameworkId = $frameworkId;
         $this->assessmentId = $assessmentId;
 
         // Validate framework
-        if (!$this->framework()) {
+        if (! $this->framework()) {
             throw new FrameworkNotFoundException(__('alerts.errors.framework-not-found'));
         }
 
         // Validate assessment
-        if (!$this->assessment()) {
+        if (! $this->assessment()) {
             throw new AssessmentNotFoundException(__('alerts.errors.assessment-not-found'));
         }
 
@@ -72,14 +77,13 @@ class AssessmentReport extends Component
             );
         }
 
-
         // Use the shared service for all report data
         $service = new AssessmentReportService($frameworkId, $assessmentId);
 
         $this->barCharts = $service->barCharts();
         $this->barChartsCompetency = $service->barChartsCompetency();
         $radar = $service->radarChart();
-        $this->radarData    = $radar['data'];
+        $this->radarData = $radar['data'];
         $this->radarOptions = $radar['options'];
         $this->variantAttributeLabel = $service->variantAttributeLabel();
 
@@ -95,7 +99,7 @@ class AssessmentReport extends Component
 
     #[Computed]
     public function framework(): ?Framework
-{
+    {
         if (empty($this->frameworkId)) {
             return null;
         }
@@ -127,7 +131,6 @@ class AssessmentReport extends Component
     {
         return $this->assessment()?->responses()->get();
     }
-
 
     #[Computed]
     public function rater(): ?Rater

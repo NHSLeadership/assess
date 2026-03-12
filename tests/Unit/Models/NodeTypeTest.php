@@ -3,7 +3,7 @@
 use App\Models\NodeType;
 
 test('node type has expected fillable attributes', function () {
-    $nodeType = new NodeType();
+    $nodeType = new NodeType;
 
     expect($nodeType->getFillable())->toEqual(['name']);
 });
@@ -13,4 +13,3 @@ test('node type defines nodes relationship method', function () {
 
     expect($methods)->toContain('nodes');
 });
-

@@ -1,7 +1,8 @@
 <?php
 
-use App\Models\NodeType;
+use App\Models\Framework;
 use App\Models\Node;
+use App\Models\NodeType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -17,7 +18,7 @@ test('node type can be created with factory', function () {
 
 test('node type can have many nodes', function () {
     $nodeType = NodeType::factory()->create();
-    $framework = \App\Models\Framework::factory()->create();
+    $framework = Framework::factory()->create();
 
     Node::factory()->count(3)->create([
         'node_type_id' => $nodeType->id,

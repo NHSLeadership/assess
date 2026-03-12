@@ -4,7 +4,6 @@ namespace App\Filament\Resources\NodeTypes\Schemas;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Str;
 
 class NodeTypeForm
 {

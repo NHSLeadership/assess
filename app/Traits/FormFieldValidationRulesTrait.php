@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Traits;
 
 trait FormFieldValidationRulesTrait
@@ -11,20 +12,20 @@ trait FormFieldValidationRulesTrait
         'checkbox' => ['sometimes', 'array'],
         'select' => ['numeric'],
         'text' => ['max:255'],
-        'textarea' => ['max:65535' ],
+        'textarea' => ['max:65535'],
     ];
 
     public function getRulesForType($question = null): array
     {
         $rules = self::$typeRules[$question['component'] ?? null] ?? [];
 
-        if (!empty($question['minLength'])) {
-            $rules[] = 'min:' . $question['minLength'];
+        if (! empty($question['minLength'])) {
+            $rules[] = 'min:'.$question['minLength'];
         }
-        if (!empty($question['maxLength'])) {
-            $rules[] = 'max:' . $question['maxLength'];
+        if (! empty($question['maxLength'])) {
+            $rules[] = 'max:'.$question['maxLength'];
         }
-        if (!empty($question['required'])) {
+        if (! empty($question['required'])) {
             $rules[] = 'required';
         } else {
             $rules[] = 'sometimes';
@@ -37,7 +38,7 @@ trait FormFieldValidationRulesTrait
     /**
      * Get the maximum length for a given form field type.
      *
-     * @param string $type The form field type.
+     * @param  string  $type  The form field type.
      * @return int|null The maximum length if defined, otherwise null.
      */
     public function getMaxLengthForType(string $type): ?int
@@ -49,6 +50,7 @@ trait FormFieldValidationRulesTrait
                 return (int) substr(trim($rule), 4);
             }
         }
+
         return null;
     }
 }

@@ -13,4 +13,3 @@ class FrameworkNotFoundException extends Exception
         ], 404);
     }
 }
-
