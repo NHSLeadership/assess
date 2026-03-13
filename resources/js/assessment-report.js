@@ -10,10 +10,13 @@ document.addEventListener('DOMContentLoaded', function () {
     let radarChart = null;
 
     if (radarCtx) {
-
-        if (typeof radarOptions.callback === 'string') {
-            radarOptions.callback = eval('(' + radarOptions.callback + ')');
-        }
+        const resolvedRadarCallback =
+            radarOptions.useScaleLabels
+                ? function (value, index) {
+                    const labels = radarOptions.tickLabels || [];
+                    return labels[index] ?? value;
+                }
+                : undefined;
 
         radarChart = new Chart(radarCtx, {
             type: 'radar',
@@ -30,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             maxTicksLimit: 100,
                             backdropColor: 'transparent',
                             showLabelBackdrop: false,
-                            callback: radarOptions.callback ?? undefined,
+                            callback: resolvedRadarCallback,
                             z: 10,
                         },
                         grid: {
