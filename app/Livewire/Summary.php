@@ -62,7 +62,7 @@ class Summary extends Component
     public function nodes(): ?Collection
     {
         if (empty($this->frameworkId)) {
-            return null;
+            return collect();
         }
 
         return app(FrameworkTraversalService::class)
