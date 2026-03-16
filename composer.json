@@ -16,6 +16,7 @@
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "livewire/volt": "^1.7.0",
+        "spatie/laravel-prometheus": "^1.5",
         "openplain/filament-tree-view": "^0.5.4",
         "symfony/yaml": "^7.3"
     },
