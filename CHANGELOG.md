@@ -8,6 +8,7 @@
 > Updated: 12.03.2026
 1. Add code analysis tooling (PHPStan, Pint, Rector)
 2. Fix JavaScript vulnerability in chart rendering and update packages
+3. Normalize error views and handle Auth0 errors
 
 ### v1.0.7
 > Updated: 11.03.2026
