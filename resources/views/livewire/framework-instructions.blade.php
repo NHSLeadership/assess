@@ -4,8 +4,9 @@
         @if (!empty($this->framework))
 
             <h1 class="nhsuk-heading-l">{{ $this->framework->name ?? null }} {{ strtolower(($this->loggedInRater($this->assessment)?->pivot?->assessment_type) ?? 'self assessment') }}</h1>
-            {!! $this->framework?->instructions ?? null !!}
-             <hr>
+            {!! \App\Support\MergeTags::apply($this->framework->instructions, $this->user, $this->framework) !!}
+
+            <hr>
             <a class="nhsuk-button" href="{{ route('variants', ['frameworkId' => $this->framework?->id, 'assessmentId' => $this->assessment?->id]) }}">Continue</a>
 
             @if ($this->assessment?->framework?->questions?->where('required', 1)->count() && ($this->assessment?->responses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count()))
