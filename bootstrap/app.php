@@ -17,27 +17,28 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function (CallbackControllerException $e, $request) {
+
+        $exceptions->renderable(function (CallbackControllerException $e) {
 
             $raw = $e->getMessage();
             $auth0Error = strtok($raw, ':');
-
-            $status = match ($auth0Error) {
-                'access_denied' => 403,
+            [$status, $message] = match ($auth0Error) {
+                'access_denied' => [403, 'This action is unauthorised.'],
                 'login_required',
                 'consent_required',
-                'interaction_required' => 401,
-                'server_error' => 500,
-                default => 400,
+                'interaction_required' => [401, 'You need to sign in to continue.'],
+                'server_error' => [500, 'We are experiencing technical difficulties. Please try again later.'],
+                default => [400, 'We could not complete your request.'],
             };
 
-            // Convert to HttpException so Laravel handles rendering later
-            throw new HttpException(
-                $status,
-                $raw,
-                $e
-            );
+            throw new HttpException($status, $message, $e);
         });
+
+        $exceptions->renderable(function (\Auth0\SDK\Exception\StateException $e) {
+            session()->flush();
+            return redirect()->route('home');
+        });
+
     })
     ->withProviders([
         AuthServiceProvider::class,
