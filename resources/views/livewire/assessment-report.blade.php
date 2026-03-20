@@ -20,7 +20,7 @@
                 </strong>
             </p>
             @if(!empty(data_get($this->framework, 'report_intro')))
-                <p>{!! data_get($this->framework, 'report_intro') !!}</p>
+                <p>{!! \App\Support\MergeTags::apply($this->framework->report_intro, $this->user, $this->framework) !!}</p>
             @endif
 
             @if(!empty(data_get($this->framework, 'report_html')))

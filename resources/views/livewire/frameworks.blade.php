@@ -1,21 +1,13 @@
-@php
-    use Filament\Forms\Components\RichEditor\RichContentRenderer;
-@endphp
 <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
     <div class="nhsuk-grid-column-full">
 
         @if ($this->framework)
             <h1 class="nhsuk-heading-l">{{ $this->framework->name ?? null }} {{ strtolower(($this->loggedInRater()?->pivot?->assessment_type) ?? 'self assessment') }}</h1>
 
-            <p>{!! RichContentRenderer::make($this->framework->description)
-                ->mergeTags([
-                    'name' => $this->user->name,
-                    'email' => $this->user->email,
-                    'today' => now()->translatedFormat('j F Y'),
-                    'framework' => $this->framework->name,
-                ])
-                ->toHtml() ?? '' !!}
-            </p>
+
+            <div class="nhsuk-body">
+                {!! \App\Support\MergeTags::apply($this->framework->description, $this->user, $this->framework) !!}
+            </div>
 
             <div class="nhsuk-action-link">
                 <a class="nhsuk-action-link__link"
