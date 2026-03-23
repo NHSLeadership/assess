@@ -32,7 +32,7 @@ class Assessments extends Component
 
     public ?string $edit = null;
 
-    public function mount($assessmentId, $nodeId = null, $edit = null): void
+    public function mount($assessmentId, $nodeId = null, $edit = null)
     {
 
         // Assign parameters to public properties
@@ -41,8 +41,7 @@ class Assessments extends Component
         $this->edit = $edit;
 
         if (empty($this->assessmentId) || ! is_numeric($this->assessmentId)) {
-            redirect()->route('frameworks');
-            return;
+            return redirect()->route('frameworks');
         }
 
         // Redirect if not permitted to do an assessment for this framework now
