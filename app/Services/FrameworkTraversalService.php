@@ -8,37 +8,78 @@ use Illuminate\Support\Collection;
 class FrameworkTraversalService
 {
     /**
+     * Load the entire framework graph once (ordered), annotate each node with
+     * a has_active_questions boolean, and prepare fast lookup maps.
+     *
+     * @return array{0:Collection,1:Collection,2:Collection}
+     *         [$all, $childrenMap, $roots]
+     */
+    private function loadFrameworkGraph(int $frameworkId): array
+    {
+        // Load all nodes in sibling order and add a fast boolean for active questions.
+        // This avoids materializing question collections and eliminates per-node queries.
+        $all = Node::query()
+            ->where('framework_id', $frameworkId)
+            ->with([
+                'children' => fn ($q) => $q->orderBy('order')->orderBy('id'),
+                // 'parent' is optional for this implementation; we navigate via parent_id + $all[]
+            ])
+            ->withExists([
+                'questions as has_active_questions' => fn ($q) => $q->where('active', true),
+            ])
+            ->orderBy('order')
+            ->orderBy('id')
+            ->get()
+            ->keyBy('id');
+
+        // Build a parent_id -> children collection map
+        $childrenMap = $all->groupBy('parent_id');
+
+        // Root nodes: parent_id = null
+        $roots = $childrenMap[null] ?? collect();
+
+        return [$all, $childrenMap, $roots];
+    }
+
+    public function orderedQuestionNodesFromGraph(Collection $all, Collection $childrenMap, Collection $roots): Collection
+    {
+        $ordered = collect();
+
+        $walk = function (Collection $nodes) use (&$walk, &$ordered, $childrenMap) {
+            foreach ($nodes as $node) {
+                if ($node->has_active_questions) {
+                    $ordered->push($node);
+                }
+
+                $children = $childrenMap[$node->id] ?? collect();
+                if ($children->isNotEmpty()) {
+                    $walk($children);
+                }
+            }
+        };
+
+        $walk($roots);
+
+        return $ordered->values();
+    }
+
+    /**
      * Return nodes in true depth-first order, restricted to nodes
      * that have at least one active question.
      */
     public function orderedQuestionNodes(int $frameworkId): Collection
     {
-        // Start from root nodes
-        $roots = Node::query()
-            ->where('framework_id', $frameworkId)
-            ->whereNull('parent_id')
-            ->orderBy('order')
-            ->orderBy('id')
-            ->get();
+        [, $childrenMap, $roots] = $this->loadFrameworkGraph($frameworkId);
 
         $ordered = collect();
 
-        $walk = function (Collection $nodes) use (&$walk, &$ordered) {
+        $walk = function (Collection $nodes) use (&$walk, &$ordered, $childrenMap) {
             foreach ($nodes as $node) {
-
-                // Include node if it has at least one active question
-                if ($node->questions()->where('active', true)->exists()) {
+                if ($node->has_active_questions) {
                     $ordered->push($node);
                 }
 
-                // Always traverse children (fetch if not already loaded)
-                $children = $node->relationLoaded('children')
-                    ? $node->children
-                    : $node->children()
-                        ->orderBy('order')
-                        ->orderBy('id')
-                        ->get();
-
+                $children = $childrenMap[$node->id] ?? collect();
                 if ($children->isNotEmpty()) {
                     $walk($children);
                 }
@@ -56,46 +97,33 @@ class FrameworkTraversalService
      */
     public function orderedHierarchyNodes(int $frameworkId): Collection
     {
-        // First get all question-bearing nodes (leaf competencies)
-        $questionNodes = $this->orderedQuestionNodes($frameworkId);
+        [$all, $childrenMap, $roots] = $this->loadFrameworkGraph($frameworkId);
 
-        // Collect all ancestors + the nodes themselves
-        $nodeIds = collect();
+        // Start with the ordered question nodes…
+        $questionNodes = $this->orderedQuestionNodesFromGraph($all, $childrenMap, $roots);
 
+        // …then compute the closure of all ancestors for those nodes.git status
+        $keepIds = collect();
         foreach ($questionNodes as $node) {
             $current = $node;
-
             while ($current) {
-                $nodeIds->push($current->id);
-                $current = $current->parent;
+                $keepIds->push($current->id);
+                $current = $current->parent_id ? ($all[$current->parent_id] ?? null) : null;
             }
         }
 
-        $nodeIds = $nodeIds->unique()->values();
-
-        // Now do a full depth-first walk, but only keep relevant branches
-        $roots = Node::query()
-            ->where('framework_id', $frameworkId)
-            ->whereNull('parent_id')
-            ->orderBy('order')
-            ->orderBy('id')
-            ->get();
+        // Make membership checks O(1)
+        $keep = $keepIds->unique()->flip();
 
         $ordered = collect();
 
-        $walk = function (Collection $nodes) use (&$walk, &$ordered, $nodeIds) {
+        $walk = function (Collection $nodes) use (&$walk, &$ordered, $childrenMap, $keep) {
             foreach ($nodes as $node) {
-                if ($nodeIds->contains($node->id)) {
+                if ($keep->has($node->id)) {
                     $ordered->push($node);
                 }
 
-                $children = $node->relationLoaded('children')
-                    ? $node->children
-                    : $node->children()
-                        ->orderBy('order')
-                        ->orderBy('id')
-                        ->get();
-
+                $children = $childrenMap[$node->id] ?? collect();
                 if ($children->isNotEmpty()) {
                     $walk($children);
                 }
