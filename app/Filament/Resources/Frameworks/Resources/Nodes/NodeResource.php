@@ -11,10 +11,14 @@ use App\Filament\Resources\Frameworks\Resources\Nodes\Schemas\NodeForm;
 use App\Filament\Resources\Frameworks\Resources\Nodes\Tables\NodesTable;
 use App\Models\Node;
 use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Openplain\FilamentTreeView\Fields\TextField;
+use Openplain\FilamentTreeView\Tree;
 
 class NodeResource extends Resource
 {
@@ -27,6 +31,28 @@ class NodeResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return NodeForm::configure($schema);
+    }
+
+    public static function tree(Tree $tree): Tree
+    {
+        return $tree->fields([
+            TextField::make('name')
+                ->formatStateUsing(fn ($state, $record) =>
+                "{$record->type?->name}: {$state}"
+                ),
+        ])
+        ->recordActions([
+            EditAction::make()->icon('heroicon-o-pencil-square'),
+            Action::make('deleteNode')
+                ->label('Delete')
+                ->icon('heroicon-o-trash')
+                ->color('danger')
+                ->requiresConfirmation()
+                ->modalDescription('Are you sure you want to delete this node? This action cannot be undone and will also delete all of its child nodes.')
+                ->action(function (Node $record): void {
+                    $record->delete();
+                }),
+            ]);
     }
 
     public static function table(Table $table): Table

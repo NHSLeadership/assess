@@ -246,6 +246,18 @@ it('returns nodes ordered by order for the framework', function () {
         'order' => 1,
     ]);
 
+    $scale = Scale::factory()->create();
+
+    Question::factory()->create([
+        'node_id' => $nodeA->id,
+        'scale_id' => $scale->id,
+    ]);
+
+    Question::factory()->create([
+        'node_id' => $nodeB->id,
+        'scale_id' => $scale->id,
+    ]);
+
     // Create a node from another framework (should NOT appear)
     Node::factory()->create([
         'framework_id' => Framework::factory()->create()->id,

@@ -6,6 +6,7 @@ use App\Models\Framework;
 use App\Models\Node;
 use App\Models\Rater;
 use App\Notifications\AssessmentCompleted as AssessmentCompletedNotification;
+use App\Services\FrameworkTraversalService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
 use Illuminate\Http\RedirectResponse;
@@ -60,8 +61,12 @@ class Summary extends Component
     #[Computed]
     public function nodes(): ?Collection
     {
-        return Node::where('framework_id', $this->frameworkId)->orderBy('order')->orderBy('id')->get();
-        // return Node::where('framework_id', $this->frameworkId)->orderByRaw('coalesce(parent_id, id), `order`')->orderBy('order')->get();
+        if (empty($this->frameworkId)) {
+            return collect();
+        }
+
+        return app(FrameworkTraversalService::class)
+            ->orderedHierarchyNodes((int) $this->frameworkId);
     }
 
     #[Computed]

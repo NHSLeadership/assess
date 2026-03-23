@@ -11,6 +11,7 @@ use App\Models\Framework;
 use App\Models\Node;
 use App\Models\Rater;
 use App\Services\AssessmentReportService;
+use App\Services\FrameworkTraversalService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
 use Illuminate\Support\Collection;
@@ -110,10 +111,12 @@ class AssessmentReport extends Component
     #[Computed]
     public function nodes(): ?Collection
     {
-        return Node::where('framework_id', $this->frameworkId)
-            ->orderBy('order')
-            ->orderBy('id')
-            ->get();
+        if (empty($this->frameworkId)) {
+            return null;
+        }
+
+        return app(FrameworkTraversalService::class)
+            ->orderedHierarchyNodes((int) $this->frameworkId);
     }
 
     #[Computed]

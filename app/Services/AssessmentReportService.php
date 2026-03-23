@@ -36,10 +36,8 @@ class AssessmentReportService
             'framework.variantAttributes.options',
         ])->findOrFail($assessmentId);
 
-        $this->nodes = Node::where('framework_id', $frameworkId)
-            ->orderBy('order')
-            ->orderBy('id')
-            ->get();
+        $this->nodes = app(FrameworkTraversalService::class)
+            ->orderedHierarchyNodes($frameworkId);
 
         $this->rater = Rater::with('assessments')
             ->where('user_id', auth()->id())

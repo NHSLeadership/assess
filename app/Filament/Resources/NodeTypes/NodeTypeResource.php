@@ -18,8 +18,6 @@ class NodeTypeResource extends Resource
 {
     protected static ?string $model = NodeType::class;
 
-    protected static string|null|\UnitEnum $navigationGroup = 'Authoring';
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function form(Schema $schema): Schema

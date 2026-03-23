@@ -161,16 +161,27 @@ it('returns nodes for the framework in the correct order', function () {
         'order' => 1,
     ]);
 
+    $scale = Scale::factory()->create();
+
+    Question::factory()->create([
+        'node_id' => $node1->id,
+        'scale_id' => $scale->id,
+    ]);
+
+    Question::factory()->create([
+        'node_id' => $node2->id,
+        'scale_id' => $scale->id,
+    ]);
+
     $component = new AssessmentReport;
     $component->frameworkId = $frameworkA->id;
 
     $nodes = $component->nodes();
 
-    expect($nodes)->toHaveCount(2)
-        ->and($nodes->pluck('id')->all())->toBe([
-            $node2->id, // order 1
-            $node1->id, // order 2
-        ]);
+    expect($nodes->pluck('id')->all())->toEqual([
+        $node2->id,
+        $node1->id,
+    ]);
 });
 
 it('returns responses for the assessment', function () {
