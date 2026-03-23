@@ -45,7 +45,7 @@ class BarChartBlock extends RichContentCustomBlock
 
     public static function toHtml(array $config, array $data): string
     {
-        $charts = $data['barChartsCompetency'] ?? [];
+        $charts = $data['barCharts'] ?? [];
 
         if (empty($charts)) {
             return '<p><em>No chart data found.</em></p>';

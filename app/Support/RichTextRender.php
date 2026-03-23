@@ -46,10 +46,11 @@ class RichTextRender
 
                 // Call block renderer
 //                return $blocks[$blockId]::toHtml([], []);
-                return $blocks[$blockId]::toHtml(
-                    config: [],
-                    data: $extra
-                );
+                return $blocks[$blockId]::toHtml($config ?? [], $extra);
+//                return $blocks[$blockId]::toHtml(
+//                    config: [],
+//                    data: $extra
+//                );
             },
             $html
         );
