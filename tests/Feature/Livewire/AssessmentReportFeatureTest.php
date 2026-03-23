@@ -178,9 +178,9 @@ it('returns nodes for the framework in the correct order', function () {
 
     $nodes = $component->nodes();
 
-    expect($nodes->pluck('id')->all())->toEqualCanonicalizing([
-        $node1->id,
+    expect($nodes->pluck('id')->all())->toEqual([
         $node2->id,
+        $node1->id,
     ]);
 });
 
