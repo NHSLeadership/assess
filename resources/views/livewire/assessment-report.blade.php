@@ -27,9 +27,9 @@
                         $this->user,
                         $this->framework,
                         [
-                            'barChartsCompetency' => $barChartsCompetency,
-                            'assessment'          => $this->assessment(),
-                            'framework'           => $this->framework,
+                            'barCharts' => $barCharts,
+                            'assessment'=> $this->assessment(),
+                            'framework' => $this->framework,
                         ]
                     )
                 !!}
@@ -171,5 +171,23 @@
         window.barCharts = @json($barChartsCompetency);
         window.csrfToken = "{{ csrf_token() }}";
         window.pdfPostUrl = "/assessment-report/{{ $frameworkId }}/{{ $assessmentId }}";
+    </script>
+@endpush
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.blockCharts) {
+                window.blockCharts.forEach(cfg => {
+                    const ctx = document.getElementById(cfg.id);
+                    if (!ctx) return;
+
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: cfg.data,
+                        options: cfg.options,
+                    });
+                });
+            }
+        });
     </script>
 @endpush
