@@ -14,11 +14,12 @@
         "flowframe/laravel-trend": "^0.4.0",
         "jeffersongoncalves/filament-umami": "3.x-dev",
         "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1",
+        "laravel/tinker": "^3.0",
+        "league/commonmark": "^2.8.2",
         "livewire/volt": "^1.7.0",
-        "spatie/laravel-prometheus": "^1.5",
         "openplain/filament-tree-view": "^0.5.4",
-        "symfony/yaml": "^7.3"
+        "spatie/laravel-prometheus": "^1.5",
+        "symfony/yaml": "^7.4"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.1",
