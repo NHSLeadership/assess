@@ -4,6 +4,10 @@
 # Assessment tool
 
 ---
+### v1.0.9
+> Updated: 24.03.2026
+1. Add Prometheus monitoring
+
 ### v1.0.8
 > Updated: 13.03.2026
 1. Add code analysis tooling (PHPStan, Pint, Rector)
