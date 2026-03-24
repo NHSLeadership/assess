@@ -10,11 +10,14 @@ use Filament\Widgets\ChartWidget;
 use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
+use Illuminate\Contracts\Support\Htmlable;
 
 class AssessmentsChart extends ChartWidget
 {
     use HasFiltersSchema;
+
     protected static ?int $sort = 2;
+
     public function filtersSchema(Schema $schema): Schema
     {
         return $schema->components([
@@ -60,13 +63,13 @@ class AssessmentsChart extends ChartWidget
 
     protected function getData(): array
     {
-        $status    = $this->filters['status'] ?? 'all';
+        $status = $this->filters['status'] ?? 'all';
         $startDate = $this->filters['startDate'] ?? '1/1/2026';
         $endDate = $this->filters['endDate'] ?? now()->endOfMonth();
-        $interval      = $this->filters['interval'] ?? 'month';
+        $interval = $this->filters['interval'] ?? 'month';
 
         $start = Carbon::parse($startDate);
-        $end   = Carbon::parse($endDate);
+        $end = Carbon::parse($endDate);
 
         $builder = Assessment::query();
         $this->applyFilters($builder);
@@ -95,14 +98,15 @@ class AssessmentsChart extends ChartWidget
         ];
     }
 
-    public function getHeading(): \Illuminate\Contracts\Support\Htmlable|string|null
+    public function getHeading(): Htmlable|string|null
     {
-        $status    = $this->filters['status'] ?? 'all';
+        $status = $this->filters['status'] ?? 'all';
         $startDate = $this->filters['startDate'] ?? '1/1/2026';
         $endDate = $this->filters['endDate'] ?? now()->endOfMonth();
         $start = Carbon::parse($startDate);
-        $end   = Carbon::parse($endDate);
-        return ucfirst($status) . ' assessments between ' . $start->format('d F Y') . ' and ' . $end->format('d F Y');
+        $end = Carbon::parse($endDate);
+
+        return ucfirst($status).' assessments between '.$start->format('d F Y').' and '.$end->format('d F Y');
     }
 
     protected function getType(): string

@@ -1,8 +1,10 @@
 <?php
+
 namespace App\Traits;
 
 use App\Models\User;
 use Livewire\Attributes\Computed;
+
 trait UserTrait
 {
     #[Computed]

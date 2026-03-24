@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QuestionVariantMatch extends Model
 {
@@ -13,7 +13,7 @@ class QuestionVariantMatch extends Model
     protected $fillable = [
         'question_variant_id',
         'framework_variant_attribute_id',
-        'framework_variant_option_id'
+        'framework_variant_option_id',
     ];
 
     public function variant(): BelongsTo

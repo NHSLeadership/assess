@@ -7,8 +7,8 @@ use App\Models\FrameworkVariantAttribute;
 use App\Models\FrameworkVariantOption;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class QuestionVariantForm
@@ -24,6 +24,7 @@ class QuestionVariantForm
                         ->label('Attribute')
                         ->options(function () {
                             $frameworkId = QuestionVariantResource::resolveFrameworkId();
+
                             return FrameworkVariantAttribute::query()
                                 ->when($frameworkId, fn ($q) => $q->where('framework_id', $frameworkId))
                                 ->orderBy('order')
@@ -40,6 +41,7 @@ class QuestionVariantForm
                             if (! $attrId) {
                                 return [];
                             }
+
                             return FrameworkVariantOption::query()
                                 ->where('framework_variant_attribute_id', $attrId)
                                 ->orderBy('order')
@@ -57,7 +59,7 @@ class QuestionVariantForm
             Select::make('rater_type')
                 ->label('Rater type')
                 ->options([
-                    'self'  => 'Self',
+                    'self' => 'Self',
                     'rater' => 'Rater',
                 ])
                 ->nullable()

@@ -3,7 +3,7 @@
 use App\Models\Signpost;
 
 test('signpost has expected fillable attributes', function () {
-    $signpost = new Signpost();
+    $signpost = new Signpost;
 
     expect($signpost->getFillable())->toEqual([
         'node_id',
@@ -15,7 +15,7 @@ test('signpost has expected fillable attributes', function () {
 });
 
 test('signpost casts min_value and max_value to integers', function () {
-    $signpost = new Signpost();
+    $signpost = new Signpost;
 
     expect($signpost->getCasts())->toHaveKey('min_value')
         ->and($signpost->getCasts()['min_value'])->toEqual('integer')

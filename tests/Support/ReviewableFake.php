@@ -7,8 +7,8 @@ use Illuminate\Notifications\Notifiable;
 
 class ReviewableFake
 {
-    use Reviewable;
     use Notifiable;
+    use Reviewable;
 
     public array $sentNotifications = [];
 

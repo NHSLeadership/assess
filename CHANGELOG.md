@@ -1,9 +1,15 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/National_Health_Service_%28England%29_logo.svg" width="200"></a>
 <br><span style="color:#fff;font-size:20px">Leadership Academy</span></p>
 
-# Self Assessment 360 Tools
+# Assessment tool
 
 ---
+### v1.0.8
+> Updated: 13.03.2026
+1. Add code analysis tooling (PHPStan, Pint, Rector)
+2. Fix JavaScript vulnerability in chart rendering and update packages
+3. Normalize error views and handle Auth0 errors
+4. Add treeview for nodes in admin panel
 
 ### v1.0.7
 > Updated: 11.03.2026

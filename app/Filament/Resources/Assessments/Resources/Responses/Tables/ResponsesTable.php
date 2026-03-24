@@ -18,8 +18,8 @@ class ResponsesTable
                 TextColumn::make('rater')
                     ->formatStateUsing(function ($state, $record) {
                         $rater = $record->rater ?? null;
-                        $name  = $rater->name ?? null;
-                        $uid   = $rater->user_id ?? null;
+                        $name = $rater->name ?? null;
+                        $uid = $rater->user_id ?? null;
 
                         if ($uid && $name) {
                             return "{$uid} ({$name})";

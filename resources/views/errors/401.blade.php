@@ -1,8 +1,8 @@
-@extends('errors::minimal')
+@extends('errors.minimal')
 
-@section('title', __('Unauthorized'))
+@section('title', __('Unauthorised'))
 @section('code', '401')
-@section('message', __('Unauthorized'))
+@section('message', __('Unauthorised'))
 @section('explanation')
     <p>
         Sorry for the inconvenience. If you entered a web address please check it was correct.

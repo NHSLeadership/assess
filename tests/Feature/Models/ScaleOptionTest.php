@@ -1,14 +1,15 @@
 <?php
 
-use App\Models\ScaleOption;
-use App\Models\Scale;
-use App\Models\Response;
 use App\Models\Assessment;
 use App\Models\Framework;
-use App\Models\Rater;
 use App\Models\Node;
-use App\Models\NodeType;
 use App\Models\Question;
+use App\Models\Rater;
+use App\Models\Response;
+use App\Models\Scale;
+use App\Models\ScaleOption;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -16,15 +17,15 @@ uses(RefreshDatabase::class);
 /**
  * Helper to create a minimal valid ScaleOption with its dependencies.
  */
-function makeScaleOption(): \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
+function makeScaleOption(): Collection|Model
 {
     $scale = Scale::factory()->create();
 
     return ScaleOption::factory()->create([
         'scale_id' => $scale->id,
-        'label'    => 'Good',
-        'value'    => 3,
-        'order'    => 1,
+        'label' => 'Good',
+        'value' => 3,
+        'order' => 1,
     ]);
 }
 
@@ -57,11 +58,11 @@ test('scale option can have many responses', function () {
 
     $assessment1 = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id'      => $auth0UserId,
+        'user_id' => $auth0UserId,
     ]);
     $assessment2 = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id'      => $auth0UserId,
+        'user_id' => $auth0UserId,
     ]);
 
     $rater = Rater::factory()->create([

@@ -1,6 +1,8 @@
 <?php
 
-require_once __DIR__ . '/Support/TestHelpers.php';
+use Tests\TestCase;
+
+require_once __DIR__.'/Support/TestHelpers.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -13,10 +15,13 @@ require_once __DIR__ . '/Support/TestHelpers.php';
 |
 */
 
-pest()->extend(Tests\TestCase::class)
- // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
-    ->in('Feature');
+pest()
+    ->extend(TestCase::class)
+    ->in(__DIR__.'/Feature');
 
+pest()
+    ->extend(PHPUnit\Framework\TestCase::class)
+    ->in(__DIR__.'/Unit');
 /*
 |--------------------------------------------------------------------------
 | Expectations

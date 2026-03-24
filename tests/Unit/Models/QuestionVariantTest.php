@@ -1,10 +1,10 @@
 <?php
 
-use App\Models\QuestionVariant;
 use App\Enums\RaterType;
+use App\Models\QuestionVariant;
 
 test('question variant has expected fillable attributes', function () {
-    $variant = new QuestionVariant();
+    $variant = new QuestionVariant;
 
     expect($variant->getFillable())->toEqual([
         'question_id',
@@ -15,7 +15,7 @@ test('question variant has expected fillable attributes', function () {
 });
 
 test('question variant casts rater_type to enum', function () {
-    $variant = new QuestionVariant();
+    $variant = new QuestionVariant;
 
     expect($variant->getCasts())->toHaveKey('rater_type')
         ->and($variant->getCasts()['rater_type'])->toEqual(RaterType::class);

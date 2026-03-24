@@ -176,9 +176,9 @@ class QuestionVariantSeeder extends Seeder
         foreach ($variants as $variant) {
             QuestionVariant::firstOrCreate([
                 'question_id' => $variant['question_id'],
-                'text'        => $variant['text'],
-                'rater_type'  => $variant['rater_type'],
-                'priority'    => $variant['priority'],
+                'text' => $variant['text'],
+                'rater_type' => $variant['rater_type'],
+                'priority' => $variant['priority'],
             ]);
         }
     }

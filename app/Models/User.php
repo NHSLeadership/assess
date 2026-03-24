@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use Auth0\SDK\Auth0;
-use Auth0\SDK\Utility\HttpResponse;
-use Auth0\SDK\Utility\Request\PaginatedRequest;
-use Auth0\SDK\Utility\Request\RequestOptions;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Auth\Authenticatable;
@@ -18,12 +14,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
-use JsonException;
 
-class User extends Model implements
-    AuthenticatableContract,
-    AuthorizableContract,
-    FilamentUser
+class User extends Model implements AuthenticatableContract, AuthorizableContract, FilamentUser
 {
     use Authenticatable;
     use Authorizable;
@@ -68,7 +60,6 @@ class User extends Model implements
         'roles',
     ];
 
-
     protected $hidden = [
         'password',
         'remember_token',
@@ -77,7 +68,7 @@ class User extends Model implements
     public function canAccessPanel(Panel $panel): bool
     {
 
-        if(
+        if (
             auth()->user()->can('assessment:viewAny') ||
             auth()->user()->can('framework:viewAny') ||
             auth()->user()->can('node:viewAny') ||
@@ -87,12 +78,13 @@ class User extends Model implements
             auth()->user()->can('signpost:viewAny') ||
             auth()->user()->can('scale:viewAny') ||
             auth()->user()->can('scaleOption:viewAny')
-        ){
+        ) {
             return true;
         }
         logger()->info('Unauthorised admin panel login attempt', [
             'user_id' => auth()->user()?->user_id,
         ]);
+
         return false;
     }
 
@@ -109,7 +101,6 @@ class User extends Model implements
         ];
     }
 
-
     public function assessments(): HasMany
     {
         return $this->hasMany(Assessment::class, 'user_id', 'user_id')
@@ -120,5 +111,4 @@ class User extends Model implements
     {
         return $this->hasMany(Rater::class);
     }
-
 }

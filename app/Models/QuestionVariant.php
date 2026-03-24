@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use App\Enums\RaterType;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QuestionVariant extends Model
 {
@@ -16,7 +16,7 @@ class QuestionVariant extends Model
         'question_id',
         'text',
         'rater_type',
-        'priority'
+        'priority',
     ];
 
     protected $casts = [
@@ -49,6 +49,7 @@ class QuestionVariant extends Model
     public function getConditionsSummaryAttribute(): string
     {
         $pairs = $this->conditionPairs();
+
         return empty($pairs) ? '—' : implode('; ', $pairs);
     }
 }

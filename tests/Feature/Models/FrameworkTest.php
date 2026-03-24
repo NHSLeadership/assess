@@ -7,10 +7,10 @@ uses(RefreshDatabase::class);
 
 test('framework can be created with factory', function () {
     $framework = Framework::factory()->create([
-        'slug'        => 'leadership-framework',
+        'slug' => 'leadership-framework',
         'description' => 'Framework for leadership skills',
-        'instructions'=> 'Answer all questions honestly',
-        'report_intro'=> 'This report summarises your leadership skills',
+        'instructions' => 'Answer all questions honestly',
+        'report_intro' => 'This report summarises your leadership skills',
     ]);
 
     expect($framework->exists)->toBeTrue()

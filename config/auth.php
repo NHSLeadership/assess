@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\User;
+use App\Repositories\UserRepository;
+
 return [
 
     /*
@@ -67,11 +70,11 @@ return [
     'providers' => [
         'auth0-provider' => [
             'driver' => 'auth0.provider',
-            'repository' => \App\Repositories\UserRepository::class,
+            'repository' => UserRepository::class,
         ],
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => env('AUTH_MODEL', User::class),
         ],
 
         // 'users' => [

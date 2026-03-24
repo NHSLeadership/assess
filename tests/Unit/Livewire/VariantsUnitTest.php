@@ -1,7 +1,7 @@
 <?php
 
-use App\Livewire\Variants;
 use Illuminate\Database\Eloquent\Collection;
+
 class VariantsValidationFake
 {
     public array $data = [];
@@ -11,7 +11,7 @@ class VariantsValidationFake
         $errors = [];
 
         foreach ($attributes as $key => $attribute) {
-            if (!array_key_exists($key, $this->data) || empty($this->data[$key])) {
+            if (! array_key_exists($key, $this->data) || empty($this->data[$key])) {
                 $errors[] = $key;
             }
         }
@@ -21,10 +21,10 @@ class VariantsValidationFake
 }
 
 it('fails validation when required fields are missing', function () {
-    $validator = new VariantsValidationFake();
+    $validator = new VariantsValidationFake;
 
     $attributes = new Collection([
-        'stage' => (object)['key' => 'stage', 'label' => 'Stage'],
+        'stage' => (object) ['key' => 'stage', 'label' => 'Stage'],
     ]);
 
     $validator->data = []; // missing
@@ -33,10 +33,10 @@ it('fails validation when required fields are missing', function () {
 });
 
 it('passes validation when required fields are present', function () {
-    $validator = new VariantsValidationFake();
+    $validator = new VariantsValidationFake;
 
     $attributes = new Collection([
-        'stage' => (object)['key' => 'stage', 'label' => 'Stage'],
+        'stage' => (object) ['key' => 'stage', 'label' => 'Stage'],
     ]);
 
     $validator->data = ['stage' => '2'];

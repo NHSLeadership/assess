@@ -4,22 +4,24 @@ namespace App\Livewire;
 
 use App\Models\Assessment;
 use App\Models\Framework;
+use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
-use Livewire\Component;
 use Livewire\Attributes\Title;
-use App\Traits\AssessmentHelperTrait;
+use Livewire\Component;
 use Log;
 use Throwable;
 
 class Frameworks extends Component
 {
-    use UserTrait;
     use AssessmentHelperTrait;
+    use UserTrait;
 
     public ?string $frameworkId = null;
+
     public ?int $pendingDeleteId = null;
 
     public function mount()
@@ -52,7 +54,7 @@ class Frameworks extends Component
             $assessment = Assessment::findOrFail($id);
             $assessment->delete();
             session()->flash('success', __('Assessment deleted.'));
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             Log::error('Error deleting assessment', [
                 'assessment_id' => $id,
                 'message' => $e->getMessage(),
@@ -86,7 +88,7 @@ class Frameworks extends Component
             ->addSelect([
                 'last_response_at' => DB::table('responses')
                     ->selectRaw('MAX(updated_at)')
-                    ->whereColumn('assessment_id', 'assessments.id')
+                    ->whereColumn('assessment_id', 'assessments.id'),
             ])
             ->orderByDesc('last_response_at')
             ->with('responses')
@@ -95,10 +97,6 @@ class Frameworks extends Component
 
     /**
      * Display the most relevant date for an assessment
-     * @param $assessment
-     * @param bool $useAmPm
-     * @param bool $showTime
-     * @return string
      */
     public function displayAssessmentDate($assessment, bool $useAmPm = false, bool $showTime = false): string
     {
@@ -117,7 +115,7 @@ class Frameworks extends Component
                     ?? $assessment->created_at;
             }
 
-            if (!$date) {
+            if (! $date) {
                 return 'Not available';
             }
 
@@ -126,7 +124,7 @@ class Frameworks extends Component
                 $format .= $useAmPm ? ', g:i a' : ', H:i';
             }
 
-            return \Carbon\Carbon::parse($date)->format($format);
+            return Carbon::parse($date)->format($format);
 
         } catch (\Exception $e) {
             return 'Not available';
@@ -135,13 +133,10 @@ class Frameworks extends Component
 
     /**
      * Calculate the percentage of questions answered in a step
-     *
-     * @param Assessment|null $assessment
-     * @return string
      */
     public function displayProgress(?Assessment $assessment): string
     {
-        if (!$assessment) {
+        if (! $assessment) {
             return 'Not available';
         }
 
@@ -180,6 +175,7 @@ class Frameworks extends Component
             $this->redirect(route('instructions', [
                 'frameworkId' => $this->frameworkId,
             ]));
+
             return;
         }
 
@@ -187,6 +183,7 @@ class Frameworks extends Component
         if (is_null($latest->submitted_at)) {
             session()->flash('error', __('alerts.errors.assessment-in-progress'));
             session()->flash('error-title', __('alerts.errors.assessment-in-progress-title'));
+
             return;
         }
 
@@ -199,6 +196,7 @@ class Frameworks extends Component
                 'newDate' => $cooldownEnds->format('j F Y'),
             ]));
             session()->flash('error-title', __('alerts.errors.assessment-not-permitted-now-title'));
+
             return;
         }
 
@@ -207,5 +205,4 @@ class Frameworks extends Component
             'frameworkId' => $this->frameworkId,
         ]));
     }
-
 }

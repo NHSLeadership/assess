@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\AssessmentVariantSelection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\AssessmentVariantSelection>
+ * @extends Factory<AssessmentVariantSelection>
  */
 class AssessmentVariantSelectionFactory extends Factory
 {

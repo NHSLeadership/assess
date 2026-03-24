@@ -17,9 +17,8 @@ use Filament\Tables\Table;
 class ScaleResource extends Resource
 {
     protected static ?string $model = Scale::class;
-    protected static string|null|\UnitEnum $navigationGroup = 'Authoring';
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedScale;
 
     public static function form(Schema $schema): Schema
     {

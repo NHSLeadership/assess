@@ -1,11 +1,10 @@
 <?php
 
 use App\Livewire\Assessments;
-use App\Models\NodeType;
-use App\Models\User;
 use App\Models\Assessment;
 use App\Models\Framework;
 use App\Models\Node;
+use App\Models\NodeType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -44,7 +43,7 @@ it('loads paginated nodes when assessment has nodes with questions', function ()
 
     $framework = Framework::factory()->create();
     $nodeType = NodeType::factory()->create();
-    $node     = Node::factory()->create([
+    $node = Node::factory()->create([
         'framework_id' => $framework->id,
         'node_type_id' => $nodeType->id,
     ]);
@@ -67,7 +66,7 @@ it('updates currentNode when questions-next-node event is dispatched', function 
         ->create();
 
     $nodeType = NodeType::factory()->create();
-    $node     = Node::factory()->create([
+    $node = Node::factory()->create([
         'framework_id' => $framework->id,
         'node_type_id' => $nodeType->id,
     ]);

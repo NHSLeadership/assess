@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Scale;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Scale>
+ * @extends Factory<Scale>
  */
 class ScaleFactory extends Factory
 {

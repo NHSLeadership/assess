@@ -13,4 +13,3 @@ class AssessmentNotFoundException extends Exception
         ], 404);
     }
 }
-

@@ -1,11 +1,10 @@
 <?php
 
 use App\Models\Assessment;
-use App\Models\User;
 use App\Models\Framework;
-use App\Models\Response;
 use App\Models\Rater;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 
 uses(RefreshDatabase::class);
 
@@ -16,7 +15,7 @@ beforeEach(function () {
     $this->framework = Framework::factory()->create();
     $this->assessment = Assessment::factory()->create([
         'framework_id' => $this->framework->id,
-        'user_id'      => $this->user->id,
+        'user_id' => $this->user->id,
     ]);
 });
 
@@ -46,7 +45,7 @@ test('assessment raters relationship works', function () {
     $rater = Rater::factory()->create(['user_id' => $this->user->user_id]);
 
     $this->assessment->raters()->attach($rater->id, [
-        'role'    => 'manager',
+        'role' => 'manager',
         'is_self' => false,
     ]);
 
@@ -59,9 +58,9 @@ test('assessment raters relationship works', function () {
 test('assessment casts submitted_at to Carbon when persisted', function () {
     $assessment = Assessment::factory()->create([
         'framework_id' => $this->framework->id,
-        'user_id'      => $this->user->id,
+        'user_id' => $this->user->id,
         'submitted_at' => '2025-12-18 14:00:00',
     ]);
 
-    expect($assessment->submitted_at)->toBeInstanceOf(\Illuminate\Support\Carbon::class);
+    expect($assessment->submitted_at)->toBeInstanceOf(Carbon::class);
 });

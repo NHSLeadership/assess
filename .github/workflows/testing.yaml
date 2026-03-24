@@ -14,20 +14,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  vulnerabilities:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-  
-      - name: Scan repository for vulnerabilities
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'
-          ignore-unfixed: true
-          format: 'table'
-          exit-code: '1'
-          severity: 'CRITICAL,HIGH'
+#  vulnerabilities:    #removed following security incident
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v3
+#  
+#      - name: Scan repository for vulnerabilities
+#        uses: aquasecurity/trivy-action@master
+#        with:
+#          scan-type: 'fs'
+#          ignore-unfixed: true
+#          format: 'table'
+#          exit-code: '1'
+#          severity: 'CRITICAL,HIGH'
       
   laravel_tests:
     runs-on: ubuntu-latest

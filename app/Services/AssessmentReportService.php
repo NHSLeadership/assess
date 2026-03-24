@@ -2,44 +2,46 @@
 
 namespace App\Services;
 
+use App\Enums\ResponseType;
+use App\Models\Assessment;
 use App\Models\Framework;
 use App\Models\Node;
-use App\Models\Assessment;
 use App\Models\Rater;
+use App\Models\ScaleOption;
+use App\Models\Signpost;
 use Illuminate\Support\Collection;
 
 class AssessmentReportService
 {
     public array $barCharts = [];
+
     public string $chartBackgroundColor = '#ccdff1';
+
     public string $chartBorderColor = '#004281';
 
-
     private ?Assessment $assessment;
-    private ?Collection $nodes;
-    private ?Rater $rater;
 
+    private ?Collection $nodes;
+
+    private ?Rater $rater;
 
     public function __construct(
         public int $frameworkId,
         public int $assessmentId
-    )
-    {
+    ) {
 
         $this->assessment = Assessment::with([
             'responses.question.node',
             'responses.scaleOption',
-            'framework.variantAttributes.options'
+            'framework.variantAttributes.options',
         ])->findOrFail($assessmentId);
 
-        $this->nodes = Node::where('framework_id', $frameworkId)
-            ->orderBy('order')
-            ->orderBy('id')
-            ->get();
+        $this->nodes = app(FrameworkTraversalService::class)
+            ->orderedHierarchyNodes($frameworkId);
 
         $this->rater = Rater::with('assessments')
             ->where('user_id', auth()->id())
-            ->whereHas('assessments', fn($q) => $q->where('assessments.id', $assessmentId))
+            ->whereHas('assessments', fn ($q) => $q->where('assessments.id', $assessmentId))
             ->first();
 
     }
@@ -66,7 +68,7 @@ class AssessmentReportService
 
     public function scaleOptions(): array
     {
-        return \App\Models\ScaleOption::orderBy('value')->pluck('label', 'value')->toArray();
+        return ScaleOption::orderBy('value')->pluck('label', 'value')->toArray();
     }
 
     public function rater(): ?Rater
@@ -76,7 +78,7 @@ class AssessmentReportService
 
     public function variantAttributeLabel()
     {
-        //@TODO: this currently assumes only one variant selection per assessment (stage)
+        // @TODO: this currently assumes only one variant selection per assessment (stage)
         return $this->assessment()->variantSelections->first()->option->label ?? null;
     }
 
@@ -89,7 +91,7 @@ class AssessmentReportService
 
         foreach ($areas as $area) {
 
-            $standards = $this->nodes()->filter(fn($n) => $n->parent_id === $area->id);
+            $standards = $this->nodes()->filter(fn ($n) => $n->parent_id === $area->id);
 
             if ($standards->isEmpty()) {
                 continue;
@@ -100,7 +102,7 @@ class AssessmentReportService
 
             foreach ($standards as $standard) {
 
-                $leafNodes = $this->nodes()->filter(fn($n) => $n->children->count() === 0 &&
+                $leafNodes = $this->nodes()->filter(fn ($n) => $n->children->count() === 0 &&
                     $n->parent_id === $standard->id
                 );
 
@@ -108,8 +110,8 @@ class AssessmentReportService
                     continue;
                 }
 
-                $scaleResponses = $this->responses()->filter(fn($r) => $leafNodes->pluck('id')->contains($r->question->node_id) &&
-                    $r->question->response_type === \App\Enums\ResponseType::TYPE_SCALE->value
+                $scaleResponses = $this->responses()->filter(fn ($r) => $leafNodes->pluck('id')->contains($r->question->node_id) &&
+                    $r->question->response_type === ResponseType::TYPE_SCALE->value
                 );
 
                 if ($scaleResponses->isEmpty()) {
@@ -117,7 +119,7 @@ class AssessmentReportService
                 }
 
                 $avg = round(
-                    $scaleResponses->avg(fn($r) => (int)($r->scaleOption->value ?? 0)),
+                    $scaleResponses->avg(fn ($r) => (int) ($r->scaleOption->value ?? 0)),
                     2
                 );
 
@@ -131,7 +133,7 @@ class AssessmentReportService
 
             $this->barCharts[] = [
                 'node_id' => $area->id,
-                'id' => 'barChart_' . $area->id,
+                'id' => 'barChart_'.$area->id,
                 'scaleOptions' => $this->scaleOptions(),
                 'title' => $area->name,
                 'description' => $area->description ?? '',
@@ -168,7 +170,7 @@ class AssessmentReportService
 
         foreach ($areas as $area) {
 
-            $standards = $this->nodes()->filter(fn($n) => $n->parent_id === $area->id);
+            $standards = $this->nodes()->filter(fn ($n) => $n->parent_id === $area->id);
 
             if ($standards->isEmpty()) {
                 continue;
@@ -179,24 +181,22 @@ class AssessmentReportService
 
             foreach ($standards as $standard) {
 
-                $leafNodes = $this->nodes()->filter(fn($n) =>
-                    $n->children->count() === 0 &&
+                $leafNodes = $this->nodes()->filter(fn ($n) => $n->children->count() === 0 &&
                     $n->parent_id === $standard->id
                 );
 
                 foreach ($leafNodes as $leaf) {
 
-                    $response = $this->responses()->first(fn($r) =>
-                        $r->question->node_id === $leaf->id &&
-                        $r->question->response_type === \App\Enums\ResponseType::TYPE_SCALE->value
+                    $response = $this->responses()->first(fn ($r) => $r->question->node_id === $leaf->id &&
+                        $r->question->response_type === ResponseType::TYPE_SCALE->value
                     );
 
-                    if (!$response) {
+                    if (! $response) {
                         continue;
                     }
 
                     $labels[] = $leaf->name;
-                    $values[] = (int)($response->scaleOption->value ?? 0);
+                    $values[] = (int) ($response->scaleOption->value ?? 0);
                 }
             }
 
@@ -206,7 +206,7 @@ class AssessmentReportService
 
             $charts[] = [
                 'node_id' => $area->id,
-                'id' => 'barChartCompetency_' . $area->id,
+                'id' => 'barChartCompetency_'.$area->id,
                 'scaleOptions' => $this->scaleOptions(),
                 'title' => $area->name,
                 'description' => $area->description ?? '',
@@ -218,7 +218,7 @@ class AssessmentReportService
                         'backgroundColor' => $this->chartBackgroundColor,
                         'borderColor' => $this->chartBorderColor,
                         'borderWidth' => 1,
-                        //'barThickness' => 20,
+                        // 'barThickness' => 20,
                     ]],
                 ],
                 'options' => [
@@ -236,16 +236,12 @@ class AssessmentReportService
         return $charts;
     }
 
-
     /* ---------------------------------------------------------
        RADAR CHART
     --------------------------------------------------------- */
 
     /**
      * Generate a radar chart with one data point per standard
-     *
-     * @param bool $useScaleLabels
-     * @return array
      */
     public function radarChart(bool $useScaleLabels = true): array
     {
@@ -259,12 +255,6 @@ class AssessmentReportService
 
         $scaleOptions = $this->scaleOptions();
         $scaleOptionsModified = array_values($scaleOptions);
-        $callback = $useScaleLabels
-            ? "function(value, index, values) {
-                const labels = " . json_encode($scaleOptionsModified) . ";
-                return labels[index] ?? value;
-            }"
-            : null;
 
         foreach ($this->barCharts as $chart) {
             // Each bar chart has multiple labels and values
@@ -284,7 +274,7 @@ class AssessmentReportService
                     'borderColor' => $this->chartBorderColor,
                     'pointBackgroundColor' => '#4F46E5',
                     'borderWidth' => 2,
-                ]]
+                ]],
             ],
             'options' => [
                 'min' => 1,
@@ -292,24 +282,24 @@ class AssessmentReportService
                 'tickColor' => '#212b32',
                 'pointLabelsColor' => '#212b32',
                 'legendLabelsColor' => '#212b32',
-                'callback' => $callback,
-                'tickLabels' => $scaleOptions
+                'useScaleLabels' => $useScaleLabels,
+                'tickLabels' => $scaleOptionsModified,
             ],
         ];
     }
 
-    function wrapLabel($label, $maxLength = 12)
+    public function wrapLabel($label, $maxLength = 12)
     {
         $words = explode(' ', $label);
         $lines = [];
         $current = '';
 
         foreach ($words as $word) {
-            if (strlen($current . $word) > $maxLength) {
+            if (strlen($current.$word) > $maxLength) {
                 $lines[] = trim($current);
                 $current = '';
             }
-            $current .= $word . ' ';
+            $current .= $word.' ';
         }
 
         if (trim($current) !== '') {
@@ -319,7 +309,7 @@ class AssessmentReportService
         return $lines;
     }
 
-    private function descendantLeafNodes(Node $node): \Illuminate\Support\Collection
+    private function descendantLeafNodes(Node $node): Collection
     {
         $all = $this->nodes();
         // build map: parent_id => [nodes]
@@ -331,7 +321,7 @@ class AssessmentReportService
         $stack = [$node];
         $leaves = collect();
 
-        while (!empty($stack)) {
+        while (! empty($stack)) {
             /** @var Node $current */
             $current = array_pop($stack);
             $children = $childrenMap[$current->id] ?? [];
@@ -358,9 +348,8 @@ class AssessmentReportService
 
         $leafIds = $leafNodes->pluck('id')->toArray();
 
-        $scaleResponses = $this->responses()->filter(fn($r) =>
-            in_array($r->question->node_id, $leafIds, true) &&
-            $r->question->response_type === \App\Enums\ResponseType::TYPE_SCALE->value
+        $scaleResponses = $this->responses()->filter(fn ($r) => in_array($r->question->node_id, $leafIds, true) &&
+            $r->question->response_type === ResponseType::TYPE_SCALE->value
         );
 
         if ($scaleResponses->isEmpty()) {
@@ -368,7 +357,7 @@ class AssessmentReportService
         }
 
         return round(
-            $scaleResponses->avg(fn($r) => (int)($r->scaleOption->value ?? 0)),
+            $scaleResponses->avg(fn ($r) => (int) ($r->scaleOption->value ?? 0)),
             1
         );
     }
@@ -384,14 +373,14 @@ class AssessmentReportService
             ? $this->assessment()->variantSelections()->pluck('framework_variant_option_id')->toArray()
             : [];
 
-        $query = \App\Models\Signpost::query()
+        $query = Signpost::query()
             ->where('node_id', $node->id)
             ->where('min_value', '<=', $avg)
             ->where('max_value', '>=', $avg)
             ->orderBy('min_value')
             ->orderBy('max_value');
 
-        if (!empty($selectedOptionIds)) {
+        if (! empty($selectedOptionIds)) {
             $query->where(function ($q) use ($selectedOptionIds) {
                 $q->whereNull('framework_variant_option_id')
                     ->orWhereIn('framework_variant_option_id', $selectedOptionIds);

@@ -202,8 +202,8 @@ class FrameworkSeeder extends Seeder
 HTML;
 
         Framework::firstOrCreate([
-            'name'        => 'Management and leadership framework',
-            'slug'        => 'mlf',
+            'name' => 'Management and leadership framework',
+            'slug' => 'mlf',
             'description' => '<p>The framework consists of a code of practice, standards and competencies at all levels from entry level manager to executive, and a learning and development curriculum.</p>',
             'instructions' => $instructions,
             'report_intro' => $report_intro,

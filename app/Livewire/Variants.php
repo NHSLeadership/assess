@@ -5,25 +5,27 @@ namespace App\Livewire;
 use App\Models\Assessment;
 use App\Models\AssessmentRater;
 use App\Models\Framework;
-use App\Models\FrameworkVariantOption;
-use App\Models\Node;
 use App\Models\Rater;
 use App\Services\UserAssessmentVariantSelectionService;
 use App\Traits\AssessmentHelperTrait;
+use App\Traits\UserTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
-use App\Traits\UserTrait;
 
 class Variants extends Component
 {
-    use UserTrait;
     use AssessmentHelperTrait;
+    use UserTrait;
 
     public ?string $frameworkId;
+
     public ?string $assessmentId = null;
+
     public ?array $data;
+
     public ?string $back = null;
 
     public function mount($frameworkId = null, $assessmentId = null)
@@ -34,34 +36,34 @@ class Variants extends Component
         // Validate frameworkId
         if (
             empty($this->frameworkId) ||
-            !is_numeric($this->frameworkId) ||
-            !Framework::whereKey((int) $this->frameworkId)->exists()
+            ! is_numeric($this->frameworkId) ||
+            ! Framework::whereKey((int) $this->frameworkId)->exists()
         ) {
             return redirect()->route('frameworks');
         }
 
         // Validate assessmentId
         if (
-            !empty($this->assessmentId) &&
-            (!is_numeric($this->assessmentId) ||
-            !Assessment::whereKey($this->assessmentId)->exists())
+            ! empty($this->assessmentId) &&
+            (! is_numeric($this->assessmentId) ||
+            ! Assessment::whereKey($this->assessmentId)->exists())
         ) {
             return redirect()->route('frameworks');
         }
 
-        //Redirect if not permitted to do an assessment for this framework now
+        // Redirect if not permitted to do an assessment for this framework now
         $this->redirectIfAssessmentNotPermitted($this->frameworkId, $this->assessmentId);
 
-        //Redirect to summary if already submitted assessment
+        // Redirect to summary if already submitted assessment
         $this->redirectIfSubmittedOrFinished($this->assessment(), $this->frameworkId);
 
-        if (!empty($this->assessmentId) && !$this->back) {
+        if (! empty($this->assessmentId) && ! $this->back) {
             $node = $this->getAssessmentResumeNode($this->assessmentId);
-            if (!empty($node)) {
+            if (! empty($node)) {
                 // There are answered questions, so we should resume there
                 $this->redirect(route('questions', [
                     'assessmentId' => $this->assessmentId,
-                    'nodeId' => $node?->id
+                    'nodeId' => $node?->id,
                 ]));
             }
         }
@@ -69,13 +71,13 @@ class Variants extends Component
         $this->data = $this->variantSelections()?->toArray();
     }
 
-
     #[Computed]
     public function framework(): ?Framework
     {
         if (empty($this->frameworkId)) {
             $framework = Framework::first();
             $this->frameworkId = $framework->id;
+
             return $framework;
         }
 
@@ -85,22 +87,21 @@ class Variants extends Component
     #[Computed]
     public function attributes(): ?Collection
     {
-        if (empty($this->frameworkId) || !is_numeric($this->frameworkId)) {
+        if (empty($this->frameworkId) || ! is_numeric($this->frameworkId)) {
             return null;
         }
 
         return Framework::find($this->frameworkId)->variantAttributes()->get();
     }
 
-
     #[Computed]
-    public function frameworks(): \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|Framework|null
+    public function frameworks(): Model|\Illuminate\Database\Eloquent\Collection|Framework|null
     {
         return Framework::with(['variantAttributes.options'])->find($this->frameworkId);
     }
 
     #[Computed]
-    public function variantSelections(): Collection|null
+    public function variantSelections(): ?Collection
     {
         if (empty($this->assessmentId)) {
             return Collection::empty();
@@ -113,7 +114,7 @@ class Variants extends Component
     public function store(): void
     {
         $attributes = $this->attributes()?->keyBy('key');
-        if (!$this->validateVariants($attributes)) {
+        if (! $this->validateVariants($attributes)) {
             return;
         }
 
@@ -132,7 +133,7 @@ class Variants extends Component
                 route('questions',
                     [
                         'assessmentId' => $this->assessmentId,
-                        'nodeId' => null
+                        'nodeId' => null,
                     ]
                 )
             );
@@ -152,10 +153,11 @@ class Variants extends Component
         foreach ($attributes as $key => $attribute) {
 
             // Check if user submitted this key
-            if (!array_key_exists($key, $input) || empty($input[$key])) {
-                $this->addError('data.' . $key, "The {$attribute->label} field is required.");
+            if (! array_key_exists($key, $input) || empty($input[$key])) {
+                $this->addError('data.'.$key, "The {$attribute->label} field is required.");
             }
         }
+
         return $this->getErrorBag()->isEmpty();
     }
 
@@ -183,6 +185,7 @@ class Variants extends Component
                 ]);
 
             }, 3); // retry count for deadlocks.
+
             return $this->assessmentId ?? null;
         } catch (\Throwable $e) {
             report($e); // log the error for debugging
@@ -191,6 +194,7 @@ class Variants extends Component
                 type: 'error',
                 message: __('alerts.errors.assessment-initialise'),
             );
+
             return false;
         }
     }

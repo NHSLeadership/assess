@@ -43,8 +43,8 @@ class FrameworkVariantOptionSeeder extends Seeder
                 'framework_variant_attribute_id' => $option['framework_variant_attribute_id'],
                 'value' => $option['value'],
                 'label' => $option['label'],
-                'order' => $option['order']
-                ],
+                'order' => $option['order'],
+            ],
             );
         }
     }

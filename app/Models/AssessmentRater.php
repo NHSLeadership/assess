@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AssessmentRater extends Pivot
 {
@@ -39,5 +39,4 @@ class AssessmentRater extends Pivot
     {
         return $this->is_self ? 'Self assessment' : '360';
     }
-
 }

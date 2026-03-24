@@ -3,7 +3,7 @@
 use App\Models\QuestionVariantMatch;
 
 test('question variant match has expected fillable attributes', function () {
-    $match = new QuestionVariantMatch();
+    $match = new QuestionVariantMatch;
 
     expect($match->getFillable())->toEqual([
         'question_variant_id',

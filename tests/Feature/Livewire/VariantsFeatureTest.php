@@ -3,13 +3,7 @@
 use App\Livewire\Variants;
 use App\Models\Assessment;
 use App\Models\Framework;
-use App\Models\Node;
-use App\Models\NodeType;
-use App\Models\Question;
-use App\Models\Rater;
 use App\Models\Response;
-use App\Models\Scale;
-use App\Models\ScaleOption;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
@@ -44,12 +38,12 @@ it('redirects when the assessment is already submitted', function () {
     ]);
 
     variantsLivewireTest($user, [
-        'frameworkId'  => $framework->id,
+        'frameworkId' => $framework->id,
         'assessmentId' => $assessment->id,
     ])
         ->assertRedirect(route('summary', [
             'assessmentId' => $assessment->id,
-            'frameworkId'  => $framework->id,
+            'frameworkId' => $framework->id,
         ]));
 });
 
@@ -67,19 +61,19 @@ it('redirects to the resume node when the assessment has answered questions', fu
 
     Response::factory()->for($assessment)->create([
         'updated_at' => Carbon::now()->subDays(5),
-        'assessment_id'   => $assessment->id,
-        'rater_id'        => $rater->id,
-        'question_id'     => $question->id,
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'question_id' => $question->id,
         'scale_option_id' => $scaleOption->id,
     ]);
 
     variantsLivewireTest($user, [
-        'frameworkId'  => $framework->id,
+        'frameworkId' => $framework->id,
         'assessmentId' => $assessment->id,
     ])
         ->assertRedirect(route('questions', [
             'assessmentId' => $assessment->id,
-            'nodeId'       => $node->id,
+            'nodeId' => $node->id,
         ]));
 });
 
@@ -97,12 +91,12 @@ it('loads existing variant selections into data on mount', function () {
     // Attach a variant selection
     $assessment->variantSelections()->create([
         'framework_variant_option_id' => $option->id,
-        'attribute_key'               => 'stage',
-        'framework_variant_attribute_id'    => $attribute->id,
+        'attribute_key' => 'stage',
+        'framework_variant_attribute_id' => $attribute->id,
     ]);
 
     variantsLivewireTest($user, [
-        'frameworkId'  => $framework->id,
+        'frameworkId' => $framework->id,
         'assessmentId' => $assessment->id,
     ])
         ->assertSet('data.stage', $option->id);
@@ -115,7 +109,7 @@ it('shows validation errors when required variant fields are missing', function 
 
     // Create one required attribute
     $framework->variantAttributes()->create([
-        'key'   => 'stage',
+        'key' => 'stage',
         'label' => 'Stage',
     ]);
 
@@ -155,7 +149,7 @@ it('creates a new assessment and redirects to questions when data is valid', fun
     // Assert redirect to questions
     $test->assertRedirect(route('questions', [
         'assessmentId' => $assessment->id,
-        'nodeId'       => null,
+        'nodeId' => null,
     ]));
 });
 
@@ -166,12 +160,12 @@ it('redirects to instructions when goPrevious is called', function () {
     $assessment = createAssessmentForUser($user, $framework);
 
     variantsLivewireTest($user, [
-        'frameworkId'  => $framework->id,
+        'frameworkId' => $framework->id,
         'assessmentId' => $assessment->id,
     ])
         ->call('goPrevious')
         ->assertRedirect(route('instructions', [
-            'frameworkId'  => $framework->id,
+            'frameworkId' => $framework->id,
             'assessmentId' => $assessment->id,
         ]));
 });

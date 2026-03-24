@@ -7,7 +7,9 @@ use Livewire\Component;
 class Alerts extends Component
 {
     public $type = null;
+
     public $message = null;
+
     public $heading = null;
 
     // Listen for Livewire events
@@ -26,6 +28,7 @@ class Alerts extends Component
     {
         $this->reset(['type', 'message', 'heading']);
     }
+
     public function render()
     {
         return view('livewire.alerts');

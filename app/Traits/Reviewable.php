@@ -16,7 +16,7 @@ trait Reviewable
     public function getLink(Model $model): string
     {
         return URL::signedRoute('review-request', [
-            'model'  => $model
+            'model' => $model,
         ]);
     }
 }

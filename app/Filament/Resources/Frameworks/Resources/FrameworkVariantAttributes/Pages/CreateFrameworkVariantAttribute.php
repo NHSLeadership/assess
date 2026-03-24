@@ -14,7 +14,7 @@ class CreateFrameworkVariantAttribute extends CreateRecord
     {
         // Go back to the parent Framework's page
         return FrameworkResource::getUrl('edit', [
-            'record'   => $this->getParentRecord(),
+            'record' => $this->getParentRecord(),
             'relation' => 'variants',  // Navigate to Variant Attributes tab
         ]);
     }

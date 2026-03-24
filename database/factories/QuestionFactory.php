@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Question;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Question>
+ * @extends Factory<Question>
  */
 class QuestionFactory extends Factory
 {
@@ -21,7 +22,7 @@ class QuestionFactory extends Factory
             'node_id' => $this->faker->unique()->numberBetween(1000, 999999),
             'title' => $this->faker->title(),
             'text' => $this->faker->text(),
-            'response_type' => $this->faker->randomElement(['single_choice','multi_choice','scale','boolean','textarea']),
+            'response_type' => $this->faker->randomElement(['single_choice', 'multi_choice', 'scale', 'boolean', 'textarea']),
             'required' => $this->faker->boolean(),
             'order' => $this->faker->numberBetween(1, 100),
         ];

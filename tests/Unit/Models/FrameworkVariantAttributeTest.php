@@ -5,9 +5,9 @@ use App\Models\FrameworkVariantAttribute;
 test('framework variant attribute has fillable attributes', function () {
     $attr = new FrameworkVariantAttribute([
         'framework_id' => 1,
-        'key'          => 'color',
-        'label'        => 'Color',
-        'order'        => 2,
+        'key' => 'color',
+        'label' => 'Color',
+        'order' => 2,
     ]);
 
     expect($attr->framework_id)->toEqual(1)

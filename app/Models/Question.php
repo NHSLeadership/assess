@@ -27,7 +27,7 @@ class Question extends Model
 
     protected $casts = [
         'required' => 'boolean',
-        'active'   => 'boolean',
+        'active' => 'boolean',
     ];
 
     public function getComponentAttribute(): string
@@ -44,7 +44,7 @@ class Question extends Model
 
     public function getReflectionAttribute(): string
     {
-        return 'question_' . $this->attributes['id'] . '_reflection';
+        return 'question_'.$this->attributes['id'].'_reflection';
     }
 
     public function node(): BelongsTo
