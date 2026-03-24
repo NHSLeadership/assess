@@ -5,7 +5,7 @@
 
 ---
 ### v1.0.9
-> Updated: 16.03.2026
+> Updated: 24.03.2026
 1. Add Prometheus monitoring
 
 ### v1.0.8

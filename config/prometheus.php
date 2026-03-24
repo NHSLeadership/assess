@@ -16,6 +16,7 @@ return [
      */
     'allowed_ips' => [
         // '1.2.3.4',
+        env('PROMETHEUS_ALLOWED_IPS'),
     ],
 
     /*
