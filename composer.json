@@ -18,7 +18,7 @@
         "livewire/volt": "^1.7.0",
         "openplain/filament-tree-view": "^0.5.4",
         "spatie/laravel-prometheus": "^1.5",
-        "symfony/yaml": "^7.4"
+        "symfony/yaml": "^8.0"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.1",
