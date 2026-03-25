@@ -21,7 +21,6 @@
                 </strong>
             </p>
             @if(!empty(data_get($this->framework, 'report_intro')))
-{{--                <p>{!! \App\Support\RichTextRender::render($this->framework->report_intro, $this->user, $this->framework) !!}</p>--}}
                 {!! \App\Support\RichTextRender::render(
                         $this->framework->report_intro,
                         $this->user,

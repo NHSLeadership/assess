@@ -1,39 +1,59 @@
 <?php
+
 namespace App\Support;
 
 class RichTextRender
 {
-    // Render merge tags into values for a given html, user and framework
-    public static function render(?string $html, $user, $framework, array $extra = []): ?string    {
-
-        // return null if content is null or empty
+    public static function render(?string $html, $user, $framework, array $extra = []): ?string
+    {
         if (empty($html)) {
             return $html;
         }
 
-        // Define merge tags and their corresponding values
+        // Merge tags
         $mergeTags = [
-            'userName'   => $user->name,
-            'userID'     => $user->user_id,
-            'userEmail'  => $user->email,
-            'today'      => now()->translatedFormat('j F Y'),
-            'framework'  => $framework->name,
+            'userName'  => $user->name,
+            'userID'    => $user->user_id,
+            'userEmail' => $user->email,
+            'today'     => now()->translatedFormat('j F Y'),
+            'framework' => $framework->name,
         ];
 
-        // Apply merge tags to the html content
         foreach ($mergeTags as $mergeTag => $value) {
             $html = preg_replace(
-                '#<span[^>]+data-type="mergeTag"[^>]+data-id="' . $mergeTag . '"[^>]*></span>#',
+                '#<span[^>]+data-type="mergeTag"[^>]+data-id="' . preg_quote($mergeTag, '#') . '"[^>]*></span>#',
                 e($value),
                 $html
             );
         }
 
-        // Apply custom blocks
+        // Custom blocks
         return preg_replace_callback(
-            '#<div[^>]+data-type="customBlock"[^>]+data-id="([^"]+)"[^>]*></div>#',
+            '#<div\b[^>]*data-type="customBlock"[^>]*></div>#',
             function ($matches) use ($extra) {
-                $blockId = $matches[1];
+                $blockHtml = $matches[0];
+
+                // Extract data-id
+                if (! preg_match('#data-id="([^"]+)"#', $blockHtml, $mId)) {
+                    return $blockHtml;
+                }
+                $blockId = $mId[1];
+
+                // Extract data-config
+                $config = [];
+                if (preg_match('#data-config="([^"]*)"#', $blockHtml, $mCfg)) {
+                    $raw = $mCfg[1];
+
+                    // decode HTML entities (&quot; etc)
+                    $raw = html_entity_decode($raw, ENT_QUOTES);
+
+                    if ($raw !== '' && $raw !== 'null') {
+                        $decoded = json_decode($raw, true);
+                        if (is_array($decoded)) {
+                            $config = $decoded;
+                        }
+                    }
+                }
 
                 // Map block ID to block class
                 $blocks = [
@@ -41,16 +61,11 @@ class RichTextRender
                 ];
 
                 if (! isset($blocks[$blockId])) {
-                    return $matches[0];
+                    return $blockHtml;
                 }
 
-                // Call block renderer
-//                return $blocks[$blockId]::toHtml([], []);
-                return $blocks[$blockId]::toHtml($config ?? [], $extra);
-//                return $blocks[$blockId]::toHtml(
-//                    config: [],
-//                    data: $extra
-//                );
+                // Call block renderer with config + extra data
+                return $blocks[$blockId]::toHtml($config, $extra);
             },
             $html
         );
