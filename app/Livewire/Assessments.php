@@ -40,15 +40,15 @@ class Assessments extends Component
         $this->nodeId = $nodeId ? (int) $nodeId : null;
         $this->edit = $edit;
 
-        if (empty($this->assessmentId) || ! is_numeric($this->assessmentId)) {
+        if (empty($this->assessmentId)) {
             return redirect()->route('frameworks');
         }
 
         // Redirect if not permitted to do an assessment for this framework now
-        $this->redirectIfAssessmentNotPermitted($this->assessment?->framework?->id, $this->assessmentId);
+        $this->redirectIfAssessmentNotPermitted($this->assessment()?->framework?->id, $this->assessmentId);
 
         // Redirect already submitted assignments to summary page
-        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment?->framework?->id, $this->edit);
+        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework?->id, $this->edit);
 
         // Set initial current node so headings are correct on first render
         $nodes = $this->nodes();
@@ -63,12 +63,12 @@ class Assessments extends Component
     #[Computed]
     public function nodes(): ?Collection
     {
-        if (empty($this->assessment?->framework)) {
+        if (empty($this->assessment()->framework)) {
             return null;
         }
 
         return app(FrameworkTraversalService::class)
-            ->orderedQuestionNodes($this->assessment->framework->id);
+            ->orderedQuestionNodes($this->assessment()->framework->id);
     }
 
     protected function paginatedNodes(): ?LengthAwarePaginator
@@ -96,16 +96,6 @@ class Assessments extends Component
         );
     }
 
-    #[Computed]
-    public function data()
-    {
-        if (empty($this->assessmentId)) {
-            return null;
-        }
-
-        return $this->user?->data?->where('assessment_id', $this->assessmentId)->get();
-    }
-
     public function backPage()
     {
         $this->previousPage();
@@ -115,16 +105,18 @@ class Assessments extends Component
     public function currentQuestionNode($nodeId = null): void
     {
         // Keep node within current framework
-        if (! $nodeId || ! $this->assessment?->framework) {
+        if (! $nodeId || ! $this->assessment()?->framework) {
             $this->currentNode = null;
             return;
         }
 
-        $this->currentNode = $this->assessment
+        /** @var Node|null $node */
+        $node = $this->assessment()
             ->framework
             ->nodes()
             ->whereKey($nodeId)
             ->first();
+        $this->currentNode = $node;
     }
 
     /**
@@ -141,7 +133,7 @@ class Assessments extends Component
 
         while ($current) {
             $stack[] = $current;
-            $current = $current?->parent;
+            $current = $current->parent;
         }
 
         $stack = array_reverse($stack);
@@ -164,14 +156,15 @@ class Assessments extends Component
             };
 
             return [
-                'name' => $n->name ?? '',
-                'colour' => $n->colour ?? 'blue',
-                'headingTag' => $headingTag,
+                'name'         => $n->name ?? '',
+                'colour'       => $n->colour ?? 'blue',
+                'headingTag'   => $headingTag,
                 'headingClass' => $headingClass,
-                'type' => $n->type?->name ?? '',
+                'type'         => $n->type?->name ?? '',
             ];
-        })->toArray();
+        })->all();
     }
+
 
     public function render()
     {

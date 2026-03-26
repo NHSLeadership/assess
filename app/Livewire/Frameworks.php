@@ -20,7 +20,7 @@ class Frameworks extends Component
     use AssessmentHelperTrait;
     use UserTrait;
 
-    public ?string $frameworkId = null;
+    public ?int $frameworkId = null;
 
     public ?int $pendingDeleteId = null;
 
@@ -152,7 +152,7 @@ class Frameworks extends Component
         // Count only responses that belong to ACTIVE questions
         $answered = (int) ($assessment->responses()
             ->whereHas('question', fn ($q) => $q->where('active', true))
-            ->count() ?? 0);
+            ->count());
 
         $percentage = (int) round(($answered / $total) * 100);
 

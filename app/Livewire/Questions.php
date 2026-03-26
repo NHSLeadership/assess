@@ -43,15 +43,15 @@ class Questions extends Component
     public function mount(): void
     {
         // Redirect if not permitted to do an assessment for this framework now
-        $this->redirectIfAssessmentNotPermitted($this->assessment?->framework?->id, $this->assessmentId);
+        $this->redirectIfAssessmentNotPermitted($this->assessment()?->framework?->id, $this->assessmentId);
 
-        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment?->framework->id, $this->edit);
+        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework->id, $this->edit);
 
         /**
          * Pre-populate forms with defaults
          */
         $this->data = $this->responses()?->toArray() ?? [];
-        if (empty($this->data) && $this->nodeQuestions()) {
+        if (empty($this->data) && $this->nodeQuestions()->isNotEmpty()) {
             foreach ($this->nodeQuestions() as $question) {
                 $defaults = null;
                 // This may be a match/switch expression in future based on multiple response_types
@@ -113,7 +113,7 @@ class Questions extends Component
     #[Computed]
     public function nodes(): ?\ArrayIterator
     {
-        if (empty($this->assessment?->framework)) {
+        if (empty($this->assessment->framework)) {
             return null;
         }
 
@@ -121,11 +121,12 @@ class Questions extends Component
         $nodes = app(FrameworkTraversalService::class)
             ->orderedQuestionNodes($this->assessment->framework->id);
 
+        /** @var \ArrayIterator<int, \App\Models\Node> $nodesIterator */
         $nodesIterator = $nodes->values()->getIterator();
 
         // Initialise pointer (nodeKeyId is the index in the ordered list)
         if ($this->nodeKeyId === null) {
-            $this->nodeKeyId = $nodesIterator->key() ?? 0;
+            $this->nodeKeyId = $nodesIterator->key();
         }
 
         $nodesIterator->seek($this->nodeKeyId);
@@ -147,7 +148,7 @@ class Questions extends Component
 
     public function buildResponses(bool $onlyRequired = false): ?Collection
     {
-        $assessment = $this->user->assessments()
+        $assessment = $this->user()?->assessments()
             ->where('id', $this->assessmentId)
             ->with('responses.question')
             ->first();
@@ -156,7 +157,15 @@ class Questions extends Component
             return null;
         }
 
-        $responses = $assessment?->responses;
+
+        $assessment = $this->assessment();
+
+        if (! $assessment) {
+            return null;
+        }
+        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Response> $responses */
+        $responses = $assessment->responses;
+
 
         if ($onlyRequired) {
             $responses = $responses->filter(function ($response) {
@@ -164,28 +173,31 @@ class Questions extends Component
             });
         }
 
-        return $responses->mapWithKeys(function ($response) use ($onlyRequired) {
-            $key = $response->question->name;
+        return $responses->mapWithKeys(
+            /** @param \App\Models\Response $response */
+            function (\App\Models\Response $response) use ($onlyRequired) {
+                $key = $response->question->name;
 
-            // TEXTAREA → only one value
-            if ($response->question->response_type === ResponseType::TYPE_TEXTAREA->value) {
-                return [
-                    $key => $response->textarea ?? '',
-                ];
-            }
+                // TEXTAREA → only one value
+                if ($response->question->response_type === ResponseType::TYPE_TEXTAREA->value) {
+                    return [
+                        $key => $response->textarea ?? '',
+                    ];
+                }
 
-            // SCALE
-            if ($onlyRequired) {
-                return [
-                    $key => $response->scale_option_id,
-                ];
-            } else {
-                return [
-                    $key => $response->scale_option_id,
-                    $key.'_reflection' => $response->textarea ?? '',
-                ];
+                // SCALE
+                if ($onlyRequired) {
+                    return [
+                        $key => $response->scale_option_id,
+                    ];
+                } else {
+                    return [
+                        $key => $response->scale_option_id,
+                        $key.'_reflection' => $response->textarea ?? '',
+                    ];
+                }
             }
-        });
+        );
     }
 
     public function backPage(): void

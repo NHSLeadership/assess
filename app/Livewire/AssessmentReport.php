@@ -37,9 +37,7 @@ class AssessmentReport extends Component
 
     public ?string $variantAttributeLabel = null;
 
-    /**
-     * @var array|mixed
-     */
+    /** @var array<string, mixed> */
     public array $signposts;
 
     /**
@@ -138,11 +136,11 @@ class AssessmentReport extends Component
     #[Computed]
     public function rater(): ?Rater
     {
-        if (empty($this->assessmentId) || empty($this->user()?->user_id)) {
+        if (empty($this->assessmentId) || empty($this->user()->user_id)) {
             return null;
         }
 
-        return Rater::where('user_id', $this->user()?->user_id)
+        return Rater::where('user_id', $this->user()->user_id)
             ->whereHas('assessments', function ($q) {
                 $q->where('assessments.id', $this->assessmentId);
             })
