@@ -15,12 +15,13 @@ class ManageFrameworkNodes extends TreeRelationPage
     protected static ?string $relatedResource = NodeResource::class;
     protected static string|null|\BackedEnum $navigationIcon = Heroicon::OutlinedPuzzlePiece;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [
             Action::make('createNode')
                 ->label('New node')
-                ->url(fn () => NodeResource::getUrl('create', [
+                ->url(fn (): string => NodeResource::getUrl('create', [
                     'framework' => $this->getRecord(),
                 ])),
         ];

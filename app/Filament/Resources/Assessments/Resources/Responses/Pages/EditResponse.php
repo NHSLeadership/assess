@@ -10,6 +10,7 @@ class EditResponse extends EditRecord
 {
     protected static string $resource = ResponseResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

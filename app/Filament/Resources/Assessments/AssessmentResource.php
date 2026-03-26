@@ -21,16 +21,19 @@ class AssessmentResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBarSquare;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return AssessmentForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return AssessmentsTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -38,6 +41,7 @@ class AssessmentResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

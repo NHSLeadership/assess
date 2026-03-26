@@ -10,6 +10,7 @@ class ListNodeTypes extends ListRecords
 {
     protected static string $resource = NodeTypeResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

@@ -21,22 +21,20 @@ class ResponseForm
                 Select::make('rater_id')
                     ->label('Rater')
                     // Display all that are available from user_id, name and email
-                    ->options(function () {
-                        return Rater::query()
-                            ->orderBy('user_id')
-                            ->get()
-                            ->mapWithKeys(function (Rater $rater) {
-                                $parts = array_filter([
-                                    $rater->user_id,
-                                    $rater->name,
-                                    $rater->email,
-                                ]);
-                                $label = implode(' | ', $parts);
+                    ->options(fn() => Rater::query()
+                        ->orderBy('user_id')
+                        ->get()
+                        ->mapWithKeys(function (Rater $rater): array {
+                            $parts = array_filter([
+                                $rater->user_id,
+                                $rater->name,
+                                $rater->email,
+                            ]);
+                            $label = implode(' | ', $parts);
 
-                                return [$rater->id => $label];
-                            })
-                            ->toArray();
-                    })
+                            return [$rater->id => $label];
+                        })
+                        ->toArray())
                     ->default(fn () => Rater::where('user_id', auth()->id())->value('id'))
                     ->createOptionForm([
                         TextInput::make('user_id')
@@ -50,8 +48,8 @@ class ResponseForm
                     ->live(),
                 Select::make('question_id')
                     ->label('Question')
-                    ->disabled(fn (Get $get) => blank($get('rater_id')))
-                    ->options(function (Get $get, $livewire) {
+                    ->disabled(fn (Get $get): bool => blank($get('rater_id')))
+                    ->options(function (Get $get, $livewire): array {
                         $assessment = $livewire->getParentRecord();
                         if (! $assessment) {
                             return [];
@@ -65,9 +63,9 @@ class ResponseForm
                     ->afterStateUpdated(fn ($state, callable $set) => $set('scale_option_id', null)),
                 Select::make('scale_option_id')
                     ->label('Answer')
-                    ->visible(fn (Get $get) => $get('question_id') && Question::query()->whereKey($get('question_id'))->value('response_type') === 'scale')
-                    ->required(fn (Get $get) => $get('question_id') && Question::query()->whereKey($get('question_id'))->value('response_type') === 'scale')
-                    ->disabled(fn (Get $get) => blank($get('question_id')))
+                    ->visible(fn (Get $get): bool => $get('question_id') && Question::query()->whereKey($get('question_id'))->value('response_type') === 'scale')
+                    ->required(fn (Get $get): bool => $get('question_id') && Question::query()->whereKey($get('question_id'))->value('response_type') === 'scale')
+                    ->disabled(fn (Get $get): bool => blank($get('question_id')))
                     ->options(function (Get $get): array {
                         $questionId = $get('question_id');
                         if (! $questionId) {
@@ -88,8 +86,8 @@ class ResponseForm
                     }),
                 Textarea::make('textarea')
                     ->label('Answer')
-                    ->visible(fn (Get $get) => $get('question_id') && Question::query()->whereKey($get('question_id'))->value('response_type') === 'textarea')
-                    ->required(fn (Get $get) => $get('question_id') && Question::query()->whereKey($get('question_id'))->value('response_type') === 'textarea')
+                    ->visible(fn (Get $get): bool => $get('question_id') && Question::query()->whereKey($get('question_id'))->value('response_type') === 'textarea')
+                    ->required(fn (Get $get): bool => $get('question_id') && Question::query()->whereKey($get('question_id'))->value('response_type') === 'textarea')
                     ->columnSpanFull(),
             ]);
     }

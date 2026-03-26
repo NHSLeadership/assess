@@ -46,8 +46,8 @@ trait FormFieldValidationRulesTrait
         $rules = self::$typeRules[$type] ?? [];
 
         foreach ($rules as $rule) {
-            if (str_starts_with($rule, 'max:')) {
-                return (int) substr(trim($rule), 4);
+            if (str_starts_with((string) $rule, 'max:')) {
+                return (int) substr(trim((string) $rule), 4);
             }
         }
 

@@ -32,7 +32,7 @@ class QuestionForm
                     ->required()
                     ->reactive()
                     ->default('scale')
-                    ->afterStateUpdated(function ($state, $set) {
+                    ->afterStateUpdated(function ($state, $set): void {
                         if ($state !== 'scale') {
                             $set('scale_id', null);
                         }
@@ -43,10 +43,10 @@ class QuestionForm
                     ->preload()
                     ->nullable()
                     ->reactive()
-                    ->required(fn ($get) => $get('response_type') === 'scale')
-                    ->disabled(fn ($get) => $get('response_type') !== 'scale')
+                    ->required(fn ($get): bool => $get('response_type') === 'scale')
+                    ->disabled(fn ($get): bool => $get('response_type') !== 'scale')
                     ->dehydrateStateUsing(fn ($state, $get) => $get('response_type') === 'scale' ? $state : null)
-                    ->dehydrated(fn ($state, $get) => true),
+                    ->dehydrated(fn ($state, $get): true => true),
                 Toggle::make('required')
                     ->default(true)
                     ->required(),

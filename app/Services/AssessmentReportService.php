@@ -19,11 +19,11 @@ class AssessmentReportService
 
     public string $chartBorderColor = '#004281';
 
-    private ?Assessment $assessment;
+    private readonly ?Assessment $assessment;
 
-    private ?Collection $nodes;
+    private readonly ?Collection $nodes;
 
-    private ?Rater $rater;
+    private readonly ?Rater $rater;
 
     public function __construct(
         public int $frameworkId,
@@ -91,7 +91,7 @@ class AssessmentReportService
 
         foreach ($areas as $area) {
 
-            $standards = $this->nodes()->filter(fn ($n) => $n->parent_id === $area->id);
+            $standards = $this->nodes()->filter(fn ($n): bool => $n->parent_id === $area->id);
 
             if ($standards->isEmpty()) {
                 continue;
@@ -102,7 +102,7 @@ class AssessmentReportService
 
             foreach ($standards as $standard) {
 
-                $leafNodes = $this->nodes()->filter(fn ($n) => $n->children->count() === 0 &&
+                $leafNodes = $this->nodes()->filter(fn ($n): bool => $n->children->count() === 0 &&
                     $n->parent_id === $standard->id
                 );
 
@@ -110,7 +110,7 @@ class AssessmentReportService
                     continue;
                 }
 
-                $scaleResponses = $this->responses()->filter(fn ($r) => $leafNodes->pluck('id')->contains($r->question->node_id) &&
+                $scaleResponses = $this->responses()->filter(fn ($r): bool => $leafNodes->pluck('id')->contains($r->question->node_id) &&
                     $r->question->response_type === ResponseType::TYPE_SCALE->value
                 );
 
@@ -119,7 +119,7 @@ class AssessmentReportService
                 }
 
                 $avg = round(
-                    $scaleResponses->avg(fn ($r) => (int) ($r->scaleOption->value ?? 0)),
+                    $scaleResponses->avg(fn ($r): int => (int) ($r->scaleOption->value ?? 0)),
                     2
                 );
 
@@ -127,7 +127,7 @@ class AssessmentReportService
                 $values[] = $avg;
             }
 
-            if (empty($labels)) {
+            if ($labels === []) {
                 continue;
             }
 
@@ -170,7 +170,7 @@ class AssessmentReportService
 
         foreach ($areas as $area) {
 
-            $standards = $this->nodes()->filter(fn ($n) => $n->parent_id === $area->id);
+            $standards = $this->nodes()->filter(fn ($n): bool => $n->parent_id === $area->id);
 
             if ($standards->isEmpty()) {
                 continue;
@@ -181,13 +181,13 @@ class AssessmentReportService
 
             foreach ($standards as $standard) {
 
-                $leafNodes = $this->nodes()->filter(fn ($n) => $n->children->count() === 0 &&
+                $leafNodes = $this->nodes()->filter(fn ($n): bool => $n->children->count() === 0 &&
                     $n->parent_id === $standard->id
                 );
 
                 foreach ($leafNodes as $leaf) {
 
-                    $response = $this->responses()->first(fn ($r) => $r->question->node_id === $leaf->id &&
+                    $response = $this->responses()->first(fn ($r): bool => $r->question->node_id === $leaf->id &&
                         $r->question->response_type === ResponseType::TYPE_SCALE->value
                     );
 
@@ -200,7 +200,7 @@ class AssessmentReportService
                 }
             }
 
-            if (empty($labels)) {
+            if ($labels === []) {
                 continue;
             }
 
@@ -246,7 +246,7 @@ class AssessmentReportService
     public function radarChart(bool $useScaleLabels = true): array
     {
         // Ensure bar charts are generated
-        if (empty($this->barCharts)) {
+        if ($this->barCharts === []) {
             $this->barCharts();
         }
 
@@ -288,9 +288,12 @@ class AssessmentReportService
         ];
     }
 
-    public function wrapLabel($label, $maxLength = 12)
+    /**
+     * @return string[]
+     */
+    public function wrapLabel($label, $maxLength = 12): array
     {
-        $words = explode(' ', $label);
+        $words = explode(' ', (string) $label);
         $lines = [];
         $current = '';
 
@@ -321,12 +324,12 @@ class AssessmentReportService
         $stack = [$node];
         $leaves = collect();
 
-        while (! empty($stack)) {
+        while ($stack !== []) {
             /** @var Node $current */
             $current = array_pop($stack);
             $children = $childrenMap[$current->id] ?? [];
 
-            if (empty($children)) {
+            if ($children === []) {
                 $leaves->push($current);
             } else {
                 foreach ($children as $child) {
@@ -348,7 +351,7 @@ class AssessmentReportService
 
         $leafIds = $leafNodes->pluck('id')->toArray();
 
-        $scaleResponses = $this->responses()->filter(fn ($r) => in_array($r->question->node_id, $leafIds, true) &&
+        $scaleResponses = $this->responses()->filter(fn ($r): bool => in_array($r->question->node_id, $leafIds, true) &&
             $r->question->response_type === ResponseType::TYPE_SCALE->value
         );
 
@@ -357,7 +360,7 @@ class AssessmentReportService
         }
 
         return round(
-            $scaleResponses->avg(fn ($r) => (int) ($r->scaleOption->value ?? 0)),
+            $scaleResponses->avg(fn ($r): int => (int) ($r->scaleOption->value ?? 0)),
             1
         );
     }
@@ -369,7 +372,7 @@ class AssessmentReportService
             return [];
         }
 
-        $selectedOptionIds = $this->assessment()?->variantSelections()
+        $selectedOptionIds = $this->assessment()?->variantSelections() instanceof \Illuminate\Database\Eloquent\Relations\HasMany
             ? $this->assessment()->variantSelections()->pluck('framework_variant_option_id')->toArray()
             : [];
 
@@ -381,7 +384,7 @@ class AssessmentReportService
             ->orderBy('max_value');
 
         if (! empty($selectedOptionIds)) {
-            $query->where(function ($q) use ($selectedOptionIds) {
+            $query->where(function ($q) use ($selectedOptionIds): void {
                 $q->whereNull('framework_variant_option_id')
                     ->orWhereIn('framework_variant_option_id', $selectedOptionIds);
             });

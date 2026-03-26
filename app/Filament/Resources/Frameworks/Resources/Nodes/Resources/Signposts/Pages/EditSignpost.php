@@ -10,6 +10,7 @@ class EditSignpost extends EditRecord
 {
     protected static string $resource = SignpostResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

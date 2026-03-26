@@ -28,6 +28,7 @@ class NodeResource extends Resource
 
     protected static ?string $parentResource = FrameworkResource::class;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return NodeForm::configure($schema);
@@ -37,7 +38,7 @@ class NodeResource extends Resource
     {
         return $tree->fields([
             TextField::make('name')
-                ->formatStateUsing(fn ($state, $record) =>
+                ->formatStateUsing(fn ($state, $record): string =>
                 "{$record->type?->name}: {$state}"
                 ),
         ])
@@ -55,11 +56,13 @@ class NodeResource extends Resource
             ]);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return NodesTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -68,6 +71,7 @@ class NodeResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

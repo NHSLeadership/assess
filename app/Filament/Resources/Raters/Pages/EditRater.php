@@ -10,6 +10,7 @@ class EditRater extends EditRecord
 {
     protected static string $resource = RaterResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

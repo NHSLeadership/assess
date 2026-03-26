@@ -31,7 +31,7 @@ class Summary extends Component
     #[Computed]
     public function framework(): ?Framework
     {
-        if (empty($this->frameworkId)) {
+        if ($this->frameworkId === null || $this->frameworkId === 0) {
             return null;
         }
 
@@ -44,10 +44,10 @@ class Summary extends Component
         return Framework::all();
     }
 
-    public function continueAssessment()
+    public function continueAssessment(): void
     {
         $node = $this->getAssessmentResumeNode($this->assessmentId);
-        if (! empty($node)) {
+        if ($node instanceof \App\Models\Node) {
             // There are unanswered questions, so we should resume there
             $this->redirect(route('questions', [
                 'assessmentId' => $this->assessmentId,
@@ -61,7 +61,7 @@ class Summary extends Component
     #[Computed]
     public function nodes(): ?Collection
     {
-        if (empty($this->frameworkId)) {
+        if ($this->frameworkId === null || $this->frameworkId === 0) {
             return collect();
         }
 
@@ -95,7 +95,7 @@ class Summary extends Component
     {
         try {
             $assessment = $this->assessment();
-            if (! $assessment) {
+            if (!$assessment instanceof \App\Models\Assessment) {
                 session()->flash('error', __('alerts.errors.assessment-not-found'));
                 $this->dispatch('scroll-to-top');
 
@@ -131,12 +131,12 @@ class Summary extends Component
     #[Computed]
     public function rater()
     {
-        if (empty($this->assessmentId) || empty($this->user()?->user_id)) {
+        if ($this->assessmentId === null || $this->assessmentId === 0 || empty($this->user()?->user_id)) {
             return null;
         }
 
         return Rater::where('user_id', $this->user()?->user_id)
-            ->whereHas('assessments', function ($q) {
+            ->whereHas('assessments', function ($q): void {
                 $q->where('assessments.id', $this->assessmentId);
             })
             ->first();
@@ -167,7 +167,7 @@ class Summary extends Component
             ->count();
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.summary', [
             'title' => 'Areas',

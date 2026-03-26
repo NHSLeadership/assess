@@ -61,9 +61,10 @@ class AssessmentsChart extends ChartWidget
         }
     }
 
+    #[\Override]
     protected function getData(): array
     {
-        $status = $this->filters['status'] ?? 'all';
+        $this->filters['status'] ?? 'all';
         $startDate = $this->filters['startDate'] ?? '1/1/2026';
         $endDate = $this->filters['endDate'] ?? now()->endOfMonth();
         $interval = $this->filters['interval'] ?? 'month';
@@ -89,15 +90,16 @@ class AssessmentsChart extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'data' => $trend->map(fn (TrendValue $v) => $v->aggregate),
+                    'data' => $trend->map(fn (TrendValue $v): mixed => $v->aggregate),
                     'backgroundColor' => '#9BD0F5',
                     'borderColor' => '#9BD0F5',
                 ],
             ],
-            'labels' => $trend->map(fn (TrendValue $v) => $v->date),
+            'labels' => $trend->map(fn (TrendValue $v): string => $v->date),
         ];
     }
 
+    #[\Override]
     public function getHeading(): Htmlable|string|null
     {
         $status = $this->filters['status'] ?? 'all';
@@ -114,6 +116,7 @@ class AssessmentsChart extends ChartWidget
         return 'bar';
     }
 
+    #[\Override]
     protected function getOptions(): array
     {
         return [
@@ -125,6 +128,7 @@ class AssessmentsChart extends ChartWidget
         ];
     }
 
+    #[\Override]
     public function getColumnSpan(): int|string|array
     {
         return 'full';

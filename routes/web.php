@@ -16,19 +16,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', Home::class)->name('home');
 
-Route::any('/admin/logout', function () {
-    return redirect('/logout');
-})->name('filament.admin.logout');
-Route::any('/admin/login', function () {
-    return redirect('/login');
-})->name('filament.admin.login');
+Route::any('/admin/logout', fn(): \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse => redirect('/logout'))->name('filament.admin.logout');
+Route::any('/admin/login', fn(): \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse => redirect('/login'))->name('filament.admin.login');
 
 Route::group([
     'middleware' => [
         'auth',
         // 'can:users:manage',
     ],
-], function () {
+], function (): void {
     Route::get('/assessments/{frameworkId?}', Frameworks::class)->name('frameworks');
     Route::get('/assessment-variants/{frameworkId?}/{assessmentId?}/{back?}', Variants::class)->name('variants');
     Route::get('/framework-instructions/{frameworkId?}/{assessmentId?}', FrameworkInstructions::class)->name('instructions');
@@ -49,7 +45,7 @@ Route::group([
 
 Route::group([
     'middleware' => 'signed',
-], function () {
+], function (): void {
     Route::get('/review/{hashId}', Review::class)->name('review');
 });
 

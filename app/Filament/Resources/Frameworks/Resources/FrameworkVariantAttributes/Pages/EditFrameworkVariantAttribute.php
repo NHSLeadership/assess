@@ -10,6 +10,7 @@ class EditFrameworkVariantAttribute extends EditRecord
 {
     protected static string $resource = FrameworkVariantAttributeResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

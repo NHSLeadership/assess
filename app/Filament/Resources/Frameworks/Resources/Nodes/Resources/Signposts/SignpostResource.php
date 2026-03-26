@@ -22,16 +22,19 @@ class SignpostResource extends Resource
 
     protected static ?string $parentResource = NodeResource::class;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return SignpostForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return SignpostsTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -39,6 +42,7 @@ class SignpostResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

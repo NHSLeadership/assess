@@ -20,16 +20,19 @@ class ScaleResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedScale;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return ScaleForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return ScalesTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -37,6 +40,7 @@ class ScaleResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

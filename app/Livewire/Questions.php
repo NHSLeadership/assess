@@ -62,7 +62,7 @@ class Questions extends Component
             }
         }
 
-        if (! empty($this->nodeId) && $this->edit === 'edit') {
+        if ($this->nodeId !== null && $this->nodeId !== 0 && $this->edit === 'edit') {
             // Explicit edit link from Summary -> honour it
             $this->goToNodeById($this->nodeId);
         } else {
@@ -159,12 +159,10 @@ class Questions extends Component
         $responses = $assessment?->responses;
 
         if ($onlyRequired) {
-            $responses = $responses->filter(function ($response) {
-                return $response->question->required ?? false;
-            });
+            $responses = $responses->filter(fn($response) => $response->question->required ?? false);
         }
 
-        return $responses->mapWithKeys(function ($response) use ($onlyRequired) {
+        return $responses->mapWithKeys(function ($response) use ($onlyRequired): array {
             $key = $response->question->name;
 
             // TEXTAREA → only one value
@@ -179,12 +177,11 @@ class Questions extends Component
                 return [
                     $key => $response->scale_option_id,
                 ];
-            } else {
-                return [
-                    $key => $response->scale_option_id,
-                    $key.'_reflection' => $response->textarea ?? '',
-                ];
             }
+            return [
+                $key => $response->scale_option_id,
+                $key.'_reflection' => $response->textarea ?? '',
+            ];
         });
     }
 
@@ -193,6 +190,7 @@ class Questions extends Component
         $this->previousPage();
     }
 
+    #[\Override]
     public function getRules(): array
     {
         $rules = [];
@@ -242,7 +240,7 @@ class Questions extends Component
     {
         $rules = $this->getRules();
 
-        if (! empty($rules)) {
+        if ($rules !== []) {
             try {
                 $this->validate($rules);
             } catch (ValidationException $e) {
@@ -251,12 +249,12 @@ class Questions extends Component
             }
         }
 
-        $questions = $this->nodeQuestions()?->keyBy('name');
+        $questions = $this->nodeQuestions()->keyBy('name');
 
         foreach (($this->data ?? []) as $name => $value) {
 
             // Skip reflection keys entirely
-            if (str_ends_with($name, '_reflection')) {
+            if (str_ends_with((string) $name, '_reflection')) {
                 continue;
             }
 
@@ -270,7 +268,7 @@ class Questions extends Component
             // Skip empty textarea responses
             if (
                 $question['response_type'] === ResponseType::TYPE_TEXTAREA->value &&
-                empty(trim($value))
+                in_array(trim((string) $value), ['', '0'], true)
             ) {
                 continue;
             }
@@ -326,7 +324,7 @@ class Questions extends Component
             if ($node->id === $currentQuestion->node_id) {
                 $offset = $this->orderedQuestions($node)
                     ->pluck('id')
-                    ->search(fn ($id) => (int) $id === (int) $questionId);
+                    ->search(fn ($id): bool => (int) $id === (int) $questionId);
 
                 $questionCounter += ($offset !== false ? $offset : 0);
                 break;
@@ -427,14 +425,14 @@ class Questions extends Component
      */
     public function goToNodeById(int $nodeId): void
     {
-        if (empty($nodeId)) {
+        if ($nodeId === 0) {
             return;
         }
         $this->resetPage(pageName: $this->pageName);
 
         $nodes = $this->nodes();
 
-        if (! $nodes) {
+        if (!$nodes instanceof \ArrayIterator) {
             return;
         }
 
@@ -472,7 +470,7 @@ class Questions extends Component
         return $question->scale->options()
             ->orderBy('order')
             ->get()
-            ->mapWithKeys(function ($opt) {
+            ->mapWithKeys(function ($opt): array {
                 $label = $opt->label;
 
                 if (! empty($opt->description)) {
@@ -484,7 +482,7 @@ class Questions extends Component
             ->toArray();
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.questions', [
             'questions' => $this->paginatedQuestions(),

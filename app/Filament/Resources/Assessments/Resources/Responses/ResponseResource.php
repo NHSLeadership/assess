@@ -22,16 +22,19 @@ class ResponseResource extends Resource
 
     protected static ?string $parentResource = AssessmentResource::class;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return ResponseForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return ResponsesTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -39,6 +42,7 @@ class ResponseResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

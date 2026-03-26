@@ -29,7 +29,7 @@ class QuestionTextResolver
         // 3) Load questions for the assessment's framework
         $questions = Question::query()
             ->whereHas('node', fn ($question) => $question->where('framework_id', $assessment->framework_id))
-            ->with(['variants' => function ($question) use ($raterType) {
+            ->with(['variants' => function ($question) use ($raterType): void {
                 $question->whereNull('rater_type')->orWhere('rater_type', $raterType)
                     ->orderByDesc('priority')->orderBy('id');
             }, 'variants.matches'])
@@ -80,7 +80,7 @@ class QuestionTextResolver
         $question = Question::query()
             ->where('id', $questionId)
             ->whereHas('node', fn ($q) => $q->where('framework_id', $assessment->framework_id))
-            ->with(['variants' => function ($q) use ($raterType) {
+            ->with(['variants' => function ($q) use ($raterType): void {
                 $q->whereNull('rater_type')
                     ->orWhere('rater_type', $raterType)
                     ->orderByDesc('priority')

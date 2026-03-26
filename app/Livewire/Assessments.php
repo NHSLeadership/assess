@@ -21,7 +21,7 @@ class Assessments extends Component
     use UserTrait;
     use WithPagination;
 
-    public ?int $assessmentId;
+    public ?int $assessmentId = null;
 
     protected int $perPage = 1;
     protected string $pageName = 'nodePage';
@@ -32,7 +32,7 @@ class Assessments extends Component
 
     public ?string $edit = null;
 
-    public function mount($assessmentId, $nodeId = null, $edit = null)
+    public function mount($assessmentId, $nodeId = null, ?string $edit = null)
     {
 
         // Assign parameters to public properties
@@ -40,7 +40,7 @@ class Assessments extends Component
         $this->nodeId = $nodeId ? (int) $nodeId : null;
         $this->edit = $edit;
 
-        if (empty($this->assessmentId) || ! is_numeric($this->assessmentId)) {
+        if (!isset($this->assessmentId) || $this->assessmentId === 0 || ! is_numeric($this->assessmentId)) {
             return redirect()->route('frameworks');
         }
 
@@ -99,14 +99,14 @@ class Assessments extends Component
     #[Computed]
     public function data()
     {
-        if (empty($this->assessmentId)) {
+        if (!isset($this->assessmentId) || ($this->assessmentId === null || $this->assessmentId === 0)) {
             return null;
         }
 
         return $this->user?->data?->where('assessment_id', $this->assessmentId)->get();
     }
 
-    public function backPage()
+    public function backPage(): void
     {
         $this->previousPage();
     }
@@ -146,7 +146,7 @@ class Assessments extends Component
 
         $stack = array_reverse($stack);
 
-        return collect($stack)?->map(function ($n, $index) {
+        return collect($stack)->map(function ($n, $index): array {
             $headingTag = match ($index) {
                 0 => 'h1',
                 1 => 'h2',
@@ -173,7 +173,7 @@ class Assessments extends Component
         })->toArray();
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.assessments', [
             'paginatedNodes' => $this->paginatedNodes(),

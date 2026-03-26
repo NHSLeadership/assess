@@ -26,16 +26,19 @@ class FrameworkResource extends Resource
 
     protected static ?\Filament\Pages\Enums\SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return FrameworkForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return FrameworksTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -43,6 +46,7 @@ class FrameworkResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getRecordSubNavigation(Page $page): array
     {
         return $page->generateNavigationItems([
@@ -51,6 +55,7 @@ class FrameworkResource extends Resource
         ]);
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [
