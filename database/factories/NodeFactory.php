@@ -22,7 +22,7 @@ class NodeFactory extends Factory
             'id' => $this->faker->unique()->numberBetween(1000, 999999), // if your PK is UUID
             'node_type_id' => $this->faker->unique()->numberBetween(1000, 999999),
             'colour' => $this->faker->randomElement(
-                array_map(fn ($case) => $case->value, NodeColour::cases())
+                array_map(fn (\App\Enums\NodeColour $case) => $case->value, NodeColour::cases())
             ),
             'name' => $this->faker->name(),
             'description' => $this->faker->text(),

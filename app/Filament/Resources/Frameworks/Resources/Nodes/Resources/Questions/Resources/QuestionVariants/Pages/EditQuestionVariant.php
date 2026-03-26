@@ -10,6 +10,7 @@ class EditQuestionVariant extends EditRecord
 {
     protected static string $resource = QuestionVariantResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

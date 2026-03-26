@@ -10,6 +10,7 @@ class CreateFrameworkVariantAttribute extends CreateRecord
 {
     protected static string $resource = FrameworkVariantAttributeResource::class;
 
+    #[\Override]
     protected function getRedirectUrl(): string
     {
         // Go back to the parent Framework's page

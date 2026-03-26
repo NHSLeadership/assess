@@ -13,7 +13,7 @@ class AssessmentCompleted extends Component
 
     public function mount()
     {
-        if (empty($this->assessmentId) || ! is_numeric($this->assessmentId)) {
+        if ($this->assessmentId === null || $this->assessmentId === 0 || ! is_numeric($this->assessmentId)) {
             return redirect()->route('frameworks');
         }
 
@@ -31,7 +31,7 @@ class AssessmentCompleted extends Component
         ]);
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.assessment-completed');
     }

@@ -54,12 +54,12 @@ class AssessmentReport extends Component
         $this->assessmentId = $assessmentId;
 
         // Validate framework
-        if (! $this->framework()) {
+        if (!$this->framework() instanceof \App\Models\Framework) {
             throw new FrameworkNotFoundException(__('alerts.errors.framework-not-found'));
         }
 
         // Validate assessment
-        if (! $this->assessment()) {
+        if (!$this->assessment() instanceof \App\Models\Assessment) {
             throw new AssessmentNotFoundException(__('alerts.errors.assessment-not-found'));
         }
 
@@ -92,7 +92,7 @@ class AssessmentReport extends Component
 
         foreach ($service->nodes() as $node) {
             $signposts = $service->signpostsForNode($node);
-            if ($signposts) {
+            if ($signposts !== []) {
                 $this->signposts[$node->id] = $signposts;
             }
         }
@@ -101,7 +101,7 @@ class AssessmentReport extends Component
     #[Computed]
     public function framework(): ?Framework
     {
-        if (empty($this->frameworkId)) {
+        if ($this->frameworkId === null || $this->frameworkId === 0) {
             return null;
         }
 
@@ -111,7 +111,7 @@ class AssessmentReport extends Component
     #[Computed]
     public function nodes(): ?Collection
     {
-        if (empty($this->frameworkId)) {
+        if ($this->frameworkId === null || $this->frameworkId === 0) {
             return null;
         }
 
@@ -122,7 +122,7 @@ class AssessmentReport extends Component
     #[Computed]
     public function assessment(): ?Assessment
     {
-        if (empty($this->assessmentId)) {
+        if ($this->assessmentId === null || $this->assessmentId === 0) {
             return null;
         }
 
@@ -138,18 +138,18 @@ class AssessmentReport extends Component
     #[Computed]
     public function rater(): ?Rater
     {
-        if (empty($this->assessmentId) || empty($this->user()?->user_id)) {
+        if ($this->assessmentId === null || $this->assessmentId === 0 || empty($this->user()?->user_id)) {
             return null;
         }
 
         return Rater::where('user_id', $this->user()?->user_id)
-            ->whereHas('assessments', function ($q) {
+            ->whereHas('assessments', function ($q): void {
                 $q->where('assessments.id', $this->assessmentId);
             })
             ->first();
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.assessment-report');
     }

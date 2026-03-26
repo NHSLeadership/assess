@@ -45,7 +45,7 @@ class FrameworkTraversalService
     {
         $ordered = collect();
 
-        $walk = function (Collection $nodes) use (&$walk, &$ordered, $childrenMap) {
+        $walk = function (Collection $nodes) use (&$walk, &$ordered, $childrenMap): void {
             foreach ($nodes as $node) {
                 if ($node->has_active_questions) {
                     $ordered->push($node);
@@ -73,7 +73,7 @@ class FrameworkTraversalService
 
         $ordered = collect();
 
-        $walk = function (Collection $nodes) use (&$walk, &$ordered, $childrenMap) {
+        $walk = function (Collection $nodes) use (&$walk, &$ordered, $childrenMap): void {
             foreach ($nodes as $node) {
                 if ($node->has_active_questions) {
                     $ordered->push($node);
@@ -117,7 +117,7 @@ class FrameworkTraversalService
 
         $ordered = collect();
 
-        $walk = function (Collection $nodes) use (&$walk, &$ordered, $childrenMap, $keep) {
+        $walk = function (Collection $nodes) use (&$walk, &$ordered, $childrenMap, $keep): void {
             foreach ($nodes as $node) {
                 if ($keep->has($node->id)) {
                     $ordered->push($node);

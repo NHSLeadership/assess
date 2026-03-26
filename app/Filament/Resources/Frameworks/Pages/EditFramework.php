@@ -13,6 +13,7 @@ class EditFramework extends EditRecord
     protected static ?string $navigationLabel = 'Framework';
     protected static string|null|\BackedEnum $navigationIcon = Heroicon::OutlinedLifebuoy;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

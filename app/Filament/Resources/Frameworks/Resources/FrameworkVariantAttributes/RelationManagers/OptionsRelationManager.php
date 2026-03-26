@@ -20,6 +20,7 @@ class OptionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'options';
 
+    #[\Override]
     public function form(Schema $schema): Schema
     {
         return $schema

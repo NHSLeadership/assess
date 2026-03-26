@@ -33,7 +33,7 @@ class AssessmentForm
                     ->required()
                     ->live()
                     // When framework changes, (re)seed the repeater with one item per attribute:
-                    ->afterStateUpdated(function (Set $set, ?int $state) {
+                    ->afterStateUpdated(function (Set $set, ?int $state): void {
                         if (! $state) {
                             $set('variantSelections', []);
 
@@ -43,7 +43,7 @@ class AssessmentForm
                             ->where('framework_id', $state)
                             ->orderBy('order')
                             ->get();
-                        $set('variantSelections', $attributes->map(fn ($attr) => [
+                        $set('variantSelections', $attributes->map(fn ($attr): array => [
                             'framework_variant_attribute_id' => $attr->id,
                             'framework_variant_option_id' => null,
                         ])->toArray());
@@ -52,7 +52,7 @@ class AssessmentForm
                 Repeater::make('variantSelections')
                     ->label(null) // or keep 'Framework variants' if you want a section title
                     ->relationship('variantSelections')
-                    ->visible(fn (Get $get) => filled($get('framework_id')))
+                    ->visible(fn (Get $get): bool => filled($get('framework_id')))
                     ->default(function (Get $get) {
                         $frameworkId = $get('framework_id');
                         if (! $frameworkId) {
@@ -63,7 +63,7 @@ class AssessmentForm
                             ->where('framework_id', $frameworkId)
                             ->orderBy('order')
                             ->get()
-                            ->map(fn ($attr) => [
+                            ->map(fn ($attr): array => [
                                 'framework_variant_attribute_id' => $attr->id,
                                 'framework_variant_option_id' => null,
                             ])->toArray();
@@ -77,7 +77,7 @@ class AssessmentForm
                     // ✅ Remove expander look + header text
                     ->collapsible(false)
                     ->collapsed(false)
-                    ->itemLabel(fn () => '') // <- empty label prevents showing the header text
+                    ->itemLabel(fn (): string => '') // <- empty label prevents showing the header text
 
                     ->schema([
                         Hidden::make('framework_variant_attribute_id'),

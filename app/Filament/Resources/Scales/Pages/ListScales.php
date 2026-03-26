@@ -10,6 +10,7 @@ class ListScales extends ListRecords
 {
     protected static string $resource = ScaleResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

@@ -10,6 +10,7 @@ class EditNodeType extends EditRecord
 {
     protected static string $resource = NodeTypeResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

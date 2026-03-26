@@ -10,6 +10,7 @@ class EditAssessment extends EditRecord
 {
     protected static string $resource = AssessmentResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

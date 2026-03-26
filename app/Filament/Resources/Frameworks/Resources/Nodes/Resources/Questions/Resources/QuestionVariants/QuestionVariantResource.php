@@ -25,6 +25,7 @@ class QuestionVariantResource extends Resource
     protected static ?string $parentResource = QuestionResource::class;
 
     // Define the parent resource relationship
+    #[\Override]
     public static function getParentResourceRegistration(): ?ParentResourceRegistration
     {
         return QuestionResource::asParent()
@@ -32,16 +33,19 @@ class QuestionVariantResource extends Resource
             ->inverseRelationship('question');
     }
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return QuestionVariantForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return QuestionVariantsTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -49,6 +53,7 @@ class QuestionVariantResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

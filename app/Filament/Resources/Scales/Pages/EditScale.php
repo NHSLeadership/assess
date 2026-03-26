@@ -10,6 +10,7 @@ class EditScale extends EditRecord
 {
     protected static string $resource = ScaleResource::class;
 
+    #[\Override]
     protected function getHeaderActions(): array
     {
         return [

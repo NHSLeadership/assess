@@ -18,7 +18,7 @@ class FrameworkForm
             ->components([
                 TextInput::make('name')
                     ->live(onBlur: true)
-                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                    ->afterStateUpdated(function ($state, callable $set, callable $get): void {
                         $set('slug', Str::slug($state));
                     })
                     ->required(),

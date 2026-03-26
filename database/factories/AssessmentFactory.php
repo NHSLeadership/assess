@@ -19,8 +19,8 @@ class AssessmentFactory extends Factory
     public function definition(): array
     {
 
-        $minDate = Carbon::parse('2026-01-01');
-        $now = now();
+        Carbon::parse('2026-01-01');
+        now();
 
         return [
             //            'user_id' => $this->faker->unique()->numberBetween(1000000000, 9999999999),

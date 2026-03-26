@@ -15,7 +15,7 @@ class FrameworkVariantAttributeForm
             ->components([
                 TextInput::make('key')
                     ->live(onBlur: true)
-                    ->afterStateUpdated(function ($state, callable $set) {
+                    ->afterStateUpdated(function ($state, callable $set): void {
                         $set('label', Str::title($state));
                     })
                     ->required(),

@@ -6,11 +6,11 @@ use Livewire\Component;
 
 class Alerts extends Component
 {
-    public $type = null;
+    public $type;
 
-    public $message = null;
+    public $message;
 
-    public $heading = null;
+    public $heading;
 
     // Listen for Livewire events
     protected $listeners = [
@@ -29,7 +29,7 @@ class Alerts extends Component
         $this->reset(['type', 'message', 'heading']);
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.alerts');
     }

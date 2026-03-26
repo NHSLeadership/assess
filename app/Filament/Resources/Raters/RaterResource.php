@@ -20,16 +20,19 @@ class RaterResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return RaterForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return RatersTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -37,6 +40,7 @@ class RaterResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

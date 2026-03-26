@@ -20,16 +20,19 @@ class NodeTypeResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return NodeTypeForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return NodeTypesTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -37,6 +40,7 @@ class NodeTypeResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

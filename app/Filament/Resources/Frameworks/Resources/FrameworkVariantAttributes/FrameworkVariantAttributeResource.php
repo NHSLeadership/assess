@@ -25,6 +25,7 @@ class FrameworkVariantAttributeResource extends Resource
     protected static ?string $parentResource = FrameworkResource::class;
 
     // Define the parent resource relationship
+    #[\Override]
     public static function getParentResourceRegistration(): ?ParentResourceRegistration
     {
         return FrameworkResource::asParent()
@@ -32,16 +33,19 @@ class FrameworkVariantAttributeResource extends Resource
             ->inverseRelationship('framework');
     }
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return FrameworkVariantAttributeForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return FrameworkVariantAttributesTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -49,6 +53,7 @@ class FrameworkVariantAttributeResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

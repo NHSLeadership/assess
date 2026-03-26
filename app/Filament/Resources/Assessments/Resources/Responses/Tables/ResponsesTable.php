@@ -16,7 +16,7 @@ class ResponsesTable
         return $table
             ->columns([
                 TextColumn::make('rater')
-                    ->formatStateUsing(function ($state, $record) {
+                    ->formatStateUsing(function ($state, $record): string {
                         $rater = $record->rater ?? null;
                         $name = $rater->name ?? null;
                         $uid = $rater->user_id ?? null;

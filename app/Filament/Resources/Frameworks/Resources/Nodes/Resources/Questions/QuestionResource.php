@@ -23,16 +23,19 @@ class QuestionResource extends Resource
 
     protected static ?string $parentResource = NodeResource::class;
 
+    #[\Override]
     public static function form(Schema $schema): Schema
     {
         return QuestionForm::configure($schema);
     }
 
+    #[\Override]
     public static function table(Table $table): Table
     {
         return QuestionsTable::configure($table);
     }
 
+    #[\Override]
     public static function getRelations(): array
     {
         return [
@@ -40,6 +43,7 @@ class QuestionResource extends Resource
         ];
     }
 
+    #[\Override]
     public static function getPages(): array
     {
         return [

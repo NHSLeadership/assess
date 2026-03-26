@@ -24,10 +24,10 @@ class Frameworks extends Component
 
     public ?int $pendingDeleteId = null;
 
-    public function mount()
+    public function mount(): void
     {
         // Set default framework if none selected
-        if (empty($this->frameworkId)) {
+        if (in_array($this->frameworkId, [null, '', '0'], true)) {
             $framework = Framework::first();
             $this->frameworkId = $framework->id;
         }
@@ -126,7 +126,7 @@ class Frameworks extends Component
 
             return Carbon::parse($date)->format($format);
 
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return 'Not available';
         }
     }
@@ -136,7 +136,7 @@ class Frameworks extends Component
      */
     public function displayProgress(?Assessment $assessment): string
     {
-        if (! $assessment) {
+        if (!$assessment instanceof \App\Models\Assessment) {
             return 'Not available';
         }
 
@@ -160,7 +160,7 @@ class Frameworks extends Component
     }
 
     #[Title('Frameworks')]
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.frameworks');
     }
@@ -171,7 +171,7 @@ class Frameworks extends Component
         $latest = $this->getLatestAssessmentForFramework($this->frameworkId);
 
         // No assessments at all → allowed
-        if (! $latest) {
+        if (!$latest instanceof \App\Models\Assessment) {
             $this->redirect(route('instructions', [
                 'frameworkId' => $this->frameworkId,
             ]));
