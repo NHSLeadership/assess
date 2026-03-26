@@ -7,6 +7,7 @@ use App\Models\Node;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
+use Laravel\Pennant\Feature;
 
 class BarChartBlock extends RichContentCustomBlock
 {
@@ -22,6 +23,11 @@ class BarChartBlock extends RichContentCustomBlock
 
     public static function configureEditorAction(Action $action): Action
     {
+
+        if (! Feature::active('rich-editor-custom-blocks')) {
+            return $action->hidden();
+        }
+
         return $action
             ->modalDescription('Choose a node to display a bar chart for its immediate children')
             ->schema([
