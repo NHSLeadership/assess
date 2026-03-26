@@ -10,6 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
+use Laravel\Pennant\Feature;
 
 class FrameworkForm
 {
@@ -30,7 +31,11 @@ class FrameworkForm
                         ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'small', 'highlight', 'link'],
                         ['h2', 'h3', 'horizontalRule', 'alignStart', 'alignCenter', 'alignEnd', 'alignJustify'],
                         ['bulletList', 'orderedList'],
-                        ['table', 'details', 'attachFiles', 'customBlocks', 'mergeTags'],
+                        array_filter([
+                            'table', 'details', 'attachFiles',
+                            Feature::active('rich-editor-custom-blocks') ? 'customBlocks' : null,
+                            'mergeTags'
+                        ]),
                         ['undo', 'redo', 'clearFormatting'],
                     ])
                     ->fileAttachmentsDisk('public')
@@ -52,7 +57,11 @@ class FrameworkForm
                                 ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'small', 'highlight', 'link'],
                                 ['h2', 'h3', 'horizontalRule', 'alignStart', 'alignCenter', 'alignEnd', 'alignJustify'],
                                 ['bulletList', 'orderedList'],
-                                ['table', 'details', 'attachFiles', 'customBlocks', 'mergeTags'],
+                                array_filter([
+                                    'table', 'details', 'attachFiles',
+                                    Feature::active('rich-editor-custom-blocks') ? 'customBlocks' : null,
+                                    'mergeTags'
+                                ]),
                                 ['undo', 'redo', 'clearFormatting'],
                             ])
                             ->fileAttachmentsDisk('public')
@@ -77,7 +86,11 @@ class FrameworkForm
                                 ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'small', 'highlight', 'link'],
                                 ['h2', 'h3', 'horizontalRule', 'alignStart', 'alignCenter', 'alignEnd', 'alignJustify'],
                                 ['bulletList', 'orderedList'],
-                                ['table', 'details', 'attachFiles', 'customBlocks', 'mergeTags'],
+                                array_filter([
+                                    'table', 'details', 'attachFiles',
+                                    Feature::active('rich-editor-custom-blocks') ? 'customBlocks' : null,
+                                    'mergeTags'
+                                ]),
                                 ['undo', 'redo', 'clearFormatting'],
                             ])
                             ->fileAttachmentsDisk('public')
@@ -103,7 +116,11 @@ class FrameworkForm
                                 ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'small', 'highlight', 'link'],
                                 ['h2', 'h3', 'horizontalRule', 'alignStart', 'alignCenter', 'alignEnd', 'alignJustify'],
                                 ['bulletList', 'orderedList'],
-                                ['table', 'details', 'attachFiles', 'customBlocks', 'mergeTags'],
+                                array_filter([
+                                    'table', 'details', 'attachFiles',
+                                    Feature::active('rich-editor-custom-blocks') ? 'customBlocks' : null,
+                                    'mergeTags'
+                                ]),
                                 ['undo', 'redo', 'clearFormatting'],
                             ])
                             ->fileAttachmentsDisk('public')
