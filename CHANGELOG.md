@@ -5,6 +5,10 @@
 
 ---
 ### v1.0.9
+> Updated: 26.03.2026
+1. Code refactoring and cleanup
+
+### v1.0.9
 > Updated: 24.03.2026
 1. Add Prometheus monitoring
 
