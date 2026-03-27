@@ -8,3 +8,11 @@
 @import "nhs-colours";
 @import "nhs-additional";
 @import "components/inset-text";
+
+// Images
+img {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  display: block;
+}

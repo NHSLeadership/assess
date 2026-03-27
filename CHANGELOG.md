@@ -4,6 +4,11 @@
 # Assessment tool
 
 ---
+### v1.0.10
+> Updated: 26.03.2026
+1. Code refactoring and cleanup
+2. Improve rich text editor for frameworks
+
 ### v1.0.9
 > Updated: 24.03.2026
 1. Add Prometheus monitoring
