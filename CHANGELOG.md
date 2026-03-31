@@ -7,7 +7,7 @@
 ### v1.0.9
 > Updated: 31.03.2026
 1. Add Prometheus monitoring
-2. Axios security fix
+2. Remove optional axios
 
 ### v1.0.8
 > Updated: 13.03.2026
