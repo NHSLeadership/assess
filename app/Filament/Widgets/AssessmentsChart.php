@@ -74,6 +74,7 @@ class AssessmentsChart extends ChartWidget
         $builder = Assessment::query();
         $this->applyFilters($builder);
 
+        /** @var 'day'|'week'|'month'|'year' $interval */
         $intervalMethod = match ($interval) {
             'day' => 'perDay',
             'week' => 'perWeek',
