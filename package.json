@@ -13,6 +13,6 @@
     },
     "dependencies": {
         "chart.js": "^4.5.1",
-        "nhsuk-frontend": "^10.4.1"
+        "nhsuk-frontend": "^10.4.2"
     }
 }
