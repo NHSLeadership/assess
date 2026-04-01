@@ -9,7 +9,8 @@ class AssessmentCompleted extends Component
 {
     use AssessmentHelperTrait;
 
-    public ?int $assessmentId = null;
+    /** int|null */
+    public $assessmentId = null;
 
     public function mount()
     {
@@ -26,7 +27,7 @@ class AssessmentCompleted extends Component
     public function viewReport()
     {
         return redirect()->route('assessment-report', [
-            'frameworkId' => $this->assessment?->framework?->id,
+            'frameworkId' => $this->assessment()?->framework?->id,
             'assessmentId' => $this->assessmentId,
         ]);
     }
