@@ -7,7 +7,7 @@
 ### v1.0.11
 > Updated: 07.04.2026
 1. Gotenberg integration for pdf generation
-2. Security and package updates
+2. Upgrade to Laravel 13
 
 ### v1.0.10
 > Updated: 31.03.2026
