@@ -8,11 +8,11 @@
 > Updated: 31.03.2026
 1. Code refactoring and cleanup
 2. Improve rich text editor for frameworks
+3. Remove optional axios package
 
 ### v1.0.9
 > Updated: 31.03.2026
 1. Add Prometheus monitoring
-2. Remove optional axios
 
 ### v1.0.8
 > Updated: 13.03.2026
