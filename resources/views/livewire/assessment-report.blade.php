@@ -12,7 +12,8 @@
                 <strong>Academy Id: {{ Auth()?->user()?->user_id ?? '' }}</strong>
                 <br>
                 <strong>
-                    Completed on {{ $this->assessment() ? \Carbon\Carbon::parse(data_get($this->assessment(), 'submitted_at'))->format('j F Y') : '' }}
+                    Completed
+                    on {{ $this->assessment() ? \Carbon\Carbon::parse(data_get($this->assessment(), 'submitted_at'))->format('j F Y') : '' }}
                 </strong>
                 <br>
                 <strong>
@@ -20,7 +21,17 @@
                 </strong>
             </p>
             @if(!empty(data_get($this->framework, 'report_intro')))
-                <p>{!! data_get($this->framework, 'report_intro') !!}</p>
+                {!! \App\Support\RichTextRender::render(
+                        $this->framework->report_intro,
+                        $this->user,
+                        $this->framework,
+                        [
+                            'barCharts' => $barCharts,
+                            'assessment'=> $this->assessment(),
+                            'framework' => $this->framework,
+                        ]
+                    )
+                !!}
             @endif
 
             @if(!empty(data_get($this->framework, 'report_html')))
@@ -43,7 +54,8 @@
             {{-- SECTION (top-level) --}}
             @if (empty($node->parent))
                 <div class="nhsuk-u-padding-2">
-                    <h3 class="nhsuk-heading-m nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0" style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};">
+                    <h3 class="nhsuk-heading-m nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0"
+                        style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};">
                         {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
                         {{ $node->name }}
                     </h3>
@@ -128,7 +140,7 @@
                 $nodeSignposts = data_get($this->signposts, $node->id, []);
             @endphp
 
-            <x-signpost-banner :signposts="$nodeSignposts" title="Development resources" :banner-id="$node->id" />
+            <x-signpost-banner :signposts="$nodeSignposts" title="Development resources" :banner-id="$node->id"/>
         @endforeach
 
         <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
@@ -158,5 +170,23 @@
         window.barCharts = @json($barChartsCompetency);
         window.csrfToken = "{{ csrf_token() }}";
         window.pdfPostUrl = "/assessment-report/{{ $frameworkId }}/{{ $assessmentId }}";
+    </script>
+@endpush
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.blockCharts) {
+                window.blockCharts.forEach(cfg => {
+                    const ctx = document.getElementById(cfg.id);
+                    if (!ctx) return;
+
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: cfg.data,
+                        options: cfg.options,
+                    });
+                });
+            }
+        });
     </script>
 @endpush

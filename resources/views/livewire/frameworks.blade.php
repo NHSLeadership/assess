@@ -4,7 +4,10 @@
         @if ($this->framework)
             <h1 class="nhsuk-heading-l">{{ $this->framework->name ?? null }} {{ strtolower(($this->loggedInRater()?->pivot?->assessment_type) ?? 'self assessment') }}</h1>
 
-            <p>{!! $this->framework->description ?? '' !!}</p>
+
+            <div class="nhsuk-body">
+                {!! \App\Support\RichTextRender::render($this->framework->description, $this->user, $this->framework) !!}
+            </div>
 
             <div class="nhsuk-action-link">
                 <a class="nhsuk-action-link__link"
@@ -45,7 +48,8 @@
                                : route('variants', ['frameworkId' => $assessment->framework?->id, 'assessmentId' => $assessment->id]) }}"
                                aria-describedby="{{ $assessment->slug }}-hint"
                                class="nhsuk-link">
-                                {{ ucfirst(($this->loggedInRater($assessment)?->pivot?->assessment_type) ?? 'Self assessment') }}<span class="nhsuk-u-visually-hidden">{{ $this->displayAssessmentDate($assessment) }}</span>
+                                {{ ucfirst(($this->loggedInRater($assessment)?->pivot?->assessment_type) ?? 'Self assessment') }}
+                                <span class="nhsuk-u-visually-hidden">{{ $this->displayAssessmentDate($assessment) }}</span>
                             </a>
                         </td>
                         <td class="nhsuk-table__cell">
@@ -72,9 +76,9 @@
                                 @include('livewire.partials.confirm-delete')
                             @else
                                 <button
-                                    type="button"
-                                    class="nhsuk-link"
-                                    wire:click.prevent="askDelete({{ $assessment->id }})">
+                                        type="button"
+                                        class="nhsuk-link"
+                                        wire:click.prevent="askDelete({{ $assessment->id }})">
                                     {{ __('Delete') }}
                                 </button>
                             @endif
