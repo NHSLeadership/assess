@@ -4,6 +4,7 @@
 # Assessment tool
 
 ---
+<<<<<<< HEAD
 ### v1.0.11
 > Updated: 07.04.2026
 1. Gotenberg integration for pdf generation
