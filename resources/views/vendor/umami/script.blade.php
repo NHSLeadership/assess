@@ -1,11 +1,21 @@
-@if(!empty(config('umami.website_id')))
-    <script async defer data-website-id="{{ config('umami.website_id') }}"
-            src="{{ config('umami.host_analytics') }}"
-            @if(config('umami.host_url')) data-host-url="{{ config('umami.host_url') }}" @endif
-            @if(config('umami.domains')) data-domains="{{ config('umami.domains') }}" @endif
-            @if(config('umami.tag')) data-tag="{{ config('umami.tag') }}" @endif
-            data-auto-track="{{ config('umami.auto_track') ? 'true' : 'false' }}"
-            data-exclude-search="{{ config('umami.exclude_search') ? 'true' : 'false' }}"
-            data-exclude-hash="{{ config('umami.exclude_hash') ? 'true' : 'false' }}">
-    </script>
+@php
+    use JeffersonGoncalves\Umami\Settings\UmamiSettings;
+
+    /** @var UmamiSettings $umami */
+    $umami = app(UmamiSettings::class);
+@endphp
+
+@if(!empty($umami->website_id))
+    <script
+            async
+            defer
+            data-website-id="{{ $umami->website_id }}"
+            src="{{ $umami->host_analytics }}"
+            @if($umami->host_url) data-host-url="{{ $umami->host_url }}" @endif
+            @if($umami->domains) data-domains="{{ $umami->domains }}" @endif
+            @if($umami->tag) data-tag="{{ $umami->tag }}" @endif
+            data-auto-track="{{ $umami->auto_track ? 'true' : 'false' }}"
+            data-exclude-search="{{ $umami->exclude_search ? 'true' : 'false' }}"
+            data-exclude-hash="{{ $umami->exclude_hash ? 'true' : 'false' }}"
+    ></script>
 @endif
