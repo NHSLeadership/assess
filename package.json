@@ -9,7 +9,7 @@
     "devDependencies": {
         "laravel-vite-plugin": "^3.0.0",
         "sass": "^1.90.0",
-        "vite": "^8.0.2"
+        "vite": "^8.0.5"
     },
     "dependencies": {
         "chart.js": "^4.5.1",
