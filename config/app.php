@@ -143,4 +143,6 @@ return [
     'auth0_admin_permission_cache_ttl' => env('AUTH0_ADMIN_PERMISSION_CACHE_TTL', 300),
     'assessment_min_interval_months' => env('ASSESSMENT_MIN_INTERVAL_MONTHS', 3),
     'footer_copyright_text' => env('FOOTER_COPYRIGHT_TEXT', '© NHS England'),
+    'pdf_engine' => env('PDF_ENGINE', 'dompdf'),
+    'gotenberg_url' => env('GOTENBERG_URL', 'https://gotenberg.staging.nhsla.net'),
 ];
