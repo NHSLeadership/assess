@@ -16,6 +16,8 @@ return RectorConfig::configure()
         __DIR__.'/vendor',
         __DIR__.'/storage',
         __DIR__.'/bootstrap/cache',
+        __DIR__.'/database/migrations',
+        __DIR__.'/app/Filament',
     ])
     ->withPreparedSets(
         deadCode: true,

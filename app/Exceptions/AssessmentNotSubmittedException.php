@@ -6,16 +6,12 @@ use Exception;
 
 class AssessmentNotSubmittedException extends Exception
 {
-    public ?int $assessmentId;
-
-    public function __construct(?int $assessmentId = null, ?string $message = null)
+    public function __construct(public ?int $assessmentId = null, ?string $message = null)
     {
-        $this->assessmentId = $assessmentId;
-
         parent::__construct($message);
     }
 
-    public function report()
+    public function report(): void
     {
         \Log::notice('Attempt to access an unsubmitted assessment', [
             'assessment_id' => $this->assessmentId,

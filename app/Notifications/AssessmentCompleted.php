@@ -11,14 +11,11 @@ class AssessmentCompleted extends Notification
 {
     use Queueable;
 
-    public ?Assessment $assessment = null;
-
     /**
      * Create a new notification instance.
      */
-    public function __construct(Assessment $assessment)
+    public function __construct(public ?Assessment $assessment)
     {
-        $this->assessment = $assessment;
     }
 
     /**

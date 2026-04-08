@@ -19,19 +19,18 @@ trait AssessmentHelperTrait
      */
     public function redirectIfSubmittedOrFinished(?Assessment $assessment, ?int $frameworkId, ?string $edit = null): Redirector|RedirectResponse|null
     {
-        if (! $assessment) {
+        if (!$assessment instanceof \App\Models\Assessment) {
             return null;
         }
 
         $totalQuestions = $assessment->framework
             ?->questions()
             ->count() ?? 0;
-        $responseCount = $assessment->responses()
-            ?->count() ?? 0;
+        $responseCount = $assessment->responses()->count() ?? 0;
         $allAnswered = $totalQuestions > 0 && $responseCount === $totalQuestions;
 
         $alreadySubmitted = ! is_null($assessment->submitted_at);
-        if ((empty($edit) && $allAnswered) || $alreadySubmitted) {
+        if ((in_array($edit, [null, '', '0'], true) && $allAnswered) || $alreadySubmitted) {
             return redirect()->route('summary', [
                 'frameworkId' => $frameworkId,
                 'assessmentId' => $assessment?->id,
@@ -48,7 +47,7 @@ trait AssessmentHelperTrait
     {
         // Validate frameworkId
         if (
-            empty($frameworkId) ||
+            $frameworkId === null || $frameworkId === 0 ||
             ! is_numeric($frameworkId) ||
             ! Framework::whereKey((int) $frameworkId)->exists()
         ) {
@@ -57,7 +56,7 @@ trait AssessmentHelperTrait
 
         // Validate assessmentId
         if (
-            ! empty($assessmentId) &&
+            $assessmentId !== null && $assessmentId !== 0 &&
             (! is_numeric($assessmentId) ||
                 ! Assessment::whereKey($assessmentId)->exists())
         ) {
@@ -76,12 +75,12 @@ trait AssessmentHelperTrait
 
         if ($next) {
             if ($firstUnanswered) {
-                return Node::with(['questions' => function ($q) {
+                return Node::with(['questions' => function ($q): void {
                     $q->where('active', true);
                 }])
-                    ->whereHas('questions', function ($q) use ($assessmentId) {
+                    ->whereHas('questions', function ($q) use ($assessmentId): void {
                         $q->where('active', true)
-                            ->whereDoesntHave('responses', function ($r) use ($assessmentId) {
+                            ->whereDoesntHave('responses', function ($r) use ($assessmentId): void {
                                 $r->where('assessment_id', $assessmentId);
                             });
                     })
@@ -90,13 +89,13 @@ trait AssessmentHelperTrait
             }
 
             // First unanswered and required question's node
-            return Node::with(['questions' => function ($q) {
+            return Node::with(['questions' => function ($q): void {
                 $q->where('active', true);
             }])
-                ->whereHas('questions', function ($q) use ($assessmentId) {
+                ->whereHas('questions', function ($q) use ($assessmentId): void {
                     $q->where('active', true)
                         ->where('required', 1)
-                        ->whereDoesntHave('responses', function ($r) use ($assessmentId) {
+                        ->whereDoesntHave('responses', function ($r) use ($assessmentId): void {
                             $r->where('assessment_id', $assessmentId);
                         });
                 })
@@ -105,12 +104,12 @@ trait AssessmentHelperTrait
         }
 
         // Last answered node
-        return Node::with(['questions' => function ($q) {
+        return Node::with(['questions' => function ($q): void {
             $q->where('active', true);
         }])
-            ->whereHas('questions', function ($q) use ($assessmentId) {
+            ->whereHas('questions', function ($q) use ($assessmentId): void {
                 $q->where('active', true)
-                    ->whereHas('responses', function ($r) use ($assessmentId) {
+                    ->whereHas('responses', function ($r) use ($assessmentId): void {
                         $r->where('assessment_id', $assessmentId);
                     });
             })
@@ -203,7 +202,7 @@ trait AssessmentHelperTrait
 
     public function loggedInRater(?Assessment $assessment = null): ?Rater
     {
-        if (empty($assessment)) {
+        if (!$assessment instanceof \App\Models\Assessment) {
             return null;
         }
 

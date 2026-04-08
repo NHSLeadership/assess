@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire;
 
 use App\Traits\AssessmentHelperTrait;
@@ -10,7 +12,7 @@ class AssessmentCompleted extends Component
     use AssessmentHelperTrait;
 
     /** int|null */
-    public $assessmentId = null;
+    public $assessmentId;
 
     public function mount()
     {
@@ -32,7 +34,7 @@ class AssessmentCompleted extends Component
         ]);
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.assessment-completed');
     }
