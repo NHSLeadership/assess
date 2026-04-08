@@ -19,9 +19,6 @@
         "livewire/volt": "^1.7.0",
         "openplain/filament-tree-view": "^0.5.4",
         "spatie/laravel-prometheus": "^1.5",
-        "staudenmeir/eloquent-has-many-deep-contracts": "^1.4",
-        "staudenmeir/laravel-adjacency-list": "^1.26",
-        "staudenmeir/laravel-cte": "^1.13",
         "symfony/yaml": "^7.4",
         "ext-fileinfo": "*"
     },
