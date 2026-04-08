@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Unit\Livewire;
+
 use Illuminate\Database\Eloquent\Collection;
 
 class VariantsValidationFake
