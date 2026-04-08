@@ -66,6 +66,11 @@ This will connect [/var/www/html/public/storage] to [/var/www/html/storage/app/p
 
 sail php ./vendor/bin/pest
 
+### Umami configuration
+
+Umami runtime configuration is DB-backed via Spatie Settings.
+config/umami.php is used only for defaults and bootstrap.
+
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

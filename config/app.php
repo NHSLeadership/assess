@@ -129,7 +129,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'version' => '1.0.10',
+    'version' => '1.0.11',
 
     /*
     |--------------------------------------------------------------------------
@@ -143,4 +143,9 @@ return [
     'auth0_admin_permission_cache_ttl' => env('AUTH0_ADMIN_PERMISSION_CACHE_TTL', 300),
     'assessment_min_interval_months' => env('ASSESSMENT_MIN_INTERVAL_MONTHS', 3),
     'footer_copyright_text' => env('FOOTER_COPYRIGHT_TEXT', '© NHS England'),
+    'pdf_engine' => env('PDF_ENGINE', 'dompdf'),
+    'gotenberg_url' => env('GOTENBERG_URL', 'https://gotenberg.staging.nhsla.net'),
+    'gotenberg_basic_auth_enabled' => env('GOTENBERG_BASIC_AUTH_ENABLED', false),
+    'gotenberg_basic_auth_username' => env('GOTENBERG_BASIC_AUTH_USERNAME', false),
+    'gotenberg_basic_auth_password' => env('GOTENBERG_BASIC_AUTH_PASSWORD', false),
 ];
