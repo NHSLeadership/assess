@@ -69,6 +69,12 @@ class AssessmentReportPdfController extends Controller
 
         $data = $this->buildPdfData($service, $request, false);
 
+        logger()->info('PDF generated', [
+            'engine' => config('app.pdf_engine'),
+            'assessment_id' => $assessmentId,
+            'user_id' => auth()?->id(),
+        ]);
+
         return Pdf::loadView('pdf.assessment-report', $data)
             ->download('assessment-report.pdf');
     }
@@ -114,6 +120,12 @@ class AssessmentReportPdfController extends Controller
                     'Gotenberg failed with status ' . $response->status()
                 );
             }
+
+            logger()->info('PDF generated', [
+                'engine' => config('app.pdf_engine'),
+                'assessment_id' => $assessmentId,
+                'user_id' => auth()?->id(),
+            ]);
 
             return response($response->body(), 200, [
                 'Content-Type' => 'application/pdf',
