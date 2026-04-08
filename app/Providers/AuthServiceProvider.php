@@ -13,7 +13,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::before(function ($user, $ability, $arguments) {
+        Gate::before(function ($user, $ability, $arguments): ?false {
             // Determine the model (instance or class name)
             $model = $arguments[0] ?? null;
 

@@ -13,12 +13,12 @@ use Illuminate\Support\Facades\Log;
 
 final class UserRepository extends UserRepositoryAbstract implements UserRepositoryContract
 {
-    public function fromAccessToken(array $user): ?Authenticatable
+    public function fromAccessToken(array $user): \Illuminate\Contracts\Auth\Authenticatable
     {
         return new StatelessUser($user);
     }
 
-    public function fromSession(array $user): ?Authenticatable
+    public function fromSession(array $user): \Illuminate\Contracts\Auth\Authenticatable
     {
         $authProfile = $this->extractUserAuthProfile($user);
 
@@ -33,10 +33,8 @@ final class UserRepository extends UserRepositoryAbstract implements UserReposit
     /**
      * That function simplifies the user data into accessible object (can be encrypted)
      *
-     *
-     * @return mixed
      */
-    protected function extractUserAuthProfile($user)
+    private function extractUserAuthProfile(array $user): array
     {
         $prefix = config('auth0.customDataPrefix', 'https://nhsla.net');
         $user['user_id'] = intval($user[$prefix.'/username'] ?? $user['user_id']);

@@ -6,7 +6,7 @@ class RichTextRender
 {
     public static function render(?string $html, $user, $framework, array $extra = []): ?string
     {
-        if (empty($html)) {
+        if (in_array($html, [null, '', '0'], true)) {
             return $html;
         }
 
@@ -23,14 +23,14 @@ class RichTextRender
             $html = preg_replace(
                 '#<span[^>]+data-type="mergeTag"[^>]+data-id="' . preg_quote($mergeTag, '#') . '"[^>]*></span>#',
                 e($value),
-                $html
+                (string) $html
             );
         }
 
         // Custom blocks
         return preg_replace_callback(
             '#<div\b[^>]*data-type="customBlock"[^>]*></div>#',
-            function ($matches) use ($extra) {
+            function (array $matches) use ($extra) {
                 $blockHtml = $matches[0];
 
                 // Extract data-id
@@ -67,7 +67,7 @@ class RichTextRender
                 // Call block renderer with config + extra data
                 return $blocks[$blockId]::toHtml($config, $extra);
             },
-            $html
+            (string) $html
         );
     }
 }
