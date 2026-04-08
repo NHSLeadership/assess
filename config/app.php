@@ -145,4 +145,7 @@ return [
     'footer_copyright_text' => env('FOOTER_COPYRIGHT_TEXT', '© NHS England'),
     'pdf_engine' => env('PDF_ENGINE', 'dompdf'),
     'gotenberg_url' => env('GOTENBERG_URL', 'https://gotenberg.staging.nhsla.net'),
+    'gotenberg_basic_auth_enabled' => env('GOTENBERG_BASIC_AUTH_ENABLED', false),
+    'gotenberg_basic_auth_username' => env('GOTENBERG_BASIC_AUTH_USERNAME', false),
+    'gotenberg_basic_auth_password' => env('GOTENBERG_BASIC_AUTH_PASSWORD', false),
 ];

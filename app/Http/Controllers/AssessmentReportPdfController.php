@@ -86,25 +86,46 @@ class AssessmentReportPdfController extends Controller
         $headerHtml = view('pdf.gotenberg-header')->render();
         $footerHtml = view('pdf.gotenberg-footer')->render();
 
-        $response = Http::timeout(120)
-            ->attach('files', $html, 'index.html')
-            ->attach('files', $headerHtml, 'header.html')
-            ->attach('files', $footerHtml, 'footer.html')
-            ->post(
-                config('app.gotenberg_url') . '/forms/chromium/convert/html',
-                [
-                    'marginTop' => '120px',
-                    'marginBottom' => '50px',
-                    'printBackground' => true,
-                ]
-            );
+        try {
+            $clientRequest = Http::timeout(120);
 
-        abort_unless($response->ok(), 500, $response->body());
+            if (config('app.gotenberg_basic_auth_enabled')) {
+                $clientRequest = $clientRequest->withBasicAuth(
+                    config('app.gotenberg_basic_auth_username'),
+                    config('app.gotenberg_basic_auth_password')
+                );
+            }
 
-        return response($response->body(), 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="assessment-report.pdf"',
-        ]);
+            $response = $clientRequest
+                ->attach('files', $html, 'index.html')
+                ->attach('files', $headerHtml, 'header.html')
+                ->attach('files', $footerHtml, 'footer.html')
+                ->post(
+                    rtrim(config('app.gotenberg_url'), '/') . '/forms/chromium/convert/html',
+                    [
+                        'marginTop' => '120px',
+                        'marginBottom' => '50px',
+                        'printBackground' => true,
+                    ]
+                );
+
+            if ( !$response->ok()) {
+                throw new \RuntimeException(
+                    'Gotenberg failed with status ' . $response->status()
+                );
+            }
+
+            return response($response->body(), 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="assessment-report.pdf"',
+            ]);
+
+        } catch (\Throwable $e) {
+            logger()->warning('Using Dompdf fallback', [
+                'reason' => $e->getMessage(),
+            ]);
+            return $this->renderWithDompdf($frameworkId, $assessmentId, $request);
+        }
     }
 
     protected function prepareHtmlForDompdf(?string $content): string
