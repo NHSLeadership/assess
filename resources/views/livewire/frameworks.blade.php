@@ -16,9 +16,9 @@
                 <div class="nhsuk-card nhsuk-card--warning">
                     <div class="nhsuk-card__content">
                         <h3 class="nhsuk-card__heading">
-                <span role="text">
-                <span class="nhsuk-u-visually-hidden">Important:</span> Some assessments are expiring
-                </span>
+                            <span role="text">
+                            <span class="nhsuk-u-visually-hidden">Important:</span> Some assessments are expiring
+                            </span>
                         </h3>
 
                         @php
@@ -42,8 +42,13 @@
                         <p>
                             These assessments are expiring soon and will be deleted unless you keep them.
                         </p>
-                        <a class="nhsuk-button nhsuk-button--reverse" data-module="nhsuk-button" href="#" role="button" draggable="false">
-                            Keep assessments for another year
+                        <a
+                                class="nhsuk-button nhsuk-button--reverse"
+                                wire:click.prevent="retainExpiringAssessments"
+                                wire:loading.attr="disabled"
+                                wire:target="retainExpiringAssessments"
+                        >
+                            Keep assessments for {{ $years }} more {{ \Illuminate\Support\Str::plural('year', $years) }}
                         </a>
                     </div>
                 </div>

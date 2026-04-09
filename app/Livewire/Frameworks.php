@@ -33,6 +33,28 @@ class Frameworks extends Component
         }
     }
 
+    public function retainExpiringAssessments(): void
+    {
+        $expiring = $this->assessments()
+            ->filter(fn ($assessment) => $assessment->isWithinExpiryWarningWindow());
+
+        if ($expiring->isEmpty()) {
+            return;
+        }
+
+        $expiring->each->touch();
+
+        $years = config('retention.retention_years');
+
+        session()->flash(
+            'success',
+            __('Expiring assessments have been kept for another :count :unit.', [
+                'count' => $years,
+                'unit'  => \Illuminate\Support\Str::plural('year', $years),
+            ])
+        );
+    }
+
     public function askDelete(int $id): void
     {
         $this->pendingDeleteId = $id;
