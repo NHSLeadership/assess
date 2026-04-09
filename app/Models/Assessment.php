@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,6 +30,26 @@ class Assessment extends Model
         'submitted_at' => 'datetime',
         'target_completion_date' => 'date',
     ];
+
+
+    public function expiresAt(): Carbon
+    {
+        return $this->updated_at
+            ->copy()
+            ->addYears(config('retention.retention_years'));
+    }
+
+    public function isExpired(): bool
+    {
+        return now()->greaterThanOrEqualTo($this->expiresAt());
+    }
+
+    public function isWithinExpiryWarningWindow(): bool
+    {
+        return now()->greaterThanOrEqualTo(
+            $this->expiresAt()->subMonths(config('retention.warning_months'))
+        );
+    }
 
     public function subject(): BelongsTo
     {
