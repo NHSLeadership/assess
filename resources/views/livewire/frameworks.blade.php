@@ -4,11 +4,50 @@
         @if ($this->framework)
             <h1 class="nhsuk-heading-l">{{ $this->framework->name ?? null }} {{ strtolower(($this->loggedInRater()?->pivot?->assessment_type) ?? 'self assessment') }}</h1>
 
-
             <div class="nhsuk-body">
                 {!! \App\Support\RichTextRender::render($this->framework->description, $this->user, $this->framework) !!}
             </div>
 
+            @if (
+                $this->assessments()
+                    ->filter(fn ($assessment) => $assessment->isWithinExpiryWarningWindow())
+                    ->isNotEmpty()
+            )
+                <div class="nhsuk-card nhsuk-card--warning">
+                    <div class="nhsuk-card__content">
+                        <h3 class="nhsuk-card__heading">
+                <span role="text">
+                <span class="nhsuk-u-visually-hidden">Important:</span> Some assessments are expiring
+                </span>
+                        </h3>
+
+                        @php
+                            $years = config('retention.retention_years');
+                        @endphp
+
+                        <p class="nhsuk-card__description">
+                            In accordance with our data retention policy, we only keep assessments for
+                            {{ $years }} {{ \Illuminate\Support\Str::plural('year', $years) }}
+                            after they were last updated.
+                            <br><br>
+                            The assessment(s) labelled as "Expiring" below will be deleted unless you take action.
+                        </p>
+                    </div>
+                </div>
+                <div class="nhsuk-panel nhsuk-panel--interruption">
+                    <h1 class="nhsuk-panel__title nhsuk-panel__title--l">
+                        What you can do
+                    </h1>
+                    <div class="nhsuk-panel__body">
+                        <p>
+                            These assessments are expiring soon and will be deleted unless you keep them.
+                        </p>
+                        <a class="nhsuk-button nhsuk-button--reverse" data-module="nhsuk-button" href="#" role="button" draggable="false">
+                            Keep assessments for another year
+                        </a>
+                    </div>
+                </div>
+            @endif
             <div class="nhsuk-action-link">
                 <a class="nhsuk-action-link__link"
                    href="#" wire:click.prevent="startNewAssessment()">
@@ -59,7 +98,14 @@
                             {{ $this->displayProgress($assessment) }}
                         </td>
                         <td class="nhsuk-table__cell">
-                            @if (empty($assessment->submitted_at))
+                            @if ($assessment->isWithinExpiryWarningWindow())
+                                <strong class="nhsuk-tag nhsuk-tag--yellow">
+                                    {{ __('Expiring') }}
+                                </strong>
+                                <div class="nhsuk-hint nhsuk-u-margin-top-1">
+                                    Deletes on {{ $assessment->expiresAt()->format('j F Y') }}
+                                </div>
+                            @elseif(empty($assessment->submitted_at))
                                 @if ($assessment->questions)
                                     <strong class="nhsuk-tag nhsuk-tag--red">{{ __('Not started') }}</strong>
                                 @elseif ($assessment->responses?->count() === $assessment?->framework?->questions?->where('required', 1)->count())
