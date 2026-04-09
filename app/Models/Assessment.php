@@ -32,16 +32,22 @@ class Assessment extends Model
     ];
 
 
-    public function expiresAt(): Carbon
+    public function effectiveLastUpdatedAt(): ?Carbon
     {
-        return $this->updated_at
-            ->copy()
-            ->addYears(config('retention.retention_years'));
+        $dates = collect([
+            $this->updated_at,
+            $this->submitted_at,
+            $this->responses?->max('updated_at'),
+        ])->filter();
+
+        return $dates->max();
     }
 
-    public function isExpired(): bool
+    public function expiresAt(): Carbon
     {
-        return now()->greaterThanOrEqualTo($this->expiresAt());
+        return $this->effectiveLastUpdatedAt()
+            ->copy()
+            ->addYears(config('retention.retention_years'));
     }
 
     public function isWithinExpiryWarningWindow(): bool
@@ -49,6 +55,11 @@ class Assessment extends Model
         return now()->greaterThanOrEqualTo(
             $this->expiresAt()->subMonths(config('retention.warning_months'))
         );
+    }
+
+    public function isExpired(): bool
+    {
+        return now()->greaterThanOrEqualTo($this->expiresAt());
     }
 
     public function subject(): BelongsTo

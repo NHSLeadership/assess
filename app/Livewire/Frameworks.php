@@ -101,19 +101,7 @@ class Frameworks extends Component
     public function displayAssessmentDate($assessment, bool $useAmPm = false, bool $showTime = false): string
     {
         try {
-            // If submitted, always use submitted_at
-            if ($assessment->submitted_at) {
-                $date = $assessment->submitted_at;
-            } else {
-                // Otherwise, fallback to latest response date
-                $latestResponse = $assessment->responses()
-                    ->orderByDesc('updated_at')
-                    ->first();
-
-                $date = $latestResponse->updated_at
-                    ?? $assessment->updated_at
-                    ?? $assessment->created_at;
-            }
+            $date = $assessment->effectiveLastUpdatedAt();
 
             if (! $date) {
                 return 'Not available';
@@ -124,9 +112,9 @@ class Frameworks extends Component
                 $format .= $useAmPm ? ', g:i a' : ', H:i';
             }
 
-            return Carbon::parse($date)->format($format);
+            return $date->format($format);
 
-        } catch (\Exception) {
+        } catch (\Throwable $e) {
             return 'Not available';
         }
     }
