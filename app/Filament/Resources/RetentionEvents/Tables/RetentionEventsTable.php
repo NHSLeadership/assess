@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Filament\Resources\RetentionEvents\Tables;
+
+use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+class RetentionEventsTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('subject_type')
+                    ->searchable(),
+                TextColumn::make('subject_id')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('action')
+                    ->badge()
+                    ->searchable(),
+                TextColumn::make('reason')
+                    ->badge()
+                    ->searchable(),
+                TextColumn::make('actor_type')
+                    ->badge()
+                    ->searchable(),
+                TextColumn::make('actor_id')
+                    ->numeric()
+                    ->sortable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                //
+            ])
+            ->recordActions([
+                ViewAction::make(),
+            ])
+            ->toolbarActions([
+            ]);
+    }
+}
