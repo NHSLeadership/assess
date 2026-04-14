@@ -28,17 +28,52 @@ class DeleteExpiredAssessments implements ShouldQueue
     {
         $expiresAt = $assessment->expiresAt();
 
-        // Not expired yet
+        // Not expired
         if (now()->lt($expiresAt)) {
             return;
         }
 
-        // Already deleted?
+        // Must have warning before deleting
+        $warningEvent = $this->getWarningEvent($assessment, $expiresAt);
+
+        if (! $warningEvent) {
+            logger()->warning('Retention deletion blocked – no prior warning', [
+                'assessment_id' => $assessment->id,
+                'expires_at' => $expiresAt->toDateString(),
+            ]);
+            return;
+        }
+
+        // Enforce minimum delay since warning
+        $minDeleteAt = $warningEvent->created_at
+            ->clone()
+            ->addDays(config('retention.minimum_days_after_warning'));
+
+        if (now()->lt($minDeleteAt)) {
+            logger()->info('Retention deletion delayed – minimum warning period not elapsed', [
+                'assessment_id' => $assessment->id,
+                'warning_sent_at' => $warningEvent->created_at->toDateTimeString(),
+                'earliest_delete_at' => $minDeleteAt->toDateTimeString(),
+            ]);
+            return;
+        }
+
+        // Already deleted
         if ($this->alreadyDeleted($assessment, $expiresAt)) {
             return;
         }
 
+        logger()->info('Deleting assessment by retention policy', [
+            'assessment_id' => $assessment->id,
+            'expires_at' => $expiresAt->toDateString(),
+        ]);
+
         $this->deleteAssessment($assessment, $expiresAt);
+
+        logger()->info('Assessment deleted by retention policy', [
+            'assessment_id' => $assessment->id,
+            'expires_at' => $expiresAt->toDateString(),
+        ]);
     }
 
     protected function alreadyDeleted(Assessment $assessment, Carbon $expiresAt): bool
@@ -51,12 +86,19 @@ class DeleteExpiredAssessments implements ShouldQueue
             ->exists();
     }
 
+    protected function getWarningEvent(Assessment $assessment, Carbon $expiresAt): ?RetentionEvent
+    {
+        return RetentionEvent::query()
+            ->where('subject_type', 'Assessment')
+            ->where('subject_id', $assessment->id)
+            ->where('action', RetentionAction::Warning)
+            ->where('metadata->expires_at', $expiresAt->toDateString())
+            ->orderByDesc('created_at')
+            ->first();
+    }
+
     protected function deleteAssessment(Assessment $assessment, Carbon $expiresAt): void
     {
-        // Delete dependent data first if needed
-        $assessment->responses()->delete();
-
-        // Then delete the assessment itself
         $assessment->delete();
 
         $this->recordDeletionEvent($assessment, $expiresAt);

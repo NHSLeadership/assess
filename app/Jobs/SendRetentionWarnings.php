@@ -31,21 +31,22 @@ class SendRetentionWarnings implements ShouldQueue
     {
         $expiresAt = $assessment->expiresAt();
 
-        $daysUntilExpiry = now()->diffInDays($expiresAt, false);
-
+        // Too early – not yet in warning window
         if (now()->lt($expiresAt->copy()->subDays(config('retention.warning_days')))) {
             return;
         }
 
-        if ($daysUntilExpiry < 0) {
-            return;
-        }
-
+        // Already warned
         if ($this->alreadyWarned($assessment, $expiresAt)) {
             return;
         }
 
         $this->sendWarning($assessment, $expiresAt);
+
+        logger()->info('Retention warning sent', [
+            'assessment_id' => $assessment->id,
+            'expires_at' => $expiresAt->toDateString(),
+        ]);
     }
 
     protected function alreadyWarned(Assessment $assessment, Carbon $expiresAt): bool
@@ -53,19 +54,22 @@ class SendRetentionWarnings implements ShouldQueue
         return RetentionEvent::query()
             ->where('subject_type', 'Assessment')
             ->where('subject_id', $assessment->id)
-            ->where('action', RetentionAction::Warning30Days)
+            ->where('action', RetentionAction::Warning)
             ->where('metadata->expires_at', $expiresAt->toDateString())
             ->exists();
     }
 
-    /**
-     * @throws \JsonException
-     */
     protected function sendWarning(Assessment $assessment, Carbon $expiresAt): void
     {
         $recipient = $assessment->notificationRecipient();
 
         if (! $recipient) {
+
+            logger()->warning('Retention warning skipped – no contactable subject', [
+                'assessment_id' => $assessment->id,
+                'user_identifier' => $assessment->user_id,
+            ]);
+
             return;
         }
 
@@ -80,7 +84,7 @@ class SendRetentionWarnings implements ShouldQueue
         RetentionEvent::create([
             'subject_type' => 'Assessment',
             'subject_id'   => $assessment->id,
-            'action'       => RetentionAction::Warning30Days,
+            'action'       => RetentionAction::Warning,
             'reason'       => RetentionReason::Policy,
             'actor_type'   => RetentionActorType::System,
             'actor_id'     => null,

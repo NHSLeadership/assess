@@ -27,6 +27,7 @@ class RetentionEvent extends Model
         'action'     => RetentionAction::class,
         'reason'     => RetentionReason::class,
         'actor_type' => RetentionActorType::class,
+        'created_at' => 'immutable_datetime',
         'metadata'   => 'array',
     ];
 }
