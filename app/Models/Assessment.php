@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\Auth0UserService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -53,7 +54,7 @@ class Assessment extends Model
     public function isWithinExpiryWarningWindow(): bool
     {
         return now()->greaterThanOrEqualTo(
-            $this->expiresAt()->subMonths(config('retention.warning_months'))
+            $this->expiresAt()->subDays(config('retention.warning_days'))
         );
     }
 
@@ -93,5 +94,24 @@ class Assessment extends Model
     public function variantSelections(): HasMany
     {
         return $this->hasMany(AssessmentVariantSelection::class);
+    }
+
+    public function notificationRecipient(): ?array
+    {
+        $userName = (string) $this->user_id;
+
+        $authUser = app(Auth0UserService::class)
+            ->getUserByUsername($userName);
+
+        if (! $authUser || empty($authUser['email'])) {
+            return null;
+        }
+
+        return [
+            'email' => $authUser['email'],
+            'first_name' => $authUser['given_name']
+                ?? $authUser['name']
+                    ?? null,
+        ];
     }
 }
