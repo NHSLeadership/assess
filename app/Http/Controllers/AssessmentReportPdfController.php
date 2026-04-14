@@ -33,7 +33,7 @@ class AssessmentReportPdfController extends Controller
         $signposts = [];
         foreach ($service->nodes() as $node) {
             $sp = $service->signpostsForNode($node);
-            if ($sp) {
+            if ($sp !== []) {
                 $signposts[$node->id] = $sp;
             }
         }
@@ -107,7 +107,7 @@ class AssessmentReportPdfController extends Controller
                 ->attach('files', $headerHtml, 'header.html')
                 ->attach('files', $footerHtml, 'footer.html')
                 ->post(
-                    rtrim(config('app.gotenberg_url'), '/') . '/forms/chromium/convert/html',
+                    rtrim((string) config('app.gotenberg_url'), '/') . '/forms/chromium/convert/html',
                     [
                         'marginTop' => '120px',
                         'marginBottom' => '50px',
@@ -148,18 +148,18 @@ class AssessmentReportPdfController extends Controller
 
         $content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');
         $content = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}\x{00A0}]/u', '', $content);
-        $content = preg_replace('/<\s*style\b[^>]*>[\s\S]*?<\/style>/i', '', $content);
+        $content = preg_replace('/<\s*style\b[^>]*>[\s\S]*?<\/style>/i', '', (string) $content);
 
         return preg_replace_callback(
             '/<img([^>]*)src=["\']\/media\/([^"\']+)["\']([^>]*)>/i',
-            function ($m) {
+            function (array $m): string {
                 $path = public_path('media/' . $m[2]);
                 return '<img' . $m[1] .
                     'src="' . $path . '" ' .
                     'style="width:350px; height:auto; display:block; margin:0 auto;"' .
                     $m[3] . '>';
             },
-            $content
+            (string) $content
         );
     }
 
@@ -174,11 +174,11 @@ class AssessmentReportPdfController extends Controller
 
         $content = html_entity_decode($content, ENT_QUOTES, 'UTF-8');
         $content = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}\x{00A0}]/u', '', $content);
-        $content = preg_replace('/<\s*style\b[^>]*>[\s\S]*?<\/style>/i', '', $content);
+        $content = preg_replace('/<\s*style\b[^>]*>[\s\S]*?<\/style>/i', '', (string) $content);
 
         return preg_replace_callback(
             '/<img([^>]*)src=["\']\/media\/([^"\']+)["\']([^>]*)>/i',
-            function ($m) {
+            function (array $m): string {
                 $path = public_path('media/' . $m[2]);
 
                 if (! file_exists($path)) {
@@ -193,7 +193,7 @@ class AssessmentReportPdfController extends Controller
                     'class="image-adjust"' .
                     $m[3] . '>';
             },
-            $content
+            (string) $content
         );
     }
 }

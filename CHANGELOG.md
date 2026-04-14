@@ -4,6 +4,10 @@
 # Assessment tool
 
 ---
+### v1.0.12
+> Updated: 08.04.2026
+1. Code refactoring and cleanup
+
 ### v1.0.11
 > Updated: 07.04.2026
 1. Gotenberg integration for pdf generation

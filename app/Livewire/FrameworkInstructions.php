@@ -16,7 +16,7 @@ class FrameworkInstructions extends Component
 
     public ?int $assessmentId = null;
 
-    public function mount(?int $frameworkId = null, ?int $assessmentId = null)
+    public function mount(?int $frameworkId = null, ?int $assessmentId = null): void
     {
         $this->frameworkId = $frameworkId;
         $this->assessmentId = $assessmentId;
@@ -35,7 +35,7 @@ class FrameworkInstructions extends Component
             : null;
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.framework-instructions');
     }

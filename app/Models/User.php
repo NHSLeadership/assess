@@ -93,6 +93,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      *
      * @return array<string, string>
      */
+    #[\Override]
     protected function casts(): array
     {
         return [
