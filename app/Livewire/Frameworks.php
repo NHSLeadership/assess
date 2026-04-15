@@ -7,6 +7,7 @@ use App\Models\Framework;
 use App\Settings\Retention;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -123,11 +124,34 @@ class Frameworks extends Component
     public function displayAssessmentDate($assessment, bool $useAmPm = false, bool $showTime = false): string
     {
         try {
-            $date = $assessment->effectiveLastUpdatedAt();
+            if (! $assessment) {
+                return 'Not available';
+            }
+
+            $date = null;
+
+            // Use submitted_at if it exists
+            if (! empty($assessment->submitted_at)) {
+                $date = $assessment->submitted_at;
+            } else {
+                // Otherwise use latest response updated_at if present
+                if (method_exists($assessment, 'responses')) {
+                    $latestResponse = $assessment->responses()
+                        ->orderByDesc('updated_at')
+                        ->first();
+
+                    $date = $latestResponse?->updated_at;
+                }
+
+                // Fallback to updated_at
+                $date ??= $assessment->updated_at ?? $assessment->created_at ?? null;
+            }
 
             if (! $date) {
                 return 'Not available';
             }
+
+            $date = $date instanceof Carbon ? $date : Carbon::parse($date);
 
             $format = 'j F Y';
             if ($showTime) {
@@ -135,8 +159,7 @@ class Frameworks extends Component
             }
 
             return $date->format($format);
-
-        } catch (\Throwable $e) {
+        } catch (Throwable) {
             return 'Not available';
         }
     }
