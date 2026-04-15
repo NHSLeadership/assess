@@ -14,6 +14,7 @@ class RetentionEvent extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'owner',
         'subject_type',
         'subject_id',
         'action',

@@ -39,7 +39,7 @@ class DeleteExpiredAssessments implements ShouldQueue
         if (! $warningEvent) {
             logger()->warning('Retention deletion blocked – no prior warning', [
                 'assessment_id' => $assessment->id,
-                'expires_at' => $expiresAt->toDateString(),
+                'expired_at' => $expiresAt->toDateString(),
             ]);
             return;
         }
@@ -65,14 +65,14 @@ class DeleteExpiredAssessments implements ShouldQueue
 
         logger()->info('Deleting assessment by retention policy', [
             'assessment_id' => $assessment->id,
-            'expires_at' => $expiresAt->toDateString(),
+            'expired_at' => $expiresAt->toDateString(),
         ]);
 
         $this->deleteAssessment($assessment, $expiresAt);
 
         logger()->info('Assessment deleted by retention policy', [
             'assessment_id' => $assessment->id,
-            'expires_at' => $expiresAt->toDateString(),
+            'expired_at' => $expiresAt->toDateString(),
         ]);
     }
 
@@ -82,7 +82,6 @@ class DeleteExpiredAssessments implements ShouldQueue
             ->where('subject_type', 'Assessment')
             ->where('subject_id', $assessment->id)
             ->where('action', RetentionAction::Deleted)
-            ->where('metadata->expires_at', $expiresAt->toDateString())
             ->exists();
     }
 
@@ -92,7 +91,6 @@ class DeleteExpiredAssessments implements ShouldQueue
             ->where('subject_type', 'Assessment')
             ->where('subject_id', $assessment->id)
             ->where('action', RetentionAction::Warning)
-            ->where('metadata->expires_at', $expiresAt->toDateString())
             ->orderByDesc('created_at')
             ->first();
     }
@@ -107,6 +105,7 @@ class DeleteExpiredAssessments implements ShouldQueue
     protected function recordDeletionEvent(Assessment $assessment, Carbon $expiresAt): void
     {
         RetentionEvent::create([
+            'owner' => (string) $assessment->user_id,
             'subject_type' => 'Assessment',
             'subject_id'   => $assessment->id,
             'action'       => RetentionAction::Deleted,
@@ -114,9 +113,9 @@ class DeleteExpiredAssessments implements ShouldQueue
             'actor_type'   => RetentionActorType::System,
             'actor_id'     => null,
             'metadata'     => [
-                'expires_at' => $expiresAt->toDateString(),
+                'last_update' => $assessment->effectiveLastUpdatedAt()->toDateString(),
                 'retention_years' => config('retention.retention_years'),
-                'deleted_at' => now()->toDateTimeString(),
+                'expired_at' => $expiresAt->toDateString(),
             ],
         ]);
     }

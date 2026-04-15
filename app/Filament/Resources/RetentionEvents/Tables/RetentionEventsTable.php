@@ -12,8 +12,12 @@ class RetentionEventsTable
     {
         return $table
             ->columns([
+                TextColumn::make('owner')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('subject_type')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('subject_id')
                     ->numeric()
                     ->sortable(),
@@ -31,16 +35,11 @@ class RetentionEventsTable
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
             ])
-            ->filters([
-                //
-            ])
+            ->defaultSort('id', direction: 'desc')
             ->recordActions([
                 ViewAction::make(),
-            ])
-            ->toolbarActions([
             ]);
     }
 }

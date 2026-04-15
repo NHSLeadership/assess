@@ -12,6 +12,9 @@ class RetentionEventInfolist
     {
         return $schema
             ->components([
+                TextEntry::make('owner'),
+                TextEntry::make('created_at')
+                    ->dateTime(),
                 TextEntry::make('subject_type'),
                 TextEntry::make('subject_id')
                     ->numeric(),
@@ -22,14 +25,9 @@ class RetentionEventInfolist
                 TextEntry::make('actor_type')
                     ->badge(),
                 TextEntry::make('actor_id')
-                    ->numeric()
-                    ->placeholder('-'),
+                    ->numeric(),
                 KeyValueEntry::make('metadata')
-                    ->columnSpanFull()
-                    ->placeholder('No metadata recorded'),
-                TextEntry::make('created_at')
-                    ->dateTime()
-                    ->placeholder('-'),
+                    ->columnSpanFull(),
             ]);
     }
 }

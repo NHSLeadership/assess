@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
 /**
- * @property-read \App\Models\Framework|null $framework
+ * @property-read Framework|null $framework
  */
 
 class Assessment extends Model

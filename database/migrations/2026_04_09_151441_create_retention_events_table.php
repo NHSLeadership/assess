@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('retention_events', function (Blueprint $table) {
             $table->id();
+            $table->string('owner');
             $table->string('subject_type');
             $table->unsignedBigInteger('subject_id');
             $table->string('action');
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('actor_id')->nullable();
             $table->json('metadata')->nullable();
             $table->timestamp('created_at')->useCurrent();
+            $table->index('owner');
             $table->index(['subject_type', 'subject_id']);
             $table->index('action');
             $table->index('created_at');

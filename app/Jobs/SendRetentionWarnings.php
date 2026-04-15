@@ -55,7 +55,6 @@ class SendRetentionWarnings implements ShouldQueue
             ->where('subject_type', 'Assessment')
             ->where('subject_id', $assessment->id)
             ->where('action', RetentionAction::Warning)
-            ->where('metadata->expires_at', $expiresAt->toDateString())
             ->exists();
     }
 
@@ -82,6 +81,7 @@ class SendRetentionWarnings implements ShouldQueue
     protected function recordWarningEvent(Assessment $assessment, Carbon $expiresAt): void
     {
         RetentionEvent::create([
+            'owner' => (string) $assessment->user_id,
             'subject_type' => 'Assessment',
             'subject_id'   => $assessment->id,
             'action'       => RetentionAction::Warning,
@@ -89,9 +89,9 @@ class SendRetentionWarnings implements ShouldQueue
             'actor_type'   => RetentionActorType::System,
             'actor_id'     => null,
             'metadata'     => [
-                'warning_stage' => '30_days',
-                'expires_at' => $expiresAt->toDateString(),
+                'last_update' => $assessment->effectiveLastUpdatedAt()->toDateString(),
                 'retention_years' => config('retention.retention_years'),
+                'expires_at' => $expiresAt->toDateString(),
                 'warning_window_days' => config('retention.warning_days'),
                 'channel' => 'email',
             ],
