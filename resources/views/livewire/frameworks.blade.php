@@ -22,7 +22,7 @@
                         </h3>
 
                         @php
-                            $years = config('retention.retention_years');
+                            $years = app(\App\Settings\Retention::class)->retention_years;
                         @endphp
 
                         <p class="nhsuk-card__description">

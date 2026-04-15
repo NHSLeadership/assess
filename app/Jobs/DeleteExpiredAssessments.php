@@ -7,6 +7,7 @@ use App\Enums\RetentionActorType;
 use App\Enums\RetentionReason;
 use App\Models\Assessment;
 use App\Models\RetentionEvent;
+use App\Settings\Retention;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -17,14 +18,16 @@ class DeleteExpiredAssessments implements ShouldQueue
 
     public function handle(): void
     {
+        $settings = app(Retention::class);
+
         Assessment::query()
             ->whereNotNull('id')
             ->get()
-            ->each(function (Assessment $assessment) {
-                $this->handleAssessment($assessment);
+            ->each(function (Assessment $assessment) use ($settings) {
+                $this->handleAssessment($assessment, $settings);
             });
     }
-    protected function handleAssessment(Assessment $assessment): void
+    protected function handleAssessment(Assessment $assessment, Retention $settings): void
     {
         $expiresAt = $assessment->expiresAt();
 
@@ -47,7 +50,7 @@ class DeleteExpiredAssessments implements ShouldQueue
         // Enforce minimum delay since warning
         $minDeleteAt = $warningEvent->created_at
             ->clone()
-            ->addDays(config('retention.minimum_days_after_warning'));
+            ->addDays($settings->min_days_after_warning);
 
         if (now()->lt($minDeleteAt)) {
             logger()->info('Retention deletion delayed – minimum warning period not elapsed', [
@@ -68,7 +71,7 @@ class DeleteExpiredAssessments implements ShouldQueue
             'expired_at' => $expiresAt->toDateString(),
         ]);
 
-        $this->deleteAssessment($assessment, $expiresAt);
+        $this->deleteAssessment($assessment, $expiresAt, $settings);
 
         logger()->info('Assessment deleted by retention policy', [
             'assessment_id' => $assessment->id,
@@ -95,14 +98,14 @@ class DeleteExpiredAssessments implements ShouldQueue
             ->first();
     }
 
-    protected function deleteAssessment(Assessment $assessment, Carbon $expiresAt): void
+    protected function deleteAssessment(Assessment $assessment, Carbon $expiresAt, Retention $settings): void
     {
         $assessment->delete();
 
-        $this->recordDeletionEvent($assessment, $expiresAt);
+        $this->recordDeletionEvent($assessment, $expiresAt, $settings);
     }
 
-    protected function recordDeletionEvent(Assessment $assessment, Carbon $expiresAt): void
+    protected function recordDeletionEvent(Assessment $assessment, Carbon $expiresAt, Retention $settings): void
     {
         RetentionEvent::create([
             'owner' => (string) $assessment->user_id,
@@ -114,7 +117,7 @@ class DeleteExpiredAssessments implements ShouldQueue
             'actor_id'     => null,
             'metadata'     => [
                 'last_update' => $assessment->effectiveLastUpdatedAt()->toDateString(),
-                'retention_years' => config('retention.retention_years'),
+                'retention_years' => $settings->retention_years,
                 'expired_at' => $expiresAt->toDateString(),
             ],
         ]);

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Services\Auth0UserService;
+use App\Settings\Retention;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -46,15 +47,19 @@ class Assessment extends Model
 
     public function expiresAt(): Carbon
     {
+        $settings = app(Retention::class);
+
         return $this->effectiveLastUpdatedAt()
             ->copy()
-            ->addYears(config('retention.retention_years'));
+            ->addYears($settings->retention_years);
     }
 
     public function isWithinExpiryWarningWindow(): bool
     {
+        $settings = app(Retention::class);
+
         return now()->greaterThanOrEqualTo(
-            $this->expiresAt()->subDays(config('retention.warning_days'))
+            $this->expiresAt()->subDays($settings->expiry_warning_days)
         );
     }
 

@@ -4,9 +4,9 @@ namespace App\Livewire;
 
 use App\Models\Assessment;
 use App\Models\Framework;
+use App\Settings\Retention;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -44,7 +44,7 @@ class Frameworks extends Component
 
         $expiring->each->touch();
 
-        $years = config('retention.retention_years');
+        $years = app(Retention::class)->retention_years;
 
         session()->flash(
             'success',

@@ -8,6 +8,7 @@ use App\Enums\RetentionReason;
 use App\Mail\AssessmentExpiryWarningMail;
 use App\Models\Assessment;
 use App\Models\RetentionEvent;
+use App\Settings\Retention;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -19,20 +20,22 @@ class SendRetentionWarnings implements ShouldQueue
 
     public function handle(): void
     {
+        $settings = app(Retention::class);
+
         Assessment::query()
             ->whereNotNull('id')
             ->get()
-            ->each(function (Assessment $assessment) {
-                $this->handleAssessment($assessment);
+            ->each(function (Assessment $assessment) use ($settings) {
+                $this->handleAssessment($assessment, $settings);
             });
     }
 
-    protected function handleAssessment(Assessment $assessment): void
+    protected function handleAssessment(Assessment $assessment, Retention $settings): void
     {
         $expiresAt = $assessment->expiresAt();
 
         // Too early – not yet in warning window
-        if (now()->lt($expiresAt->copy()->subDays(config('retention.warning_days')))) {
+        if (now()->lt($expiresAt->copy()->subDays($settings->expiry_warning_days))) {
             return;
         }
 
@@ -41,7 +44,7 @@ class SendRetentionWarnings implements ShouldQueue
             return;
         }
 
-        $this->sendWarning($assessment, $expiresAt);
+        $this->sendWarning($assessment, $expiresAt, $settings);
 
         logger()->info('Retention warning sent', [
             'assessment_id' => $assessment->id,
@@ -49,7 +52,7 @@ class SendRetentionWarnings implements ShouldQueue
         ]);
     }
 
-    protected function alreadyWarned(Assessment $assessment, Carbon $expiresAt): bool
+    protected function alreadyWarned(Assessment $assessment): bool
     {
         return RetentionEvent::query()
             ->where('subject_type', 'Assessment')
@@ -58,7 +61,7 @@ class SendRetentionWarnings implements ShouldQueue
             ->exists();
     }
 
-    protected function sendWarning(Assessment $assessment, Carbon $expiresAt): void
+    protected function sendWarning(Assessment $assessment, Carbon $expiresAt, Retention $settings): void
     {
         $recipient = $assessment->notificationRecipient();
 
@@ -75,10 +78,10 @@ class SendRetentionWarnings implements ShouldQueue
         Mail::to($recipient['email'])
             ->send(new AssessmentExpiryWarningMail($expiresAt));
 
-        $this->recordWarningEvent($assessment, $expiresAt);
+        $this->recordWarningEvent($assessment, $expiresAt, $settings);
     }
 
-    protected function recordWarningEvent(Assessment $assessment, Carbon $expiresAt): void
+    protected function recordWarningEvent(Assessment $assessment, Carbon $expiresAt, Retention $settings): void
     {
         RetentionEvent::create([
             'owner' => (string) $assessment->user_id,
@@ -90,9 +93,9 @@ class SendRetentionWarnings implements ShouldQueue
             'actor_id'     => null,
             'metadata'     => [
                 'last_update' => $assessment->effectiveLastUpdatedAt()->toDateString(),
-                'retention_years' => config('retention.retention_years'),
                 'expires_at' => $expiresAt->toDateString(),
-                'warning_window_days' => config('retention.warning_days'),
+                'retention_years' => $settings->retention_years,
+                'warning_window_days' => $settings->expiry_warning_days,
                 'channel' => 'email',
             ],
         ]);
