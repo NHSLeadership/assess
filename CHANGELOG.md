@@ -5,8 +5,9 @@
 
 ---
 ### v1.0.12
-> Updated: 08.04.2026
+> Updated: 16.04.2026
 1. Code refactoring and cleanup
+2. Add auto delete for data retention policy compliance
 
 ### v1.0.11
 > Updated: 07.04.2026
