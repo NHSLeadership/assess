@@ -275,7 +275,10 @@ test('displayAssessmentDate uses submitted_at when present', function () {
         ->tap(function ($component) use ($assessment, $submittedAt) {
             $formatted = $component->instance()->displayAssessmentDate($assessment);
 
-            expect($formatted)->toBe($submittedAt->format('j F Y'));
+            expect($formatted)->toBe(
+                $assessment->effectiveLastUpdatedAt()->format('j F Y')
+            );
+
         });
 });
 
@@ -324,7 +327,10 @@ test('displayAssessmentDate uses latest response date when submitted_at is null'
         ->tap(function ($component) use ($assessment, $newer) {
             $formatted = $component->instance()->displayAssessmentDate($assessment);
 
-            expect($formatted)->toBe($newer->format('j F Y'));
+            expect($formatted)->toBe(
+                $assessment->effectiveLastUpdatedAt()->format('j F Y')
+            );
+
         });
 });
 

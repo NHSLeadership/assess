@@ -128,28 +128,7 @@ class Frameworks extends Component
                 return 'Not available';
             }
 
-            $date = null;
-
-            // Use submitted_at if it exists
-            if (! empty($assessment->submitted_at)) {
-                $date = $assessment->submitted_at;
-            } else {
-                // Otherwise use latest response updated_at if present
-                if (method_exists($assessment, 'responses')) {
-                    $latestResponse = $assessment->responses()
-                        ->orderByDesc('updated_at')
-                        ->first();
-
-                    $date = $latestResponse?->updated_at;
-                }
-
-                // Fallback to updated_at
-                $date ??= $assessment->updated_at ?? $assessment->created_at ?? null;
-            }
-
-            if (! $date) {
-                return 'Not available';
-            }
+            $date = $assessment->effectiveLastUpdatedAt();
 
             $date = $date instanceof Carbon ? $date : Carbon::parse($date);
 
