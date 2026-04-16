@@ -57,7 +57,7 @@ class Variants extends Component
         // Redirect to summary if already submitted assessment
         $this->redirectIfSubmittedOrFinished($this->assessment(), $this->frameworkId);
 
-        if ($this->assessmentId !== '' && $this->assessmentId !== '0' && ! $this->back) {
+        if (! empty($this->assessmentId) && ! $this->back) {
             $node = $this->getAssessmentResumeNode($this->assessmentId);
             if ($node instanceof \App\Models\Node) {
                 // There are answered questions, so we should resume there
