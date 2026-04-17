@@ -1,7 +1,5 @@
 <?php
 
-uses(Tests\TestCase::class);
-
 use App\Models\Assessment;
 use Carbon\Carbon;
 use Tests\Support\FrameworksFake;

@@ -11,6 +11,11 @@ trait UserTrait
     public function user(): ?User
     {
         $authUser = auth()->user();
+
+        if (! $authUser) {
+            return null;
+        }
+
         $authUser->id = $authUser?->preferred_username;
 
         return new User($authUser->getAttributes());

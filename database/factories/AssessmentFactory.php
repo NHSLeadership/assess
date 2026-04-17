@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Models\Assessment;
+use App\Models\Framework;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 
@@ -25,6 +26,7 @@ class AssessmentFactory extends Factory
         now();
 
         return [
+            'framework_id' => Framework::factory(),
             //            'user_id' => $this->faker->unique()->numberBetween(1000000000, 9999999999),
             //            'framework_id' => 1,
             //            'submitted_at' => $this->faker->optional(0.6)->dateTimeBetween($minDate, $now),
