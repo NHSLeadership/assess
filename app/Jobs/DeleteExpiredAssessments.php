@@ -22,7 +22,7 @@ class DeleteExpiredAssessments implements ShouldQueue
 
         Assessment::query()
             ->whereNotNull('id')
-            ->get()
+            ->lazyById()
             ->each(function (Assessment $assessment) use ($settings) {
                 $this->handleAssessment($assessment, $settings);
             });
@@ -88,12 +88,13 @@ class DeleteExpiredAssessments implements ShouldQueue
             ->exists();
     }
 
-    protected function getWarningEvent(Assessment $assessment, Carbon $expiresAt): ?RetentionEvent
+    protected function getWarningEvent(Assessment $assessment): ?RetentionEvent
     {
         return RetentionEvent::query()
             ->where('subject_type', 'Assessment')
             ->where('subject_id', $assessment->id)
             ->where('action', RetentionAction::Warn)
+            ->where('metadata->expires_at', $assessment->expiresAt()->toDateString())
             ->orderByDesc('created_at')
             ->first();
     }

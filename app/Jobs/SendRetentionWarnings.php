@@ -58,6 +58,7 @@ class SendRetentionWarnings implements ShouldQueue
             ->where('subject_type', 'Assessment')
             ->where('subject_id', $assessment->id)
             ->where('action', RetentionAction::Warn)
+            ->where('metadata->expires_at', $assessment->expiresAt()->toDateString())
             ->exists();
     }
 

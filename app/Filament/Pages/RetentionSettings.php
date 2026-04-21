@@ -7,7 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
-use app\Settings\Retention;
+use App\Settings\Retention;
 
 class RetentionSettings extends SettingsPage
 {
