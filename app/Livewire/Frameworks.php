@@ -47,8 +47,6 @@ class Frameworks extends Component
             return;
         }
 
-        $expiring->each->touch();
-
         $years = app(Retention::class)->retention_years;
 
         foreach ($expiring as $assessment) {
@@ -59,13 +57,15 @@ class Frameworks extends Component
                 'action'       => RetentionAction::Extend,
                 'reason'       => RetentionReason::UserAction,
                 'actor_type'   => RetentionActorType::User,
-                'actor_id'     => $this->user()->user_id,
+                'actor_id'     => $this->user()?->user_id,
                 'metadata'     => [
                     'old_last_update' => $assessment->effectiveLastUpdatedAt()->toDateString(),
                     'new_last_update' => now()->toDateString(),
                     'extension_period' => $years . ' ' . \Illuminate\Support\Str::plural('year', $years),
                 ],
             ]);
+
+            $expiring->each->touch();
         }
 
         session()->flash(
@@ -163,7 +163,7 @@ class Frameworks extends Component
             }
 
             return $date->format($format);
-        } catch (Throwable) {
+        } catch (\Throwable) {
             return 'Not available';
         }
     }
