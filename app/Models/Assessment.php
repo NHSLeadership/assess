@@ -49,7 +49,12 @@ class Assessment extends Model
     {
         $settings = app(Retention::class);
 
-        return $this->effectiveLastUpdatedAt()
+        $lastUpdatedAt = $this->effectiveLastUpdatedAt() ?? $this->created_at;
+        if (! $lastUpdatedAt instanceof Carbon) {
+            throw new \LogicException('Cannot determine expiry date for an assessment without any timestamps.');
+        }
+
+        return $lastUpdatedAt
             ->copy()
             ->addYears($settings->retention_years);
     }
