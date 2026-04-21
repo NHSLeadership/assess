@@ -1,16 +1,18 @@
 <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
     <div class="nhsuk-grid-column-full">
 
+        @php
+            $assessments = $this->framework
+                ? $this->assessments
+                : collect();
+        @endphp
+
         @if ($this->framework)
             <h1 class="nhsuk-heading-l">{{ $this->framework->name ?? null }} {{ strtolower(($this->loggedInRater()?->pivot?->assessment_type) ?? 'self assessment') }}</h1>
 
             <div class="nhsuk-body">
                 {!! \App\Support\RichTextRender::render($this->framework->description, $this->user, $this->framework) !!}
             </div>
-
-            @php
-                $assessments = $this->assessments;
-            @endphp
 
             @if (
                 $assessments
