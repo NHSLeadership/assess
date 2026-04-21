@@ -24,7 +24,7 @@ class SendRetentionWarnings implements ShouldQueue
 
         Assessment::query()
             ->whereNotNull('id')
-            ->get()
+            ->lazyById()
             ->each(function (Assessment $assessment) use ($settings) {
                 $this->handleAssessment($assessment, $settings);
             });
