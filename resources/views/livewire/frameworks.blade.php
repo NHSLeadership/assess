@@ -8,8 +8,12 @@
                 {!! \App\Support\RichTextRender::render($this->framework->description, $this->user, $this->framework) !!}
             </div>
 
+            @php
+                $assessments = $this->assessments;
+            @endphp
+
             @if (
-                $this->assessments()
+                $assessments
                     ->filter(fn ($assessment) => $assessment->isWithinExpiryWarningWindow())
                     ->isNotEmpty()
             )
@@ -70,7 +74,7 @@
 
         @include('livewire.alerts')
 
-        @if ($this->assessments()?->count())
+        @if ($assessments->isNotEmpty())
             <h3>{{ __('Assessments') }}</h3>
 
             <table class="nhsuk-table">
@@ -84,7 +88,7 @@
                 </tr>
                 </thead>
                 <tbody class="nhsuk-table__body">
-                @foreach ($this->assessments() as $assessment)
+                @foreach ($assessments as $assessment)
                     <tr class="nhsuk-table__row" wire:key="assessment-{{ $assessment->id }}">
                         <td class="nhsuk-table__cell">
                             <a href="{{ !empty($assessment->submitted_at)
