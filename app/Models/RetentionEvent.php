@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class RetentionEvent extends Model
 {
-    public const null UPDATED_AT = null;
-
     public $timestamps = false;
 
     protected $fillable = [

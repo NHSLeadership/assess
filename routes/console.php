@@ -4,6 +4,7 @@ use App\Jobs\DeleteExpiredAssessments;
 use App\Jobs\SendRetentionWarnings;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function (): void {
     $this->comment(Inspiring::quote());
