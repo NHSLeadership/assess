@@ -62,7 +62,7 @@ class DeleteExpiredAssessments implements ShouldQueue
         }
 
         // Already deleted
-        if ($this->alreadyDeleted($assessment, $expiresAt)) {
+        if ($this->alreadyDeleted($assessment)) {
             return;
         }
 
@@ -79,7 +79,7 @@ class DeleteExpiredAssessments implements ShouldQueue
         ]);
     }
 
-    protected function alreadyDeleted(Assessment $assessment, Carbon $expiresAt): bool
+    protected function alreadyDeleted(Assessment $assessment): bool
     {
         return RetentionEvent::query()
             ->where('subject_type', 'Assessment')
