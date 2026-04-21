@@ -12,7 +12,7 @@ class Auth0UserService
             ->management()
             ->users()
             ->getAll([
-                'q' => sprintf('username:"%s"', $username),
+                'q' => sprintf('username:"%s"', $this->escapeAuth0SearchValue($username)),
                 'search_engine' => 'v3',
             ]);
 
@@ -23,5 +23,13 @@ class Auth0UserService
         $users = HttpResponse::decodeContent($response);
 
         return $users[0] ?? null;
+    }
+    private function escapeAuth0SearchValue(string $value): string
+    {
+        return str_replace(
+            ['\\', '"'],
+            ['\\\\', '\\"'],
+            $value
+        );
     }
 }
