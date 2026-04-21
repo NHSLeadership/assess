@@ -57,7 +57,7 @@ class SendRetentionWarnings implements ShouldQueue
         return RetentionEvent::query()
             ->where('subject_type', 'Assessment')
             ->where('subject_id', $assessment->id)
-            ->where('action', RetentionAction::Warning)
+            ->where('action', RetentionAction::Warn)
             ->exists();
     }
 
@@ -87,7 +87,7 @@ class SendRetentionWarnings implements ShouldQueue
             'owner' => (string) $assessment->user_id,
             'subject_type' => 'Assessment',
             'subject_id'   => $assessment->id,
-            'action'       => RetentionAction::Warning,
+            'action'       => RetentionAction::Warn,
             'reason'       => RetentionReason::Policy,
             'actor_type'   => RetentionActorType::System,
             'actor_id'     => null,

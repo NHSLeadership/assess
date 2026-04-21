@@ -2,8 +2,12 @@
 
 namespace App\Livewire;
 
+use App\Enums\RetentionAction;
+use App\Enums\RetentionActorType;
+use App\Enums\RetentionReason;
 use App\Models\Assessment;
 use App\Models\Framework;
+use App\Models\RetentionEvent;
 use App\Settings\Retention;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
@@ -46,6 +50,23 @@ class Frameworks extends Component
         $expiring->each->touch();
 
         $years = app(Retention::class)->retention_years;
+
+        foreach ($expiring as $assessment) {
+            RetentionEvent::create([
+                'owner' => (string) $assessment->user_id,
+                'subject_type' => 'Assessment',
+                'subject_id'   => $assessment->id,
+                'action'       => RetentionAction::Extend,
+                'reason'       => RetentionReason::UserAction,
+                'actor_type'   => RetentionActorType::User,
+                'actor_id'     => $this->user()->user_id,
+                'metadata'     => [
+                    'old_last_update' => $assessment->effectiveLastUpdatedAt()->toDateString(),
+                    'new_last_update' => now()->toDateString(),
+                    'extension_period' => $years . ' ' . \Illuminate\Support\Str::plural('year', $years),
+                ],
+            ]);
+        }
 
         session()->flash(
             'success',

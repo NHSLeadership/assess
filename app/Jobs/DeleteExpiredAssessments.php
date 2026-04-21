@@ -84,7 +84,7 @@ class DeleteExpiredAssessments implements ShouldQueue
         return RetentionEvent::query()
             ->where('subject_type', 'Assessment')
             ->where('subject_id', $assessment->id)
-            ->where('action', RetentionAction::Deleted)
+            ->where('action', RetentionAction::Delete)
             ->exists();
     }
 
@@ -93,7 +93,7 @@ class DeleteExpiredAssessments implements ShouldQueue
         return RetentionEvent::query()
             ->where('subject_type', 'Assessment')
             ->where('subject_id', $assessment->id)
-            ->where('action', RetentionAction::Warning)
+            ->where('action', RetentionAction::Warn)
             ->orderByDesc('created_at')
             ->first();
     }
@@ -111,7 +111,7 @@ class DeleteExpiredAssessments implements ShouldQueue
             'owner' => (string) $assessment->user_id,
             'subject_type' => 'Assessment',
             'subject_id'   => $assessment->id,
-            'action'       => RetentionAction::Deleted,
+            'action'       => RetentionAction::Delete,
             'reason'       => RetentionReason::Policy,
             'actor_type'   => RetentionActorType::System,
             'actor_id'     => null,

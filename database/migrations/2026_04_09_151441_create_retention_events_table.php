@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('action');
             $table->string('reason');
             $table->string('actor_type');
-            $table->unsignedBigInteger('actor_id')->nullable();
+            $table->string('actor_id')->nullable();
             $table->json('metadata')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->index('owner');

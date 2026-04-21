@@ -31,7 +31,7 @@ class RetentionEventsTable
                     ->badge()
                     ->searchable(),
                 TextColumn::make('actor_id')
-                    ->numeric()
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()

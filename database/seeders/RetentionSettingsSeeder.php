@@ -13,7 +13,7 @@ class RetentionSettingsSeeder extends Seeder
             [
                 'group'      => 'retention',
                 'name'       => 'retention_years',
-                'payload'    => json_encode(3),
+                'payload'    => json_encode(6),
                 'locked'     => false,
                 'created_at' => now(),
                 'updated_at' => now(),

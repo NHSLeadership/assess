@@ -4,8 +4,8 @@ namespace App\Enums;
 
 enum RetentionAction: string
 {
-    case Warning = 'warning';
-    case RetentionExtended  = 'retention_extended';
-    case Deleted            = 'deleted';
-    case Anonymised         = 'anonymised';
+    case Warn = 'warn';
+    case Extend = 'extend';
+    case Delete = 'delete';
+    case Anonymise = 'anonymise';
 }

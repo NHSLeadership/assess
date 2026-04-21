@@ -24,8 +24,7 @@ class RetentionEventInfolist
                     ->badge(),
                 TextEntry::make('actor_type')
                     ->badge(),
-                TextEntry::make('actor_id')
-                    ->numeric(),
+                TextEntry::make('actor_id'),
                 KeyValueEntry::make('metadata')
                     ->columnSpanFull(),
             ]);
