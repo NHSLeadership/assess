@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Mail;
 use function Pest\Laravel\assertDatabaseHas;
 
 beforeEach(function () {
-    Carbon::setTestNow(now());
+    Carbon::setTestNow();
 
     $settings = app(Retention::class);
 

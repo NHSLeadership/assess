@@ -36,13 +36,21 @@ class Assessment extends Model
 
     public function effectiveLastUpdatedAt(): ?Carbon
     {
-        $dates = collect([
+        $latestResponseUpdatedAt = $this->relationLoaded('responses')
+            ? $this->responses->max('updated_at')
+            : $this->responses()->max('updated_at');
+        if (is_string($latestResponseUpdatedAt)) {
+            $latestResponseUpdatedAt = Carbon::parse($latestResponseUpdatedAt);
+        }
+
+        return collect([
             $this->updated_at,
             $this->submitted_at,
-            $this->responses?->max('updated_at'),
-        ])->filter();
-
-        return $dates->max();
+            $latestResponseUpdatedAt,
+        ])
+            ->filter(fn ($date) => $date instanceof Carbon)
+            ->sortBy(fn (Carbon $date) => $date->getTimestamp())
+            ->last();
     }
 
     public function expiresAt(): Carbon

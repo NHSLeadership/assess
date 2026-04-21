@@ -37,7 +37,7 @@ class DeleteExpiredAssessments implements ShouldQueue
         }
 
         // Must have warning before deleting
-        $warningEvent = $this->getWarningEvent($assessment, $expiresAt);
+        $warningEvent = $this->getWarningEvent($assessment);
 
         if (! $warningEvent) {
             logger()->warning('Retention deletion blocked – no prior warning', [
