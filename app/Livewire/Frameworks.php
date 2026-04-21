@@ -151,6 +151,10 @@ class Frameworks extends Component
 
             $date = $assessment->effectiveLastUpdatedAt();
 
+            if ($date === null) {
+                return 'Not available';
+            }
+
             $date = $date instanceof Carbon ? $date : Carbon::parse($date);
 
             $format = 'j F Y';
