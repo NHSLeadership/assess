@@ -40,7 +40,7 @@ class SendRetentionWarnings implements ShouldQueue
         }
 
         // Already warned
-        if ($this->alreadyWarned($assessment, $expiresAt)) {
+        if ($this->alreadyWarned($assessment)) {
             return;
         }
 
