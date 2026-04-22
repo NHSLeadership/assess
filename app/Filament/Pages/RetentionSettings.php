@@ -81,13 +81,16 @@ class RetentionSettings extends SettingsPage
             'auditable_id'   => 0,
             'event'          => 'updated',
 
-            'old_values' => json_encode($this->auditOldValues, JSON_THROW_ON_ERROR),
-            'new_values' => json_encode($newValues, JSON_THROW_ON_ERROR),
+            'old_values' => $this->auditOldValues,
+            'new_values' => $newValues,
 
-            'tags'        => 'settings,retention',
+            'user_type'   => auth()->user() ? get_class(auth()->user()) : null,
             'user_id'     => auth()->id(),
+            'user_agent'  => request()->userAgent(),
             'url'         => request()->fullUrl(),
             'ip_address'  => request()->ip(),
+
+            'tags'        => 'settings,retention',
         ]);
     }
 }
