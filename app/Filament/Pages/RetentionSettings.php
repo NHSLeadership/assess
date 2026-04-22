@@ -16,6 +16,9 @@ class RetentionSettings extends SettingsPage
     protected static string $settings = Retention::class;
     protected static string|null|\UnitEnum $navigationGroup = 'Settings';
 
+    protected array $auditOldValues = [];
+
+
     public function form(Schema $schema): Schema
     {
         return $schema
@@ -48,5 +51,43 @@ class RetentionSettings extends SettingsPage
                     ->maxValue(10)
                     ->required(),
             ]);
+    }
+
+    protected function beforeSave(): void
+    {
+        /** @var \App\Settings\Retention $settings */
+        $settings = app(\App\Settings\Retention::class);
+
+        $this->auditOldValues = [
+            'retention_years'        => $settings->retention_years,
+            'expiry_warning_days'    => $settings->expiry_warning_days,
+            'min_days_after_warning' => $settings->min_days_after_warning,
+        ];
+    }
+
+    protected function afterSave(): void
+    {
+        /** @var \App\Settings\Retention $settings */
+        $settings = app(\App\Settings\Retention::class);
+
+        $newValues = [
+            'retention_years'        => $settings->retention_years,
+            'expiry_warning_days'    => $settings->expiry_warning_days,
+            'min_days_after_warning' => $settings->min_days_after_warning,
+        ];
+
+        \OwenIt\Auditing\Models\Audit::create([
+            'auditable_type' => \App\Settings\Retention::class,
+            'auditable_id'   => 0,
+            'event'          => 'updated',
+
+            'old_values' => json_encode($this->auditOldValues, JSON_THROW_ON_ERROR),
+            'new_values' => json_encode($newValues, JSON_THROW_ON_ERROR),
+
+            'tags'        => 'settings,retention',
+            'user_id'     => auth()->id(),
+            'url'         => request()->fullUrl(),
+            'ip_address'  => request()->ip(),
+        ]);
     }
 }
