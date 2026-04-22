@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Openplain\FilamentTreeView\Concerns\HasTreeStructure;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Node extends Model
+class Node extends Model implements Auditable
 {
     use HasFactory;
     use HasTreeStructure;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'framework_id',

@@ -1,6 +1,6 @@
 @component('mail::message')
     @if($user->first_name)
-        Dear {{ $user->first_name ?? 'Staff' }},
+        Dear {{ $user->first_name }},
     @endif
     <br><br>
     Thank you for completing your assessment.<br><br>

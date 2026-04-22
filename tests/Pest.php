@@ -3,9 +3,6 @@
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-uses(RefreshDatabase::class)
-    ->in('Feature');
-
 require_once __DIR__.'/Support/TestHelpers.php';
 
 /*
@@ -19,13 +16,11 @@ require_once __DIR__.'/Support/TestHelpers.php';
 |
 */
 
-pest()
-    ->extend(TestCase::class)
-    ->in(__DIR__.'/Feature');
+uses(
+    TestCase::class,
+    RefreshDatabase::class,
+)->in('Feature', 'Unit');
 
-pest()
-    ->extend(PHPUnit\Framework\TestCase::class)
-    ->in(__DIR__.'/Unit');
 /*
 |--------------------------------------------------------------------------
 | Expectations

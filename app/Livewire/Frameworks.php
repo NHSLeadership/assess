@@ -2,8 +2,13 @@
 
 namespace App\Livewire;
 
+use App\Enums\RetentionAction;
+use App\Enums\RetentionActorType;
+use App\Enums\RetentionReason;
 use App\Models\Assessment;
 use App\Models\Framework;
+use App\Models\RetentionEvent;
+use App\Settings\Retention;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
 use Carbon\Carbon;
@@ -31,6 +36,45 @@ class Frameworks extends Component
             $framework = Framework::first();
             $this->frameworkId = $framework->id;
         }
+    }
+
+    public function retainExpiringAssessments(): void
+    {
+        $expiring = $this->assessments()
+            ->filter(fn ($assessment) => $assessment->isWithinExpiryWarningWindow());
+
+        if ($expiring->isEmpty()) {
+            return;
+        }
+
+        $years = app(Retention::class)->retention_years;
+
+        foreach ($expiring as $assessment) {
+            RetentionEvent::create([
+                'owner' => (string) $assessment->user_id,
+                'subject_type' => 'Assessment',
+                'subject_id'   => $assessment->id,
+                'action'       => RetentionAction::Extend,
+                'reason'       => RetentionReason::UserAction,
+                'actor_type'   => RetentionActorType::User,
+                'actor_id'     => $this->user()?->user_id,
+                'metadata'     => [
+                    'old_last_update' => $assessment->effectiveLastUpdatedAt()->toDateString(),
+                    'new_last_update' => now()->toDateString(),
+                    'extension_period' => $years . ' ' . \Illuminate\Support\Str::plural('year', $years),
+                ],
+            ]);
+
+            $expiring->each->touch();
+        }
+
+        session()->flash(
+            'success',
+            __('Expiring assessments have been kept for another :count :unit.', [
+                'count' => $years,
+                'unit'  => \Illuminate\Support\Str::plural('year', $years),
+            ])
+        );
     }
 
     public function askDelete(int $id): void
@@ -101,32 +145,25 @@ class Frameworks extends Component
     public function displayAssessmentDate($assessment, bool $useAmPm = false, bool $showTime = false): string
     {
         try {
-            // If submitted, always use submitted_at
-            if ($assessment->submitted_at) {
-                $date = $assessment->submitted_at;
-            } else {
-                // Otherwise, fallback to latest response date
-                $latestResponse = $assessment->responses()
-                    ->orderByDesc('updated_at')
-                    ->first();
-
-                $date = $latestResponse->updated_at
-                    ?? $assessment->updated_at
-                    ?? $assessment->created_at;
-            }
-
-            if (! $date) {
+            if (! $assessment) {
                 return 'Not available';
             }
+
+            $date = $assessment->effectiveLastUpdatedAt();
+
+            if ($date === null) {
+                return 'Not available';
+            }
+
+            $date = $date instanceof Carbon ? $date : Carbon::parse($date);
 
             $format = 'j F Y';
             if ($showTime) {
                 $format .= $useAmPm ? ', g:i a' : ', H:i';
             }
 
-            return Carbon::parse($date)->format($format);
-
-        } catch (\Exception) {
+            return $date->format($format);
+        } catch (\Throwable) {
             return 'Not available';
         }
     }
