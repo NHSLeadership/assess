@@ -15,3 +15,8 @@ Schedule::job(new SendRetentionWarnings)
 
 Schedule::job(new DeleteExpiredAssessments)
     ->dailyAt('03:00');
+
+Schedule::command('audits:prune-old')
+    ->dailyAt('04:00')
+    ->onOneServer()
+    ->withoutOverlapping();
