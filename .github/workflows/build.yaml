@@ -47,7 +47,7 @@ jobs:
           echo "buildref="$(echo $GITHUB_REF | tr '[:upper:]' '[:lower:]' | awk '{split($0,a,"/"); print a[3]}') >> $GITHUB_OUTPUT
 
       - name: Build and Push Docker image
-        uses: docker/build-push-action@v5.3.0
+        uses: docker/build-push-action@v7.1.0
         with:
           context: .
           file: docker/Dockerfile
