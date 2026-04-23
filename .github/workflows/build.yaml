@@ -79,7 +79,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
       
       - name: update image tag
-        uses: mikefarah/yq@v4.42.1
+        uses: mikefarah/yq@v4.53.2
         with:
           cmd: yq e -i '.spec.sources.0.helm.valuesObject.image.tag = "${{ needs.build-and-publish.outputs.buildref }}-${{ needs.build-and-publish.outputs.buildsha }}"' charts/staging-apps/templates/assess/develop.yaml
 
