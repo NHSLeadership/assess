@@ -1,0 +1,49 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", ":semanticCommits"],
+  "baseBranches": ["develop"],
+  "timezone": "Europe/London",
+  "rangeStrategy": "bump",
+  "composerIgnorePlatformReqs": [],
+  "dependencyDashboard": true,
+  "packageRules": [
+    {
+      "matchManagers": ["composer"],
+      "matchUpdateTypes": ["patch"],
+      "groupName": "composer patch updates",
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true,
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "matchManagers": ["composer"],
+      "matchUpdateTypes": ["minor"],
+      "groupName": "composer minor updates",
+      "automerge": false
+    },
+    {
+      "matchManagers": ["composer"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "dependencyDashboardApproval": true
+    },
+    {
+      "matchPackageNames": ["laravel/framework"],
+      "matchUpdateTypes": ["patch"],
+      "groupName": null,
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true,
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["patch", "pin", "digest"],
+      "groupName": "npm patch updates",
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    }
+  ]
+}
