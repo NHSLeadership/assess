@@ -28,7 +28,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
 
       - name: update tags in Helm chart
-        uses: mikefarah/yq@v4.42.1
+        uses: mikefarah/yq@v4.53.2
         with:
           cmd: |
             yq e -i '.image.tag = "main-${{ github.sha }}"' charts/assess/values.yaml
