@@ -20,22 +20,22 @@ class Variants extends Component
     use AssessmentHelperTrait;
     use UserTrait;
 
-    public ?string $frameworkId;
+    public ?string $frameworkId = null;
 
     public ?string $assessmentId = null;
 
-    public ?array $data;
+    public ?array $data = null;
 
     public ?string $back = null;
 
-    public function mount($frameworkId = null, $assessmentId = null)
+    public function mount(?string $frameworkId = null, ?string $assessmentId = null)
     {
         $this->frameworkId = $frameworkId;
         $this->assessmentId = $assessmentId;
 
         // Validate frameworkId
         if (
-            empty($this->frameworkId) ||
+            !isset($this->frameworkId) || in_array($this->frameworkId, [null, '', '0'], true) ||
             ! is_numeric($this->frameworkId) ||
             ! Framework::whereKey((int) $this->frameworkId)->exists()
         ) {
@@ -44,7 +44,7 @@ class Variants extends Component
 
         // Validate assessmentId
         if (
-            ! empty($this->assessmentId) &&
+            !in_array($this->assessmentId, [null, '', '0'], true) &&
             (! is_numeric($this->assessmentId) ||
             ! Assessment::whereKey($this->assessmentId)->exists())
         ) {
@@ -59,7 +59,7 @@ class Variants extends Component
 
         if (! empty($this->assessmentId) && ! $this->back) {
             $node = $this->getAssessmentResumeNode($this->assessmentId);
-            if (! empty($node)) {
+            if ($node instanceof \App\Models\Node) {
                 // There are answered questions, so we should resume there
                 $this->redirect(route('questions', [
                     'assessmentId' => $this->assessmentId,
@@ -74,7 +74,7 @@ class Variants extends Component
     #[Computed]
     public function framework(): ?Framework
     {
-        if (empty($this->frameworkId)) {
+        if (!isset($this->frameworkId) || in_array($this->frameworkId, [null, '', '0'], true)) {
             $framework = Framework::first();
             $this->frameworkId = $framework->id;
 
@@ -87,7 +87,7 @@ class Variants extends Component
     #[Computed]
     public function attributes(): ?Collection
     {
-        if (empty($this->frameworkId) || ! is_numeric($this->frameworkId)) {
+        if (!isset($this->frameworkId) || in_array($this->frameworkId, [null, '', '0'], true) || ! is_numeric($this->frameworkId)) {
             return null;
         }
 
@@ -103,7 +103,7 @@ class Variants extends Component
     #[Computed]
     public function variantSelections(): ?Collection
     {
-        if (empty($this->assessmentId)) {
+        if (in_array($this->assessmentId, [null, '', '0'], true)) {
             return Collection::empty();
         }
 
@@ -118,7 +118,7 @@ class Variants extends Component
             return;
         }
 
-        if (empty($this->assessmentId)) {
+        if (in_array($this->assessmentId, [null, '', '0'], true)) {
             $this->assessmentId = $this->initialiseAssessment();
         }
         if ($this->assessmentId) {
@@ -161,10 +161,10 @@ class Variants extends Component
         return $this->getErrorBag()->isEmpty();
     }
 
-    public function initialiseAssessment()
+    public function initialiseAssessment(): string|null|false
     {
         try {
-            DB::transaction(function () {
+            DB::transaction(function (): void {
                 // Create the assessment
                 $assessment = Assessment::create([
                     'framework_id' => $this->frameworkId,
@@ -207,7 +207,7 @@ class Variants extends Component
         ]);
     }
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.variants');
     }

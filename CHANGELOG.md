@@ -4,6 +4,12 @@
 # Assessment tool
 
 ---
+### v1.0.12
+> Updated: 17.04.2026
+1. Code refactoring and cleanup
+2. Add auto delete for data retention policy compliance
+3. Add auditing for user actions in admin panel
+
 ### v1.0.11
 > Updated: 07.04.2026
 1. Gotenberg integration for pdf generation

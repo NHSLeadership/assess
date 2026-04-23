@@ -19,16 +19,15 @@ use Spatie\Prometheus\Facades\Prometheus;
 
 class PrometheusServiceProvider extends ServiceProvider
 {
-    public function register()
+    #[\Override]
+    public function register(): void
     {
         /*
          * Here you can register all the exporters that you
          * want to export to prometheus
          */
         Prometheus::addGauge('My gauge')
-            ->value(function() {
-                return 123.45;
-            });
+            ->value(fn(): float => 123.45);
 
         /*
          * Uncomment this line if you want to export
@@ -66,7 +65,7 @@ class PrometheusServiceProvider extends ServiceProvider
             QueueDelayedJobsCollector::class,
             QueueReservedJobsCollector::class,
             QueueOldestPendingJobCollector::class,
-        ], compact('connection', 'queues'));
+        ]);
 
         return $this;
     }

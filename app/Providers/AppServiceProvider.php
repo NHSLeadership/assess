@@ -10,6 +10,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
+    #[\Override]
     public function register(): void
     {
         //
@@ -21,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Define feature flags
-        Feature::define('rich-editor-custom-blocks', fn ($user) =>
+        Feature::define('rich-editor-custom-blocks', fn ($user): bool =>
             $user && $user->can('framework:update')
         );
     }

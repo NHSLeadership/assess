@@ -1,27 +1,19 @@
 <?php
 
 use App\Models\Assessment;
-use App\Models\Response;
+use Carbon\Carbon;
 use Tests\Support\FrameworksFake;
 
 test('displayAssessmentDate uses submitted_at when present', function () {
     $component = new FrameworksFake;
 
-    $assessment = new class
-    {
-        public $submitted_at;
+    $assessment = new Assessment();
 
-        public $updated_at = null;
+    $assessment->submitted_at = Carbon::create(2024, 1, 1);
+    $assessment->created_at = null;
+    $assessment->updated_at = null;
 
-        public $created_at = null;
-
-        public function responses()
-        {
-            return collect([]);
-        }
-    };
-
-    $assessment->submitted_at = now()->setDate(2024, 1, 1);
+    $assessment->setRelation('responses', collect([]));
 
     $result = $component->displayAssessmentDate($assessment);
 
@@ -31,69 +23,20 @@ test('displayAssessmentDate uses submitted_at when present', function () {
 test('displayAssessmentDate uses latest response date when not submitted', function () {
     $component = new FrameworksFake;
 
-    // Fake response object
-    $response1 = new class
-    {
-        public $updated_at;
-    };
-    $response1->updated_at = now()->setDate(2024, 1, 1);
+    $assessment = new Assessment();
+    $assessment->created_at = null;
+    $assessment->submitted_at = null;
+    $assessment->updated_at  = null;
 
-    $response2 = new class
-    {
-        public $updated_at;
-    };
-    $response2->updated_at = now()->setDate(2024, 2, 1);
+    $response1 = (object) [
+        'updated_at' => Carbon::create(2024, 1, 1),
+    ];
 
-    // Fake assessment object
-    $assessment = new class($response1, $response2)
-    {
-        public $submitted_at = null;
+    $response2 = (object) [
+        'updated_at' => Carbon::create(2024, 2, 1),
+    ];
 
-        public $updated_at = null;
-
-        public $created_at = null;
-
-        private $responses;
-
-        public function __construct($r1, $r2)
-        {
-            $this->responses = collect([$r1, $r2]);
-        }
-
-        public function responses()
-        {
-            // Simulate Eloquent: orderByDesc('updated_at')->first()
-            return new class($this->responses)
-            {
-                private $responses;
-
-                public function __construct($responses)
-                {
-                    $this->responses = $responses;
-                }
-
-                public function orderByDesc($field)
-                {
-                    $sorted = $this->responses->sortByDesc($field);
-
-                    return new class($sorted)
-                    {
-                        private $sorted;
-
-                        public function __construct($sorted)
-                        {
-                            $this->sorted = $sorted;
-                        }
-
-                        public function first()
-                        {
-                            return $this->sorted->first();
-                        }
-                    };
-                }
-            };
-        }
-    };
+    $assessment->setRelation('responses', collect([$response1, $response2]));
 
     $result = $component->displayAssessmentDate($assessment);
 

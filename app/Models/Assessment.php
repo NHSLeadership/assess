@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Services\Auth0UserService;
+use App\Settings\Retention;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
 /**
- * @property-read \App\Models\Framework|null $framework
+ * @property-read Framework|null $framework
  */
 
 class Assessment extends Model
@@ -29,6 +32,54 @@ class Assessment extends Model
         'submitted_at' => 'datetime',
         'target_completion_date' => 'date',
     ];
+
+
+    public function effectiveLastUpdatedAt(): ?Carbon
+    {
+        $latestResponseUpdatedAt = $this->relationLoaded('responses')
+            ? $this->responses->max('updated_at')
+            : $this->responses()->max('updated_at');
+        if (is_string($latestResponseUpdatedAt)) {
+            $latestResponseUpdatedAt = Carbon::parse($latestResponseUpdatedAt);
+        }
+
+        return collect([
+            $this->updated_at,
+            $this->submitted_at,
+            $latestResponseUpdatedAt,
+        ])
+            ->filter(fn ($date) => $date instanceof Carbon)
+            ->sortBy(fn (Carbon $date) => $date->getTimestamp())
+            ->last();
+    }
+
+    public function expiresAt(): Carbon
+    {
+        $settings = app(Retention::class);
+
+        $lastUpdatedAt = $this->effectiveLastUpdatedAt() ?? $this->created_at;
+        if (! $lastUpdatedAt instanceof Carbon) {
+            throw new \LogicException('Cannot determine expiry date for an assessment without any timestamps.');
+        }
+
+        return $lastUpdatedAt
+            ->copy()
+            ->addYears($settings->retention_years);
+    }
+
+    public function isWithinExpiryWarningWindow(): bool
+    {
+        $settings = app(Retention::class);
+
+        return now()->greaterThanOrEqualTo(
+            $this->expiresAt()->subDays($settings->expiry_warning_days)
+        );
+    }
+
+    public function isExpired(): bool
+    {
+        return now()->greaterThanOrEqualTo($this->expiresAt());
+    }
 
     public function subject(): BelongsTo
     {
@@ -61,5 +112,24 @@ class Assessment extends Model
     public function variantSelections(): HasMany
     {
         return $this->hasMany(AssessmentVariantSelection::class);
+    }
+
+    public function notificationRecipient(): ?array
+    {
+        $userName = (string) $this->user_id;
+
+        $authUser = app(Auth0UserService::class)
+            ->getUserByUsername($userName);
+
+        if (! $authUser || empty($authUser['email'])) {
+            return null;
+        }
+
+        return [
+            'email' => $authUser['email'],
+            'first_name' => $authUser['given_name']
+                ?? $authUser['name']
+                    ?? null,
+        ];
     }
 }

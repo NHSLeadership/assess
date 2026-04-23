@@ -17,6 +17,7 @@
         "questionVariant:viewAny", "questionVariant:view", "questionVariant:create", "questionVariant:update", "questionVariant:delete", "questionVariant:restore", "questionVariant:forceDelete", "questionVariant:reorder",
         "rater:viewAny", "rater:view", "rater:create", "rater:update", "rater:delete", "rater:restore", "rater:forceDelete", "rater:reorder",
         "response:viewAny", "response:view", "response:create", "response:update", "response:delete", "response:restore", "response:forceDelete", "response:reorder",
+        "retentionEvent:viewAny","retentionEvent:view",
         "scaleOption:viewAny", "scaleOption:view", "scaleOption:create", "scaleOption:update", "scaleOption:delete", "scaleOption:restore", "scaleOption:forceDelete", "scaleOption:reorder",
         "scale:viewAny", "scale:view", "scale:create", "scale:update", "scale:delete", "scale:restore", "scale:forceDelete", "scale:reorder",
         "signpost:viewAny", "signpost:view", "signpost:create", "signpost:update", "signpost:delete", "signpost:restore", "signpost:forceDelete", "signpost:reorder"
@@ -38,6 +39,7 @@
         "questionVariant:viewAny", "questionVariant:view", "questionVariant:create", "questionVariant:update", "questionVariant:reorder",
         "rater:viewAny", "rater:view", "rater:create", "rater:update", "rater:reorder",
         "response:viewAny", "response:view", "response:create", "response:update", "response:reorder",
+        "retentionEvent:viewAny","retentionEvent:view",
         "scaleOption:viewAny", "scaleOption:view", "scaleOption:create", "scaleOption:update", "scaleOption:reorder",
         "scale:viewAny", "scale:view", "scale:create", "scale:update", "scale:reorder",
         "signpost:viewAny", "signpost:view", "signpost:create", "signpost:update", "signpost:reorder"

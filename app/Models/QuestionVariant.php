@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class QuestionVariant extends Model
+class QuestionVariant extends Model implements Auditable
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'question_id',
@@ -41,7 +43,7 @@ class QuestionVariant extends Model
 
         return $matches
             ->sortBy(fn ($m) => $m->attribute->order ?? 0)
-            ->map(fn ($m) => "{$m->attribute->key}={$m->option->value}")
+            ->map(fn ($m): string => "{$m->attribute->key}={$m->option->value}")
             ->values()
             ->all();
     }
@@ -50,6 +52,6 @@ class QuestionVariant extends Model
     {
         $pairs = $this->conditionPairs();
 
-        return empty($pairs) ? '—' : implode('; ', $pairs);
+        return $pairs === [] ? '—' : implode('; ', $pairs);
     }
 }

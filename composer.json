@@ -7,7 +7,8 @@
     "license": "MIT",
     "require": {
         "php": "~8.4",
-        "auth0/login": "dev-main as 7.20.0",
+        "ext-fileinfo": "*",
+        "auth0/login": "^7.22",
         "barryvdh/laravel-dompdf": "^3.1",
         "diglactic/laravel-breadcrumbs": "^10.1",
         "filament/filament": "^5.3",
@@ -19,9 +20,9 @@
         "laravel/tinker": "^3.0",
         "livewire/volt": "^1.7.0",
         "openplain/filament-tree-view": "^0.5.4",
+        "owen-it/laravel-auditing": "^14.0",
         "spatie/laravel-prometheus": "^1.5",
-        "symfony/yaml": "^7.4",
-        "ext-fileinfo": "*"
+        "symfony/yaml": "^8.0"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.1",
@@ -36,14 +37,6 @@
         "pestphp/pest-plugin-laravel": "^4.0",
         "rector/rector": "^2.3"
     },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/NHSLeadership/laravel-auth0",
-      "only": ["auth0/login"],
-      "comment": "TEMPORARY: Forked auth0/login to allow Illuminate ^13. REMOVE when upstream auth0/login supports Laravel 13 (Dependabot will surface this)."
-    }
-  ],
   "autoload": {
         "psr-4": {
             "App\\": "app/",
