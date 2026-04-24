@@ -2,9 +2,7 @@
 
 namespace App\Filament\Resources\Frameworks\Tables;
 
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\RestoreAction;
 use Filament\Tables\Columns\TextColumn;
@@ -33,18 +31,17 @@ class FrameworksTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->requiresConfirmation()
+                    ->modalHeading('Delete framework')
+                    ->modalDescription(fn ($record) =>
+                        ($record->assessments()->exists()
+                            ? "This framework is currently in use by {$record->assessments()->count()} assessment(s). Are you sure you want to delete it?"
+                            : 'Are you sure you want to delete this framework?')
+                    ),
                 RestoreAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
             ]);
     }
 }

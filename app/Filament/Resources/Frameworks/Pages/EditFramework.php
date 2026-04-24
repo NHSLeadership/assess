@@ -15,8 +15,18 @@ class EditFramework extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        return [
-            DeleteAction::make(),
-        ];
+        $actions = [];
+
+        if ($this->record?->hasAssessments()) {
+            $count = $this->record->assessments()->count();
+            $actions[] = DeleteAction::make()
+                ->requiresConfirmation()
+                ->modalHeading('Delete framework')
+                ->modalDescription("This framework is currently in use by {$count} assessment(s). Are you sure you want to delete it?");
+        } else {
+            $actions[] = DeleteAction::make();
+        }
+
+        return $actions;
     }
 }
