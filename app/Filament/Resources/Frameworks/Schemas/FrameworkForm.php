@@ -22,7 +22,7 @@ class FrameworkForm
                 TextEntry::make('warning')
                     ->state(fn (callable $get) => (
                         $get('id') && \App\Models\Framework::query()->whereKey($get('id'))->whereHas('assessments')->exists()
-                            ? 'This framework is currently in use by one or more assessments. Changes made here may affect those assessments.'
+                            ? trans('messages.framework_in_use_top_warning')
                             : ''
                     ))
                     ->badge(true)

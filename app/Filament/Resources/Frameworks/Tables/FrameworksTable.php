@@ -38,8 +38,8 @@ class FrameworksTable
                     ->modalHeading('Delete framework')
                     ->modalDescription(fn ($record) =>
                         ($record->assessments()->exists()
-                            ? "This framework is currently in use by {$record->assessments()->count()} assessment(s). Are you sure you want to delete it?"
-                            : 'Are you sure you want to delete this framework?')
+                            ? trans('messages.framework_in_use_delete_modal', ['count' => $record->assessments()->count()])
+                            : trans('messages.framework_delete_confirmation'))
                     ),
                 RestoreAction::make(),
             ]);

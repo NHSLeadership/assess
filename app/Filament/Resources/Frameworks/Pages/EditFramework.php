@@ -22,7 +22,7 @@ class EditFramework extends EditRecord
             $actions[] = DeleteAction::make()
                 ->requiresConfirmation()
                 ->modalHeading('Delete framework')
-                ->modalDescription("This framework is currently in use by {$count} assessment(s). Are you sure you want to delete it?");
+                ->modalDescription(trans('messages.framework_in_use_delete_modal', ['count' => $count]));
         } else {
             $actions[] = DeleteAction::make();
         }
