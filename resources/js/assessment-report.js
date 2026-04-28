@@ -167,6 +167,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const downloadBtn = document.getElementById('downloadPdfBtn');
 
     if (downloadBtn) {
+        const DEFAULT_LABEL =
+            downloadBtn.dataset.labelDefault || downloadBtn.textContent;
+
         downloadBtn.addEventListener('click', async () => {
             const originalText = downloadBtn.textContent;
 
@@ -213,19 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const blob = await response.blob();
 
-                // Default filename (required for blob downloads).
-                let filename = 'report.pdf';
-
-                // Optional override from server header.
-                const contentDisposition = response.headers.get('Content-Disposition');
-                if (contentDisposition) {
-                    const match = contentDisposition.match(
-                        /filename\*?=(?:UTF-8''|")?([^;"\n"]+)/i
-                    );
-                    if (match && match[1]) {
-                        filename = decodeURIComponent(match[1].replace(/"/g, ''));
-                    }
-                }
+                const filename = getSafeFilename(response, 'report.pdf');
 
                 //Trigger download.
                 const objectUrl = URL.createObjectURL(blob);
@@ -241,21 +232,47 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 downloadBtn.textContent = 'Downloaded ✓';
                 setTimeout(() => {
-                    downloadBtn.textContent = originalText;
+                    downloadBtn.textContent = DEFAULT_LABEL;
+                    downloadBtn.disabled = false;
                 }, 1500);
 
             } catch (error) {
                 console.error(error);
-
                 downloadBtn.textContent = 'Download failed';
                 setTimeout(() => {
-                    downloadBtn.textContent = originalText;
+                    downloadBtn.textContent = DEFAULT_LABEL;
+                    downloadBtn.disabled = false;
                 }, 2000);
 
             } finally {
                 downloadBtn.disabled = false;
             }
         });
+    }
+
+    function getSafeFilename(response, fallback = 'report.pdf') {
+        const header = response.headers.get('Content-Disposition');
+        if (!header) return fallback;
+
+        const starMatch = header.match(/filename\*\s*=\s*UTF-8''([^;\n]+)/i);
+        if (starMatch && starMatch[1]) {
+            try {
+                return decodeURIComponent(starMatch[1]);
+            } catch (e) {
+                console.warn('Failed to decode filename* header:', e);
+                return starMatch[1]; // return raw value as fallback
+            }
+        }
+
+        // Fallback to plain filename="..."
+        const plainMatch = header.match(/filename\s*=\s*"([^"\n]+)"/i)
+            || header.match(/filename\s*=\s*([^;\n]+)/i);
+
+        if (plainMatch && plainMatch[1]) {
+            return plainMatch[1].trim();
+        }
+
+        return fallback;
     }
 
 });
