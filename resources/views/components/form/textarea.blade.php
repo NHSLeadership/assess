@@ -13,7 +13,7 @@
     @endif
 
     @if (!empty($hints) && is_array($hints))
-        <div class="nhsuk-hint">
+        <div class="nhsuk-hint" id="{{ $name }}-hints">
             @foreach($hints as $hint)
                 <p>{!! $hint !!}</p>
             @endforeach
@@ -26,7 +26,23 @@
         </span>
     @endif
 
-    <textarea name="{{ $name }}"
+    @php
+        $describedBy = [];
+
+        if (isset($hint)) {
+            $describedBy[] = $name . '-hint';
+        }
+
+        if (!empty($hints)) {
+            $describedBy[] = $name . '-hints';
+        }
+
+        if ($errors->has($name)) {
+            $describedBy[] = $name . '-error-error';
+        }
+    @endphp
+
+        <textarea name="{{ $name }}"
             id="{{ $name }}"
             class="nhsuk-textarea {{ $errors->has($name) ? ' nhsuk-textarea--error' : '' }} {{ $class ?? '' }}"
             placeholder="{{ $placeholder ?? '' }}"
@@ -41,6 +57,9 @@
                 wire:model.defer="{{ $name ?? null }}"
             @endif
             rows="{{ $rows ?? 5 }}"
-            aria-describedby="{{ $name }}">{{ old($name) }}</textarea><br/>
-
+            @if($describedBy) aria-describedby="{{ implode(' ', $describedBy) }}"@endif
+        >
+            {{ old($name) }}
+        </textarea>
+        <br/>
 </div>

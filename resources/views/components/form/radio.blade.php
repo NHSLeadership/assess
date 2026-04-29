@@ -1,13 +1,5 @@
 <div class="nhsuk-form-group {{ $errors->has($name) ? ' nhsuk-form-group--error' : '' }}">
 
-{{--    @if (isset($label))--}}
-{{--        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--s">--}}
-{{--            <p class="nhsuk-fieldset__heading">--}}
-{{--                {{ $label }}--}}
-{{--            </p>--}}
-{{--        </legend>--}}
-{{--    @endif--}}
-
     @if (!empty($descriptions) && is_array($descriptions))
         <div class="nhsuk-u-display-block">
             @foreach($descriptions as $description)
@@ -57,7 +49,7 @@
                         @else
                             wire:model.live="{{ $name }}"
                         @endif
-                        @if (isset($tabindex) && $param_value === array_key_first($dropdown_list))
+                        @if (isset($tabindex) && $param_value === array_key_first($options_list))
                             tabindex="{{ $tabindex }}"
                         @endif
                         value="{{$param_value}}"
