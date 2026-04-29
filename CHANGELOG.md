@@ -5,9 +5,10 @@
 
 ---
 ### v1.0.13
-> Updated: 28.04.2026
+> Updated: 29.04.2026
 1. Update PDF downloads to use asynchronous handling with user feedback, removing fixed delays.
 2. Lock in-use frameworks
+2. Accessibility improvements WCAG: 1.3.1 – Info and Relationships
 
 ### v1.0.12
 > Updated: 17.04.2026
