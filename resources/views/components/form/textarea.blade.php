@@ -1,11 +1,9 @@
 <div class="nhsuk-form-group {{ $errors->has($name) ? ' nhsuk-form-group--error' : '' }}">
 
     @if (isset($label))
-        <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--s">
-            <p class="nhsuk-fieldset__heading">
-                {{ $label }}
-            </p>
-        </legend>
+        <label class="nhsuk-label nhsuk-label--s" for="{{$name}}">
+            {{ $label }}
+        </label>
     @endif
 
     @if (isset($hint))
@@ -43,6 +41,6 @@
                 wire:model.defer="{{ $name ?? null }}"
             @endif
             rows="{{ $rows ?? 5 }}"
-            aria-describedby="example-hint">{{ old($name) }}</textarea><br/>
+            aria-describedby="{{ $name }}">{{ old($name) }}</textarea><br/>
 
 </div>
