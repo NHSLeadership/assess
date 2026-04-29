@@ -107,8 +107,7 @@
                         <canvas id="{{ $chart['id'] }}" style="width: 100%; max-width: 900px;" aria-describedby="chart-desc-{{ $chart['id'] }}"></canvas>
 
                         {{-- Accessible alternative chart for screen readers --}}
-{{--                        <div id="chart-desc-{{ $chart['id'] }}" class="nhsuk-u-visually-hidden">--}}
-                        <div id="chart-desc-{{ $chart['id'] }}" >
+                        <div id="chart-desc-{{ $chart['id'] }}" class="nhsuk-u-visually-hidden">
                             <p>Bar chart showing scores for {{ $node->name }}.</p>
                             @php
                                 $labels = data_get($chart, 'data.labels', []);
