@@ -152,7 +152,7 @@
         </div>
 
         <div class="nhsuk-u-margin-bottom-4">
-            <button id="downloadPdfBtn" class="nhsuk-button">
+            <button id="downloadPdfBtn" class="nhsuk-button" data-label-default="Download PDF">
                 Download PDF
             </button>
             <p id="mobilePdfNote" class="nhsuk-body" style="display:none;">
