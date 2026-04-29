@@ -34,7 +34,11 @@ class Frameworks extends Component
         // Set default framework if none selected
         if ($this->frameworkId === null || $this->frameworkId === 0) {
             $framework = Framework::first();
-            $this->frameworkId = $framework->id;
+
+            if ($framework) {
+                $this->frameworkId = $framework->id;
+            }
+
         }
     }
 

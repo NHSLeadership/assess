@@ -7,6 +7,7 @@
 ### v1.0.13
 > Updated: 28.04.2026
 1. Update PDF downloads to use asynchronous handling with user feedback, removing fixed delays.
+2. Lock in-use frameworks
 
 ### v1.0.12
 > Updated: 17.04.2026
