@@ -65,7 +65,7 @@
                                                 @php
                                                     $dsLabel = data_get($ds, 'label', 'Series');
                                                 @endphp
-                                                <th scope="col">Score</th>
+                                                <th scope="col">$dsLabel</th>
                                             @endforeach
                                     </tr>
                                 </thead>
@@ -123,7 +123,7 @@
                                                     @php
                                                         $dsLabel = data_get($ds, 'label', 'Series');
                                                     @endphp
-                                                    <th scope="col">Score</th>
+                                                    <th scope="col">$dsLabel</th>
                                                 @endforeach
                                         </tr>
                                     </thead>
