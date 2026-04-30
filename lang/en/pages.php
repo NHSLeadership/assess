@@ -19,6 +19,9 @@ return [
     'assessment-report' => [
         'title' => 'Assessment report',
     ],
+    'assessments' => [
+        'title' => 'Assessment questions',
+    ],
     'frameworks' => [
         'title' => 'Frameworks',
         'content' => '',

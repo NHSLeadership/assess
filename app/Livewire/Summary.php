@@ -8,11 +8,11 @@ use App\Models\Rater;
 use App\Notifications\AssessmentCompleted as AssessmentCompletedNotification;
 use App\Services\FrameworkTraversalService;
 use App\Traits\AssessmentHelperTrait;
-use App\Traits\HasPageTitle;
 use App\Traits\UserTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\Features\SupportRedirects\Redirector;
 
@@ -20,7 +20,6 @@ class Summary extends Component
 {
     use AssessmentHelperTrait;
     use UserTrait;
-    use HasPageTitle;
 
     public ?int $frameworkId = null;
 
@@ -29,11 +28,6 @@ class Summary extends Component
     public ?int $requiredCount = null;
 
     public ?int $answeredRequiredCount = null;
-
-    public function mount()
-    {
-        $this->pageTitle = __('pages.summary.title');
-    }
 
     #[Computed]
     public function framework(): ?Framework
@@ -174,6 +168,7 @@ class Summary extends Component
             ->count();
     }
 
+    #[Title('Assessment summary')]
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.summary', [

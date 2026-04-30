@@ -9,7 +9,6 @@ use App\Services\FrameworkTraversalService;
 use App\Services\UserResponseService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\FormFieldValidationRulesTrait;
-use App\Traits\HasPageTitle;
 use App\Traits\UserTrait;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;

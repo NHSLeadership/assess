@@ -5,14 +5,13 @@ namespace App\Livewire;
 use App\Models\Assessment;
 use App\Models\Framework;
 use App\Traits\AssessmentHelperTrait;
-use App\Traits\HasPageTitle;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 class FrameworkInstructions extends Component
 {
     use AssessmentHelperTrait;
-    use HasPageTitle;
 
     public ?int $frameworkId = null;
 
@@ -28,8 +27,6 @@ class FrameworkInstructions extends Component
 
         $this->redirectIfInvalidAssessment($frameworkId, $assessmentId);
 
-        $this->pageTitle = __('pages.instructions.title');
-
     }
 
     #[Computed]
@@ -40,6 +37,7 @@ class FrameworkInstructions extends Component
             : null;
     }
 
+    #[Title('Instructions')]
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.framework-instructions');

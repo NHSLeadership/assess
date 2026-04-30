@@ -13,17 +13,16 @@ use App\Models\Rater;
 use App\Services\AssessmentReportService;
 use App\Services\FrameworkTraversalService;
 use App\Traits\AssessmentHelperTrait;
-use App\Traits\HasPageTitle;
 use App\Traits\UserTrait;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 class AssessmentReport extends Component
 {
     use AssessmentHelperTrait;
     use UserTrait;
-    use HasPageTitle;
 
     public ?int $frameworkId = null;
 
@@ -96,8 +95,6 @@ class AssessmentReport extends Component
                 $this->signposts[$node->id] = $signposts;
             }
         }
-
-        $this->pageTitle = __('pages.assessment-report.title');
     }
 
     #[Computed]
@@ -151,6 +148,7 @@ class AssessmentReport extends Component
             ->first();
     }
 
+    #[Title('Assessment report')]
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.assessment-report');

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use App\Traits\HasPageTitle;
 
@@ -217,8 +218,20 @@ class Variants extends Component
         ]);
     }
 
+    public function title(): string
+    {
+        $variants = $this->frameworks()?->variantAttributes;
+
+        if ($variants && $variants->isNotEmpty()) {
+            return $variants->pluck('label')->implode(' | ');
+        }
+
+        return 'Variant selection';
+    }
+
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
-        return view('livewire.variants');
+        return view('livewire.variants')
+            ->title($this->title());
     }
 }
