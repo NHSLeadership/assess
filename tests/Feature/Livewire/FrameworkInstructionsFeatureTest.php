@@ -44,7 +44,7 @@ it('renders the framework instructions view', function () {
         ->assertViewIs('livewire.framework-instructions');
 });
 
-it('dispatches page-title event when pageTitle is set', function () {
+it('renders the correct page title for framework instructions', function () {
     $user = makeAuthUser();
     $this->actingAs($user);
 
@@ -54,12 +54,16 @@ it('dispatches page-title event when pageTitle is set', function () {
         ->for($user)
         ->create();
 
+    $expectedTitle =
+        config('app.page_title_prefix') . __('pages.instructions.title');
 
-    Livewire::test(FrameworkInstructions::class, [
+    $this->get(route('instructions', [
         'frameworkId'  => $framework->id,
         'assessmentId' => $assessment->id,
-    ])->assertDispatched(
-    'page-title',
-        title: config('app.page_title_prefix') . __('pages.instructions.title')
-    );
+    ]))
+        ->assertOk()
+        ->assertSee(
+            "<title>{$expectedTitle}</title>",
+            escape: false
+        );
 });
