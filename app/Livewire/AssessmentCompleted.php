@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Traits\AssessmentHelperTrait;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 class AssessmentCompleted extends Component
@@ -23,7 +24,6 @@ class AssessmentCompleted extends Component
         if ($this->assessment()?->submitted_at === null) {
             return redirect()->route('frameworks');
         }
-
     }
 
     public function viewReport()
@@ -34,6 +34,7 @@ class AssessmentCompleted extends Component
         ]);
     }
 
+    #[Title('Assessment completed')]
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.assessment-completed');

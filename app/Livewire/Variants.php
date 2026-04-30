@@ -13,12 +13,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
 use Livewire\Component;
+use App\Traits\HasPageTitle;
 
 class Variants extends Component
 {
     use AssessmentHelperTrait;
     use UserTrait;
+    use HasPageTitle;
 
     public ?string $frameworkId = null;
 
@@ -68,7 +71,15 @@ class Variants extends Component
             }
         }
 
+
         $this->data = $this->variantSelections()?->toArray();
+
+        $variants = $this->frameworks()?->variantAttributes;
+        if ($variants?->isNotEmpty()) {
+            $this->pageTitle = $variants
+                ->pluck('label')
+                ->implode(' | ');
+        }
     }
 
     #[Computed]
@@ -207,8 +218,20 @@ class Variants extends Component
         ]);
     }
 
+    public function title(): string
+    {
+        $variants = $this->frameworks()?->variantAttributes;
+
+        if ($variants && $variants->isNotEmpty()) {
+            return $variants->pluck('label')->implode(' | ');
+        }
+
+        return 'Variant selection';
+    }
+
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
-        return view('livewire.variants');
+        return view('livewire.variants')
+            ->title($this->title());
     }
 }
