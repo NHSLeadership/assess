@@ -26,7 +26,6 @@ class Questions extends Component
     use UserTrait;
     use WithoutUrlPagination;
     use WithPagination;
-    use HasPageTitle;
 
     public $assessmentId;
 

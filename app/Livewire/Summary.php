@@ -32,7 +32,7 @@ class Summary extends Component
 
     public function mount()
     {
-    $this->pageTitle = __('pages.summary.title');
+        $this->pageTitle = __('pages.summary.title');
     }
 
     #[Computed]

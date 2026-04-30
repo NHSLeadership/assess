@@ -123,7 +123,7 @@ class Assessments extends Component
 
         //Mount page title dynamically.
         $this->pageTitle = $this->currentNode?->name ?? __('pages.questions.title');
-        $this->mountHasPageTitle();
+        $this->dispatchPageTitle();
     }
 
     /**
