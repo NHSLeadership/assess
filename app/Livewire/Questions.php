@@ -9,6 +9,7 @@ use App\Services\FrameworkTraversalService;
 use App\Services\UserResponseService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\FormFieldValidationRulesTrait;
+use App\Traits\HasPageTitle;
 use App\Traits\UserTrait;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -25,6 +26,7 @@ class Questions extends Component
     use UserTrait;
     use WithoutUrlPagination;
     use WithPagination;
+    use HasPageTitle;
 
     public $assessmentId;
 

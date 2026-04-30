@@ -14,11 +14,13 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
+use App\Traits\HasPageTitle;
 
 class Variants extends Component
 {
     use AssessmentHelperTrait;
     use UserTrait;
+    use HasPageTitle;
 
     public ?string $frameworkId = null;
 
@@ -68,7 +70,15 @@ class Variants extends Component
             }
         }
 
+
         $this->data = $this->variantSelections()?->toArray();
+
+        $variants = $this->frameworks()?->variantAttributes;
+        if ($variants?->isNotEmpty()) {
+            $this->pageTitle = $variants
+                ->pluck('label')
+                ->implode(' | ');
+        }
     }
 
     #[Computed]

@@ -13,6 +13,12 @@ return [
     'signin' => 'Sign in',
     'signout' => 'Sign out',
     'admin' => 'Admin',
+    'assessment-completed' => [
+        'title' => 'Assessment completed',
+    ],
+    'assessment-report' => [
+        'title' => 'Assessment report',
+    ],
     'frameworks' => [
         'title' => 'Frameworks',
         'content' => '',
@@ -29,8 +35,13 @@ return [
         'title' => 'Home',
         'content' => '',
     ],
+    'instructions' => [
+        'title' => 'Instructions',
+        'content' => '',
+    ],
     'questions' => [
         'reflection-label' => 'Enter your reflections, notes, reasons and evidence for your response',
+        'title' => 'Assessment questions',
     ],
     'stages' => [
         'title' => 'Stages',
@@ -43,5 +54,6 @@ return [
     'summary' => [
         'response-edit-prompt' => 'Please check your responses below.<br/>You may click on the question titles to change your answers before completing your assessment.',
         'reflection-label' => 'Notes',
+        'title' => 'Assessment summary',
     ],
 ];

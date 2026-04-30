@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Traits\AssessmentHelperTrait;
+use App\Traits\HasPageTitle;
 use Livewire\Component;
 
 class AssessmentCompleted extends Component
 {
     use AssessmentHelperTrait;
+    use HasPageTitle;
 
     /** int|null */
     public $assessmentId;
@@ -24,6 +26,7 @@ class AssessmentCompleted extends Component
             return redirect()->route('frameworks');
         }
 
+        $this->pageTitle = __('pages.assessment-completed.title');
     }
 
     public function viewReport()

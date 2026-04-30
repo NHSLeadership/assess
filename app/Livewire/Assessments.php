@@ -6,6 +6,7 @@ use App\Models\Node;
 use App\Services\FrameworkTraversalService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\FormFieldValidationRulesTrait;
+use App\Traits\HasPageTitle;
 use App\Traits\UserTrait;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -20,6 +21,7 @@ class Assessments extends Component
     use FormFieldValidationRulesTrait;
     use UserTrait;
     use WithPagination;
+    use HasPageTitle;
 
     public ?int $assessmentId = null;
 
@@ -58,6 +60,7 @@ class Assessments extends Component
                 ? $nodes->firstWhere('id', $this->nodeId)
                 : $nodes->first();
         }
+
     }
 
     #[Computed]
@@ -117,6 +120,10 @@ class Assessments extends Component
             ->whereKey($nodeId)
             ->first();
         $this->currentNode = $node;
+
+        //Mount page title dynamically.
+        $this->pageTitle = $this->currentNode?->name ?? __('pages.questions.title');
+        $this->mountHasPageTitle();
     }
 
     /**
