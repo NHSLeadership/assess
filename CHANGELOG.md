@@ -11,6 +11,7 @@
 3. Accessibility improvements WCAG: 1.3.1 – Info and Relationships
 4. Improve accessibility of charts in report
 5. Accessibility improvements WCAG Level A: Update page titles dynamically
+6. Package updates
 
 ### v1.0.12
 > Updated: 17.04.2026
