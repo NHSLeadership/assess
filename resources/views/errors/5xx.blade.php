@@ -2,7 +2,7 @@
 
 @section('title', __('Unrecognised server error'))
 @section('code', $exception->getStatusCode() ?? '5xx')
-@section('message', 'Unrecognised server error'))
+@section('message', 'Unrecognised server error')
 @section('explanation')
     <p>
         Sorry for the inconvenience. An unexpected error has occurred.

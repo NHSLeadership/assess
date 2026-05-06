@@ -4,7 +4,7 @@
             <form wire:submit.prevent="storeNext()">
                 @foreach ($questions as $question)
                     <div wire:key="question-{{ $question->id }}">
-                        {{-- Render each component based on type and it's properties --}}
+                        {{-- Render each component based on type and its properties --}}
                         @component('components.form.' . $question['component'], [
                             'name' => $question['name'] ? 'data.' . $question['name'] : null,
                             'class' => $question['class'] ?? null,
