@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 #[Signature('copy:export
-    {--path=copy-for-proofreading.txt : Output file path relative to storage/app}
+    {--path=copy-for-proofreading.txt : Output file path relative to storage/app/private}
 ')]
 #[Description('Export user-visible copy as plain text for spelling and grammar checks')]
 class ExportCopyForProofreading extends Command
