@@ -65,7 +65,7 @@
                                                 @php
                                                     $dsLabel = data_get($ds, 'label', 'Series');
                                                 @endphp
-                                                <th scope="col">$dsLabel</th>
+                                                <th scope="col">{{ is_array($dsLabel) ? implode(' ', $dsLabel) : $dsLabel }}</th>
                                             @endforeach
                                     </tr>
                                 </thead>
@@ -123,7 +123,7 @@
                                                     @php
                                                         $dsLabel = data_get($ds, 'label', 'Series');
                                                     @endphp
-                                                    <th scope="col">$dsLabel</th>
+                                                        <th scope="col">{{ is_array($dsLabel) ? implode(' ', $dsLabel) : $dsLabel }}</th>
                                                 @endforeach
                                         </tr>
                                     </thead>
