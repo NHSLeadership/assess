@@ -118,7 +118,9 @@ class ExportCopyForProofreading extends Command
             implode("\n", $lines)
         );
 
-        $this->info("✅ Copy exported to storage/app/{$path}");
+        $fullPath = Storage::disk('local')->path($path);
+        $this->info("✅ Copy exported to {$fullPath}");
+
 
         return self::SUCCESS;
     }
