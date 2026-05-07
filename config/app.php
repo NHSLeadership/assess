@@ -129,7 +129,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'version' => '1.0.12',
+    'version' => '1.0.13',
 
     /*
     |--------------------------------------------------------------------------
@@ -138,6 +138,7 @@ return [
     */
 
     'description' => env('APP_DESCRIPTION', 'NHS Leadership assessment'),
+    'page_title_prefix' => env('PAGE_TITLE_PREFIX', 'NHS Leadership assessment'),
     'welcome' => env('APP_WELCOME', '<p>From here you can assess your leadership against the NHS Management and Leadership Framework</p><hr>'),
     'show_node_type_prefix' => env('SHOW_NODE_TYPE_PREFIX', false),
     'auth0_admin_permission_cache_ttl' => env('AUTH0_ADMIN_PERMISSION_CACHE_TTL', 300),

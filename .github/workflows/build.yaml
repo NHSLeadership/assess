@@ -22,13 +22,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: get branch
         run: echo "BRANCH=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4.0.2
+        uses: aws-actions/configure-aws-credentials@v6.1.1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -36,7 +36,7 @@ jobs:
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2.0.1
+        uses: aws-actions/amazon-ecr-login@v2.1.5
 
       - name: Set Docker tag
         id: docker-tag
@@ -47,7 +47,7 @@ jobs:
           echo "buildref="$(echo $GITHUB_REF | tr '[:upper:]' '[:lower:]' | awk '{split($0,a,"/"); print a[3]}') >> $GITHUB_OUTPUT
 
       - name: Build and Push Docker image
-        uses: docker/build-push-action@v5.3.0
+        uses: docker/build-push-action@v7.1.0
         with:
           context: .
           file: docker/Dockerfile
@@ -65,7 +65,7 @@ jobs:
     steps:
       - name: Generate GitHub App token
         id: app-token
-        uses: actions/create-github-app-token@v2.0.6
+        uses: actions/create-github-app-token@v3.1.1
         with:
           app-id: ${{ secrets.CICD_APP_ID }}
           private-key: ${{ secrets.CICD_APP_PKEY }}
@@ -73,13 +73,13 @@ jobs:
           repositories: "argocd"
 
       - name: Checkout ArgoCD repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: nhsleadership/argocd
           token: ${{ steps.app-token.outputs.token }}
       
       - name: update image tag
-        uses: mikefarah/yq@v4.42.1
+        uses: mikefarah/yq@v4.53.2
         with:
           cmd: yq e -i '.spec.sources.0.helm.valuesObject.image.tag = "${{ needs.build-and-publish.outputs.buildref }}-${{ needs.build-and-publish.outputs.buildsha }}"' charts/staging-apps/templates/assess/develop.yaml
 

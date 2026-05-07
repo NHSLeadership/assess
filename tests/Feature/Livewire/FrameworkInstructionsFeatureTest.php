@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\FrameworkInstructions;
+use App\Models\Assessment;
 use App\Models\Framework;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -41,4 +42,28 @@ it('renders the framework instructions view', function () {
         'frameworkId' => $framework->id,
     ])
         ->assertViewIs('livewire.framework-instructions');
+});
+
+it('renders the correct page title for framework instructions', function () {
+    $user = makeAuthUser();
+    $this->actingAs($user);
+
+    $framework = Framework::factory()->create();
+    $assessment = Assessment::factory()
+        ->for($framework)
+        ->for($user)
+        ->create();
+
+    $expectedTitle =
+        config('app.page_title_prefix') . __('pages.instructions.title');
+
+    $this->get(route('instructions', [
+        'frameworkId'  => $framework->id,
+        'assessmentId' => $assessment->id,
+    ]))
+        ->assertOk()
+        ->assertSee(
+            "<title>{$expectedTitle}</title>",
+            escape: false
+        );
 });

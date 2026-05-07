@@ -6,7 +6,7 @@
                     <p><strong>This is a NEW Service</strong></p>
                         <p>NHS Leadership Academy has replaced its old central profile and learning portal <a href="https://nhsx.uk/" target="__blank">NHSx</a> website from the
                             <b>17th Jan 2022</b>.<br>
-                            If you would like to find more about our this new site, please follow our user guide
+                            If you would like to find more about this new site, please follow our user guide
                             <a href="{{ Config::get('app.user_guide_url','#') }}" target="_blank">user guide</a>.
                         </p>
                 </article>

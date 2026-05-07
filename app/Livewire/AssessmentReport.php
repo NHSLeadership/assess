@@ -16,6 +16,7 @@ use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 class AssessmentReport extends Component
@@ -147,6 +148,7 @@ class AssessmentReport extends Component
             ->first();
     }
 
+    #[Title('Assessment report')]
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.assessment-report');

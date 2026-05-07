@@ -167,56 +167,112 @@ document.addEventListener('DOMContentLoaded', function () {
     const downloadBtn = document.getElementById('downloadPdfBtn');
 
     if (downloadBtn) {
-        downloadBtn.addEventListener('click', function () {
-            downloadBtn.disabled = true;
-            downloadBtn.innerText = "Generating PDF…";
+        const DEFAULT_LABEL =
+            downloadBtn.dataset.labelDefault || downloadBtn.textContent;
 
-            const radarCanvas = document.getElementById('radarChart');
-            const radarImage = radarCanvas ? radarCanvas.toDataURL('image/png') : null;
+        downloadBtn.addEventListener('click', async () => {
+            const originalText = downloadBtn.textContent;
 
-            const barImages = [];
-            barCharts.forEach(chart => {
-                const canvas = document.getElementById(chart.id);
-                if (canvas) {
-                    barImages.push({
-                        id: chart.id,
-                        image: canvas.toDataURL('image/png')
-                    });
+            try {
+                downloadBtn.disabled = true;
+                downloadBtn.textContent = 'Generating PDF…';
+
+                const radarCanvas = document.getElementById('radarChart');
+                const radarImage = radarCanvas ? radarCanvas.toDataURL('image/png') : null;
+
+                const barImages = [];
+                (window.barCharts || []).forEach(chart => {
+                    const canvas = document.getElementById(chart.id);
+                    if (canvas) {
+                        barImages.push({
+                            id: chart.id,
+                            image: canvas.toDataURL('image/png')
+                        });
+                    }
+                });
+
+                //Build POST payload.
+                const payload = new FormData();
+                payload.append('_token', window.csrfToken);
+                payload.append('radarImage', radarImage || '');
+                payload.append('barImages', JSON.stringify(barImages));
+
+                //Request PDF generation from server.
+                const response = await fetch(window.pdfPostUrl, {
+                    method: 'POST',
+                    body: payload,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text().catch(() => '');
+                    throw new Error(
+                        `PDF generation failed (${response.status}). ${errorText}`.trim()
+                    );
                 }
-            });
 
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = window.pdfPostUrl;
-            form.style.display = 'none';
 
-            const csrf = document.createElement('input');
-            csrf.type = 'hidden';
-            csrf.name = '_token';
-            csrf.value = window.csrfToken;
-            form.appendChild(csrf);
+                const blob = await response.blob();
 
-            const radarInput = document.createElement('input');
-            radarInput.type = 'hidden';
-            radarInput.name = 'radarImage';
-            radarInput.value = radarImage;
-            form.appendChild(radarInput);
+                const filename = getSafeFilename(response, 'report.pdf');
 
-            const barInput = document.createElement('input');
-            barInput.type = 'hidden';
-            barInput.name = 'barImages';
-            barInput.value = JSON.stringify(barImages);
-            form.appendChild(barInput);
+                //Trigger download.
+                const objectUrl = URL.createObjectURL(blob);
 
-            document.body.appendChild(form);
-            form.submit();
+                const link = document.createElement('a');
+                link.href = objectUrl;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
 
-            // Reset button after download starts
-            setTimeout(() => {
+                link.remove();
+                URL.revokeObjectURL(objectUrl);
+
+                downloadBtn.textContent = 'Downloaded ✓';
+                setTimeout(() => {
+                    downloadBtn.textContent = DEFAULT_LABEL;
+                    downloadBtn.disabled = false;
+                }, 1500);
+
+            } catch (error) {
+                console.error(error);
+                downloadBtn.textContent = 'Download failed';
+                setTimeout(() => {
+                    downloadBtn.textContent = DEFAULT_LABEL;
+                    downloadBtn.disabled = false;
+                }, 2000);
+
+            } finally {
                 downloadBtn.disabled = false;
-                downloadBtn.innerText = "Download PDF";
-            }, 2000);
+            }
         });
+    }
+
+    function getSafeFilename(response, fallback = 'report.pdf') {
+        const header = response.headers.get('Content-Disposition');
+        if (!header) return fallback;
+
+        const starMatch = header.match(/filename\*\s*=\s*UTF-8''([^;\n]+)/i);
+        if (starMatch && starMatch[1]) {
+            try {
+                return decodeURIComponent(starMatch[1]);
+            } catch (e) {
+                console.warn('Failed to decode filename* header:', e);
+                return starMatch[1]; // return raw value as fallback
+            }
+        }
+
+        // Fallback to plain filename="..."
+        const plainMatch = header.match(/filename\s*=\s*"([^"\n]+)"/i)
+            || header.match(/filename\s*=\s*([^;\n]+)/i);
+
+        if (plainMatch && plainMatch[1]) {
+            return plainMatch[1].trim();
+        }
+
+        return fallback;
     }
 
 });

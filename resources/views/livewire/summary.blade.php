@@ -116,7 +116,7 @@
             </button>
         @elseif (!$isSubmitted)
             <h2 class="nhsuk-heading-m">Complete your assessment</h2>
-            <p>You will not be able to change your responses after completing your assessment</p>
+            <p>You will not be able to change your responses after completing your assessment.</p>
             <button class="nhsuk-button"
                     wire:click.prevent="confirmSubmit()">
                 Complete assessment

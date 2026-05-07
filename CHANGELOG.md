@@ -4,6 +4,16 @@
 # Assessment tool
 
 ---
+### v1.0.13
+> Updated: 06.05.2026
+1. Update PDF downloads to use asynchronous handling with user feedback, removing fixed delays.
+2. Lock in-use frameworks
+3. Accessibility improvements WCAG: 1.3.1 – Info and Relationships
+4. Improve accessibility of charts in report
+5. Accessibility improvements WCAG Level A: Update page titles dynamically
+6. Package updates
+7. Spelling and grammar corrections
+
 ### v1.0.12
 > Updated: 17.04.2026
 1. Code refactoring and cleanup

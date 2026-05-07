@@ -39,4 +39,14 @@ class Framework extends Model implements Auditable
     {
         return $this->hasMany(FrameworkVariantAttribute::class)->orderBy('order');
     }
+
+    public function assessments(): HasMany
+    {
+        return $this->hasMany(Assessment::class);
+    }
+
+    public function hasAssessments(): bool
+    {
+        return $this->assessments()->exists();
+    }
 }

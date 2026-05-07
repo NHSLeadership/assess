@@ -15,7 +15,6 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 use Log;
 use Throwable;
@@ -34,7 +33,11 @@ class Frameworks extends Component
         // Set default framework if none selected
         if ($this->frameworkId === null || $this->frameworkId === 0) {
             $framework = Framework::first();
-            $this->frameworkId = $framework->id;
+
+            if ($framework) {
+                $this->frameworkId = $framework->id;
+            }
+
         }
     }
 
@@ -196,10 +199,10 @@ class Frameworks extends Component
         return sprintf('%d/%d (%d%%)', $answered, $total, $percentage);
     }
 
-    #[Title('Frameworks')]
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
-        return view('livewire.frameworks');
+        return view('livewire.frameworks')
+            ->title(__('pages.frameworks.title'));
     }
 
     public function startNewAssessment(): void

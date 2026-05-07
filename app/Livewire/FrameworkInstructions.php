@@ -6,6 +6,7 @@ use App\Models\Assessment;
 use App\Models\Framework;
 use App\Traits\AssessmentHelperTrait;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
 class FrameworkInstructions extends Component
@@ -25,6 +26,7 @@ class FrameworkInstructions extends Component
         $this->redirectIfAssessmentNotPermitted($this->frameworkId, $this->assessmentId);
 
         $this->redirectIfInvalidAssessment($frameworkId, $assessmentId);
+
     }
 
     #[Computed]
@@ -35,6 +37,7 @@ class FrameworkInstructions extends Component
             : null;
     }
 
+    #[Title('Instructions')]
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.framework-instructions');

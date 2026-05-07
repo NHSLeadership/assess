@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Frameworks\Schemas;
 use App\Filament\Forms\Components\RichEditor\RichContentCustomBlocks\BarChartBlock;
 use Filament\Forms\Components\CodeEditor;
 use Filament\Forms\Components\CodeEditor\Enums\Language;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -18,6 +19,18 @@ class FrameworkForm
     {
         return $schema
             ->components([
+                TextEntry::make('warning')
+                    ->state(fn (callable $get) => (
+                        $get('id') && \App\Models\Framework::query()->whereKey($get('id'))->whereHas('assessments')->exists()
+                            ? trans('messages.framework_in_use_top_warning')
+                            : ''
+                    ))
+                    ->badge(true)
+                    ->color('danger')
+                    ->size('lg')
+                    ->icon('heroicon-o-exclamation-triangle')
+                    ->visible(fn (callable $get) => (bool) $get('id'))
+                    ->columnSpanFull(),
                 TextInput::make('name')
                     ->live(onBlur: true)
                     ->afterStateUpdated(function ($state, callable $set, callable $get) {

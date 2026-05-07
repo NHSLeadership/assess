@@ -44,10 +44,46 @@
 
         @if (!empty($radarData))
             <h2>Results</h2>
-            <div class="nhsuk-u-margin-bottom-5" wire:ignore>
-                <h3>Average scores for standards</h3>
-                <canvas id="radarChart" style="width: 90%"></canvas>
-            </div>
+                <div class="nhsuk-u-margin-bottom-5" wire:ignore>
+                    <h3>Average scores for standards</h3>
+                    <canvas id="radarChart" style="width: 90%" aria-describedby="radar-desc"></canvas>
+
+                    {{-- Accessible alternative chart for screen readers --}}
+                    <div id="radar-desc" class="nhsuk-u-visually-hidden">
+                        <p>Radar chart showing average scores for standards.</p>
+                        @if(!empty($radarData) && is_array($radarData))
+                            @php
+                                $labels = data_get($radarData, 'labels', []);
+                                $datasets = data_get($radarData, 'datasets', []);
+                            @endphp
+                            <table>
+                                <caption>Radar chart data: average scores for standards</caption>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Standard</th>
+                                            @foreach($datasets as $ds)
+                                                @php
+                                                    $dsLabel = data_get($ds, 'label', 'Series');
+                                                @endphp
+                                                <th scope="col">{{ is_array($dsLabel) ? implode(' ', $dsLabel) : $dsLabel }}</th>
+                                            @endforeach
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($labels as $i => $label)
+                                        <tr>
+                                            <th scope="row">{{ is_array($label) ? implode(' ', $label) : $label }}</th>
+                                            @foreach($datasets as $ds)
+                                                @php $cell = data_get($ds, 'data.' . $i, ''); @endphp
+                                                <td>{{ is_array($cell) ? implode(', ', $cell) : $cell }}</td>
+                                            @endforeach
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @endif
+                    </div>
+                </div>
         @endif
         @foreach ($this->nodes as $node)
 
@@ -68,7 +104,43 @@
 
                 @if ($chart)
                     <div class="nhsuk-u-margin-bottom-5" wire:ignore>
-                        <canvas id="{{ $chart['id'] }}" style="width: 100%; max-width: 900px;"></canvas>
+                        <canvas id="{{ $chart['id'] }}" style="width: 100%; max-width: 900px;" aria-describedby="chart-desc-{{ $chart['id'] }}"></canvas>
+
+                        {{-- Accessible alternative chart for screen readers --}}
+                        <div id="chart-desc-{{ $chart['id'] }}" class="nhsuk-u-visually-hidden">
+                            <p>Bar chart showing scores for {{ $node->name }}.</p>
+                            @php
+                                $labels = data_get($chart, 'data.labels', []);
+                                $datasets = data_get($chart, 'data.datasets', []);
+                            @endphp
+                            @if(!empty($labels) && !empty($datasets))
+                                <table>
+                                    <caption>Bar chart data for {{ $node->name }}</caption>
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Label</th>
+                                                @foreach($datasets as $ds)
+                                                    @php
+                                                        $dsLabel = data_get($ds, 'label', 'Series');
+                                                    @endphp
+                                                        <th scope="col">{{ is_array($dsLabel) ? implode(' ', $dsLabel) : $dsLabel }}</th>
+                                                @endforeach
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($labels as $i => $label)
+                                            <tr>
+                                                <th scope="row">{{ is_array($label) ? implode(' ', $label) : $label }}</th>
+                                                @foreach($datasets as $ds)
+                                                    @php $cell = data_get($ds, 'data.' . $i, ''); @endphp
+                                                    <td>{{ is_array($cell) ? implode(', ', $cell) : $cell }}</td>
+                                                @endforeach
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @endif
+                        </div>
                     </div>
                 @endif
 
@@ -152,7 +224,7 @@
         </div>
 
         <div class="nhsuk-u-margin-bottom-4">
-            <button id="downloadPdfBtn" class="nhsuk-button">
+            <button id="downloadPdfBtn" class="nhsuk-button" data-label-default="Download PDF">
                 Download PDF
             </button>
             <p id="mobilePdfNote" class="nhsuk-body" style="display:none;">

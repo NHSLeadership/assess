@@ -70,13 +70,19 @@
                     <span class="nhsuk-action-link__text">{{ __('Start new self assessment') }}</span>
                 </a>
             </div>
-        @else
-            <p>No frameworks found.</p>
         @endif
 
         @include('livewire.alerts')
 
-        @if ($assessments->isNotEmpty())
+        @if (!$this->framework)
+            <div class="nhsuk-inset-text nhsuk-u-margin-top-1">
+                <span class="nhsuk-u-visually-hidden">Information: </span>
+                <p>No assessment framework is currently available.</p>
+                <p>Once a framework has been set up, you’ll be able to start and manage assessments here.</p>
+                <p>For help or support, please visit our <a href="https://leadershipacademy.nhs.uk/contact-us/">contact us page</a>.
+                </p>
+            </div>
+        @elseif ($assessments->isNotEmpty())
             <h3>{{ __('Assessments') }}</h3>
 
             <table class="nhsuk-table">

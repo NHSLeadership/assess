@@ -5,7 +5,7 @@
 A web application built with the Laravel framework. 
 
 ### Installation 
-> Just run composer install and compile node content when applicable, please check the php version requirement as per composer (php 8+)
+> Run `composer install`. If applicable, compile Node assets. Please ensure your PHP version meets the Composer requirement (PHP 8+).
 ```composer install```
 
 When you first install it, the .env will not be present
@@ -13,7 +13,7 @@ When you first install it, the .env will not be present
 ```cp .env.example .env```
 ```php artisan key:generate```
 
-And tweak your default settings if needed (mysql, security etc...)
+And tweak your default settings if needed (mysql, security, etc.)
 
 ### Locally run the app with (recommended) 
 > php artisan serve
@@ -36,7 +36,7 @@ Run development watch
 ```npm run watch```
 ```watch-poll```
 
-Run development watch
+Run production build
 ```npm run production```
 
 ### Optimising Filament components
