@@ -5,7 +5,7 @@
 A web application built with the Laravel framework. 
 
 ### Installation 
-> Just run composer install and compile node content when applicable, please check the php version requirement as per composer (PHP 8+)
+> Run `composer install`. If applicable, compile Node assets. Please ensure your PHP version meets the Composer requirement (PHP 8+).
 ```composer install```
 
 When you first install it, the .env will not be present
