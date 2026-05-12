@@ -7,6 +7,16 @@
   "rangeStrategy": "bump",
   "composerIgnorePlatformReqs": [],
   "dependencyDashboard": true,
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"],
+    "minimumReleaseAge": "0 days",
+    "automerge": true,
+    "automergeType": "pr",
+    "platformAutomerge": true,
+    "schedule": ["at any time"]
+  },
   "packageRules": [
     {
       "matchDepTypes": ["engines"],
@@ -68,15 +78,6 @@
       "matchUpdateTypes": ["major"],
       "automerge": false,
       "dependencyDashboardApproval": true
-    },
-    {
-      "matchUpdateTypes": ["patch", "minor"],
-      "matchVulnerabilityPriority": ["CRITICAL", "HIGH"],
-      "minimumReleaseAge": "0 days",
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true,
-      "groupName": "critical security updates"
     }
   ]
 }
