@@ -1,12 +1,32 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended", ":semanticCommits"],
-  "baseBranches": ["develop"],
+  "baseBranches": ["main"],
   "timezone": "Europe/London",
+  "schedule": ["* 9-16 * * 1-5"],
   "rangeStrategy": "bump",
   "composerIgnorePlatformReqs": [],
   "dependencyDashboard": true,
+  "osvVulnerabilityAlerts": true,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"],
+    "minimumReleaseAge": "0 days",
+    "automerge": true,
+    "automergeType": "pr",
+    "platformAutomerge": true,
+    "schedule": ["at any time"]
+  },
   "packageRules": [
+    {
+      "matchDepTypes": ["engines"],
+      "enabled": false
+    },
+    {
+      "matchManagers": ["composer"],
+      "matchDepTypes": ["platform"],
+      "enabled": false
+    },
     {
       "matchManagers": ["composer"],
       "matchUpdateTypes": ["patch"],
@@ -29,9 +49,10 @@
       "dependencyDashboardApproval": true
     },
     {
+      "matchManagers": ["composer"],
       "matchPackageNames": ["laravel/framework"],
       "matchUpdateTypes": ["patch"],
-      "groupName": null,
+      "groupName": "laravel framework patches",
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true,
@@ -43,7 +64,20 @@
       "groupName": "npm patch updates",
       "automerge": true,
       "automergeType": "pr",
-      "platformAutomerge": true
+      "platformAutomerge": true,
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["minor"],
+      "groupName": "npm minor updates",
+      "automerge": false
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "dependencyDashboardApproval": true
     }
   ]
 }
