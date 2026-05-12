@@ -12,9 +12,8 @@
                             'type' => $question['type'] ?? null,
                             'descriptions' => [
                                 $question['text'] ?? null,
-                                \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $question['id']) ?? $question['hint']
+                                '<div class="nhsuk-inset-text inset-text-large"><span class="nhsuk-u-visually-hidden">Information: </span><p>' . (\App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $question['id']) ?? $question['hint']) . '</p></div>'
                              ]
-
                         ])
                             @slot('label')
                                 <span class="nhsuk-u-visually-hidden">Competency {{ $question->id }}</span>
