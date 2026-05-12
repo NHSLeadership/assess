@@ -12,7 +12,7 @@
                             'type' => $question['type'] ?? null,
                             'descriptions' => [
                                 $question['text'] ?? null,
-                                '<div class="nhsuk-inset-text inset-text-large"><span class="nhsuk-u-visually-hidden">Information: </span><p>' . (\App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $question['id']) ?? $question['hint']) . '</p></div>'
+                                '<div class="nhsuk-inset-text inset-text-large"><span class="nhsuk-u-visually-hidden">Information: </span><p>' . (($resolvedHint = \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $question['id'])) !== '' && trim($resolvedHint) !== '' ? $resolvedHint : $question['hint']) . '</p></div>'
                              ]
                         ])
                             @slot('label')
