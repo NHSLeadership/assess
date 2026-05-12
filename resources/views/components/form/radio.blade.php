@@ -3,7 +3,11 @@
     @if (!empty($descriptions) && is_array($descriptions))
         <div class="nhsuk-u-display-block">
             @foreach($descriptions as $description)
-                <p>{!! $description !!}</p>
+                @if (is_string($description) && strpos(trim($description), '<div') === 0)
+                    {!! $description !!}
+                @else
+                    <p>{!! $description !!}</p>
+                @endif
             @endforeach
         </div>
     @endif
