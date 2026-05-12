@@ -13,7 +13,7 @@ env:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
-    if: github.event.head_commit.author.name != 'dependabot[bot]' && github.event.head_commit.author.name != 'renovate[bot]'
+#    if: github.event.head_commit.author.name != 'dependabot[bot]' && github.event.head_commit.author.name != 'renovate[bot]'
     outputs:
       buildsha: ${{ steps.docker-tag.outputs.buildsha }}
       buildref: ${{ steps.docker-tag.outputs.buildref }}
