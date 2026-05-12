@@ -1,10 +1,10 @@
-name: build-develop-master-image
+name: build-main-image
 
 on:
   push:
     branches:
         - main
-        - develop
+  workflow_dispatch:
 
 env:
   PROJECT: assess
@@ -13,6 +13,7 @@ env:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    if: github.event.head_commit.author.name != 'dependabot[bot]' && github.event.head_commit.author.name != 'renovate[bot]'
     outputs:
       buildsha: ${{ steps.docker-tag.outputs.buildsha }}
       buildref: ${{ steps.docker-tag.outputs.buildref }}
@@ -55,10 +56,10 @@ jobs:
           tags: |
             ${{ env.ECR_URI }}/${{ env.PROJECT}}:${{ steps.docker-tag.outputs.buildref }}-${{ steps.docker-tag.outputs.buildsha }}
   
-  deploy-develop-to-staging:
+  deploy-main-to-staging:
     runs-on: ubuntu-latest
     needs: build-and-publish
-    if: success() && github.ref == 'refs/heads/develop'
+    if: success() && github.ref == 'refs/heads/main'
     permissions:
       contents: read
       actions: read
@@ -81,11 +82,11 @@ jobs:
       - name: update image tag
         uses: mikefarah/yq@v4.53.2
         with:
-          cmd: yq e -i '.spec.sources.0.helm.valuesObject.image.tag = "${{ needs.build-and-publish.outputs.buildref }}-${{ needs.build-and-publish.outputs.buildsha }}"' charts/staging-apps/templates/assess/develop.yaml
+          cmd: yq e -i '.spec.sources.0.helm.valuesObject.image.tag = "${{ needs.build-and-publish.outputs.buildref }}-${{ needs.build-and-publish.outputs.buildsha }}"' charts/staging-apps/templates/assess/main.yaml
 
       - name: Update ArgoCD app in GitHub
         run: |
           git config --global user.email "${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com"
           git config --global user.name "${{ steps.app-token.outputs.app-slug }}[bot]"
-          git commit -am 'assess: deploying ${{ github.sha }} to staging/develop'
+          git commit -am 'assess: deploying ${{ github.sha }} to staging/main'
           git push
