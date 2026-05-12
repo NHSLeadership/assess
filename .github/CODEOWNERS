@@ -6,4 +6,4 @@
 /devops/  @NHSLeadership/devops
 /docker/  @NHSLeadership/devops
 /helm/    @NHSLeadership/devops
-/DISASTER_RECOVERY.md @NHSLeadership/devops
+DISASTER_RECOVERY.md @NHSLeadership/devops
