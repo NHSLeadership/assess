@@ -6,7 +6,7 @@ This application repository does not own the Kubernetes or infrastructure disast
 
 - https://github.com/NHSLeadership/tofu-infrastructure : infrastructure repository with disaster recovery and cluster rebuild procedures.
 - https://github.com/NHSLeadership/helm-charts : Helm charts for application settings and deployment configuration.
-- https://github.com/NHSLeadership/argocd: ArgoCD repository for application restore, deployment rollback, and recovery steps.
+- https://github.com/NHSLeadership/argocd : ArgoCD repository for application restore, deployment rollback, and recovery steps.
 
 ## What this repository covers
 
