@@ -4,6 +4,7 @@
 # Infrastructure falls under DevOps
 /.github/ @NHSLeadership/devops
 /docker/  @NHSLeadership/devops
+DISASTER_RECOVERY.md @NHSLeadership/devops
 LICENCE.md @NHSLeadership/devops
 renovate.json @NHSLeadership/devops
 SECURITY.md @NHSLeadership/devops
