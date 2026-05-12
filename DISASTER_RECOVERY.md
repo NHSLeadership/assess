@@ -13,6 +13,7 @@ This application repository does not own the Kubernetes or infrastructure disast
 - This document is intentionally minimal.
 - App-specific recovery actions should be handled by the appropriate infrastructure or deployment repos.
 
-## Contacts
+## Security contacts
 
-- See SECURITY.md for contacts
+- See SECURITY.md for vulnerability reporting and cybersecurity contacts only.
+- For operational or disaster recovery ownership, use the infrastructure and ArgoCD repositories listed above.
