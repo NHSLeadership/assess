@@ -200,6 +200,14 @@ class Frameworks extends Component
     }
 
     /**
+     * Get the variant attribute label for the table header
+     */
+    public function getVariantAttributeHeaderLabel(): ?string
+    {
+        return $this->framework?->variantAttributes?->first()?->label;
+    }
+
+    /**
      * Get the variant attribute label for an assessment
      */
     public function getVariantAttributeLabel(Assessment $assessment): string

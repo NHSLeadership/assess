@@ -84,7 +84,7 @@
                 <tr>
                     <th scope="col" class="nhsuk-table__header">Type</th>
                     <th scope="col" class="nhsuk-table__header">
-                        {{ $this->framework->variantAttributes->first()->label ?? null }}
+                        {{ $this->getVariantAttributeHeaderLabel() }}
                     </th>
                     <th scope="col" class="nhsuk-table__header">Last updated</th>
                     <th scope="col" class="nhsuk-table__header">Progress</th>
