@@ -2,14 +2,14 @@
     <div class="nhsuk-grid-column-full">
 
         @if ($this->framework)
-            <h1 class="nhsuk-heading-l">{{ $this->framework->name ?? null }} {{ $this->getFrameworkHeingAssessmentType() }}</h1>
+            <h1 class="nhsuk-heading-l">{{ $this->framework->name ?? null }} {{ $this->getFrameworkHeadingAssessmentType() }}</h1>
 
             <div class="nhsuk-body">
                 {!! \App\Support\RichTextRender::render($this->framework->description, $this->user, $this->framework) !!}
             </div>
 
             @if (
-                $this->assessments
+                $this->frameworkAssessments()
                     ->filter(fn ($assessment) => $assessment->isWithinExpiryWarningWindow())
                     ->isNotEmpty()
             )
@@ -76,7 +76,7 @@
                 <p>For help or support, please visit our <a href="https://leadershipacademy.nhs.uk/contact-us/">contact us page</a>.
                 </p>
             </div>
-        @elseif ($this->assessments->isNotEmpty())
+        @elseif ($this->frameworkAssessments()->isNotEmpty())
             <h3>{{ __('Assessments') }}</h3>
 
             <table class="nhsuk-table">
@@ -93,7 +93,7 @@
                 </tr>
                 </thead>
                 <tbody class="nhsuk-table__body">
-                @foreach ($this->assessments as $assessment)
+                @foreach ($this->frameworkAssessments() as $assessment)
                     <tr class="nhsuk-table__row" wire:key="assessment-{{ $assessment->id }}">
                         <td class="nhsuk-table__cell">
                             <a href="{{ !empty($assessment->submitted_at)

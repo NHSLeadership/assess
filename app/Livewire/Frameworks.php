@@ -200,6 +200,18 @@ class Frameworks extends Component
     }
 
     /**
+     * Get assessments for the current framework, or empty collection if no framework
+     */
+    public function frameworkAssessments(): Collection
+    {
+        if (!$this->framework) {
+            return collect();
+        }
+
+        return $this->assessments();
+    }
+
+    /**
      * Get the variant attribute label for the table header
      */
     public function getVariantAttributeHeaderLabel(): ?string
@@ -232,7 +244,7 @@ class Frameworks extends Component
     /**
      * Get the assessment type for page heading
      */
-    public function getFrameworkHeingAssessmentType(): string
+    public function getFrameworkHeadingAssessmentType(): string
     {
         $type = $this->loggedInRater()?->pivot?->assessment_type ?? 'self assessment';
         return strtolower($type);
