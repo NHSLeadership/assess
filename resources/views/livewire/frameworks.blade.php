@@ -1,21 +1,15 @@
 <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
     <div class="nhsuk-grid-column-full">
 
-        @php
-            $assessments = $this->framework
-                ? $this->assessments
-                : collect();
-        @endphp
-
         @if ($this->framework)
-            <h1 class="nhsuk-heading-l">{{ $this->framework->name ?? null }} {{ strtolower(($this->loggedInRater()?->pivot?->assessment_type) ?? 'self assessment') }}</h1>
+            <h1 class="nhsuk-heading-l">{{ $this->framework->name ?? null }} {{ $this->getFrameworkHeingAssessmentType() }}</h1>
 
             <div class="nhsuk-body">
                 {!! \App\Support\RichTextRender::render($this->framework->description, $this->user, $this->framework) !!}
             </div>
 
             @if (
-                $assessments
+                $this->assessments
                     ->filter(fn ($assessment) => $assessment->isWithinExpiryWarningWindow())
                     ->isNotEmpty()
             )
@@ -82,13 +76,16 @@
                 <p>For help or support, please visit our <a href="https://leadershipacademy.nhs.uk/contact-us/">contact us page</a>.
                 </p>
             </div>
-        @elseif ($assessments->isNotEmpty())
+        @elseif ($this->assessments->isNotEmpty())
             <h3>{{ __('Assessments') }}</h3>
 
             <table class="nhsuk-table">
                 <thead class="nhsuk-table__head">
                 <tr>
                     <th scope="col" class="nhsuk-table__header">Type</th>
+                    <th scope="col" class="nhsuk-table__header">
+                        {{ $this->framework->variantAttributes->first()->label ?? null }}
+                    </th>
                     <th scope="col" class="nhsuk-table__header">Last updated</th>
                     <th scope="col" class="nhsuk-table__header">Progress</th>
                     <th scope="col" class="nhsuk-table__header">Status</th>
@@ -96,7 +93,7 @@
                 </tr>
                 </thead>
                 <tbody class="nhsuk-table__body">
-                @foreach ($assessments as $assessment)
+                @foreach ($this->assessments as $assessment)
                     <tr class="nhsuk-table__row" wire:key="assessment-{{ $assessment->id }}">
                         <td class="nhsuk-table__cell">
                             <a href="{{ !empty($assessment->submitted_at)
@@ -104,9 +101,12 @@
                                : route('variants', ['frameworkId' => $assessment->framework?->id, 'assessmentId' => $assessment->id]) }}"
                                aria-describedby="{{ $assessment->slug }}-hint"
                                class="nhsuk-link">
-                                {{ ucfirst(($this->loggedInRater($assessment)?->pivot?->assessment_type) ?? 'Self assessment') }}
+                                {{ $this->getAssessmentTypeDisplay($assessment) }}
                                 <span class="nhsuk-u-visually-hidden">{{ $this->displayAssessmentDate($assessment) }}</span>
                             </a>
+                        </td>
+                        <td class="nhsuk-table__cell">
+                            {{ $this->getVariantAttributeLabel($assessment) }}
                         </td>
                         <td class="nhsuk-table__cell">
                             {{ $this->displayAssessmentDate($assessment) }}
@@ -115,23 +115,16 @@
                             {{ $this->displayProgress($assessment) }}
                         </td>
                         <td class="nhsuk-table__cell">
-                            @if ($assessment->isWithinExpiryWarningWindow())
-                                <strong class="nhsuk-tag nhsuk-tag--yellow">
-                                    {{ __('Expiring') }}
-                                </strong>
+                            @php
+                                $tagData = $this->getAssessmentStatusTag($assessment);
+                            @endphp
+                            <strong class="nhsuk-tag {{ $tagData['class'] }}">
+                                {{ $tagData['text'] }}
+                            </strong>
+                            @if ($tagData['subtitle'])
                                 <div class="nhsuk-hint nhsuk-u-margin-top-1">
-                                    Deletes on {{ $assessment->expiresAt()->format('j F Y') }}
+                                    {{ $tagData['subtitle'] }}
                                 </div>
-                            @elseif(empty($assessment->submitted_at))
-                                @if ($assessment->questions)
-                                    <strong class="nhsuk-tag nhsuk-tag--red">{{ __('Not started') }}</strong>
-                                @elseif ($assessment->responses?->count() === $assessment?->framework?->questions?->where('required', 1)->count())
-                                    <strong class="nhsuk-tag nhsuk-tag--orange">{{ __('Ready') }}</strong>
-                                @else
-                                    <strong class="nhsuk-tag nhsuk-tag--blue">{{ __('Started') }}</strong>
-                                @endif
-                            @else
-                                <strong class="nhsuk-tag nhsuk-tag--green">{{ __('Completed') }}</strong>
                             @endif
                         </td>
                         <td class="nhsuk-table__cell">

@@ -199,6 +199,80 @@ class Frameworks extends Component
         return sprintf('%d/%d (%d%%)', $answered, $total, $percentage);
     }
 
+    /**
+     * Get the variant attribute label for an assessment
+     */
+    public function getVariantAttributeLabel(Assessment $assessment): string
+    {
+        try {
+            $service = new \App\Services\AssessmentReportService($assessment->framework_id, $assessment->id);
+            return $service->variantAttributeLabel() ?? '';
+        } catch (\Throwable) {
+            return '';
+        }
+    }
+
+    /**
+     * Get the display name for assessment type
+     */
+    public function getAssessmentTypeDisplay(Assessment $assessment): string
+    {
+        $type = $this->loggedInRater($assessment)?->pivot?->assessment_type ?? 'self assessment';
+        return ucfirst(strtolower($type));
+    }
+
+    /**
+     * Get the assessment type for page heading
+     */
+    public function getFrameworkHeingAssessmentType(): string
+    {
+        $type = $this->loggedInRater()?->pivot?->assessment_type ?? 'self assessment';
+        return strtolower($type);
+    }
+
+    /**
+     * Get status tag data for an assessment
+     * Returns array with 'class', 'text', 'subtitle' keys
+     */
+    public function getAssessmentStatusTag(Assessment $assessment): array
+    {
+        if ($assessment->isWithinExpiryWarningWindow()) {
+            return [
+                'class' => 'nhsuk-tag--yellow',
+                'text' => __('Expiring'),
+                'subtitle' => 'Deletes on ' . $assessment->expiresAt()->format('j F Y'),
+            ];
+        }
+
+        if (empty($assessment->submitted_at)) {
+            if ($assessment->questions) {
+                return [
+                    'class' => 'nhsuk-tag--red',
+                    'text' => __('Not started'),
+                    'subtitle' => null,
+                ];
+            } elseif ($assessment->responses?->count() === $assessment?->framework?->questions?->where('required', 1)->count()) {
+                return [
+                    'class' => 'nhsuk-tag--orange',
+                    'text' => __('Ready'),
+                    'subtitle' => null,
+                ];
+            } else {
+                return [
+                    'class' => 'nhsuk-tag--blue',
+                    'text' => __('Started'),
+                    'subtitle' => null,
+                ];
+            }
+        }
+
+        return [
+            'class' => 'nhsuk-tag--green',
+            'text' => __('Completed'),
+            'subtitle' => null,
+        ];
+    }
+
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.frameworks')
