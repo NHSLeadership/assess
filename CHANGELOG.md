@@ -4,6 +4,11 @@
 # Assessment tool
 
 ---
+### v1.0.14
+> Updated: 12.05.2026
+1. Style competency statements as inset text
+
+---
 ### v1.0.13
 > Updated: 06.05.2026
 1. Update PDF downloads to use asynchronous handling with user feedback, removing fixed delays.
