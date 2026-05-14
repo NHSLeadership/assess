@@ -269,7 +269,7 @@ class Frameworks extends Component
             return [
                 'class' => 'nhsuk-tag--yellow',
                 'text' => __('Expiring'),
-                'subtitle' => 'Deletes on ' . $assessment->expiresAt()->format('j F Y'),
+                'subtitle' => __('Deletes on :date', ['date' => $assessment->expiresAt()->format('j F Y')]),
             ];
         }
 
