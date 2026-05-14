@@ -147,6 +147,7 @@ class Frameworks extends Component
             ])
             ->orderByDesc('last_response_at')
             ->with('responses')
+            ->with('variantSelections.option')
             ->get();
     }
 
@@ -229,9 +230,13 @@ class Frameworks extends Component
     public function getVariantAttributeLabel(Assessment $assessment): string
     {
         try {
-            $service = new \App\Services\AssessmentReportService($assessment->framework_id, $assessment->id);
-            return $service->variantAttributeLabel() ?? '';
-        } catch (\Throwable) {
+            return $assessment->variantSelections->first()?->option?->label ?? '';
+        } catch (\Throwable $e) {
+            Log::error('Error getting variant attribute label', [
+                'assessment_id' => $assessment->id,
+                'message' => $e->getMessage(),
+                'exception' => $e,
+            ]);
             return '';
         }
     }
