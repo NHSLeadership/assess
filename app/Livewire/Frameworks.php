@@ -212,11 +212,7 @@ class Frameworks extends Component
      */
     public function frameworkAssessments(): Collection
     {
-        if (!$this->framework) {
-            return collect();
-        }
-
-        return $this->assessments();
+        return $this->assessments ?? collect();
     }
 
     /**
