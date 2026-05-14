@@ -274,7 +274,7 @@ class Frameworks extends Component
         }
 
         if (empty($assessment->submitted_at)) {
-            if ($assessment->questions) {
+            if ($assessment->responses?->isEmpty()) {
                 return [
                     'class' => 'nhsuk-tag--red',
                     'text' => __('Not started'),
