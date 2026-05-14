@@ -87,9 +87,11 @@
                 <thead class="nhsuk-table__head">
                 <tr>
                     <th scope="col" class="nhsuk-table__header">Type</th>
-                    <th scope="col" class="nhsuk-table__header">
-                        {{ $this->getVariantAttributeHeaderLabel() }}
-                    </th>
+                    @if ($this->hasVariantAttributes())
+                        <th scope="col" class="nhsuk-table__header">
+                            {{ $this->getVariantAttributeHeaderLabel() }}
+                        </th>
+                    @endif
                     <th scope="col" class="nhsuk-table__header">Last updated</th>
                     <th scope="col" class="nhsuk-table__header">Progress</th>
                     <th scope="col" class="nhsuk-table__header">Status</th>
@@ -109,9 +111,11 @@
                                 <span class="nhsuk-u-visually-hidden">{{ $this->displayAssessmentDate($assessment) }}</span>
                             </a>
                         </td>
-                        <td class="nhsuk-table__cell">
-                            {{ $this->getVariantAttributeLabel($assessment) }}
-                        </td>
+                        @if ($this->hasVariantAttributes())
+                            <td class="nhsuk-table__cell">
+                                {{ $this->getVariantAttributeLabel($assessment) }}
+                            </td>
+                        @endif
                         <td class="nhsuk-table__cell">
                             {{ $this->displayAssessmentDate($assessment) }}
                         </td>

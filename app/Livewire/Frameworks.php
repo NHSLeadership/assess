@@ -41,6 +41,14 @@ class Frameworks extends Component
         }
     }
 
+    /**
+     * Check if the current framework has any variant attributes
+     */
+    public function hasVariantAttributes(): bool
+    {
+        return $this->framework?->variantAttributes?->isNotEmpty() ?? false;
+    }
+
     public function retainExpiringAssessments(): void
     {
         $expiring = $this->assessments()
