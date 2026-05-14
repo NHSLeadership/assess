@@ -29,6 +29,12 @@
     },
     {
       "matchManagers": ["composer"],
+      "matchPackageNames": ["php"],
+      "matchUpdateTypes": ["minor", "major"],
+      "enabled": false
+    },
+    {
+      "matchManagers": ["composer"],
       "matchUpdateTypes": ["patch"],
       "groupName": "composer patch updates",
       "automerge": true,
