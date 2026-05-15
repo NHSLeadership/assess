@@ -124,7 +124,7 @@ class Frameworks extends Component
     #[Computed]
     public function framework(): ?Framework
     {
-        return Framework::find($this->frameworkId);
+        return Framework::with('variantAttributes')->find($this->frameworkId);
     }
 
     #[Computed]
