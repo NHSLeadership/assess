@@ -16,7 +16,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
-use Log;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class Frameworks extends Component
