@@ -1,11 +1,12 @@
 <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
     <div class="nhsuk-grid-column-full">
 
-        @php
-            $assessments = $this->frameworkAssessments();
-        @endphp
-
         @if ($this->framework)
+
+            @php
+                $assessments = $this->frameworkAssessments();
+            @endphp
+
             <h1 class="nhsuk-heading-l">{{ $this->framework->name ?? null }} {{ $this->getFrameworkHeadingAssessmentType() }}</h1>
 
             <div class="nhsuk-body">

@@ -213,6 +213,9 @@ class Frameworks extends Component
      */
     public function frameworkAssessments(): Collection
     {
+        if (!$this->framework) {
+            return collect();
+        }
         return $this->assessments ?? collect();
     }
 
@@ -230,7 +233,13 @@ class Frameworks extends Component
     public function getVariantAttributeLabel(Assessment $assessment): string
     {
         try {
-            return $assessment->variantSelections->first()?->option?->label ?? '';
+            $headerAttribute = $this->framework?->variantAttributes?->first();
+            if (!$headerAttribute) {
+                return '';
+            }
+            return $assessment->variantSelections
+                ->firstWhere('framework_variant_attribute_id', $headerAttribute->id)
+                ?->option?->label ?? '';
         } catch (\Throwable $e) {
             Log::error('Error getting variant attribute label', [
                 'assessment_id' => $assessment->id,
