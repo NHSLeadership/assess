@@ -146,6 +146,8 @@ class Frameworks extends Component
                     ->whereColumn('assessment_id', 'assessments.id'),
             ])
             ->orderByDesc('last_response_at')
+            ->with('framework')
+            ->with('framework.questions')
             ->with('responses')
             ->with('variantSelections.option')
             ->get();
