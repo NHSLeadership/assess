@@ -30,7 +30,7 @@
         "larastan/larastan": "^3.9.6",
         "laravel/pail": "^1.2.6",
         "laravel/pint": "^1.29.1",
-        "laravel/sail": "^1.58.0",
+        "laravel/sail": "^1.59.0",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^8.9.4",
         "pestphp/pest": "^4.7.0",
