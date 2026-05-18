@@ -5,11 +5,11 @@
 
 A web application for self-assessment and 360-degree feedback, built with [Laravel](https://laravel.com/) and [Filament](https://filamentphp.com/).
 
-**License:** [MIT](LICENCE.md) | **Security:** [Security Policy](SECURITY.md) | **Contributing:** [Contribute](CONTRIBUTING.md) | **Code of Conduct:** [Read](CODE_OF_CONDUCT.md)
+**License:** [MIT](LICENCE.md) | **Security:** [Security Policy](SECURITY.md) | **Contributing:** [Contribute](CONTRIBUTING.md)
 
 ## Community
 
-We welcome contributions from the community. Please read our [Code of Conduct](CODE_OF_CONDUCT.md) and [Contributing Guidelines](CONTRIBUTING.md) before participating.
+We welcome contributions from the community. Please read our [Contributing Guidelines](CONTRIBUTING.md) before participating.
 
 For security concerns, see our [Security Policy](SECURITY.md).
 
