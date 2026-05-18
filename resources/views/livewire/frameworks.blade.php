@@ -1,14 +1,13 @@
 <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
     <div class="nhsuk-grid-column-full">
 
-        @php
-            $assessments = $this->framework
-                ? $this->assessments
-                : collect();
-        @endphp
-
         @if ($this->framework)
-            <h1 class="nhsuk-heading-l">{{ $this->framework->name ?? null }} {{ strtolower(($this->loggedInRater()?->pivot?->assessment_type) ?? 'self assessment') }}</h1>
+
+            @php
+                $assessments = $this->frameworkAssessments();
+            @endphp
+
+            <h1 class="nhsuk-heading-l">{{ $this->framework->name ?? null }} {{ $this->getFrameworkHeadingAssessmentType() }}</h1>
 
             <div class="nhsuk-body">
                 {!! \App\Support\RichTextRender::render($this->framework->description, $this->user, $this->framework) !!}
@@ -89,6 +88,11 @@
                 <thead class="nhsuk-table__head">
                 <tr>
                     <th scope="col" class="nhsuk-table__header">Type</th>
+                    @if ($this->hasVariantAttributes())
+                        <th scope="col" class="nhsuk-table__header">
+                            {{ $this->getVariantAttributeHeaderLabel() }}
+                        </th>
+                    @endif
                     <th scope="col" class="nhsuk-table__header">Last updated</th>
                     <th scope="col" class="nhsuk-table__header">Progress</th>
                     <th scope="col" class="nhsuk-table__header">Status</th>
@@ -104,10 +108,15 @@
                                : route('variants', ['frameworkId' => $assessment->framework?->id, 'assessmentId' => $assessment->id]) }}"
                                aria-describedby="{{ $assessment->slug }}-hint"
                                class="nhsuk-link">
-                                {{ ucfirst(($this->loggedInRater($assessment)?->pivot?->assessment_type) ?? 'Self assessment') }}
+                                {{ $this->getAssessmentTypeDisplay($assessment) }}
                                 <span class="nhsuk-u-visually-hidden">{{ $this->displayAssessmentDate($assessment) }}</span>
                             </a>
                         </td>
+                        @if ($this->hasVariantAttributes())
+                            <td class="nhsuk-table__cell">
+                                {{ $this->getVariantAttributeLabel($assessment) }}
+                            </td>
+                        @endif
                         <td class="nhsuk-table__cell">
                             {{ $this->displayAssessmentDate($assessment) }}
                         </td>
@@ -115,23 +124,16 @@
                             {{ $this->displayProgress($assessment) }}
                         </td>
                         <td class="nhsuk-table__cell">
-                            @if ($assessment->isWithinExpiryWarningWindow())
-                                <strong class="nhsuk-tag nhsuk-tag--yellow">
-                                    {{ __('Expiring') }}
-                                </strong>
+                            @php
+                                $tagData = $this->getAssessmentStatusTag($assessment);
+                            @endphp
+                            <strong class="nhsuk-tag {{ $tagData['class'] }}">
+                                {{ $tagData['text'] }}
+                            </strong>
+                            @if ($tagData['subtitle'])
                                 <div class="nhsuk-hint nhsuk-u-margin-top-1">
-                                    Deletes on {{ $assessment->expiresAt()->format('j F Y') }}
+                                    {{ $tagData['subtitle'] }}
                                 </div>
-                            @elseif(empty($assessment->submitted_at))
-                                @if ($assessment->questions)
-                                    <strong class="nhsuk-tag nhsuk-tag--red">{{ __('Not started') }}</strong>
-                                @elseif ($assessment->responses?->count() === $assessment?->framework?->questions?->where('required', 1)->count())
-                                    <strong class="nhsuk-tag nhsuk-tag--orange">{{ __('Ready') }}</strong>
-                                @else
-                                    <strong class="nhsuk-tag nhsuk-tag--blue">{{ __('Started') }}</strong>
-                                @endif
-                            @else
-                                <strong class="nhsuk-tag nhsuk-tag--green">{{ __('Completed') }}</strong>
                             @endif
                         </td>
                         <td class="nhsuk-table__cell">
