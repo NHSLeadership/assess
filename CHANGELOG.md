@@ -5,9 +5,11 @@
 
 ---
 ### v1.0.14
-> Updated: 13.05.2026
+> Updated: 18.05.2026
 1. Style competency statements as inset text
 2. Add framework variant attributes to assessment listing page
+3. Update ReadMe, etc.
+4. Package updates
 
 ---
 ### v1.0.13
