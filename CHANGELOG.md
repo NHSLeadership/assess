@@ -6,7 +6,7 @@
 ---
 ### v1.0.15
 > Updated: 18.05.2026
-1. Stop incorrect description inheritance from previous node.
+1. Stop incorrect description inheritance from previous node
 
 ### v1.0.14
 > Updated: 18.05.2026
