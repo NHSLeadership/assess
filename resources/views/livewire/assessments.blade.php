@@ -52,7 +52,7 @@
 
                 @endif
 
-                <p>{!! $currentNode->description ?? $node->description ?? '' !!}</p>
+                <p>{!! $currentNode->description !!}</p>
 
                 <livewire:questions
                         :assessmentId="$this->assessmentId"
