@@ -1,12 +1,20 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/National_Health_Service_%28England%29_logo.svg" width="200"></a>
 <br><span style="color:#fff;font-size:20px">Leadership Academy</span></p>
 
-## Self Assessment 360 Tools
-A web application built with the Laravel framework. 
+# NHS Leadership Academy - Assessment Tool
 
-### Installation 
+A web application for self-assessment and 360-degree feedback, built with [Laravel](https://laravel.com/) and [Filament](https://filamentphp.com/).
+
+**License:** [MIT](LICENCE.md) | **Security:** [Security Policy](SECURITY.md) | **Contributing:** [Contribute](CONTRIBUTING.md)
+
+## Community
+
+We welcome contributions from the community. Please read our [Contributing Guidelines](CONTRIBUTING.md) before participating.
+
+For security concerns, see our [Security Policy](SECURITY.md).
+
+### Installation
 > Run `composer install`. If applicable, compile Node assets. Please ensure your PHP version meets the Composer requirement (PHP 8+).
-```composer install```
 
 When you first install it, the .env will not be present
 
@@ -15,7 +23,7 @@ When you first install it, the .env will not be present
 
 And tweak your default settings if needed (mysql, security, etc.)
 
-### Locally run the app with (recommended) 
+### Locally run the app with (recommended)
 > php artisan serve
 
 This will serve the application at:
@@ -29,15 +37,7 @@ This will serve the application at:
 
 ### Compiling assets
 
-Run development build
-```npm run dev```
-
-Run development watch
-```npm run watch```
-```watch-poll```
-
-Run production build
-```npm run production```
+> npm run build
 
 ### Optimising Filament components
 
@@ -62,9 +62,9 @@ To make files in `storage/app/public` (such as certificate background images) ac
 
 This will connect [/var/www/html/public/storage] to [/var/www/html/storage/app/public].
 
-#### Running tests 
+#### Running tests
 
-sail php ./vendor/bin/pest
+```php artisan test```
 
 ### Umami configuration
 
@@ -73,4 +73,4 @@ config/umami.php is used only for defaults and bootstrap.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This software is licensed under the [MIT license](LICENCE.md).

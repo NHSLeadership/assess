@@ -702,3 +702,36 @@ it('redirects to instructions when no previous assessment exists', function () {
             'frameworkId' => $framework->id,
         ]));
 });
+
+it('hasVariantAttributes returns true when framework has variant attributes', function () {
+    $user = makeAuthUser();
+
+    $setup = createFrameworkWithNodeAndQuestions(1);
+    $framework = $setup['framework'];
+
+    // Create a variant attribute
+    $framework->variantAttributes()->create([
+        'label' => 'Career Stage',
+        'key' => 'career_stage',
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(Frameworks::class, ['frameworkId' => $framework->id])
+        ->assertOk()
+        ->tap(function ($component) {
+            expect($component->instance()->hasVariantAttributes())->toBeTrue();
+        });
+});
+
+it('hasVariantAttributes returns false when framework has no variant attributes', function () {
+    $user = makeAuthUser();
+
+    $framework = Framework::factory()->create();
+
+    Livewire::actingAs($user)
+        ->test(Frameworks::class, ['frameworkId' => $framework->id])
+        ->assertOk()
+        ->tap(function ($component) {
+            expect($component->instance()->hasVariantAttributes())->toBeFalse();
+        });
+});

@@ -15,14 +15,14 @@
         "filament/spatie-laravel-settings-plugin": "^5.6.3",
         "flowframe/laravel-trend": "^0.5",
         "jeffersongoncalves/filament-umami": "3.x-dev",
-        "laravel/framework": "^13.8.0",
+        "laravel/framework": "^13.9.0",
         "laravel/pennant": "^1.23.0",
         "laravel/tinker": "^3.0.2",
         "livewire/volt": "^1.10.5",
         "openplain/filament-tree-view": "^0.5.6",
         "owen-it/laravel-auditing": "^14.0.3",
         "spatie/laravel-prometheus": "^1.6.0",
-        "symfony/yaml": "^8.0.10"
+        "symfony/yaml": "^8.0.11"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.3.0",
@@ -30,7 +30,7 @@
         "larastan/larastan": "^3.9.6",
         "laravel/pail": "^1.2.6",
         "laravel/pint": "^1.29.1",
-        "laravel/sail": "^1.58.0",
+        "laravel/sail": "^1.59.0",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^8.9.4",
         "pestphp/pest": "^4.7.0",
