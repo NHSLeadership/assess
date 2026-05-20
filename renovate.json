@@ -29,8 +29,12 @@
     },
     {
       "matchManagers": ["composer"],
-      "matchPackageNames": ["php"],
-      "matchUpdateTypes": ["minor", "major"],
+      "matchDepNames": ["php"],
+      "enabled": false
+    },
+    {
+      "matchManagers": ["composer"],
+      "matchDepPatterns": ["^ext-"],
       "enabled": false
     },
     {
