@@ -24,7 +24,7 @@ return [
     ],
     'frameworks' => [
         'title' => 'Frameworks',
-        'content' => '',
+        'content-title' => 'NHS Management and Leadership Assessment',
     ],
     'competencies' => [
         'title' => 'Competencies',

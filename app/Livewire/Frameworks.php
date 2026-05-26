@@ -262,15 +262,6 @@ class Frameworks extends Component
     }
 
     /**
-     * Get the assessment type for page heading
-     */
-    public function getFrameworkHeadingAssessmentType(): string
-    {
-        $type = $this->loggedInRater()?->pivot?->assessment_type ?? 'self assessment';
-        return strtolower($type);
-    }
-
-    /**
      * Get status tag data for an assessment
      * Returns array with 'class', 'text', 'subtitle' keys
      */
