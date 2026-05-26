@@ -65,7 +65,7 @@
 
                                 <br>
 
-                                {{-- Question text --}}`
+                                {{-- Question text --}}
                                 {!! \App\Services\QuestionTextResolver::textFor(
                                     $this->assessment(),
                                     $this->rater(),
