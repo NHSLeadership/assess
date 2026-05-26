@@ -84,9 +84,9 @@
         @elseif ($assessments->isNotEmpty())
             <h3>{{ __('Assessments') }}</h3>
 
-            <table class="nhsuk-table">
+            <table class="nhsuk-table-responsive">
                 <thead class="nhsuk-table__head">
-                <tr>
+                <tr class="nhsuk-table__row">
                     <th scope="col" class="nhsuk-table__header">Type</th>
                     @if ($this->hasVariantAttributes())
                         <th scope="col" class="nhsuk-table__header">
