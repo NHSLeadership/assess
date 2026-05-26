@@ -59,13 +59,13 @@
                                     <a href="#" wire:click.prevent="editAnswer({{ $question->node_id }})"
                                        class="nhsuk-link nhsuk-task-list__link">
                                         <strong>{!! $question->title !!}</strong>
+                                        <span class="nhsuk-u-visually-hidden">Edit this answer</span>
                                     </a>
-                                    <span class="nhsuk-u-visually-hidden">Click to edit this answer</span>
                                 @endif
 
                                 <br>
 
-                                {{-- Question text --}}
+                                {{-- Question text --}}`
                                 {!! \App\Services\QuestionTextResolver::textFor(
                                     $this->assessment(),
                                     $this->rater(),
