@@ -7,7 +7,7 @@
                 $assessments = $this->frameworkAssessments();
             @endphp
 
-            <h1 class="nhsuk-heading-l">{{ $this->framework->name ?? null }} {{ $this->getFrameworkHeadingAssessmentType() }}</h1>
+            <h1 class="nhsuk-heading-l">{{ __('pages.frameworks.content-title') }}</h1>
 
             <div class="nhsuk-body">
                 {!! \App\Support\RichTextRender::render($this->framework->description, $this->user, $this->framework) !!}
