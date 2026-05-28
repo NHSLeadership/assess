@@ -4,6 +4,11 @@
 # Assessment tool
 
 ---
+### v1.0.16
+> Updated: 26.05.2026
+1. Responsive table layout for assessment listing page
+2. Filament JS updates
+
 ### v1.0.15
 > Updated: 18.05.2026
 1. Stop incorrect description inheritance from previous node

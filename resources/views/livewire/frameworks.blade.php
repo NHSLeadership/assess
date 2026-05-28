@@ -82,27 +82,29 @@
                 </p>
             </div>
         @elseif ($assessments->isNotEmpty())
-            <h3>{{ __('Assessments') }}</h3>
-
-            <table class="nhsuk-table">
-                <thead class="nhsuk-table__head">
-                <tr>
-                    <th scope="col" class="nhsuk-table__header">Type</th>
-                    @if ($this->hasVariantAttributes())
-                        <th scope="col" class="nhsuk-table__header">
-                            {{ $this->getVariantAttributeHeaderLabel() }}
-                        </th>
-                    @endif
-                    <th scope="col" class="nhsuk-table__header">Last updated</th>
-                    <th scope="col" class="nhsuk-table__header">Progress</th>
-                    <th scope="col" class="nhsuk-table__header">Status</th>
-                    <th scope="col" class="nhsuk-table__header">Actions</th>
-                </tr>
+            <table class="nhsuk-table nhsuk-table-responsive" role="table">
+                <caption class="nhsuk-table__caption">
+                    {{ __('Assessments') }}
+                </caption>
+                <thead class="nhsuk-table__head" role="rowgroup">
+                    <tr class="nhsuk-table__row" role="row">
+                        <th scope="col" class="nhsuk-table__header" role="columnheader">Type</th>
+                        @if ($this->hasVariantAttributes())
+                            <th scope="col" class="nhsuk-table__header" role="columnheader">
+                                {{ $this->getVariantAttributeHeaderLabel() }}
+                            </th>
+                        @endif
+                        <th scope="col" class="nhsuk-table__header" role="columnheader">Last updated</th>
+                        <th scope="col" class="nhsuk-table__header" role="columnheader">Progress</th>
+                        <th scope="col" class="nhsuk-table__header" role="columnheader">Status</th>
+                        <th scope="col" class="nhsuk-table__header" role="columnheader">Actions</th>
+                    </tr>
                 </thead>
                 <tbody class="nhsuk-table__body">
                 @foreach ($assessments as $assessment)
-                    <tr class="nhsuk-table__row" wire:key="assessment-{{ $assessment->id }}">
-                        <td class="nhsuk-table__cell">
+                    <tr class="nhsuk-table__row" wire:key="assessment-{{ $assessment->id }}" role="row">
+                        <td class="nhsuk-table__cell" role="cell">
+                            <span class="nhsuk-table-responsive__heading">Type</span>
                             <a href="{{ !empty($assessment->submitted_at)
                                ? route('summary', ['frameworkId' => $this->framework?->id, 'assessmentId' => $assessment->id])
                                : route('variants', ['frameworkId' => $assessment->framework?->id, 'assessmentId' => $assessment->id]) }}"
@@ -113,17 +115,21 @@
                             </a>
                         </td>
                         @if ($this->hasVariantAttributes())
-                            <td class="nhsuk-table__cell">
+                            <td class="nhsuk-table__cell" role="cell">
+                                <span class="nhsuk-table-responsive__heading">Career stage</span>
                                 {{ $this->getVariantAttributeLabel($assessment) }}
                             </td>
                         @endif
-                        <td class="nhsuk-table__cell">
+                        <td class="nhsuk-table__cell" role="cell">
+                            <span class="nhsuk-table-responsive__heading">Last updated</span>
                             {{ $this->displayAssessmentDate($assessment) }}
                         </td>
-                        <td class="nhsuk-table__cell">
+                        <td class="nhsuk-table__cell" role="cell">
+                            <span class="nhsuk-table-responsive__heading">Progress</span>
                             {{ $this->displayProgress($assessment) }}
                         </td>
-                        <td class="nhsuk-table__cell">
+                        <td class="nhsuk-table__cell" role="cell">
+                            <span class="nhsuk-table-responsive__heading">Status</span>
                             @php
                                 $tagData = $this->getAssessmentStatusTag($assessment);
                             @endphp
@@ -136,7 +142,8 @@
                                 </div>
                             @endif
                         </td>
-                        <td class="nhsuk-table__cell">
+                        <td class="nhsuk-table__cell" role="cell">
+                            <span class="nhsuk-table-responsive__heading">Actions</span>
                             @if ($this->pendingDeleteId === $assessment->id)
                                 @include('livewire.partials.confirm-delete')
                             @else
