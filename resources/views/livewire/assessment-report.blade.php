@@ -46,7 +46,12 @@
             <h2>Results</h2>
                 <div class="nhsuk-u-margin-bottom-5" wire:ignore>
                     <h3>Average scores for standards</h3>
-                    <canvas id="radarChart" style="width: 90%" aria-describedby="radar-desc"></canvas>
+
+                    <div style="overflow-x: auto;">
+                        <div style="position: relative; min-width: 420px; max-width: 700px;">
+                            <canvas id="radarChart" aria-describedby="radar-desc"></canvas>
+                        </div>
+                    </div>
 
                     {{-- Accessible alternative chart for screen readers --}}
                     <div id="radar-desc" class="nhsuk-u-visually-hidden">
@@ -84,7 +89,7 @@
                         @endif
                     </div>
                 </div>
-        @endif
+            @endif
         @foreach ($this->nodes as $node)
 
             {{-- SECTION (top-level) --}}

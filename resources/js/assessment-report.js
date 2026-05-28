@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
             type: 'radar',
             data: radarData,
             options: {
+                responsive: true,
+                aspectRatio: 1,
                 devicePixelRatio: 2,
                 scales: {
                     r: {
