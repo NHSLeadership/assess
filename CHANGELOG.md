@@ -8,6 +8,7 @@
 > Updated: 26.05.2026
 1. Responsive table layout for assessment listing page
 2. Filament JS updates
+3. Accessibility improvement in summary page for screen readers
 
 ### v1.0.15
 > Updated: 18.05.2026
