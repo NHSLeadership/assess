@@ -98,6 +98,8 @@ document.addEventListener('DOMContentLoaded', function () {
             data: chart.data,
             options: {
                 devicePixelRatio: 3,
+                responsive: true,
+                aspectRatio: 1,
                 indexAxis: 'y',
                 plugins: {
                     legend: {
