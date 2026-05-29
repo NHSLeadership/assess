@@ -109,8 +109,6 @@
 
                 @if ($chart)
                     <div class="nhsuk-u-margin-bottom-5" wire:ignore>
-{{--                        <canvas id="{{ $chart['id'] }}" style="width: 100%; max-width: 900px;" aria-describedby="chart-desc-{{ $chart['id'] }}"></canvas>--}}
-
                         <div style="overflow-x: auto;">
                             <div style="position: relative; min-width: 420px; max-width: 900px;">
                                 <canvas
