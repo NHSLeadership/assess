@@ -7,6 +7,8 @@
     <h4 class="signpost-title">{{ $title }}</h4>
 
     @foreach ($signposts as $sp)
-        {!! $sp->guidance !!}
+        <div class="signpost-content">
+            {!! $sp->guidance !!}
+        </div>
     @endforeach
 @endif

@@ -218,7 +218,6 @@ class AssessmentReportService
                         'backgroundColor' => $this->chartBackgroundColor,
                         'borderColor' => $this->chartBorderColor,
                         'borderWidth' => 1,
-                        // 'barThickness' => 20,
                     ]],
                 ],
                 'options' => [

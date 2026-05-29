@@ -89,10 +89,6 @@ document.addEventListener('DOMContentLoaded', function () {
         chart.data.datasets[0].barThickness =
             window.innerWidth < 600 ? 15 : 30;
 
-        const barCount = chart.data.labels.length;
-
-        ctx.height = window.innerWidth < 600 ? barCount * 40 : barCount * 100;
-
         new Chart(ctx, {
             type: 'bar',
             data: chart.data,

@@ -16,3 +16,8 @@ img {
   height: auto;
   display: block;
 }
+.signpost-content,
+.signpost-content * {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
