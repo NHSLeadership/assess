@@ -184,7 +184,7 @@
 
                                 {!! \App\Services\QuestionTextResolver::textFor(
                                         $this->assessment(),
-                                        $this->rater(),
+                                        $this->rater()?->pivot,
                                         $response->question->id
                                     ) ?? $response->question?->hint !!}
 

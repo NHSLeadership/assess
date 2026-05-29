@@ -105,7 +105,7 @@ class Assessment extends Model
     {
         return $this->belongsToMany(Rater::class, 'assessment_rater')
             ->using(AssessmentRater::class)
-            ->withPivot(['role', 'is_self'])
+            ->withPivot(['type', 'rater_group_id'])
             ->withTimestamps();
     }
 

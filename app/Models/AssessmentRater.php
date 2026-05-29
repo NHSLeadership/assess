@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\RaterType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -17,12 +18,12 @@ class AssessmentRater extends Pivot
     protected $fillable = [
         'assessment_id',
         'rater_id',
-        'role',
-        'is_self',
+        'type',
+        'rater_group_id',
     ];
 
     protected $casts = [
-        'is_self' => 'boolean',
+        'type' => RaterType::class,
     ];
 
     public function assessment(): BelongsTo
@@ -35,8 +36,13 @@ class AssessmentRater extends Pivot
         return $this->belongsTo(Rater::class);
     }
 
-    public function getAssessmentTypeAttribute(): string
+    public function group(): BelongsTo
     {
-        return $this->is_self ? 'Self assessment' : '360';
+        return $this->belongsTo(RaterGroup::class, 'rater_group_id');
+    }
+
+    public function isSelf(): bool
+    {
+        return $this->type === RaterType::Self;
     }
 }
