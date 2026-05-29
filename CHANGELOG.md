@@ -10,6 +10,7 @@
 2. Filament JS updates
 3. Accessibility improvement in summary page for screen readers
 4. Heading improvement in assessment listing page
+5. Display tabular data instead of charts at small viewport widths
 
 ### v1.0.15
 > Updated: 18.05.2026

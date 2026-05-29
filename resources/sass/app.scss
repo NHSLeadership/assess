@@ -16,3 +16,26 @@ img {
   height: auto;
   display: block;
 }
+.signpost-content,
+.signpost-content * {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 480px) {
+
+  .chart-view {
+    display: none;
+  }
+
+  .table-view {
+    display: block !important;
+
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    clip: auto !important;
+    clip-path: none !important;
+    white-space: normal !important;
+  }
+}
