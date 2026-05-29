@@ -28,7 +28,7 @@ return new class extends Migration
             $table->renameColumn('type', 'role');
             $table->enum('role', ['self', 'manager', 'report', 'peer', 'other'])->default('self')->change();
             $table->boolean('is_self')->default(true);
-            $table->dropColumn('group_id');
+            $table->dropConstrainedForeignId('rater_group_id');
         });
     }
 };
