@@ -47,14 +47,14 @@
                 <div class="nhsuk-u-margin-bottom-5" wire:ignore>
                     <h3>Average scores for standards</h3>
 
-                    <div style="overflow-x: auto;">
-                        <div style="position: relative; min-width: 420px; max-width: 700px;">
+                    <div class="chart-view">
+                        <div style="width: 100%; max-width: 700px;">
                             <canvas id="radarChart" aria-describedby="radar-desc"></canvas>
                         </div>
                     </div>
 
-                    {{-- Accessible alternative chart for screen readers --}}
-                    <div id="radar-desc" class="nhsuk-u-visually-hidden">
+                    {{-- Accessible alternative chart for screen readers and mobiles --}}
+                    <div id="radar-desc" class="table-view nhsuk-u-visually-hidden">
                         <p>Radar chart showing average scores for standards.</p>
                         @if(!empty($radarData) && is_array($radarData))
                             @php
@@ -109,8 +109,8 @@
 
                 @if ($chart)
                     <div class="nhsuk-u-margin-bottom-5" wire:ignore>
-                        <div style="overflow-x: auto;">
-                            <div style="position: relative; min-width: 420px; max-width: 900px;">
+                        <div class="chart-view">
+                            <div style="width: 100%; max-width: 900px;">
                                 <canvas
                                         id="{{ $chart['id'] }}"
                                         aria-describedby="chart-desc-{{ $chart['id'] }}"
@@ -120,7 +120,7 @@
 
 
                         {{-- Accessible alternative chart for screen readers --}}
-                        <div id="chart-desc-{{ $chart['id'] }}" class="nhsuk-u-visually-hidden">
+                        <div id="chart-desc-{{ $chart['id'] }}" class="table-view nhsuk-u-visually-hidden">
                             <p>Bar chart showing scores for {{ $node->name }}.</p>
                             @php
                                 $labels = data_get($chart, 'data.labels', []);
