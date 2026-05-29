@@ -55,14 +55,12 @@
 
                     {{-- Accessible alternative chart for screen readers and mobiles --}}
                     <div id="radar-desc" class="table-view nhsuk-u-visually-hidden">
-                        <p>Radar chart showing average scores for standards.</p>
                         @if(!empty($radarData) && is_array($radarData))
                             @php
                                 $labels = data_get($radarData, 'labels', []);
                                 $datasets = data_get($radarData, 'datasets', []);
                             @endphp
                             <table>
-                                <caption>Radar chart data: average scores for standards</caption>
                                 <thead>
                                     <tr>
                                         <th scope="col">Standard</th>
@@ -89,7 +87,7 @@
                         @endif
                     </div>
                 </div>
-            @endif
+        @endif
         @foreach ($this->nodes as $node)
 
             {{-- SECTION (top-level) --}}
@@ -110,6 +108,7 @@
                 @if ($chart)
                     <div class="nhsuk-u-margin-bottom-5" wire:ignore>
                         <div class="chart-view">
+                            <p>Bar chart data for {{ $node->name }}</p>
                             <div style="width: 100%; max-width: 900px;">
                                 <canvas
                                         id="{{ $chart['id'] }}"
@@ -121,17 +120,16 @@
 
                         {{-- Accessible alternative chart for screen readers --}}
                         <div id="chart-desc-{{ $chart['id'] }}" class="table-view nhsuk-u-visually-hidden">
-                            <p>Bar chart showing scores for {{ $node->name }}.</p>
                             @php
                                 $labels = data_get($chart, 'data.labels', []);
                                 $datasets = data_get($chart, 'data.datasets', []);
                             @endphp
                             @if(!empty($labels) && !empty($datasets))
                                 <table>
-                                    <caption>Bar chart data for {{ $node->name }}</caption>
+                                    <caption>{{ $node->name }} scores</caption>
                                     <thead>
                                         <tr>
-                                            <th scope="col">Label</th>
+                                            <th scope="col">Competency</th>
                                                 @foreach($datasets as $ds)
                                                     @php
                                                         $dsLabel = data_get($ds, 'label', 'Series');

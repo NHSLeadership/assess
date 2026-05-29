@@ -213,7 +213,7 @@ class AssessmentReportService
                 'data' => [
                     'labels' => $labels,
                     'datasets' => [[
-                        'label' => 'Self assessment',
+                        'label' => 'Score',
                         'data' => $values,
                         'backgroundColor' => $this->chartBackgroundColor,
                         'borderColor' => $this->chartBorderColor,
@@ -267,7 +267,7 @@ class AssessmentReportService
             'data' => [
                 'labels' => $labels,
                 'datasets' => [[
-                    'label' => 'Self assessment',
+                    'label' => 'Score',
                     'data' => $values,
                     'backgroundColor' => $this->chartBackgroundColor,
                     'borderColor' => $this->chartBorderColor,
