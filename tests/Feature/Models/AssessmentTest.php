@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\RaterType;
 use App\Models\Assessment;
 use App\Models\Framework;
 use App\Models\Rater;
@@ -45,14 +46,12 @@ test('assessment raters relationship works', function () {
     $rater = Rater::factory()->create(['user_id' => $this->user->user_id]);
 
     $this->assessment->raters()->attach($rater->id, [
-        'role' => 'manager',
-        'is_self' => false,
+        'type' => 'manager',
     ]);
 
     $pivot = $this->assessment->raters()->first()->pivot;
 
-    expect($pivot->role)->toEqual('manager')
-        ->and($pivot->is_self)->toBeFalse();
+    expect($pivot->type)->toEqual(RaterType::Manager);
 });
 
 test('assessment casts submitted_at to Carbon when persisted', function () {

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\RaterType;
 use App\Models\Assessment;
 use App\Models\AssessmentRater;
 use App\Models\Framework;
@@ -22,21 +23,18 @@ test('assessment rater pivot persists correctly', function () {
     $pivot = AssessmentRater::create([
         'assessment_id' => $this->assessment->id,
         'rater_id' => $this->rater->id,
-        'role' => 'manager',
-        'is_self' => false,
+        'type' => 'manager',
     ]);
 
     expect($pivot->exists)->toBeTrue()
-        ->and($pivot->role)->toEqual('manager')
-        ->and($pivot->is_self)->toBeFalse();
+        ->and($pivot->type)->toEqual(RaterType::Manager);
 });
 
 test('assessment rater belongs to assessment and rater', function () {
     $pivot = AssessmentRater::create([
         'assessment_id' => $this->assessment->id,
         'rater_id' => $this->rater->id,
-        'role' => 'manager',
-        'is_self' => true,
+        'type' => 'manager',
     ]);
 
     expect($pivot->assessment->id)->toEqual($this->assessment->id)
@@ -46,8 +44,7 @@ test('assessment rater can be retrieved from assessment', function () {
     $pivot = AssessmentRater::create([
         'assessment_id' => $this->assessment->id,
         'rater_id' => $this->rater->id,
-        'role' => 'peer',
-        'is_self' => false,
+        'type' => 'peer',
     ]);
 
     $retrievedPivot = AssessmentRater::where('assessment_id', $this->assessment->id)
@@ -55,24 +52,20 @@ test('assessment rater can be retrieved from assessment', function () {
         ->first();
 
     expect($retrievedPivot)->not->toBeNull()
-        ->and($retrievedPivot->role)->toEqual('peer')
-        ->and($retrievedPivot->is_self)->toBeFalse();
+        ->and($retrievedPivot->type)->toEqual(RaterType::Peer);
 });
 
 test('assessment rater can be updated', function () {
     $this->assessment->raters()->attach($this->rater->id, [
-        'role' => 'direct_report',
-        'is_self' => false,
+        'type' => 'report',
     ]);
 
     // Update via relationship
     $this->assessment->raters()->updateExistingPivot($this->rater->id, [
-        'role' => 'manager',
-        'is_self' => true,
+        'type' => 'manager',
     ]);
 
     $pivot = $this->assessment->raters()->first()->pivot;
 
-    expect($pivot->role)->toEqual('manager')
-        ->and($pivot->is_self)->toBeTrue();
+    expect($pivot->type)->toEqual(RaterType::Manager);
 });

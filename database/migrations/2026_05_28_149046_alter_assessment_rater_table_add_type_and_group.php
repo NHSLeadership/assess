@@ -26,7 +26,7 @@ return new class extends Migration
     {
         Schema::table('assessment_rater', function (Blueprint $table) {
             $table->renameColumn('type', 'role');
-            $table->enum('role', ['self', 'manager', 'direct_report', 'peer', 'other'])->default('self')->change();
+            $table->enum('role', ['self', 'manager', 'report', 'peer', 'other'])->default('self')->change();
             $table->boolean('is_self')->default(true);
             $table->dropColumn('group_id');
         });
