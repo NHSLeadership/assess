@@ -11,8 +11,8 @@
         "auth0/login": "^7.22",
         "barryvdh/laravel-dompdf": "^3.1.2",
         "diglactic/laravel-breadcrumbs": "^10.1",
-        "filament/filament": "^5.6.5",
-        "filament/spatie-laravel-settings-plugin": "^5.6.5",
+        "filament/filament": "^5.6.6",
+        "filament/spatie-laravel-settings-plugin": "^5.6.6",
         "flowframe/laravel-trend": "^0.5",
         "jeffersongoncalves/filament-umami": "3.x-dev",
         "laravel/framework": "^13.12.0",
@@ -35,7 +35,7 @@
         "nunomaduro/collision": "^8.9.4",
         "pestphp/pest": "^4.7.0",
         "pestphp/pest-plugin-laravel": "^4.1.0",
-        "rector/rector": "^2.4.4"
+        "rector/rector": "^2.4.5"
     },
   "autoload": {
         "psr-4": {
