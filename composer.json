@@ -22,12 +22,12 @@
         "openplain/filament-tree-view": "^0.5.6",
         "owen-it/laravel-auditing": "^14.0.3",
         "spatie/laravel-prometheus": "^1.6.0",
-        "symfony/yaml": "^8.0.12"
+        "symfony/yaml": "^8.1.0"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.4.0",
         "fakerphp/faker": "^1.24.1",
-        "larastan/larastan": "^3.9.6",
+        "larastan/larastan": "^3.10.0",
         "laravel/pail": "^1.2.7",
         "laravel/pint": "^1.29.1",
         "laravel/sail": "^1.61.0",
