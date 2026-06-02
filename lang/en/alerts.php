@@ -24,5 +24,9 @@ return [
     'success' => [
         'title' => 'Assessment submitted',
         'assessment-submitted' => 'Assessment submitted successfully.',
+        'generic' => 'Success',
+    ],
+    'warnings' => [
+        'title' => 'Warning',
     ],
 ];
