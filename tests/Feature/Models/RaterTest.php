@@ -52,16 +52,19 @@ test('rater can belong to many assessments with pivot data', function () {
 
     // Attach with pivot data
     $rater->assessments()->attach($assessment1->id, [
-        'type' => 'manager',
+        'role' => 'manager',
+        'is_self' => false,
     ]);
 
     $rater->assessments()->attach($assessment2->id, [
-        'type' => 'self',
+        'role' => 'self',
+        'is_self' => true,
     ]);
 
     expect($rater->assessments)->toHaveCount(2)
         ->and($rater->assessments->first()->pivot)->toBeInstanceOf(AssessmentRater::class)
-        ->and($rater->assessments->first()->pivot->type)->not->toBeNull();
+        ->and($rater->assessments->first()->pivot->role)->not->toBeNull()
+        ->and($rater->assessments->first()->pivot->is_self)->not->toBeNull();
 });
 
 test('rater can have many responses', function () {

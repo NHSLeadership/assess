@@ -49,7 +49,6 @@ class ResponseForm
                     ->required()
                     ->live(),
                 Select::make('question_id')
-                    ->columnSpanFull()
                     ->label('Question')
                     ->disabled(fn (Get $get) => blank($get('rater_id')))
                     ->options(function (Get $get, $livewire) {
@@ -59,7 +58,7 @@ class ResponseForm
                         }
                         $rater = Rater::find($get('rater_id'));
 
-                        return QuestionTextResolver::optionsFor($assessment, $assessment->rater);
+                        return QuestionTextResolver::optionsFor($assessment, $rater);
                     })
                     ->required()
                     ->live()

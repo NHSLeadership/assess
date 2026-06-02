@@ -17,6 +17,7 @@ class FrameworkVariantAttributesTable
             ->reorderable('order')
             ->columns([
                 TextColumn::make('key')
+                    ->formatStateUsing(fn ($state) => ucfirst($state))
                     ->searchable(),
                 TextColumn::make('label')
                     ->searchable(),

@@ -51,6 +51,7 @@ class QuestionVariantForm
                         ->searchable()
                         ->native(false),
                 ])
+//                ->minItems(1)
                 ->defaultItems(1)
                 ->collapsed(false)
                 ->addActionLabel('Add condition')
@@ -59,11 +60,11 @@ class QuestionVariantForm
                 ->label('Rater type')
                 ->options([
                     'self' => 'Self',
-                    'external' => 'External',
+                    'rater' => 'Rater',
                 ])
                 ->nullable()
                 ->native(false)
-                ->helperText('Leave blank to apply to both self and external raters.'),
+                ->helperText('Leave blank to apply to both self and rater.'),
             Textarea::make('text')
                 ->label('Variant text')
                 ->required()

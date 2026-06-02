@@ -27,13 +27,8 @@ class Rater extends Model
     {
         return $this->belongsToMany(Assessment::class, 'assessment_rater')
             ->using(AssessmentRater::class)
-            ->withPivot(['type', 'rater_group_id'])
+            ->withPivot(['role', 'is_self'])
             ->withTimestamps();
-    }
-
-    public function assessmentRaters(): HasMany
-    {
-        return $this->hasMany(AssessmentRater::class);
     }
 
     public function responses(): HasMany

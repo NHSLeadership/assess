@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\RaterType;
 use App\Models\Assessment;
-use App\Models\AssessmentRater;
 use App\Models\Question;
+use App\Models\Rater;
 
 class QuestionTextResolver
 {
@@ -13,13 +14,12 @@ class QuestionTextResolver
      * Basic rules: match rater_type (self/rater) and variant options (AND across selected attributes).
      * Falls back to Question->text if no variants qualify.
      */
-    public static function optionsFor(
-        Assessment $assessment,
-        ?AssessmentRater $assessmentRater
-    ): array
+    public static function optionsFor(Assessment $assessment, ?Rater $rater = null): array
     {
-        // 1) Determine audience (self vs external)
-        $audience = self::variantAudience($assessmentRater);
+        // 1) Derive rater type
+        $subjectUserId = $assessment->getAttribute('user_id');
+        $raterUserId = $rater?->getAttribute('user_id');
+        $raterType = ($raterUserId && $subjectUserId && $raterUserId === $subjectUserId) ? RaterType::Self : RaterType::Rater;
 
         // 2) Selected framework variant option ids for this assessment
         $selectedOptionIds = $assessment->variantSelections()
@@ -29,8 +29,8 @@ class QuestionTextResolver
         // 3) Load questions for the assessment's framework
         $questions = Question::query()
             ->whereHas('node', fn ($question) => $question->where('framework_id', $assessment->framework_id))
-            ->with(['variants' => function ($question) use ($audience): void {
-                $question->whereNull('rater_type')->orWhere('rater_type', $audience)
+            ->with(['variants' => function ($question) use ($raterType): void {
+                $question->whereNull('rater_type')->orWhere('rater_type', $raterType)
                     ->orderByDesc('priority')->orderBy('id');
             }, 'variants.matches'])
             ->orderBy('order')->orderBy('id')
@@ -61,11 +61,15 @@ class QuestionTextResolver
 
     public static function textFor(
         Assessment $assessment,
-        ?AssessmentRater $assessmentRater,
+        ?Rater $rater,
         int $questionId
     ): string {
-        // 1) Determine audience (self vs external)
-        $audience = self::variantAudience($assessmentRater);
+        // 1) Derive rater type
+        $subjectUserId = $assessment->getAttribute('user_id');
+        $raterUserId = $rater?->getAttribute('user_id');
+        $raterType = ($raterUserId && $subjectUserId && $raterUserId === $subjectUserId)
+            ? RaterType::Self
+            : RaterType::Rater;
 
         // 2) Selected framework variant option ids for this assessment
         $selectedOptionIds = $assessment->variantSelections()
@@ -76,9 +80,9 @@ class QuestionTextResolver
         $question = Question::query()
             ->where('id', $questionId)
             ->whereHas('node', fn ($q) => $q->where('framework_id', $assessment->framework_id))
-            ->with(['variants' => function ($q) use ($audience): void {
+            ->with(['variants' => function ($q) use ($raterType): void {
                 $q->whereNull('rater_type')
-                    ->orWhere('rater_type', $audience)
+                    ->orWhere('rater_type', $raterType)
                     ->orderByDesc('priority')
                     ->orderBy('id');
             }, 'variants.matches'])
@@ -100,11 +104,5 @@ class QuestionTextResolver
         });
 
         return $chosen?->text ?? $question->text;
-    }
-    private static function variantAudience(?AssessmentRater $assessmentRater): string
-    {
-        return ($assessmentRater?->isSelf() ?? true)
-            ? 'self'
-            : 'external';
     }
 }

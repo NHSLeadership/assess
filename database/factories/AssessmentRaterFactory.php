@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Enums\RaterType;
 use App\Models\Assessment;
 use App\Models\AssessmentRater;
 use App\Models\Rater;
@@ -25,7 +24,9 @@ class AssessmentRaterFactory extends Factory
         return [
             'assessment_id' => Assessment::factory(),
             'rater_id' => Rater::factory(),
-            'type' => $this->faker->randomElement(RaterType::cases())->value,
+            'role' => $this->faker->randomElement([
+                'self', 'manager', 'direct_report', 'peer', 'other',
+            ]),
         ];
     }
 }
