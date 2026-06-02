@@ -22,10 +22,8 @@ class QuestionVariantsTable
             ->columns([
                 TextColumn::make('conditions_summary')
                     ->label('Conditions')
-                    ->formatStateUsing(fn ($state) => ucfirst($state))
                     ->badge(),
-                TextColumn::make('rater_type')->badge()
-                    ->formatStateUsing(fn ($state) => ucfirst($state->value)),
+                TextColumn::make('rater_type'),
                 TextColumn::make('text')
                     ->label('Variant text')
                     ->limit(90)

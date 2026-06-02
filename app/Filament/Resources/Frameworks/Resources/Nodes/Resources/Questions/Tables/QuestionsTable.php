@@ -19,8 +19,7 @@ class QuestionsTable
             ->columns([
                 TextColumn::make('title')
                     ->searchable(),
-                TextColumn::make('response_type')->label('Type')->badge()
-                    ->formatStateUsing(fn ($state) => ucfirst($state)),
+                TextColumn::make('response_type')->label('Type'),
                 ToggleColumn::make('required'),
                 ToggleColumn::make('active'),
                 TextColumn::make('created_at')
