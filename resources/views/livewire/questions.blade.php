@@ -1,5 +1,7 @@
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
+        @include('livewire.alerts')
+
         @if (!empty($questions))
             <form wire:submit.prevent="storeNext()">
                 @foreach ($questions as $question)
