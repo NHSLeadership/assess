@@ -68,7 +68,7 @@
                                 {{-- Question text --}}
                                 {!! \App\Services\QuestionTextResolver::textFor(
                                     $this->assessment(),
-                                    $this->rater(),
+                                    $this->rater()?->pivot,
                                     $question->id
                                 ) !!}
 

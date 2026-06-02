@@ -1,7 +1,5 @@
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
-        @include('livewire.alerts')
-
         @if (!empty($questions))
             <form wire:submit.prevent="storeNext()">
                 @foreach ($questions as $question)
@@ -14,7 +12,7 @@
                             'type' => $question['type'] ?? null,
                             'descriptions' => [
                                 $question['text'] ?? null,
-                                '<div class="nhsuk-inset-text"><span class="nhsuk-u-visually-hidden">Information: </span><p class="nhsuk-u-font-size-26">' . (($resolvedHint = \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $question['id'])) !== '' && trim($resolvedHint) !== '' ? $resolvedHint : $question['hint']) . '</p></div>'
+                                '<div class="nhsuk-inset-text"><span class="nhsuk-u-visually-hidden">Information: </span><p class="nhsuk-u-font-size-26">' . (($resolvedHint = \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater()?->pivot, $question['id'])) !== '' && trim($resolvedHint) !== '' ? $resolvedHint : $question['hint']) . '</p></div>'
                              ]
                         ])
                             @slot('label')

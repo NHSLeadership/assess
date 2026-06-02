@@ -46,21 +46,18 @@
             <h2>Results</h2>
                 <div class="nhsuk-u-margin-bottom-5" wire:ignore>
                     <h3>Average scores for standards</h3>
+                    <canvas id="radarChart" style="width: 90%" aria-describedby="radar-desc"></canvas>
 
-                    <div class="chart-view">
-                        <div style="width: 100%; max-width: 700px;">
-                            <canvas id="radarChart" aria-describedby="radar-desc"></canvas>
-                        </div>
-                    </div>
-
-                    {{-- Accessible alternative chart for screen readers and mobiles --}}
-                    <div id="radar-desc" class="table-view nhsuk-u-visually-hidden">
+                    {{-- Accessible alternative chart for screen readers --}}
+                    <div id="radar-desc" class="nhsuk-u-visually-hidden">
+                        <p>Radar chart showing average scores for standards.</p>
                         @if(!empty($radarData) && is_array($radarData))
                             @php
                                 $labels = data_get($radarData, 'labels', []);
                                 $datasets = data_get($radarData, 'datasets', []);
                             @endphp
                             <table>
+                                <caption>Radar chart data: average scores for standards</caption>
                                 <thead>
                                     <tr>
                                         <th scope="col">Standard</th>
@@ -107,29 +104,21 @@
 
                 @if ($chart)
                     <div class="nhsuk-u-margin-bottom-5" wire:ignore>
-                        <div class="chart-view">
-                            <p>Bar chart data for {{ $node->name }}</p>
-                            <div style="width: 100%; max-width: 900px;">
-                                <canvas
-                                        id="{{ $chart['id'] }}"
-                                        aria-describedby="chart-desc-{{ $chart['id'] }}"
-                                ></canvas>
-                            </div>
-                        </div>
-
+                        <canvas id="{{ $chart['id'] }}" style="width: 100%; max-width: 900px;" aria-describedby="chart-desc-{{ $chart['id'] }}"></canvas>
 
                         {{-- Accessible alternative chart for screen readers --}}
-                        <div id="chart-desc-{{ $chart['id'] }}" class="table-view nhsuk-u-visually-hidden">
+                        <div id="chart-desc-{{ $chart['id'] }}" class="nhsuk-u-visually-hidden">
+                            <p>Bar chart showing scores for {{ $node->name }}.</p>
                             @php
                                 $labels = data_get($chart, 'data.labels', []);
                                 $datasets = data_get($chart, 'data.datasets', []);
                             @endphp
                             @if(!empty($labels) && !empty($datasets))
                                 <table>
-                                    <caption>{{ $node->name }} scores</caption>
+                                    <caption>Bar chart data for {{ $node->name }}</caption>
                                     <thead>
                                         <tr>
-                                            <th scope="col">Competency</th>
+                                            <th scope="col">Label</th>
                                                 @foreach($datasets as $ds)
                                                     @php
                                                         $dsLabel = data_get($ds, 'label', 'Series');
@@ -184,7 +173,7 @@
 
                                 {!! \App\Services\QuestionTextResolver::textFor(
                                         $this->assessment(),
-                                        $this->rater(),
+                                        $this->rater()?->pivot,
                                         $response->question->id
                                     ) ?? $response->question?->hint !!}
 
