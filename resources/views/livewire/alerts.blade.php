@@ -13,7 +13,9 @@
                 </div>
             </div>
 
-        @elseif (session()->has('success'))
+        @endif
+
+        @if (session()->has('success'))
 
             <div class="nhsuk-notification-banner nhsuk-notification-banner--success" role="alert" aria-labelledby="nhsuk-notification-banner-title" data-module="nhsuk-notification-banner">
                 <div class="nhsuk-notification-banner__header">
@@ -26,7 +28,9 @@
                 </div>
             </div>
 
-        @elseif ($errors && count($errors))
+        @endif
+
+        @if ($errors && count($errors))
 
             <div class="nhsuk-error-summary" id="error-summary"
                  aria-labelledby="error-summary-title" role="alert" tabindex="-1">
@@ -48,7 +52,9 @@
                 </div>
             </div>
 
-        @elseif (session()->has('error'))
+        @endif
+
+        @if (session()->has('error'))
 
             <div class="nhsuk-error-summary" id="error" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
                 <h2 class="nhsuk-error-summary__title" id="error-summary-title">
@@ -60,7 +66,9 @@
                 </div>
             </div>
 
-        @elseif (session()->has('warning'))
+        @endif
+
+        @if (session()->has('warning'))
 
             <div class="nhsuk-warning-callout" id="warning" role="alert" tabindex="-1">
                 <h3 class="nhsuk-warning-callout__label">
