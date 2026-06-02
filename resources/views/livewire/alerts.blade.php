@@ -36,7 +36,7 @@
                 </h2>
                 <div class="nhsuk-error-summary__body">
                     <ul class="nhsuk-list nhsuk-error-summary__list">
-                        @php $errorsDecoded = json_decode($errors, true); @endphp
+                        @php $errorsDecoded = $errors->messages(); @endphp
                         @foreach ($errorsDecoded as $id => $error)
                             <li>
                                 <a href="#{{ $id }}-error-error">
