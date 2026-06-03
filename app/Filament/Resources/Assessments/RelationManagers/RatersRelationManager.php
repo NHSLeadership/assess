@@ -6,9 +6,10 @@ use App\Enums\RaterType;
 use App\Filament\Resources\Raters\Schemas\RaterForm;
 use App\Models\Rater;
 use App\Models\RaterGroup;
+use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\DetachAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -21,59 +22,67 @@ class RatersRelationManager extends RelationManager
 {
     protected static string $relationship = 'raters';
 
-    public function form(Schema $schema): Schema    {
-        return $schema->components([
-            Select::make('rater_id')
-                ->label('User ID')
-                ->options(function () {
-                    return Rater::query()
-                        ->pluck('user_id', 'id');
-                })
-                ->preload()
+    protected function getFormComponents(): array
+    {
+        return [
+            Select::make('recordId')
+                ->label('Rater')
+                ->options(fn () =>
+                Rater::query()
+                    ->where(function ($query) {
+                        $query->where('user_id', '!=', $this->getOwnerRecord()->user_id)
+                            ->orWhereNull('user_id');
+                    })
+                    ->pluck('name', 'id')
+                )
                 ->searchable()
                 ->required()
+                ->visible(fn ($context) => $context === 'attach')
                 ->createOptionForm(RaterForm::components())
-                ->createOptionUsing(function (array $data) {
-                    return Rater::create($data)->id;
-                }),
+                ->createOptionUsing(fn ($data) => Rater::create($data)->id),
 
             Select::make('type')
-                ->options(RaterType::class)
+                ->options(collect(RaterType::cases())
+                    ->reject(fn ($case) => $case === RaterType::Self)
+                    ->mapWithKeys(fn ($case) => [$case->value => ucfirst($case->value)])
+                    ->toArray()
+                )
                 ->live()
                 ->required(),
 
             Select::make('rater_group_id')
                 ->label('Group')
-                ->options(function () {
-                    return RaterGroup::query()
-                        ->where('user_id', $this->getOwnerRecord()->user_id)
-                        ->pluck('name', 'id');
-                })
-                ->preload()
+                ->options(fn () => RaterGroup::query()
+                    ->where('user_id', $this->getOwnerRecord()->user_id)
+                    ->pluck('name', 'id')
+                )
                 ->requiredIf('type', 'other')
-                ->helperText('Required when type is Other')
                 ->nullable()
                 ->createOptionForm([
-                    TextInput::make('name')
-                        ->required()
-                        ->label('Group name'),
+                    TextInput::make('name')->required(),
                 ])
-                ->createOptionUsing(function (array $data) {
-                    return RaterGroup::create([
-                        'name' => $data['name'],
-                        'user_id' => $this->getOwnerRecord()->user_id,
-                    ])->id;
-                }),
-        ]);
+                ->createOptionUsing(fn ($data) => RaterGroup::create([
+                    'name' => $data['name'],
+                    'user_id' => $this->getOwnerRecord()->user_id,
+                ])->id),
+        ];
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema->components($this->getFormComponents());
     }
 
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function ($query) {
+                $query->where('type', '!=', RaterType::Self->value);
+            })
             ->columns([
-                TextColumn::make('user_id')
-                    ->searchable(),
                 TextColumn::make('name')
+                    ->searchable(),
+                TextColumn::make('email')
                     ->searchable(),
                 TextColumn::make('pivot.type')->label('Type')->badge()
                     ->formatStateUsing(fn ($state) => ucfirst($state->value)),
@@ -88,10 +97,14 @@ class RatersRelationManager extends RelationManager
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->headerActions([
-                CreateAction::make(),
+                AttachAction::make()
+                    ->label('Attach rater')
+                    ->schema(fn () => $this->getFormComponents())
+//                    ->schema(fn () => $this->form(new \Filament\Schemas\Schema()))
             ])
             ->recordActions([
                 EditAction::make(),
+                DetachAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
