@@ -25,21 +25,30 @@ class RatersRelationManager extends RelationManager
     protected function getFormComponents(): array
     {
         return [
+
             Select::make('recordId')
                 ->label('Rater')
-                ->options(fn () =>
-                Rater::query()
-                    ->where(function ($query) {
-                        $query->where('user_id', '!=', $this->getOwnerRecord()->user_id)
-                            ->orWhereNull('user_id');
-                    })
-                    ->pluck('name', 'id')
-                )
+                ->options(function () {
+                    $assessment = $this->getOwnerRecord();
+
+                    $attachedRaterIds = $assessment->raters()->pluck('raters.id');
+
+                    return Rater::query()
+                        ->where(function ($query) use ($assessment) {
+                            $query->where('user_id', '!=', $assessment->user_id)
+                                ->orWhereNull('user_id');
+                        })
+                        ->whereNotIn('id', $attachedRaterIds)
+                        ->whereNotNull('name')
+                        ->orderBy('name')
+                        ->pluck('name', 'id');
+                })
                 ->searchable()
                 ->required()
                 ->visible(fn ($context) => $context === 'attach')
                 ->createOptionForm(RaterForm::components())
                 ->createOptionUsing(fn ($data) => Rater::create($data)->id),
+
 
             Select::make('type')
                 ->options(collect(RaterType::cases())

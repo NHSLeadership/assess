@@ -16,6 +16,10 @@ return new class extends Migration
             $table->string('type', 10)->default('self')->change();
             $table->dropColumn('is_self');
             $table->foreignId('rater_group_id')->nullable()->constrained();
+            $table->dropIndex(['assessment_id','is_self']);
+            $table->dropIndex(['assessment_id','role']);
+            $table->index('assessment_id');
+            $table->index(['assessment_id', 'type']);
         });
     }
 
@@ -29,6 +33,10 @@ return new class extends Migration
             $table->enum('role', ['self', 'manager', 'report', 'peer', 'other'])->default('self')->change();
             $table->boolean('is_self')->default(true);
             $table->dropConstrainedForeignId('rater_group_id');
+            $table->index(['assessment_id', 'is_self']);
+            $table->index(['assessment_id', 'role']);
+            $table->dropIndex(['assessment_id']);
+            $table->dropIndex(['assessment_id', 'type']);
         });
     }
 };
