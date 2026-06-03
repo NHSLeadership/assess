@@ -15,7 +15,7 @@
         "filament/spatie-laravel-settings-plugin": "^5.6.6",
         "flowframe/laravel-trend": "^0.5",
         "jeffersongoncalves/filament-umami": "3.x-dev",
-        "laravel/framework": "^13.12.0",
+        "laravel/framework": "^13.13.0",
         "laravel/pennant": "^1.23.0",
         "laravel/tinker": "^3.0.2",
         "livewire/volt": "^1.10.5",
@@ -25,12 +25,12 @@
         "symfony/yaml": "^8.1.0"
     },
     "require-dev": {
-        "driftingly/rector-laravel": "^2.4.0",
+        "driftingly/rector-laravel": "^2.5.0",
         "fakerphp/faker": "^1.24.1",
         "larastan/larastan": "^3.10.0",
         "laravel/pail": "^1.2.7",
         "laravel/pint": "^1.29.1",
-        "laravel/sail": "^1.61.0",
+        "laravel/sail": "^1.62.0",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^8.9.4",
         "pestphp/pest": "^4.7.0",
