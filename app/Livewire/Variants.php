@@ -186,14 +186,7 @@ class Variants extends Component
                 // Ensure rater record exists (no duplicates)
                 $rater = Rater::firstOrCreate(
                     ['user_id' => $this->user()?->user_id ?? null],
-                    ['created_at' => now()] // optional defaults
                 );
-
-                // Link rater to this assessment (avoid duplicates too)
-                AssessmentRater::firstOrCreate([
-                    'assessment_id' => $assessment->id,
-                    'rater_id' => $rater->id,
-                ]);
 
             }, 3); // retry count for deadlocks.
 

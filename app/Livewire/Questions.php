@@ -3,7 +3,9 @@
 namespace App\Livewire;
 
 use App\Enums\ResponseType;
+use App\Models\Assessment;
 use App\Models\Node;
+use App\Models\Rater;
 use App\Models\Response;
 use App\Services\FrameworkTraversalService;
 use App\Services\UserResponseService;
@@ -213,9 +215,22 @@ class Questions extends Component
         return $rules ?? [];
     }
 
-    public function rater()
+//    public function rater()
+//    {
+//        return $this->assessment()?->raters()?->first();
+//    }
+
+    public function rater(): ?Rater
     {
-        return $this->assessment()?->raters()?->first();
+        $assessment = $this->assessment();
+
+        if (! $assessment instanceof Assessment) {
+            return null;
+        }
+
+        return Rater::query()
+            ->where('user_id', $assessment->user_id)
+            ->first();
     }
 
     /**
