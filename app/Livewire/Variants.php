@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\Assessment;
-use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Rater;
 use App\Services\UserAssessmentVariantSelectionService;
@@ -13,7 +12,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 use App\Traits\HasPageTitle;
 

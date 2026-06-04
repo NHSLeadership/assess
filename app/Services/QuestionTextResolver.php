@@ -103,7 +103,8 @@ class QuestionTextResolver
     }
     private static function variantAudience(?AssessmentRater $assessmentRater): string
     {
-        return ($assessmentRater?->isSelf() ?? true)
+//        return ($assessmentRater?->isSelf() ?? true)
+        return ($assessmentRater === null)
             ? 'self'
             : 'external';
     }

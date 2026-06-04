@@ -40,9 +40,4 @@ class AssessmentRater extends Pivot
     {
         return $this->belongsTo(RaterGroup::class, 'rater_group_id');
     }
-
-    public function isSelf(): bool
-    {
-        return $this->type === RaterType::Self;
-    }
 }

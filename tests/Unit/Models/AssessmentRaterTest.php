@@ -12,19 +12,6 @@ test('assessment rater casts type to enum', function () {
     expect($pivot->type)->toEqual(RaterType::Manager);
 });
 
-test('assessment rater identifies self rater correctly', function () {
-    $pivot = new AssessmentRater(['type' => 'self']);
-
-    expect($pivot->isSelf())->toBeTrue();
-});
-
-test('assessment rater identifies external rater correctly', function () {
-    $pivot = new AssessmentRater(['type' => 'peer']);
-
-    expect($pivot->isSelf())->toBeFalse();
-});
-
-
 test('assessment rater has fillable attributes', function () {
     $user = makeAuthUser();
     $assessment = Assessment::factory()->create([
@@ -43,6 +30,14 @@ test('assessment rater has fillable attributes', function () {
         ->and($pivot->type)->toEqual(RaterType::Manager);
 });
 
+
+test('assessment rater accepts valid external types', function () {
+    foreach (['manager', 'report', 'peer', 'other'] as $type) {
+        $pivot = new AssessmentRater(['type' => $type]);
+
+        expect($pivot->type->value)->toEqual($type);
+    }
+});
 
 test('assessment rater has custom group', function () {
     $user = makeAuthUser();

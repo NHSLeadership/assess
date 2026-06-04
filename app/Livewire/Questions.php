@@ -215,12 +215,8 @@ class Questions extends Component
         return $rules ?? [];
     }
 
-//    public function rater()
-//    {
-//        return $this->assessment()?->raters()?->first();
-//    }
-
-    public function rater(): ?Rater
+    // For now only get self rater. Later add function to get external raters
+    public function selfRater(): ?Rater
     {
         $assessment = $this->assessment();
 
@@ -228,9 +224,9 @@ class Questions extends Component
             return null;
         }
 
-        return Rater::query()
-            ->where('user_id', $assessment->user_id)
-            ->first();
+        return $assessment
+            ? Rater::where('user_id', $assessment->user_id)->first()
+            : null;
     }
 
     /**
@@ -305,7 +301,7 @@ class Questions extends Component
                 $value,
                 $question,
                 $this->assessmentId,
-                $this->rater()?->id
+                $this->selfRater()?->id
             );
 
             // Save optional reflection for scale questions
@@ -318,7 +314,7 @@ class Questions extends Component
                     [
                         'assessment_id' => $this->assessmentId,
                         'question_id' => $question->id,
-                        'rater_id' => $this->rater()?->id,
+                        'rater_id' => $this->selfRater()?->id,
                     ],
                     [
                         'textarea' => $reflection,

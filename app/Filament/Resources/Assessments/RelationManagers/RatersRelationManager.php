@@ -25,14 +25,11 @@ class RatersRelationManager extends RelationManager
     protected function getFormComponents(): array
     {
         return [
-
             Select::make('recordId')
                 ->label('Rater')
                 ->options(function () {
                     $assessment = $this->getOwnerRecord();
-
                     $attachedRaterIds = $assessment->raters()->pluck('raters.id');
-
                     return Rater::query()
                         ->where(function ($query) use ($assessment) {
                             $query->where('user_id', '!=', $assessment->user_id)
@@ -48,17 +45,13 @@ class RatersRelationManager extends RelationManager
                 ->visible(fn ($context) => $context === 'attach')
                 ->createOptionForm(RaterForm::components())
                 ->createOptionUsing(fn ($data) => Rater::create($data)->id),
-
-
             Select::make('type')
                 ->options(collect(RaterType::cases())
-                    ->reject(fn ($case) => $case === RaterType::Self)
                     ->mapWithKeys(fn ($case) => [$case->value => ucfirst($case->value)])
                     ->toArray()
                 )
                 ->live()
                 ->required(),
-
             Select::make('rater_group_id')
                 ->label('Group')
                 ->options(fn () => RaterGroup::query()
@@ -85,9 +78,6 @@ class RatersRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function ($query) {
-                $query->where('type', '!=', RaterType::Self->value);
-            })
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
@@ -109,7 +99,6 @@ class RatersRelationManager extends RelationManager
                 AttachAction::make()
                     ->label('Attach rater')
                     ->schema(fn () => $this->getFormComponents())
-//                    ->schema(fn () => $this->form(new \Filament\Schemas\Schema()))
             ])
             ->recordActions([
                 EditAction::make(),

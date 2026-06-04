@@ -56,7 +56,7 @@ test('rater can belong to many assessments with pivot data', function () {
     ]);
 
     $rater->assessments()->attach($assessment2->id, [
-        'type' => 'self',
+        'type' => 'peer',
     ]);
 
     expect($rater->assessments)->toHaveCount(2)
