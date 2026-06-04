@@ -22,6 +22,7 @@ return [
         'framework-not-found' => 'Framework not found.',
     ],
     'success' => [
+        'deleted' => 'Assessment deleted',
         'title' => 'Assessment submitted',
         'assessment-submitted' => 'Assessment submitted successfully.',
     ],

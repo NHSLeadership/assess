@@ -21,7 +21,7 @@
              aria-labelledby="nhsuk-notification-banner-success-title" data-module="nhsuk-notification-banner">
             <div class="nhsuk-notification-banner__header">
                 <h2 class="nhsuk-notification-banner__title" id="nhsuk-notification-banner-success-title">
-                    {{ session('success-heading', __('alerts.success.generic')) }}
+                    {{ session('success-heading', __('alerts.success.deleted')) }}
                 </h2>
             </div>
             <div class="nhsuk-notification-banner__content">
