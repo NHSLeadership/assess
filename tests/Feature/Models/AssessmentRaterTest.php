@@ -16,7 +16,9 @@ beforeEach(function () {
         'framework_id' => $this->framework->id,
         'user_id' => $this->user->id,
     ]);
-    $this->rater = Rater::factory()->create(['user_id' => $this->user->user_id]);
+    $this->rater = Rater::factory()->create([
+        'subject_id' => $this->user->user_id
+    ]);
 });
 
 test('assessment rater pivot persists correctly', function () {

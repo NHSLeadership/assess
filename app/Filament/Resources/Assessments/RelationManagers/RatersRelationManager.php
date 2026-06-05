@@ -32,8 +32,8 @@ class RatersRelationManager extends RelationManager
                     $attachedRaterIds = $assessment->raters()->pluck('raters.id');
                     return Rater::query()
                         ->where(function ($query) use ($assessment) {
-                            $query->where('user_id', '!=', $assessment->user_id)
-                                ->orWhereNull('user_id');
+                            $query->where('subject_id', '!=', $assessment->user_id)
+                                ->orWhereNull('subject_id');
                         })
                         ->whereNotIn('id', $attachedRaterIds)
                         ->whereNotNull('name')
@@ -55,7 +55,7 @@ class RatersRelationManager extends RelationManager
             Select::make('rater_group_id')
                 ->label('Group')
                 ->options(fn () => RaterGroup::query()
-                    ->where('user_id', $this->getOwnerRecord()->user_id)
+                    ->where('subject_id', $this->getOwnerRecord()->user_id)
                     ->pluck('name', 'id')
                 )
                 ->requiredIf('type', 'other')
@@ -65,7 +65,7 @@ class RatersRelationManager extends RelationManager
                 ])
                 ->createOptionUsing(fn ($data) => RaterGroup::create([
                     'name' => $data['name'],
-                    'user_id' => $this->getOwnerRecord()->user_id,
+                    'subject_id' => $this->getOwnerRecord()->user_id,
                 ])->id),
         ];
     }

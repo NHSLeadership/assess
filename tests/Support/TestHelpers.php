@@ -137,7 +137,7 @@ function createScaleWithOption(array $scaleOverrides = [], array $optionOverride
 function variantsRaterForUser($user, array $overrides = [])
 {
     return Rater::factory()->create(array_merge([
-        'user_id' => $user->user_id,
+        'subject_id' => $user->user_id,
     ], $overrides));
 }
 

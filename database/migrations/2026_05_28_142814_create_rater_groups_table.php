@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('rater_groups', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('subject_id');
             $table->string('name');
             $table->timestamps();
-            $table->unique(['user_id', 'name']);
+            $table->unique(['subject_id', 'name']);
         });
     }
 

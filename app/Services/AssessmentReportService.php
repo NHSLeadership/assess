@@ -40,7 +40,7 @@ class AssessmentReportService
             ->orderedHierarchyNodes($frameworkId);
 
         $this->rater = Rater::with('assessments')
-            ->where('user_id', auth()->id())
+            ->where('subject_id', auth()->id())
             ->whereHas('assessments', fn ($q) => $q->where('assessments.id', $assessmentId))
             ->first();
 

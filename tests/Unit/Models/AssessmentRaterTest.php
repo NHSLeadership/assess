@@ -47,7 +47,7 @@ test('assessment rater has custom group', function () {
     $rater = Rater::factory()->create();
 
     $group = RaterGroup::create([
-        'user_id' => $user->user_id,
+        'subject_id' => $user->user_id,
         'name' => 'test',
     ]);
 

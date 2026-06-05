@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class RaterGroup extends Model
 {
     protected $fillable = [
-        'user_id',
+        'subject_id',
         'name',
     ];
 

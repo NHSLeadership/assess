@@ -25,7 +25,7 @@ function makeRater(): Collection|Model
     $user = makeAuthUser(['user_id' => '1000000000']);
 
     return Rater::factory()->create([
-        'user_id' => $user->id,
+        'subject_id' => $user->user_id
     ]);
 }
 
@@ -79,11 +79,11 @@ test('rater can have many responses', function () {
 
     $assessment1 = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $rater->user_id,
+        'user_id' => $rater->subject_id,
     ]);
     $assessment2 = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $rater->user_id,
+        'user_id' => $rater->subject_id,
     ]);
 
     $scale = Scale::factory()->create();

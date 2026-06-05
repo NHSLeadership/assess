@@ -21,7 +21,7 @@ class RaterFactory extends Factory
     {
         return [
             'id' => $this->faker->unique()->numberBetween(1000, 999999), // if your PK is UUID
-            'user_id' => $this->faker->unique()->numberBetween(1000, 999999),
+            'subject_id' => $this->faker->unique()->numberBetween(1000, 999999),
             'email' => $this->faker->unique()->safeEmail(),
             'name' => $this->faker->name(),
         ];

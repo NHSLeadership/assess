@@ -225,7 +225,7 @@ class Questions extends Component
         }
 
         return $assessment
-            ? Rater::where('user_id', $assessment->user_id)->first()
+            ? Rater::where('subject_id', $assessment->user_id)->first()
             : null;
     }
 

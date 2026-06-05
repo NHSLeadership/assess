@@ -13,7 +13,7 @@ class Rater extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'subject_id',
         'name',
         'email',
     ];

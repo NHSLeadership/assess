@@ -183,7 +183,7 @@ class Variants extends Component
 
                 // Ensure rater record exists (no duplicates)
                 $rater = Rater::firstOrCreate(
-                    ['user_id' => $this->user()?->user_id ?? null],
+                    ['subject_id' => $this->user()?->user_id ?? null],
                 );
 
             }, 3); // retry count for deadlocks.

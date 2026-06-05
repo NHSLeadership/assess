@@ -25,7 +25,9 @@ test('assessment belongs to a framework', function () {
 });
 
 test('assessment has many responses', function () {
-    $rater = Rater::factory()->create(['user_id' => $this->user->user_id]);
+    $rater = Rater::factory()->create([
+        'subject_id' => $this->user->user_id]
+    );
 
     // Create node + questions via helper
     $setup = createNodeWithQuestions(3, 'scale', ['framework' => $this->framework]);
@@ -43,7 +45,9 @@ test('assessment has many responses', function () {
 });
 
 test('assessment raters relationship works', function () {
-    $rater = Rater::factory()->create(['user_id' => $this->user->user_id]);
+    $rater = Rater::factory()->create([
+        'subject_id' => $this->user->user_id
+    ]);
 
     $this->assessment->raters()->attach($rater->id, [
         'type' => 'manager',

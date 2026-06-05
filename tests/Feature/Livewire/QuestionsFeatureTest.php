@@ -138,7 +138,10 @@ it('moves to the next node when on the last page', function () {
     ]);
 
     // Rater (must match component logic)
-    $rater = Rater::factory()->create(['user_id' => $user->user_id]);
+    $rater = Rater::factory()->create([
+        'subject_id'  => $user->user_id,
+    ]);
+
     AssessmentRater::factory()->create([
         'assessment_id' => $assessment->id,
         'rater_id' => $rater->id,
