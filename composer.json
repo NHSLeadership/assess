@@ -15,7 +15,7 @@
         "filament/spatie-laravel-settings-plugin": "^5.6.6",
         "flowframe/laravel-trend": "^0.5",
         "jeffersongoncalves/filament-umami": "3.x-dev",
-        "laravel/framework": "^13.13.0",
+        "laravel/framework": "^13.14.0",
         "laravel/pennant": "^1.23.0",
         "laravel/tinker": "^3.0.2",
         "livewire/volt": "^1.10.5",
