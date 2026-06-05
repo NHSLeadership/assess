@@ -41,7 +41,6 @@ class RaterResource extends Resource
     {
         return [
             'index' => ListRaters::route('/'),
-            'create' => CreateRater::route('/create'),
             'edit' => EditRater::route('/{record}/edit'),
         ];
     }

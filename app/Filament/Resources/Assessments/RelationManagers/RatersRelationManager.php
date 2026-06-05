@@ -31,10 +31,7 @@ class RatersRelationManager extends RelationManager
                     $assessment = $this->getOwnerRecord();
                     $attachedRaterIds = $assessment->raters()->pluck('raters.id');
                     return Rater::query()
-                        ->where(function ($query) use ($assessment) {
-                            $query->where('subject_id', '!=', $assessment->user_id)
-                                ->orWhereNull('subject_id');
-                        })
+                        ->where('subject_id', $assessment->user_id)
                         ->whereNotIn('id', $attachedRaterIds)
                         ->whereNotNull('name')
                         ->orderBy('name')
@@ -44,7 +41,10 @@ class RatersRelationManager extends RelationManager
                 ->required()
                 ->visible(fn ($context) => $context === 'attach')
                 ->createOptionForm(RaterForm::components())
-                ->createOptionUsing(fn ($data) => Rater::create($data)->id),
+                ->createOptionUsing(fn ($data) => Rater::create([
+                    ...$data,
+                    'subject_id' => $this->getOwnerRecord()->user_id,
+                ])->id),
             Select::make('type')
                 ->options(collect(RaterType::cases())
                     ->mapWithKeys(fn ($case) => [$case->value => ucfirst($case->value)])
