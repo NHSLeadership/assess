@@ -8,6 +8,9 @@ return [
     |--------------------------------------------------------------------------
     */
 
+    'messages' => [
+        'title' => 'Message',
+    ],
     'errors' => [
         'title' => 'Error',
         'assessment-initialise' => 'Could not initialise new assessment. Please try again later.',
@@ -25,5 +28,8 @@ return [
         'deleted' => 'Assessment deleted',
         'title' => 'Assessment submitted',
         'assessment-submitted' => 'Assessment submitted successfully.',
+    ],
+    'warnings' => [
+        'title' => 'Warning',
     ],
 ];
