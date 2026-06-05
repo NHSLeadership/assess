@@ -16,6 +16,7 @@ return new class extends Migration
             $table->dropUnique(['user_id']);
             $table->renameColumn('user_id', 'subject_id');
             $table->index(['subject_id']);
+            $table->unique(['subject_id', 'email']);
         });
     }
 
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->renameColumn('subject_id', 'user_id');
             $table->index(['user_id']);
             $table->unique(['user_id']);
+            $table->dropUnique(['subject_id', 'email']);
         });
     }
 };

@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Raters;
 
-use App\Filament\Resources\Raters\Pages\CreateRater;
 use App\Filament\Resources\Raters\Pages\EditRater;
 use App\Filament\Resources\Raters\Pages\ListRaters;
 use App\Filament\Resources\Raters\Schemas\RaterForm;

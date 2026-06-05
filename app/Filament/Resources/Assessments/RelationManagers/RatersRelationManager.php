@@ -13,10 +13,12 @@ use Filament\Actions\DetachAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Validation\Rule;
 
 class RatersRelationManager extends RelationManager
 {
@@ -37,14 +39,36 @@ class RatersRelationManager extends RelationManager
                         ->orderBy('name')
                         ->pluck('name', 'id');
                 })
-                ->searchable()
                 ->required()
                 ->visible(fn ($context) => $context === 'attach')
                 ->createOptionForm(RaterForm::components())
-                ->createOptionUsing(fn ($data) => Rater::create([
-                    ...$data,
-                    'subject_id' => $this->getOwnerRecord()->user_id,
-                ])->id),
+                ->createOptionUsing(function ($data) {
+                    $subjectId = $this->getOwnerRecord()->user_id;
+
+                    $existing = Rater::where('subject_id', $subjectId)
+                        ->where('email', $data['email'])
+                        ->first();
+
+                    if ($existing) {
+                        Notification::make()
+                            ->title('Duplicate rater email')
+                            ->body('A rater with that email address already exists.')
+                            ->info()
+                            ->send();
+                        return $existing->id;
+                    }
+
+                    $rater = Rater::firstOrCreate(
+                        [
+                            'subject_id' => $subjectId,
+                            'email' => $data['email'],
+                        ],
+                        [
+                            'name' => $data['name'],
+                        ]
+                    );
+                    return $rater->id;
+                }),
             Select::make('type')
                 ->options(collect(RaterType::cases())
                     ->mapWithKeys(fn ($case) => [$case->value => ucfirst($case->value)])
