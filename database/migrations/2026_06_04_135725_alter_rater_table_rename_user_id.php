@@ -26,11 +26,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('raters', function (Blueprint $table) {
+            $table->dropUnique(['subject_id', 'email']);
             $table->dropIndex(['subject_id']);
             $table->renameColumn('subject_id', 'user_id');
             $table->index(['user_id']);
             $table->unique(['user_id']);
-            $table->dropUnique(['subject_id', 'email']);
         });
     }
 };
