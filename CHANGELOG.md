@@ -4,6 +4,11 @@
 # Assessment tool
 
 ---
+### v1.1.0
+> Updated: 5.06.2026
+1. Allow for external raters
+
+---
 ### v1.0.16
 > Updated: 26.05.2026
 1. Responsive table layout for assessment listing page
