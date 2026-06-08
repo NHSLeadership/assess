@@ -24,7 +24,7 @@ class QuestionVariantsTable
                     ->label('Conditions')
                     ->formatStateUsing(fn ($state) => ucfirst($state))
                     ->badge(),
-                TextColumn::make('rater_type')->badge()
+                TextColumn::make('audience')->badge()
                     ->formatStateUsing(fn ($state) => ucfirst($state->value)),
                 TextColumn::make('text')
                     ->label('Variant text')

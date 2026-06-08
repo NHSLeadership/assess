@@ -2,9 +2,14 @@
 
 namespace App\Services;
 
+use App\Enums\Audience;
 use App\Models\Assessment;
 use App\Models\AssessmentRater;
 use App\Models\Question;
+use App\Models\QuestionVariant;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class QuestionTextResolver
 {
@@ -29,11 +34,10 @@ class QuestionTextResolver
         // 3) Load questions for the assessment's framework
         $questions = Question::query()
             ->whereHas('node', fn ($question) => $question->where('framework_id', $assessment->framework_id))
-            ->with(['variants' => function ($question) use ($audience): void {
-                $question->whereNull('rater_type')->orWhere('rater_type', $audience)
-                    ->orderByDesc('priority')->orderBy('id');
-            }, 'variants.matches'])
-            ->orderBy('order')->orderBy('id')
+            ->with([
+                'variants' => fn ($query) => self::applyAudienceScope($query, $audience),
+                'variants.matches',
+            ])
             ->get();
 
         // 4) Pick variant per question (AND across all selected attributes).
@@ -64,7 +68,7 @@ class QuestionTextResolver
         ?AssessmentRater $assessmentRater,
         int $questionId
     ): string {
-        // 1) Determine audience (self vs external)
+        // 1) Determine audience (self vs rater)
         $audience = self::variantAudience($assessmentRater);
 
         // 2) Selected framework variant option ids for this assessment
@@ -76,12 +80,10 @@ class QuestionTextResolver
         $question = Question::query()
             ->where('id', $questionId)
             ->whereHas('node', fn ($q) => $q->where('framework_id', $assessment->framework_id))
-            ->with(['variants' => function ($q) use ($audience): void {
-                $q->whereNull('rater_type')
-                    ->orWhere('rater_type', $audience)
-                    ->orderByDesc('priority')
-                    ->orderBy('id');
-            }, 'variants.matches'])
+            ->with([
+                'variants' => fn ($query) => self::applyAudienceScope($query, $audience),
+                'variants.matches',
+            ])
             ->first();
 
         if (! $question) {
@@ -89,23 +91,52 @@ class QuestionTextResolver
         }
 
         // 4) Pick variant for this question
-        $chosen = $question->variants->first(function ($variant) use ($selectedOptionIds) {
+        $chosen = self::chooseVariant($question->variants, $selectedOptionIds);
+
+        return $chosen?->text ?? $question->text;
+    }
+
+    private static function selectedOptionIds(Assessment $assessment): array
+    {
+        return $assessment->variantSelections()
+            ->pluck('framework_variant_option_id')
+            ->all();
+    }
+
+    private static function applyAudienceScope(Builder|HasMany $query, Audience $audience): void
+    {
+        $query->where(function ($query) use ($audience): void {
+            $query->whereNull('audience')
+                ->orWhere('audience', $audience->value);
+        })
+            ->orderByDesc('priority')
+            ->orderBy('id');
+    }
+
+    /**
+     * @param EloquentCollection<int, QuestionVariant> $variants
+     */
+    private static function chooseVariant(
+        EloquentCollection $variants,
+        array $selectedOptionIds
+    ): ?QuestionVariant
+    {
+        return $variants->first(function ($variant) use ($selectedOptionIds) {
             if ($variant->matches->isEmpty()) {
                 return true;
             }
 
             $variantOptionIds = $variant->matches->pluck('framework_variant_option_id');
 
-            return collect($selectedOptionIds)->every(fn ($id) => $variantOptionIds->contains($id));
+            return collect($selectedOptionIds)
+                ->every(fn ($id) => $variantOptionIds->contains($id));
         });
-
-        return $chosen?->text ?? $question->text;
     }
-    private static function variantAudience(?AssessmentRater $assessmentRater): string
+
+    private static function variantAudience(?AssessmentRater $assessmentRater): Audience
     {
-//        return ($assessmentRater?->isSelf() ?? true)
-        return ($assessmentRater === null)
-            ? 'self'
-            : 'external';
+        return $assessmentRater === null
+            ? Audience::Self
+            : Audience::Rater;
     }
 }

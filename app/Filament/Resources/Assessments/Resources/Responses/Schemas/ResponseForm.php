@@ -23,11 +23,11 @@ class ResponseForm
                     // Display all that are available from user_id, name and email
                     ->options(function () {
                         return Rater::query()
-                            ->orderBy('user_id')
+                            ->orderBy('subject_id')
                             ->get()
                             ->mapWithKeys(function (Rater $rater) {
                                 $parts = array_filter([
-                                    $rater->user_id,
+                                    $rater->subject_id,
                                     $rater->name,
                                     $rater->email,
                                 ]);
@@ -37,10 +37,10 @@ class ResponseForm
                             })
                             ->toArray();
                     })
-                    ->default(fn () => Rater::where('user_id', auth()->id())->value('id'))
+                    ->default(fn () => Rater::where('subject_id', auth()->id())->value('id'))
                     ->createOptionForm([
-                        TextInput::make('user_id')
-                            ->hint('Select an existing user if rater is internal.')
+                        TextInput::make('subject_id')
+                            ->hint('Select an existing user if rater is self.')
                             ->default(auth()->id())
                             ->nullable(),
                         TextInput::make('name')->nullable(),

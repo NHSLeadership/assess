@@ -19,7 +19,7 @@ class ResponsesTable
                     ->formatStateUsing(function ($state, $record) {
                         $rater = $record->rater ?? null;
                         $name = $rater->name ?? null;
-                        $uid = $rater->user_id ?? null;
+                        $uid = $rater->subject_id ?? null;
 
                         if ($uid && $name) {
                             return "{$uid} ({$name})";
