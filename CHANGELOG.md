@@ -4,8 +4,8 @@
 # Assessment tool
 
 ---
-### v1.1.0
-> Updated: 5.06.2026
+### v2.0.0
+> Updated: 8.06.2026
 1. Allow for external raters
 
 ---
