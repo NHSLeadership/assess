@@ -56,9 +56,13 @@ class Assessments extends Component
         $nodes = $this->nodes();
 
         if ($nodes && $nodes->isNotEmpty()) {
-            $this->currentNode = $this->nodeId
+            $node = $this->nodeId
                 ? $nodes->firstWhere('id', $this->nodeId)
-                : $nodes->first();
+                : null;
+
+            // Fallback if node was filtered out or missing
+            $this->currentNode = $node ?? $nodes->first();
+
         }
 
     }
@@ -66,12 +70,17 @@ class Assessments extends Component
     #[Computed]
     public function nodes(): ?Collection
     {
-        if (empty($this->assessment()->framework)) {
+        if (empty($this->assessment()?->framework)) {
             return null;
         }
 
-        return app(FrameworkTraversalService::class)
-            ->orderedQuestionNodes($this->assessment()->framework->id);
+        $nodes = app(FrameworkTraversalService::class)
+            ->orderedQuestionNodes($this->assessment()->framework->id)
+        ;
+
+        return $nodes
+            ->filter(fn (Node $node) => $this->nodeHasVisibleQuestions($node))
+            ->values();
     }
 
     protected function paginatedNodes(): ?LengthAwarePaginator
@@ -109,7 +118,7 @@ class Assessments extends Component
     {
         // Keep node within current framework
         if (! $nodeId || ! $this->assessment()?->framework) {
-            $this->currentNode = null;
+            $this->currentNode = $node ?? $this->nodes()?->first();
             return;
         }
 
@@ -171,6 +180,27 @@ class Assessments extends Component
             ];
         })->all();
     }
+
+    protected function nodeHasVisibleQuestions(Node $node): bool
+    {
+        $assessment = $this->assessment();
+
+        if (! $assessment) {
+            return false;
+        }
+
+        $resolvedTexts = \App\Services\QuestionTextResolver::optionsFor(
+            $assessment,
+            null // self context for now
+        );
+
+        $questionIds = $node->questions()
+            ->where('active', true)
+            ->pluck('id');
+
+        return $questionIds->contains(fn ($id) => array_key_exists($id, $resolvedTexts));
+    }
+
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.assessments', [

@@ -8,6 +8,7 @@ use App\Models\Node;
 use App\Models\Rater;
 use App\Models\Response;
 use App\Services\FrameworkTraversalService;
+use App\Services\QuestionTextResolver;
 use App\Services\UserResponseService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\FormFieldValidationRulesTrait;
@@ -41,6 +42,7 @@ class Questions extends Component
     public ?int $nodeId = null;
 
     public ?string $edit = null;
+    protected ?array $resolvedQuestionTexts = null;
 
     public function mount(): void
     {
@@ -87,7 +89,30 @@ class Questions extends Component
 
     public function nodeQuestions(): Collection
     {
-        return $this->orderedQuestions($this->node())?->get() ?? collect();
+        $questions = $this->orderedQuestions($this->node())?->get() ?? collect();
+
+        $resolvedTexts = $this->resolvedQuestionTexts();
+
+        return $questions
+            ->filter(fn ($question) => array_key_exists($question->id, $resolvedTexts))
+            ->map(function ($question) use ($resolvedTexts) {
+                $question->text = $resolvedTexts[$question->id];
+
+                return $question;
+            })
+            ->values();
+    }
+
+    protected function resolvedQuestionTexts(): array
+    {
+        if ($this->resolvedQuestionTexts === null) {
+            $this->resolvedQuestionTexts = QuestionTextResolver::optionsFor(
+                $this->assessment(),
+                null // self context for now
+            );
+        }
+
+        return $this->resolvedQuestionTexts;
     }
 
     protected function messages(): array
@@ -119,14 +144,13 @@ class Questions extends Component
             return null;
         }
 
-        // Single source of truth: depth-first, sibling-ordered, question-bearing nodes
         $nodes = app(FrameworkTraversalService::class)
-            ->orderedQuestionNodes($this->assessment->framework->id);
+            ->orderedQuestionNodes($this->assessment->framework->id)
+            ->filter(fn (Node $node) => $this->nodeHasVisibleQuestions($node))
+            ->values();
 
-        /** @var \ArrayIterator<int, \App\Models\Node> $nodesIterator */
-        $nodesIterator = $nodes->values()->getIterator();
+        $nodesIterator = $nodes->getIterator();
 
-        // Initialise pointer (nodeKeyId is the index in the ordered list)
         if ($this->nodeKeyId === null) {
             $this->nodeKeyId = $nodesIterator->key();
         }
@@ -159,12 +183,12 @@ class Questions extends Component
             return null;
         }
 
-
         $assessment = $this->assessment();
 
         if (!$assessment instanceof \App\Models\Assessment) {
             return null;
         }
+
         /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Response> $responses */
         $responses = $assessment->responses;
 
@@ -415,26 +439,34 @@ class Questions extends Component
 
     protected function findResumeNodeId(): ?int
     {
-        $framework = $this->assessment?->framework;
+        $nodesIterator = $this->nodes();
 
-        if (! $framework) {
+        if (! $nodesIterator instanceof \ArrayIterator) {
             return null;
         }
 
-        $orderedNodes = app(FrameworkTraversalService::class)
-            ->orderedQuestionNodes($framework->id);
+        // Use the same resolved question set used elsewhere in this component.
+        $visibleQuestionIds = array_keys($this->resolvedQuestionTexts());
+        $visibleQuestionIdLookup = array_flip($visibleQuestionIds);
 
-        // Question IDs already answered in this assessment
+        // Question IDs already answered in this assessment.
         $answeredQuestionIds = Response::where('assessment_id', $this->assessmentId)
             ->pluck('question_id')
             ->all();
 
-        foreach ($orderedNodes as $node) {
+        foreach ($nodesIterator->getArrayCopy() as $node) {
             $questionIds = $this->orderedQuestions($node)
                 ->pluck('id')
+                ->filter(fn ($id) => isset($visibleQuestionIdLookup[$id]))
+                ->values()
                 ->all();
 
-            // if any question in this node is unanswered, resume here
+            // Skip nodes that have no visible questions for this audience/context.
+            if ($questionIds === []) {
+                continue;
+            }
+
+            // If any visible question in this node is unanswered, resume here.
             if (count(array_diff($questionIds, $answeredQuestionIds)) > 0) {
                 return $node->id;
             }
@@ -473,10 +505,26 @@ class Questions extends Component
         $this->dispatch('scroll-to-top');
     }
 
-    protected function paginatedQuestions(): ?LengthAwarePaginator
+    protected function paginatedQuestions(): LengthAwarePaginator
     {
-        return $this->orderedQuestions($this->node())
-            ?->paginate($this->perPage, pageName: $this->pageName);
+        $questions = $this->nodeQuestions()->values();
+
+        $currentPage = $this->getPage($this->pageName);
+
+        $items = $questions
+            ->forPage($currentPage, $this->perPage)
+            ->values();
+
+        return new LengthAwarePaginator(
+            $items,
+            $questions->count(),
+            $this->perPage,
+            $currentPage,
+            [
+                'path' => request()->url(),
+                'pageName' => $this->pageName,
+            ]
+        );
     }
 
     /**
@@ -503,6 +551,21 @@ class Questions extends Component
                 return [$opt->id => $label];
             })
             ->toArray();
+    }
+
+    protected function nodeHasVisibleQuestions(Node $node): bool
+    {
+        $assessment = $this->assessment();
+
+        if (! $assessment) {
+            return false;
+        }
+
+        $resolvedTexts = $this->resolvedQuestionTexts();
+
+        $questionIds = $node->questions->pluck('id');
+
+        return $questionIds->contains(fn ($id) => array_key_exists($id, $resolvedTexts));
     }
 
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View

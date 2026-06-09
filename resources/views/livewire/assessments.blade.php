@@ -52,7 +52,9 @@
 
                 @endif
 
-                <p>{!! $currentNode->description !!}</p>
+                @isset($currentNode->description)
+                    <p>{!! $currentNode->description !!}</p>
+                @endisset
 
                 <livewire:questions
                         :assessmentId="$this->assessmentId"
