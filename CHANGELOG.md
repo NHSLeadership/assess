@@ -5,7 +5,7 @@
 
 ---
 ### v2.0.0
-> Updated: 8.06.2026
+> Updated: 9.06.2026
 1. Allow for external raters
 
 ---

@@ -17,23 +17,22 @@ class ResponsesTable
             ->columns([
                 TextColumn::make('rater')
                     ->formatStateUsing(function ($state, $record) {
-                        $rater = $record->rater ?? null;
-                        $name = $rater->name ?? null;
-                        $uid = $rater->subject_id ?? null;
+                        $rater = $record->rater;
 
-                        if ($uid && $name) {
-                            return "{$uid} ({$name})";
+                        if (! $rater) {
+                            return '';
                         }
 
-                        if ($uid) {
-                            return (string) $uid;
+                        $hasPivot = $record->assessment
+                            ->raters()
+                            ->where('raters.id', $record->rater_id)
+                            ->exists();
+
+                        if (! $hasPivot) {
+                            return 'Self';
                         }
 
-                        if ($name) {
-                            return (string) $name;
-                        }
-
-                        return '';
+                        return $rater->name ?? 'Unknown rater';
                     }),
                 TextColumn::make('question.title')
                     ->limit(80),

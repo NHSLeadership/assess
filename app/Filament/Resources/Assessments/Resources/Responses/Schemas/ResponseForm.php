@@ -8,9 +8,9 @@ use App\Models\ScaleOption;
 use App\Services\QuestionTextResolver;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 
 class ResponseForm
 {
@@ -20,32 +20,31 @@ class ResponseForm
             ->components([
                 Select::make('rater_id')
                     ->label('Rater')
-                    // Display all that are available from user_id, name and email
-                    ->options(function () {
+                    ->options(function (?Model $record) {
+                        $assessment = $record?->assessment;
+
+                        if (! $assessment) {
+                            return [];
+                        }
+
+                        $attachedRaterIds = $assessment->raters()
+                            ->pluck('raters.id');
+
                         return Rater::query()
-                            ->orderBy('subject_id')
+                            ->where('subject_id', $assessment->user_id)
+                            ->orderBy('name')
                             ->get()
-                            ->mapWithKeys(function (Rater $rater) {
-                                $parts = array_filter([
-                                    $rater->subject_id,
-                                    $rater->name,
-                                    $rater->email,
-                                ]);
-                                $label = implode(' | ', $parts);
+                            ->mapWithKeys(function (Rater $rater) use ($attachedRaterIds) {
+                                $isSelf = ! $attachedRaterIds->contains($rater->id);
+
+                                $label = $isSelf
+                                    ? 'Self'
+                                    : ($rater->name ?: 'Unnamed rater');
 
                                 return [$rater->id => $label];
                             })
                             ->toArray();
                     })
-                    ->default(fn () => Rater::where('subject_id', auth()->id())->value('id'))
-                    ->createOptionForm([
-                        TextInput::make('subject_id')
-                            ->hint('Select an existing user if rater is self.')
-                            ->default(auth()->id())
-                            ->nullable(),
-                        TextInput::make('name')->nullable(),
-                        TextInput::make('email')->nullable(),
-                    ])
                     ->required()
                     ->live(),
                 Select::make('question_id')
