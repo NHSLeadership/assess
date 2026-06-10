@@ -23,7 +23,9 @@ use Livewire\WithPagination;
 
 class Questions extends Component
 {
-    use AssessmentHelperTrait;
+    use AssessmentHelperTrait {
+        assessment as getAssessment;
+    }
     use FormFieldValidationRulesTrait;
     use UserTrait;
     use WithoutUrlPagination;
@@ -43,6 +45,20 @@ class Questions extends Component
 
     public ?string $edit = null;
     public array $resolvedQuestionTexts = [];
+    protected ?Assessment $cachedAssessment = null;
+    protected ?Rater $cachedRater = null;
+    protected ?\ArrayIterator $cachedNodes = null;
+
+    public function assessment(): ?Assessment
+    {
+        if ($this->cachedAssessment !== null) {
+            return $this->cachedAssessment;
+        }
+
+        // Call the trait method directly via alias
+        return $this->cachedAssessment = $this->getAssessment();
+    }
+
 
     public function mount(): void
     {
@@ -128,28 +144,27 @@ class Questions extends Component
     #[Computed]
     public function nodes(): ?\ArrayIterator
     {
-        if (empty($this->assessment?->framework)) {
+        if ($this->cachedNodes !== null) {
+            return $this->cachedNodes;
+        }
+
+        if (empty($this->assessment()?->framework)) {
             return null;
         }
 
         $nodes = app(FrameworkTraversalService::class)
-            ->orderedQuestionNodes($this->assessment->framework->id)
+            ->orderedQuestionNodes($this->assessment()->framework->id)
             ->filter(fn (Node $node) => $this->nodeHasVisibleQuestions($node))
             ->values();
 
         $nodesIterator = $nodes->getIterator();
 
-        if ($nodes->isEmpty()) {
-            return $nodesIterator;
+        if ($nodes->isNotEmpty()) {
+            $this->nodeKeyId = $this->nodeKeyId ?? 0;
+            $nodesIterator->seek($this->nodeKeyId);
         }
 
-        if ($this->nodeKeyId === null || $this->nodeKeyId >= $nodes->count()) {
-            $this->nodeKeyId = 0;
-        }
-
-        $nodesIterator->seek($this->nodeKeyId);
-
-        return $nodesIterator;
+        return $this->cachedNodes = $nodesIterator;
     }
 
     #[Computed]
@@ -166,53 +181,40 @@ class Questions extends Component
 
     public function buildResponses(bool $onlyRequired = false): ?Collection
     {
-        $assessment = $this->user()?->assessments()
-            ->where('id', $this->assessmentId)
-            ->with('responses.question')
-            ->first();
-
-        if (! $assessment) {
-            return null;
-        }
-
         $assessment = $this->assessment();
 
-        if (!$assessment instanceof \App\Models\Assessment) {
+        if (! $assessment instanceof \App\Models\Assessment) {
             return null;
         }
 
-        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Response> $responses */
+        $assessment->loadMissing('responses.question');
+
         $responses = $assessment->responses;
 
-
         if ($onlyRequired) {
-            $responses = $responses->filter(fn($response) => $response->question->required ?? false);
+            $responses = $responses->filter(fn ($response) => $response->question->required ?? false);
         }
 
-        return $responses->mapWithKeys(
-            /** @param \App\Models\Response $response */
-            function (\App\Models\Response $response) use ($onlyRequired): array {
-                $key = $response->question->name;
+        return $responses->mapWithKeys(function (\App\Models\Response $response) use ($onlyRequired): array {
+            $key = $response->question->name;
 
-                // TEXTAREA → only one value
-                if ($response->question->response_type === ResponseType::TYPE_TEXTAREA->value) {
-                    return [
-                        $key => $response->textarea ?? '',
-                    ];
-                }
-
-                // SCALE
-                if ($onlyRequired) {
-                    return [
-                        $key => $response->scale_option_id,
-                    ];
-                }
+            if ($response->question->response_type === ResponseType::TYPE_TEXTAREA->value) {
                 return [
-                    $key => $response->scale_option_id,
-                    $key.'_reflection' => $response->textarea ?? '',
+                    $key => $response->textarea ?? '',
                 ];
             }
-        );
+
+            if ($onlyRequired) {
+                return [
+                    $key => $response->scale_option_id,
+                ];
+            }
+
+            return [
+                $key => $response->scale_option_id,
+                $key . '_reflection' => $response->textarea ?? '',
+            ];
+        });
     }
 
     public function backPage(): void
@@ -234,15 +236,18 @@ class Questions extends Component
     // For now only get self rater. Later add function to get external raters
     public function selfRater(): ?Rater
     {
+        if ($this->cachedRater !== null) {
+            return $this->cachedRater;
+        }
+
         $assessment = $this->assessment();
 
         if (! $assessment instanceof Assessment) {
             return null;
         }
 
-        return $assessment
-            ? Rater::where('subject_id', $assessment->user_id)->first()
-            : null;
+        return $this->cachedRater =
+            Rater::where('subject_id', $assessment->user_id)->first();
     }
 
     /**
@@ -289,6 +294,8 @@ class Questions extends Component
         }
 
         $questions = $this->nodeQuestions()->keyBy('name');
+        $selfRaterId = $this->selfRater()?->id;
+
 
         foreach (($this->data ?? []) as $name => $value) {
 
@@ -317,7 +324,7 @@ class Questions extends Component
                 $value,
                 $question,
                 $this->assessmentId,
-                $this->selfRater()?->id
+                $selfRaterId
             );
 
             // Save optional reflection for scale questions
@@ -330,7 +337,7 @@ class Questions extends Component
                     [
                         'assessment_id' => $this->assessmentId,
                         'question_id' => $question->id,
-                        'rater_id' => $this->selfRater()?->id,
+                        'rater_id' => $selfRaterId,
                     ],
                     [
                         'textarea' => $reflection,
@@ -347,7 +354,7 @@ class Questions extends Component
     {
         $nodes = $this->nodes()->getArrayCopy();
 
-        $currentQuestion = $this->assessment?->framework
+        $currentQuestion = $this->assessment()?->framework
             ->questions()
             ->where('active', true)
             ->where('questions.id', $questionId)
@@ -375,7 +382,7 @@ class Questions extends Component
         }
 
         $currentNumber = $questionCounter + 1;
-        $total = $this->assessment?->framework
+        $total = $this->assessment()?->framework
             ->questions()
             ->where('active', true)
             ->count() ?? 0;
@@ -411,7 +418,7 @@ class Questions extends Component
         // Additional logic for finishing the assessment can be added here
         return redirect()->route(
             'summary',
-            ['frameworkId' => $this->assessment?->framework->id, 'assessmentId' => $this->assessmentId]
+            ['frameworkId' => $this->assessment()?->framework->id, 'assessmentId' => $this->assessmentId]
         );
     }
 
@@ -424,7 +431,7 @@ class Questions extends Component
             ->route(
                 'variants',
                 [
-                    'frameworkId' => $this->assessment?->framework->id,
+                    'frameworkId' => $this->assessment()?->framework->id,
                     'assessmentId' => $this->assessmentId,
                     'back' => 1,
                 ]
