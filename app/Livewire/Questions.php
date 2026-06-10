@@ -8,6 +8,7 @@ use App\Models\Node;
 use App\Models\Rater;
 use App\Models\Response;
 use App\Services\FrameworkTraversalService;
+use App\Services\QuestionTextResolver;
 use App\Services\UserResponseService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\FormFieldValidationRulesTrait;
@@ -90,7 +91,7 @@ class Questions extends Component
     {
         $questions = $this->node()?->questions ?? collect();
 
-        $resolvedTexts = $this->resolvedQuestionTexts;
+        $resolvedTexts = $this->resolvedQuestionTextMap();
 
         return $questions
             ->filter(fn ($question) => array_key_exists($question->id, $resolvedTexts))
@@ -127,7 +128,7 @@ class Questions extends Component
     #[Computed]
     public function nodes(): ?\ArrayIterator
     {
-        if (empty($this->assessment->framework)) {
+        if (empty($this->assessment?->framework)) {
             return null;
         }
 
@@ -138,8 +139,12 @@ class Questions extends Component
 
         $nodesIterator = $nodes->getIterator();
 
-        if ($this->nodeKeyId === null) {
-            $this->nodeKeyId = $nodesIterator->key();
+        if ($nodes->isEmpty()) {
+            return $nodesIterator;
+        }
+
+        if ($this->nodeKeyId === null || $this->nodeKeyId >= $nodes->count()) {
+            $this->nodeKeyId = 0;
         }
 
         $nodesIterator->seek($this->nodeKeyId);
@@ -435,7 +440,7 @@ class Questions extends Component
         }
 
         // Use the same resolved question set used elsewhere in this component.
-        $visibleQuestionIds = array_keys($this->resolvedQuestionTexts);
+        $visibleQuestionIds = array_keys($this->resolvedQuestionTextMap());
         $visibleQuestionIdLookup = array_flip($visibleQuestionIds);
 
         // Question IDs already answered in this assessment.
@@ -550,13 +555,26 @@ class Questions extends Component
             return false;
         }
 
-        $resolvedTexts = $this->resolvedQuestionTexts;
+        $resolvedTexts = $this->resolvedQuestionTextMap();
 
         $questionIds = $node->questions->pluck('id');
 
         return $questionIds->contains(fn ($id) => array_key_exists($id, $resolvedTexts));
     }
+    protected function resolvedQuestionTextMap(): array
+    {
+        if ($this->resolvedQuestionTexts !== []) {
+            return $this->resolvedQuestionTexts;
+        }
 
+        $assessment = $this->assessment();
+
+        if (! $assessment instanceof Assessment) {
+            return [];
+        }
+
+        return QuestionTextResolver::optionsFor($assessment, null);
+    }
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.questions', [
