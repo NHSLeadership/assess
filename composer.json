@@ -27,6 +27,7 @@
     "require-dev": {
         "driftingly/rector-laravel": "^2.5.0",
         "fakerphp/faker": "^1.24.1",
+        "fruitcake/laravel-debugbar": "^4.3",
         "larastan/larastan": "^3.10.0",
         "laravel/pail": "^1.2.7",
         "laravel/pint": "^1.29.1",

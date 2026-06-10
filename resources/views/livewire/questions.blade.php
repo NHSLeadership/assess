@@ -1,5 +1,7 @@
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
+        @include('livewire.alerts')
+
         @if (!empty($questions))
             <form wire:submit.prevent="storeNext()">
                 @foreach ($questions as $question)
@@ -54,7 +56,7 @@
                     {{-- Submit button continues to next page instead of pagination links --}}
                     <div>
                         @if($this->nodes()->key() + 1 > 0)
-                                <button wire:click.prevent="goPrevious" class="nhsuk-button nhsuk-u-margin-right-3">Previous page</button>
+                            <button wire:click.prevent="goPrevious" class="nhsuk-button nhsuk-u-margin-right-3">Previous page</button>
                         @endif
                         @if($this->nodes()->count() > $this->nodes()->key() + 1 )
                             <button wire:submit.prevent="storeNext" class="nhsuk-button nhsuk-u-margin-right-3" type="submit">Save and continue</button>

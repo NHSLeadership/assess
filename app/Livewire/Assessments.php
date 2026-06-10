@@ -118,7 +118,7 @@ class Assessments extends Component
     {
         // Keep node within current framework
         if (! $nodeId || ! $this->assessment()?->framework) {
-            $this->currentNode = $node ?? $this->nodes()?->first();
+            $this->currentNode = $this->nodes()?->first();
             return;
         }
 
@@ -183,22 +183,22 @@ class Assessments extends Component
 
     protected function nodeHasVisibleQuestions(Node $node): bool
     {
-        $assessment = $this->assessment();
+        $resolvedTexts = $this->resolvedQuestionTexts;
 
-        if (! $assessment) {
-            return false;
-        }
+        $questionIds = $node->questions->pluck('id');
 
-        $resolvedTexts = \App\Services\QuestionTextResolver::optionsFor(
-            $assessment,
-            null // self context for now
+        return $questionIds->contains(
+            fn ($id) => array_key_exists($id, $resolvedTexts)
         );
+    }
 
-        $questionIds = $node->questions()
-            ->where('active', true)
-            ->pluck('id');
-
-        return $questionIds->contains(fn ($id) => array_key_exists($id, $resolvedTexts));
+    #[Computed]
+    public function resolvedQuestionTexts(): array
+    {
+        return \App\Services\QuestionTextResolver::optionsFor(
+            $this->assessment(),
+            null
+        );
     }
 
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View

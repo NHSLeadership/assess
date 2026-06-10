@@ -42,7 +42,7 @@ class Questions extends Component
     public ?int $nodeId = null;
 
     public ?string $edit = null;
-    protected ?array $resolvedQuestionTexts = null;
+    public array $resolvedQuestionTexts = [];
 
     public function mount(): void
     {
@@ -89,9 +89,10 @@ class Questions extends Component
 
     public function nodeQuestions(): Collection
     {
-        $questions = $this->orderedQuestions($this->node())?->get() ?? collect();
+//        $questions = $this->orderedQuestions($this->node())?->get() ?? collect();
+        $questions = $this->node()?->questions ?? collect();
 
-        $resolvedTexts = $this->resolvedQuestionTexts();
+        $resolvedTexts = $this->resolvedQuestionTexts;
 
         return $questions
             ->filter(fn ($question) => array_key_exists($question->id, $resolvedTexts))
@@ -101,18 +102,6 @@ class Questions extends Component
                 return $question;
             })
             ->values();
-    }
-
-    protected function resolvedQuestionTexts(): array
-    {
-        if ($this->resolvedQuestionTexts === null) {
-            $this->resolvedQuestionTexts = QuestionTextResolver::optionsFor(
-                $this->assessment(),
-                null // self context for now
-            );
-        }
-
-        return $this->resolvedQuestionTexts;
     }
 
     protected function messages(): array
@@ -369,15 +358,17 @@ class Questions extends Component
 
         foreach ($nodes as $node) {
             if ($node->id === $currentQuestion->node_id) {
-                $offset = $this->orderedQuestions($node)
-                    ->pluck('id')
-                    ->search(fn ($id): bool => (int) $id === (int) $questionId);
+                $questionIds = $node->questions->pluck('id');
+
+                $offset = $questionIds->search(
+                    fn ($id) => (int) $id === (int) $questionId
+                );
 
                 $questionCounter += ($offset !== false ? $offset : 0);
                 break;
             }
 
-            $questionCounter += $this->orderedQuestions($node)->count();
+            $questionCounter += $node->questions->count();
         }
 
         $currentNumber = $questionCounter + 1;
@@ -446,7 +437,7 @@ class Questions extends Component
         }
 
         // Use the same resolved question set used elsewhere in this component.
-        $visibleQuestionIds = array_keys($this->resolvedQuestionTexts());
+        $visibleQuestionIds = array_keys($this->resolvedQuestionTexts);
         $visibleQuestionIdLookup = array_flip($visibleQuestionIds);
 
         // Question IDs already answered in this assessment.
@@ -455,7 +446,9 @@ class Questions extends Component
             ->all();
 
         foreach ($nodesIterator->getArrayCopy() as $node) {
-            $questionIds = $this->orderedQuestions($node)
+//            $questionIds = $this->orderedQuestions($node)
+//                ->pluck('id')
+            $questionIds = $node->questions
                 ->pluck('id')
                 ->filter(fn ($id) => isset($visibleQuestionIdLookup[$id]))
                 ->values()
@@ -561,7 +554,7 @@ class Questions extends Component
             return false;
         }
 
-        $resolvedTexts = $this->resolvedQuestionTexts();
+        $resolvedTexts = $this->resolvedQuestionTexts;
 
         $questionIds = $node->questions->pluck('id');
 

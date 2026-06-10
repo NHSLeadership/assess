@@ -60,6 +60,7 @@
                         :assessmentId="$this->assessmentId"
                         :nodeId="$this->nodeId"
                         :edit="$this->edit ?? null"
+                        :resolvedQuestionTexts="$this->resolvedQuestionTexts"
                         :wire:key="'questions-assessment-' . $this->assessmentId"
                 />
 
