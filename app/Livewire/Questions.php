@@ -347,12 +347,25 @@ class Questions extends Component
         }
     }
 
+    #[Computed]
+    public function visibleRequiredCount(): int
+    {
+        $resolvedTexts = $this->resolvedQuestionTextMap();
+
+        return $this->assessment()?->framework
+            ?->questions()
+            ->where('required', true)
+            ->whereIn('questions.id', array_keys($resolvedTexts))
+            ->count() ?? 0;
+    }
+
     /**
      * Get question progress label
      */
     public function getQuestionProgressLabel(?int $questionId = null): string
     {
         $nodes = $this->nodes()->getArrayCopy();
+        $resolvedTexts = $this->resolvedQuestionTextMap();
 
         $currentQuestion = $this->assessment()?->framework
             ->questions()
@@ -367,8 +380,11 @@ class Questions extends Component
         $questionCounter = 0;
 
         foreach ($nodes as $node) {
+            $visibleQuestions = $node->questions
+                ->filter(fn ($q) => array_key_exists($q->id, $resolvedTexts));
+
             if ($node->id === $currentQuestion->node_id) {
-                $questionIds = $node->questions->pluck('id');
+                $questionIds = $visibleQuestions->pluck('id');
 
                 $offset = $questionIds->search(
                     fn ($id) => (int) $id === (int) $questionId
@@ -378,14 +394,11 @@ class Questions extends Component
                 break;
             }
 
-            $questionCounter += $node->questions->count();
+            $questionCounter += $visibleQuestions->count();
         }
 
         $currentNumber = $questionCounter + 1;
-        $total = $this->assessment()?->framework
-            ->questions()
-            ->where('active', true)
-            ->count() ?? 0;
+        $total = count($resolvedTexts);
 
         return "<strong>Response {$currentNumber} of {$total}</strong>";
     }
