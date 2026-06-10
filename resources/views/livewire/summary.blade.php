@@ -36,8 +36,11 @@
 
             {{-- Compute responses ONCE --}}
             @php
-                $nodeQuestions = $node->questions; // or however your relationship is named
+                $resolvedTexts = $this->resolvedQuestionTexts;
+                $nodeQuestions = $node->questions
+                    ->filter(fn ($q) => array_key_exists($q->id, $resolvedTexts));
             @endphp
+
 
 
             {{-- Leaf node responses --}}
@@ -66,11 +69,7 @@
                                 <br>
 
                                 {{-- Question text --}}
-                                {!! \App\Services\QuestionTextResolver::textFor(
-                                    $this->assessment(),
-                                    $this->rater()?->pivot,
-                                    $question->id
-                                ) !!}
+                                {!! $resolvedTexts[$question->id] ?? $question->text !!}
 
                                 {{-- Response (if exists) --}}
                                 @if ($response)

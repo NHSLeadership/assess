@@ -175,4 +175,13 @@ class Summary extends Component
             'title' => 'Areas',
         ]);
     }
+
+    #[Computed]
+    public function resolvedQuestionTexts(): array
+    {
+        return \App\Services\QuestionTextResolver::optionsFor(
+            $this->assessment(),
+            $this->rater()?->pivot
+        );
+    }
 }
