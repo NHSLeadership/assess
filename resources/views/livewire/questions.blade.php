@@ -13,9 +13,13 @@
                             'options_list' => $this->buildScaleOptions($question),
                             'type' => $question['type'] ?? null,
                             'descriptions' => [
-                                $question['text'] ?? null,
-                                '<div class="nhsuk-inset-text"><span class="nhsuk-u-visually-hidden">Information: </span><p class="nhsuk-u-font-size-26">' . (($resolvedHint = \App\Services\QuestionTextResolver::textFor($this->assessment(), null, $question['id'])) !== '' && trim($resolvedHint) !== '' ? $resolvedHint : $question['hint']) . '</p></div>'
-                             ]
+                                '<p class="nhsuk-u-margin-top-4">' . ($question['text'] ?? '') . '</p>',
+                                '<div class="nhsuk-inset-text"><span class="nhsuk-u-visually-hidden">Information: </span><p class="nhsuk-u-font-size-26">' . (
+                                    isset($question->resolved_text) && trim((string) $question->resolved_text) !== ''
+                                        ? $question->resolved_text
+                                        : $question['hint']
+                                ) . '</p></div>'
+                            ]
                         ])
                             @slot('label')
                                 <span class="nhsuk-u-visually-hidden">Competency {{ $question->id }}</span>

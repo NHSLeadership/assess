@@ -8,7 +8,6 @@ use App\Models\Node;
 use App\Models\Rater;
 use App\Models\Response;
 use App\Services\FrameworkTraversalService;
-use App\Services\QuestionTextResolver;
 use App\Services\UserResponseService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\FormFieldValidationRulesTrait;
@@ -89,7 +88,6 @@ class Questions extends Component
 
     public function nodeQuestions(): Collection
     {
-//        $questions = $this->orderedQuestions($this->node())?->get() ?? collect();
         $questions = $this->node()?->questions ?? collect();
 
         $resolvedTexts = $this->resolvedQuestionTexts;
@@ -97,7 +95,7 @@ class Questions extends Component
         return $questions
             ->filter(fn ($question) => array_key_exists($question->id, $resolvedTexts))
             ->map(function ($question) use ($resolvedTexts) {
-                $question->text = $resolvedTexts[$question->id];
+                $question->resolved_text = $resolvedTexts[$question->id];
 
                 return $question;
             })
@@ -446,8 +444,6 @@ class Questions extends Component
             ->all();
 
         foreach ($nodesIterator->getArrayCopy() as $node) {
-//            $questionIds = $this->orderedQuestions($node)
-//                ->pluck('id')
             $questionIds = $node->questions
                 ->pluck('id')
                 ->filter(fn ($id) => isset($visibleQuestionIdLookup[$id]))
