@@ -5,8 +5,10 @@
 
 ---
 ### v2.0.0
-> Updated: 10.06.2026
+> Updated: 11.06.2026
 1. Allow for external raters
+2. Filter questions by audience
+3. Stop signpost links opening in new tab
 
 ---
 ### v1.0.16
