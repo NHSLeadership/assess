@@ -87,8 +87,7 @@ class ResponseForm
                             ->toArray();
                     }),
                 Textarea::make('textarea')
-                    ->label('Answer')
-                    ->visible(fn (Get $get) => $get('question_id') && Question::query()->whereKey($get('question_id'))->value('response_type') === 'textarea')
+                    ->label('Notes')
                     ->required(fn (Get $get) => $get('question_id') && Question::query()->whereKey($get('question_id'))->value('response_type') === 'textarea')
                     ->columnSpanFull(),
             ]);
