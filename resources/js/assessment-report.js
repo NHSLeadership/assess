@@ -22,8 +22,6 @@ document.addEventListener('DOMContentLoaded', function () {
             type: 'radar',
             data: radarData,
             options: {
-                responsive: true,
-                aspectRatio: 1,
                 devicePixelRatio: 2,
                 scales: {
                     r: {
@@ -89,13 +87,15 @@ document.addEventListener('DOMContentLoaded', function () {
         chart.data.datasets[0].barThickness =
             window.innerWidth < 600 ? 15 : 30;
 
+        const barCount = chart.data.labels.length;
+
+        ctx.height = window.innerWidth < 600 ? barCount * 40 : barCount * 100;
+
         new Chart(ctx, {
             type: 'bar',
             data: chart.data,
             options: {
                 devicePixelRatio: 3,
-                responsive: true,
-                aspectRatio: 1,
                 indexAxis: 'y',
                 plugins: {
                     legend: {

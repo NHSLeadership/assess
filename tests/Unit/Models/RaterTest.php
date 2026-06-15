@@ -6,7 +6,7 @@ test('rater has expected fillable attributes', function () {
     $rater = new Rater;
 
     expect($rater->getFillable())->toEqual([
-        'user_id',
+        'subject_id',
         'name',
         'email',
     ]);

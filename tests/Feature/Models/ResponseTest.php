@@ -23,14 +23,14 @@ function makeResponse(): Collection|Model
     $user = makeAuthUser(['user_id' => '1000000000']);
 
     $rater = Rater::factory()->create([
-        'user_id' => $user->user_id,
+        'subject_id' => $user->user_id,
     ]);
 
     // Framework + Assessment
     $framework = Framework::factory()->create();
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $rater->user_id,
+        'user_id' => $rater->subject_id,
     ]);
 
     // Node + Question

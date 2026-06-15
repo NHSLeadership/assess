@@ -136,7 +136,7 @@ class Summary extends Component
             return null;
         }
 
-        return Rater::where('user_id', $this->user()?->user_id)
+        return Rater::where('subject_id', $this->user()?->user_id)
             ->whereHas('assessments', function ($q): void {
                 $q->where('assessments.id', $this->assessmentId);
             })
@@ -174,5 +174,14 @@ class Summary extends Component
         return view('livewire.summary', [
             'title' => 'Areas',
         ]);
+    }
+
+    #[Computed]
+    public function resolvedQuestionTexts(): array
+    {
+        return \App\Services\QuestionTextResolver::optionsFor(
+            $this->assessment(),
+            $this->rater()?->pivot
+        );
     }
 }

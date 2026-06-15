@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\RaterType;
 use App\Models\Assessment;
 use App\Models\Framework;
 use App\Models\Rater;
@@ -24,7 +25,9 @@ test('assessment belongs to a framework', function () {
 });
 
 test('assessment has many responses', function () {
-    $rater = Rater::factory()->create(['user_id' => $this->user->user_id]);
+    $rater = Rater::factory()->create([
+        'subject_id' => $this->user->user_id]
+    );
 
     // Create node + questions via helper
     $setup = createNodeWithQuestions(3, 'scale', ['framework' => $this->framework]);
@@ -42,17 +45,17 @@ test('assessment has many responses', function () {
 });
 
 test('assessment raters relationship works', function () {
-    $rater = Rater::factory()->create(['user_id' => $this->user->user_id]);
+    $rater = Rater::factory()->create([
+        'subject_id' => $this->user->user_id
+    ]);
 
     $this->assessment->raters()->attach($rater->id, [
-        'role' => 'manager',
-        'is_self' => false,
+        'type' => 'manager',
     ]);
 
     $pivot = $this->assessment->raters()->first()->pivot;
 
-    expect($pivot->role)->toEqual('manager')
-        ->and($pivot->is_self)->toBeFalse();
+    expect($pivot->type)->toEqual(RaterType::Manager);
 });
 
 test('assessment casts submitted_at to Carbon when persisted', function () {

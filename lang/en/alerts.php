@@ -8,6 +8,9 @@ return [
     |--------------------------------------------------------------------------
     */
 
+    'messages' => [
+        'title' => 'Message',
+    ],
     'errors' => [
         'title' => 'Error',
         'assessment-initialise' => 'Could not initialise new assessment. Please try again later.',
@@ -22,9 +25,9 @@ return [
         'framework-not-found' => 'Framework not found.',
     ],
     'success' => [
+        'deleted' => 'Assessment deleted',
         'title' => 'Assessment submitted',
         'assessment-submitted' => 'Assessment submitted successfully.',
-        'generic' => 'Success',
     ],
     'warnings' => [
         'title' => 'Warning',

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Assessments;
 use App\Filament\Resources\Assessments\Pages\CreateAssessment;
 use App\Filament\Resources\Assessments\Pages\EditAssessment;
 use App\Filament\Resources\Assessments\Pages\ListAssessments;
+use App\Filament\Resources\Assessments\RelationManagers\RatersRelationManager;
 use App\Filament\Resources\Assessments\RelationManagers\ResponsesRelationManager;
 use App\Filament\Resources\Assessments\Schemas\AssessmentForm;
 use App\Filament\Resources\Assessments\Tables\AssessmentsTable;
@@ -34,6 +35,7 @@ class AssessmentResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RatersRelationManager::class,
             ResponsesRelationManager::class,
         ];
     }

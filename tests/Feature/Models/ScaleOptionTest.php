@@ -66,7 +66,7 @@ test('scale option can have many responses', function () {
     ]);
 
     $rater = Rater::factory()->create([
-        'user_id' => $auth0UserId,
+        'subject_id' => $auth0UserId,
     ]);
 
     createResponseForAssessment($assessment1, $rater, $question, $option);

@@ -4,14 +4,19 @@
 # Assessment tool
 
 ---
+### v2.0.0
+> Updated: 11.06.2026
+1. Allow for external raters
+2. Filter questions by audience
+3. Stop signpost links opening in new tab
+
+---
 ### v1.0.16
-> Updated: 02.06.2026
+> Updated: 26.05.2026
 1. Responsive table layout for assessment listing page
 2. Filament JS updates
 3. Accessibility improvement in summary page for screen readers
 4. Heading improvement in assessment listing page
-5. Display tabular data instead of charts at small viewport widths
-6. Improve accessibility of error messages
 
 ### v1.0.15
 > Updated: 18.05.2026

@@ -3,7 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\Assessment;
-use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Rater;
 use App\Services\UserAssessmentVariantSelectionService;
@@ -13,7 +12,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 use App\Traits\HasPageTitle;
 
@@ -185,15 +183,8 @@ class Variants extends Component
 
                 // Ensure rater record exists (no duplicates)
                 $rater = Rater::firstOrCreate(
-                    ['user_id' => $this->user()?->user_id ?? null],
-                    ['created_at' => now()] // optional defaults
+                    ['subject_id' => $this->user()?->user_id ?? null],
                 );
-
-                // Link rater to this assessment (avoid duplicates too)
-                AssessmentRater::firstOrCreate([
-                    'assessment_id' => $assessment->id,
-                    'rater_id' => $rater->id,
-                ]);
 
             }, 3); // retry count for deadlocks.
 

@@ -13,9 +13,13 @@
                             'options_list' => $this->buildScaleOptions($question),
                             'type' => $question['type'] ?? null,
                             'descriptions' => [
-                                $question['text'] ?? null,
-                                '<div class="nhsuk-inset-text"><span class="nhsuk-u-visually-hidden">Information: </span><p class="nhsuk-u-font-size-26">' . (($resolvedHint = \App\Services\QuestionTextResolver::textFor($this->assessment(), $this->rater(), $question['id'])) !== '' && trim($resolvedHint) !== '' ? $resolvedHint : $question['hint']) . '</p></div>'
-                             ]
+                                '<p class="nhsuk-u-margin-top-4">' . ($question['text'] ?? '') . '</p>',
+                                '<div class="nhsuk-inset-text"><span class="nhsuk-u-visually-hidden">Information: </span><p class="nhsuk-u-font-size-26">' . (
+                                    isset($question->resolved_text) && trim((string) $question->resolved_text) !== ''
+                                        ? $question->resolved_text
+                                        : $question['hint']
+                                ) . '</p></div>'
+                            ]
                         ])
                             @slot('label')
                                 <span class="nhsuk-u-visually-hidden">Competency {{ $question->id }}</span>
@@ -56,15 +60,15 @@
                     {{-- Submit button continues to next page instead of pagination links --}}
                     <div>
                         @if($this->nodes()->key() + 1 > 0)
-                                <button wire:click.prevent="goPrevious" class="nhsuk-button nhsuk-u-margin-right-3">Previous page</button>
+                            <button wire:click.prevent="goPrevious" class="nhsuk-button nhsuk-u-margin-right-3">Previous page</button>
                         @endif
                         @if($this->nodes()->count() > $this->nodes()->key() + 1 )
                             <button wire:submit.prevent="storeNext" class="nhsuk-button nhsuk-u-margin-right-3" type="submit">Save and continue</button>
                         @endif
 
-                        @if ($this->requiredResponses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count() || $this->nodes()->count() === $this->nodes()->key() + 1)
+                            @if ($this->requiredResponses?->count() === $this->visibleRequiredCount || $this->nodes()->count() === $this->nodes()->key() + 1)
                             <button wire:click.prevent="finishAssessment" class="nhsuk-button nhsuk-u-margin-right-3" >View summary</button>
-                            @if ($this->requiredResponses?->count() === $this->assessment?->framework?->questions?->where('required', 1)->count())
+                                @if ($this->requiredResponses?->count() === $this->visibleRequiredCount)
                                 <div class="nhsuk-inset-text">
                                     <span class="nhsuk-u-visually-hidden">Information: </span>
                                     <p>You completed all required fields, you can still navigate and change your answers or finish the assessment to receive a report.</p>
@@ -82,7 +86,7 @@
         @else
             <p>Questions not found.</p>
 
-            <a class="nhsuk-back-link" wire:click.prevent="backPage()" href="{{ route('frameworks', $this->assessment->framework->id) }}">Step back</a>
+            <a class="nhsuk-back-link" wire:click.prevent="backPage()" href="{{ route('frameworks', $this->assessment()->framework->id) }}">Step back</a>
         @endif
 
     </div>

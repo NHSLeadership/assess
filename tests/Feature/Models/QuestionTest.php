@@ -85,7 +85,9 @@ test('question can have many responses', function () {
         'user_id' => $user->id,
     ]);
 
-    $rater = Rater::factory()->create(['user_id' => $user->user_id]);
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id
+    ]);
     $scaleSetup = createScaleWithOption();
     $scaleOption = $scaleSetup['scaleOption'];
 

@@ -6,6 +6,8 @@ namespace App\Enums;
 
 enum RaterType: string
 {
-    case Self = 'self';
-    case Rater = 'rater';
+    case Manager = 'manager';
+    case Report = 'report';
+    case Peer = 'peer';
+    case Other = 'other';
 }

@@ -40,7 +40,7 @@ class AssessmentReportService
             ->orderedHierarchyNodes($frameworkId);
 
         $this->rater = Rater::with('assessments')
-            ->where('user_id', auth()->id())
+            ->where('subject_id', auth()->id())
             ->whereHas('assessments', fn ($q) => $q->where('assessments.id', $assessmentId))
             ->first();
 
@@ -213,11 +213,12 @@ class AssessmentReportService
                 'data' => [
                     'labels' => $labels,
                     'datasets' => [[
-                        'label' => 'Score',
+                        'label' => 'Self assessment',
                         'data' => $values,
                         'backgroundColor' => $this->chartBackgroundColor,
                         'borderColor' => $this->chartBorderColor,
                         'borderWidth' => 1,
+                        // 'barThickness' => 20,
                     ]],
                 ],
                 'options' => [
@@ -267,7 +268,7 @@ class AssessmentReportService
             'data' => [
                 'labels' => $labels,
                 'datasets' => [[
-                    'label' => 'Score',
+                    'label' => 'Self assessment',
                     'data' => $values,
                     'backgroundColor' => $this->chartBackgroundColor,
                     'borderColor' => $this->chartBorderColor,

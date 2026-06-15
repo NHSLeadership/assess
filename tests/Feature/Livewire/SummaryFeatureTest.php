@@ -103,14 +103,14 @@ it('redirects to frameworks when no resume node exists', function () {
     $this->be($user);
 
     $rater = Rater::factory()->create([
-        'user_id' => $user->user_id,
+        'subject_id'  => $user->user_id,
     ]);
 
     // Framework + Assessment
     $framework = Framework::factory()->create();
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $rater->user_id,
+        'user_id' => $rater->subject_id,
     ]);
 
     // Node + Question (use helper to create a node under the same framework)
@@ -195,14 +195,14 @@ it('returns the correct rater for the assessment via pivot table', function () {
 
     // Create a rater
     $rater = Rater::factory()->create([
-        'user_id' => $user->user_id,
+        'subject_id'  => $user->user_id,
     ]);
 
     // Create a framework + assessment
     $framework = Framework::factory()->create();
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $rater->user_id,
+        'user_id' => $rater->subject_id,
     ]);
 
     // Attach rater to assessment via pivot
@@ -328,14 +328,14 @@ it('returns all responses for the assessment', function () {
 
     // Rater
     $rater = Rater::factory()->create([
-        'user_id' => $user->user_id,
+        'subject_id'  => $user->user_id,
     ]);
 
     // Framework + Assessment
     $framework = Framework::factory()->create();
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $rater->user_id,
+        'user_id' => $rater->subject_id,
     ]);
 
     // Node + Question
@@ -375,7 +375,10 @@ it('returns all responses for the assessment', function () {
     // Response for a DIFFERENT assessment (should NOT appear)
     $framework1 = Framework::factory()->create();
     Response::factory()->create([
-        'assessment_id' => Assessment::factory()->create(['framework_id' => $framework1->id, 'user_id' => $rater->user_id])->id,
+        'assessment_id' => Assessment::factory()->create([
+            'framework_id' => $framework1->id,
+            'user_id' => $rater->subject_id,
+        ])->id,
         'rater_id' => $rater->id,
         'question_id' => $question2->id,
         'scale_option_id' => $scaleOption->id,

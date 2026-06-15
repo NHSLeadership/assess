@@ -194,7 +194,7 @@ if (!empty(Auth()?->user()?->user_id)) {
 
                     {!! \App\Services\QuestionTextResolver::textFor(
                             $assessment,
-                            $rater,
+                                $rater?->pivot,
                             data_get($response, 'question.id')
                         ) ?? data_get($response, 'question.hint') !!}
 

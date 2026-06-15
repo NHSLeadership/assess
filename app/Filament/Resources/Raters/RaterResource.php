@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Raters;
 
-use App\Filament\Resources\Raters\Pages\CreateRater;
 use App\Filament\Resources\Raters\Pages\EditRater;
 use App\Filament\Resources\Raters\Pages\ListRaters;
 use App\Filament\Resources\Raters\Schemas\RaterForm;
@@ -41,7 +40,6 @@ class RaterResource extends Resource
     {
         return [
             'index' => ListRaters::route('/'),
-            'create' => CreateRater::route('/create'),
             'edit' => EditRater::route('/{record}/edit'),
         ];
     }

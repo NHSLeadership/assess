@@ -3,9 +3,12 @@
 namespace App\Livewire;
 
 use App\Enums\ResponseType;
+use App\Models\Assessment;
 use App\Models\Node;
+use App\Models\Rater;
 use App\Models\Response;
 use App\Services\FrameworkTraversalService;
+use App\Services\QuestionTextResolver;
 use App\Services\UserResponseService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\FormFieldValidationRulesTrait;
@@ -20,7 +23,9 @@ use Livewire\WithPagination;
 
 class Questions extends Component
 {
-    use AssessmentHelperTrait;
+    use AssessmentHelperTrait {
+        assessment as getAssessment;
+    }
     use FormFieldValidationRulesTrait;
     use UserTrait;
     use WithoutUrlPagination;
@@ -39,6 +44,21 @@ class Questions extends Component
     public ?int $nodeId = null;
 
     public ?string $edit = null;
+    public array $resolvedQuestionTexts = [];
+    protected ?Assessment $cachedAssessment = null;
+    protected ?Rater $cachedRater = null;
+    protected ?\ArrayIterator $cachedNodes = null;
+
+    public function assessment(): ?Assessment
+    {
+        if ($this->cachedAssessment !== null) {
+            return $this->cachedAssessment;
+        }
+
+        // Call the trait method directly via alias
+        return $this->cachedAssessment = $this->getAssessment();
+    }
+
 
     public function mount(): void
     {
@@ -85,7 +105,18 @@ class Questions extends Component
 
     public function nodeQuestions(): Collection
     {
-        return $this->orderedQuestions($this->node())?->get() ?? collect();
+        $questions = $this->node()?->questions ?? collect();
+
+        $resolvedTexts = $this->resolvedQuestionTextMap();
+
+        return $questions
+            ->filter(fn ($question) => array_key_exists($question->id, $resolvedTexts))
+            ->map(function ($question) use ($resolvedTexts) {
+                $question->resolved_text = $resolvedTexts[$question->id];
+
+                return $question;
+            })
+            ->values();
     }
 
     protected function messages(): array
@@ -113,25 +144,27 @@ class Questions extends Component
     #[Computed]
     public function nodes(): ?\ArrayIterator
     {
-        if (empty($this->assessment->framework)) {
+        if ($this->cachedNodes !== null) {
+            return $this->cachedNodes;
+        }
+
+        if (empty($this->assessment()?->framework)) {
             return null;
         }
 
-        // Single source of truth: depth-first, sibling-ordered, question-bearing nodes
         $nodes = app(FrameworkTraversalService::class)
-            ->orderedQuestionNodes($this->assessment->framework->id);
+            ->orderedQuestionNodes($this->assessment()->framework->id)
+            ->filter(fn (Node $node) => $this->nodeHasVisibleQuestions($node))
+            ->values();
 
-        /** @var \ArrayIterator<int, \App\Models\Node> $nodesIterator */
-        $nodesIterator = $nodes->values()->getIterator();
+        $nodesIterator = $nodes->getIterator();
 
-        // Initialise pointer (nodeKeyId is the index in the ordered list)
-        if ($this->nodeKeyId === null) {
-            $this->nodeKeyId = $nodesIterator->key();
+        if ($nodes->isNotEmpty()) {
+            $this->nodeKeyId = $this->nodeKeyId ?? 0;
+            $nodesIterator->seek($this->nodeKeyId);
         }
 
-        $nodesIterator->seek($this->nodeKeyId);
-
-        return $nodesIterator;
+        return $this->cachedNodes = $nodesIterator;
     }
 
     #[Computed]
@@ -148,53 +181,40 @@ class Questions extends Component
 
     public function buildResponses(bool $onlyRequired = false): ?Collection
     {
-        $assessment = $this->user()?->assessments()
-            ->where('id', $this->assessmentId)
-            ->with('responses.question')
-            ->first();
-
-        if (! $assessment) {
-            return null;
-        }
-
-
         $assessment = $this->assessment();
 
-        if (!$assessment instanceof \App\Models\Assessment) {
+        if (! $assessment instanceof \App\Models\Assessment) {
             return null;
         }
-        /** @var \Illuminate\Database\Eloquent\Collection<int, \App\Models\Response> $responses */
+
+        $assessment->loadMissing('responses.question');
+
         $responses = $assessment->responses;
 
-
         if ($onlyRequired) {
-            $responses = $responses->filter(fn($response) => $response->question->required ?? false);
+            $responses = $responses->filter(fn ($response) => $response->question->required ?? false);
         }
 
-        return $responses->mapWithKeys(
-            /** @param \App\Models\Response $response */
-            function (\App\Models\Response $response) use ($onlyRequired): array {
-                $key = $response->question->name;
+        return $responses->mapWithKeys(function (\App\Models\Response $response) use ($onlyRequired): array {
+            $key = $response->question->name;
 
-                // TEXTAREA → only one value
-                if ($response->question->response_type === ResponseType::TYPE_TEXTAREA->value) {
-                    return [
-                        $key => $response->textarea ?? '',
-                    ];
-                }
-
-                // SCALE
-                if ($onlyRequired) {
-                    return [
-                        $key => $response->scale_option_id,
-                    ];
-                }
+            if ($response->question->response_type === ResponseType::TYPE_TEXTAREA->value) {
                 return [
-                    $key => $response->scale_option_id,
-                    $key.'_reflection' => $response->textarea ?? '',
+                    $key => $response->textarea ?? '',
                 ];
             }
-        );
+
+            if ($onlyRequired) {
+                return [
+                    $key => $response->scale_option_id,
+                ];
+            }
+
+            return [
+                $key => $response->scale_option_id,
+                $key . '_reflection' => $response->textarea ?? '',
+            ];
+        });
     }
 
     public function backPage(): void
@@ -213,9 +233,21 @@ class Questions extends Component
         return $rules ?? [];
     }
 
-    public function rater()
+    // For now only get self rater. Later add function to get external raters
+    public function selfRater(): ?Rater
     {
-        return $this->assessment()?->raters()?->first();
+        if ($this->cachedRater !== null) {
+            return $this->cachedRater;
+        }
+
+        $assessment = $this->assessment();
+
+        if (! $assessment instanceof Assessment) {
+            return null;
+        }
+
+        return $this->cachedRater =
+            Rater::where('subject_id', $assessment->user_id)->first();
     }
 
     /**
@@ -262,6 +294,8 @@ class Questions extends Component
         }
 
         $questions = $this->nodeQuestions()->keyBy('name');
+        $selfRaterId = $this->selfRater()?->id;
+
 
         foreach (($this->data ?? []) as $name => $value) {
 
@@ -290,7 +324,7 @@ class Questions extends Component
                 $value,
                 $question,
                 $this->assessmentId,
-                $this->rater()?->id
+                $selfRaterId
             );
 
             // Save optional reflection for scale questions
@@ -303,7 +337,7 @@ class Questions extends Component
                     [
                         'assessment_id' => $this->assessmentId,
                         'question_id' => $question->id,
-                        'rater_id' => $this->rater()?->id,
+                        'rater_id' => $selfRaterId,
                     ],
                     [
                         'textarea' => $reflection,
@@ -313,14 +347,27 @@ class Questions extends Component
         }
     }
 
+    #[Computed]
+    public function visibleRequiredCount(): int
+    {
+        $resolvedTexts = $this->resolvedQuestionTextMap();
+
+        return $this->assessment()?->framework
+            ?->questions()
+            ->where('required', true)
+            ->whereIn('questions.id', array_keys($resolvedTexts))
+            ->count() ?? 0;
+    }
+
     /**
      * Get question progress label
      */
     public function getQuestionProgressLabel(?int $questionId = null): string
     {
         $nodes = $this->nodes()->getArrayCopy();
+        $resolvedTexts = $this->resolvedQuestionTextMap();
 
-        $currentQuestion = $this->assessment?->framework
+        $currentQuestion = $this->assessment()?->framework
             ->questions()
             ->where('active', true)
             ->where('questions.id', $questionId)
@@ -333,23 +380,25 @@ class Questions extends Component
         $questionCounter = 0;
 
         foreach ($nodes as $node) {
+            $visibleQuestions = $node->questions
+                ->filter(fn ($q) => array_key_exists($q->id, $resolvedTexts));
+
             if ($node->id === $currentQuestion->node_id) {
-                $offset = $this->orderedQuestions($node)
-                    ->pluck('id')
-                    ->search(fn ($id): bool => (int) $id === (int) $questionId);
+                $questionIds = $visibleQuestions->pluck('id');
+
+                $offset = $questionIds->search(
+                    fn ($id) => (int) $id === (int) $questionId
+                );
 
                 $questionCounter += ($offset !== false ? $offset : 0);
                 break;
             }
 
-            $questionCounter += $this->orderedQuestions($node)->count();
+            $questionCounter += $visibleQuestions->count();
         }
 
         $currentNumber = $questionCounter + 1;
-        $total = $this->assessment?->framework
-            ->questions()
-            ->where('active', true)
-            ->count() ?? 0;
+        $total = count($resolvedTexts);
 
         return "<strong>Response {$currentNumber} of {$total}</strong>";
     }
@@ -382,7 +431,7 @@ class Questions extends Component
         // Additional logic for finishing the assessment can be added here
         return redirect()->route(
             'summary',
-            ['frameworkId' => $this->assessment?->framework->id, 'assessmentId' => $this->assessmentId]
+            ['frameworkId' => $this->assessment()?->framework->id, 'assessmentId' => $this->assessmentId]
         );
     }
 
@@ -395,7 +444,7 @@ class Questions extends Component
             ->route(
                 'variants',
                 [
-                    'frameworkId' => $this->assessment?->framework->id,
+                    'frameworkId' => $this->assessment()?->framework->id,
                     'assessmentId' => $this->assessmentId,
                     'back' => 1,
                 ]
@@ -404,26 +453,34 @@ class Questions extends Component
 
     protected function findResumeNodeId(): ?int
     {
-        $framework = $this->assessment?->framework;
+        $nodesIterator = $this->nodes();
 
-        if (! $framework) {
+        if (! $nodesIterator instanceof \ArrayIterator) {
             return null;
         }
 
-        $orderedNodes = app(FrameworkTraversalService::class)
-            ->orderedQuestionNodes($framework->id);
+        // Use the same resolved question set used elsewhere in this component.
+        $visibleQuestionIds = array_keys($this->resolvedQuestionTextMap());
+        $visibleQuestionIdLookup = array_flip($visibleQuestionIds);
 
-        // Question IDs already answered in this assessment
+        // Question IDs already answered in this assessment.
         $answeredQuestionIds = Response::where('assessment_id', $this->assessmentId)
             ->pluck('question_id')
             ->all();
 
-        foreach ($orderedNodes as $node) {
-            $questionIds = $this->orderedQuestions($node)
+        foreach ($nodesIterator->getArrayCopy() as $node) {
+            $questionIds = $node->questions
                 ->pluck('id')
+                ->filter(fn ($id) => isset($visibleQuestionIdLookup[$id]))
+                ->values()
                 ->all();
 
-            // if any question in this node is unanswered, resume here
+            // Skip nodes that have no visible questions for this audience/context.
+            if ($questionIds === []) {
+                continue;
+            }
+
+            // If any visible question in this node is unanswered, resume here.
             if (count(array_diff($questionIds, $answeredQuestionIds)) > 0) {
                 return $node->id;
             }
@@ -462,10 +519,26 @@ class Questions extends Component
         $this->dispatch('scroll-to-top');
     }
 
-    protected function paginatedQuestions(): ?LengthAwarePaginator
+    protected function paginatedQuestions(): LengthAwarePaginator
     {
-        return $this->orderedQuestions($this->node())
-            ?->paginate($this->perPage, pageName: $this->pageName);
+        $questions = $this->nodeQuestions()->values();
+
+        $currentPage = $this->getPage($this->pageName);
+
+        $items = $questions
+            ->forPage($currentPage, $this->perPage)
+            ->values();
+
+        return new LengthAwarePaginator(
+            $items,
+            $questions->count(),
+            $this->perPage,
+            $currentPage,
+            [
+                'path' => request()->url(),
+                'pageName' => $this->pageName,
+            ]
+        );
     }
 
     /**
@@ -494,6 +567,34 @@ class Questions extends Component
             ->toArray();
     }
 
+    protected function nodeHasVisibleQuestions(Node $node): bool
+    {
+        $assessment = $this->assessment();
+
+        if (! $assessment) {
+            return false;
+        }
+
+        $resolvedTexts = $this->resolvedQuestionTextMap();
+
+        $questionIds = $node->questions->pluck('id');
+
+        return $questionIds->contains(fn ($id) => array_key_exists($id, $resolvedTexts));
+    }
+    protected function resolvedQuestionTextMap(): array
+    {
+        if ($this->resolvedQuestionTexts !== []) {
+            return $this->resolvedQuestionTexts;
+        }
+
+        $assessment = $this->assessment();
+
+        if (! $assessment instanceof Assessment) {
+            return [];
+        }
+
+        return QuestionTextResolver::optionsFor($assessment, null);
+    }
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.questions', [

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Frameworks\Resources\Nodes\Resources\Questions\Resources\QuestionVariants\Schemas;
 
+use App\Enums\Audience;
 use App\Filament\Resources\Frameworks\Resources\Nodes\Resources\Questions\Resources\QuestionVariants\QuestionVariantResource;
 use App\Models\FrameworkVariantAttribute;
 use App\Models\FrameworkVariantOption;
@@ -51,20 +52,21 @@ class QuestionVariantForm
                         ->searchable()
                         ->native(false),
                 ])
-//                ->minItems(1)
                 ->defaultItems(1)
                 ->collapsed(false)
                 ->addActionLabel('Add condition')
                 ->columnSpanFull(),
-            Select::make('rater_type')
-                ->label('Rater type')
-                ->options([
-                    'self' => 'Self',
-                    'rater' => 'Rater',
-                ])
+            Select::make('audience')
+                ->options(
+                    collect(Audience::cases())
+                        ->mapWithKeys(fn ($case) => [
+                            $case->value => ucfirst($case->value),
+                        ])
+                        ->toArray()
+                )
                 ->nullable()
                 ->native(false)
-                ->helperText('Leave blank to apply to both self and rater.'),
+                ->helperText('Leave blank to apply to both self and raters.'),
             Textarea::make('text')
                 ->label('Variant text')
                 ->required()

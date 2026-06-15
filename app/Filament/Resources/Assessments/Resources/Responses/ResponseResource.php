@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Assessments\Resources\Responses;
 
 use App\Filament\Resources\Assessments\AssessmentResource;
-use App\Filament\Resources\Assessments\Resources\Responses\Pages\CreateResponse;
 use App\Filament\Resources\Assessments\Resources\Responses\Pages\EditResponse;
 use App\Filament\Resources\Assessments\Resources\Responses\Schemas\ResponseForm;
 use App\Filament\Resources\Assessments\Resources\Responses\Tables\ResponsesTable;
@@ -42,7 +41,6 @@ class ResponseResource extends Resource
     public static function getPages(): array
     {
         return [
-            'create' => CreateResponse::route('/create'),
             'edit' => EditResponse::route('/{record}/edit'),
         ];
     }

@@ -9,7 +9,6 @@ use App\Models\Rater;
 use App\Models\Response;
 use App\Models\Scale;
 use App\Models\ScaleOption;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\Support\AssessmentHelperFake;
@@ -55,7 +54,7 @@ test('redirectIfSubmittedOrFinished redirects when all required questions are an
     ]);
 
     $rater = Rater::factory()->create([
-        'user_id' => $user->user_id,
+        'subject_id' => $user->user_id,
     ]);
 
     $nodeType = NodeType::factory()->create();

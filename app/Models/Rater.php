@@ -13,7 +13,7 @@ class Rater extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'subject_id',
         'name',
         'email',
     ];
@@ -27,8 +27,13 @@ class Rater extends Model
     {
         return $this->belongsToMany(Assessment::class, 'assessment_rater')
             ->using(AssessmentRater::class)
-            ->withPivot(['role', 'is_self'])
+            ->withPivot(['type', 'rater_group_id'])
             ->withTimestamps();
+    }
+
+    public function assessmentRaters(): HasMany
+    {
+        return $this->hasMany(AssessmentRater::class);
     }
 
     public function responses(): HasMany

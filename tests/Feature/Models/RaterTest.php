@@ -25,7 +25,7 @@ function makeRater(): Collection|Model
     $user = makeAuthUser(['user_id' => '1000000000']);
 
     return Rater::factory()->create([
-        'user_id' => $user->id,
+        'subject_id' => $user->user_id
     ]);
 }
 
@@ -52,19 +52,16 @@ test('rater can belong to many assessments with pivot data', function () {
 
     // Attach with pivot data
     $rater->assessments()->attach($assessment1->id, [
-        'role' => 'manager',
-        'is_self' => false,
+        'type' => 'manager',
     ]);
 
     $rater->assessments()->attach($assessment2->id, [
-        'role' => 'self',
-        'is_self' => true,
+        'type' => 'peer',
     ]);
 
     expect($rater->assessments)->toHaveCount(2)
         ->and($rater->assessments->first()->pivot)->toBeInstanceOf(AssessmentRater::class)
-        ->and($rater->assessments->first()->pivot->role)->not->toBeNull()
-        ->and($rater->assessments->first()->pivot->is_self)->not->toBeNull();
+        ->and($rater->assessments->first()->pivot->type)->not->toBeNull();
 });
 
 test('rater can have many responses', function () {
@@ -82,11 +79,11 @@ test('rater can have many responses', function () {
 
     $assessment1 = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $rater->user_id,
+        'user_id' => $rater->subject_id,
     ]);
     $assessment2 = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $rater->user_id,
+        'user_id' => $rater->subject_id,
     ]);
 
     $scale = Scale::factory()->create();

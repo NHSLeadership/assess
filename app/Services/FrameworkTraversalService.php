@@ -23,6 +23,10 @@ class FrameworkTraversalService
             ->with([
                 'children' => fn ($q) => $q->orderBy('order')->orderBy('id'),
                 // 'parent' is optional for this implementation; we navigate via parent_id + $all[]
+                'questions' => fn ($q) => $q
+                    ->where('active', true)
+                    ->orderBy('order')
+                    ->orderBy('id'),
             ])
             ->withExists([
                 'questions as has_active_questions' => fn ($q) => $q->where('active', true),

@@ -214,7 +214,7 @@ it('returns responses for the assessment', function () {
     ]);
 
     $rater = Rater::factory()->create([
-        'user_id' => 1,
+        'subject_id'  => 1,
     ]);
 
     $responseA = Response::factory()->create([
@@ -274,7 +274,7 @@ it('returns the rater for the assessment', function () {
 
     // Rater linked to the same "user"
     $rater = Rater::factory()->create([
-        'user_id' => $user->user_id,
+        'subject_id'  => $user->user_id,
     ]);
 
     // Pivot: rater ↔ assessment

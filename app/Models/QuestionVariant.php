@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Enums\RaterType;
+use App\Enums\Audience;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,12 +17,12 @@ class QuestionVariant extends Model implements Auditable
     protected $fillable = [
         'question_id',
         'text',
-        'rater_type',
+        'audience',
         'priority',
     ];
 
     protected $casts = [
-        'rater_type' => RaterType::class,
+        'audience' => Audience::class,
     ];
 
     public function question(): BelongsTo

@@ -141,7 +141,7 @@ class AssessmentReport extends Component
             return null;
         }
 
-        return Rater::where('user_id', $this->user()->user_id)
+        return Rater::where('subject_id', $this->user()->user_id)
             ->whereHas('assessments', function ($q): void {
                 $q->where('assessments.id', $this->assessmentId);
             })
