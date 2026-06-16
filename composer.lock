@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "afc612fcb10e3bdddd2b5f1f2cdf7dc9",
+    "content-hash": "cd7158e051532bcb291865746bdc9721",
     "packages": [
         {
             "name": "auth0/auth0-php",
@@ -5153,16 +5153,16 @@
         },
         {
             "name": "owen-it/laravel-auditing",
-            "version": "v14.0.3",
+            "version": "v14.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/owen-it/laravel-auditing.git",
-                "reference": "34e8a21890082a7a353894a4acdeb2d301dbe0d4"
+                "reference": "4268b7abab1d24cb6b188fc72773fde3ea6b1c0b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/owen-it/laravel-auditing/zipball/34e8a21890082a7a353894a4acdeb2d301dbe0d4",
-                "reference": "34e8a21890082a7a353894a4acdeb2d301dbe0d4",
+                "url": "https://api.github.com/repos/owen-it/laravel-auditing/zipball/4268b7abab1d24cb6b188fc72773fde3ea6b1c0b",
+                "reference": "4268b7abab1d24cb6b188fc72773fde3ea6b1c0b",
                 "shasum": ""
             },
             "require": {
@@ -5233,7 +5233,7 @@
                 "issues": "https://github.com/owen-it/laravel-auditing/issues",
                 "source": "https://github.com/owen-it/laravel-auditing"
             },
-            "time": "2026-03-27T13:27:17+00:00"
+            "time": "2026-06-12T13:27:20+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
