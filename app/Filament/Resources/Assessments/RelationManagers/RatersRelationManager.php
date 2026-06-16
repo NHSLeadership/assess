@@ -6,6 +6,7 @@ use App\Enums\RaterType;
 use App\Filament\Resources\Raters\Schemas\RaterForm;
 use App\Models\Rater;
 use App\Models\RaterGroup;
+use App\Services\RaterInvitationService;
 use Filament\Actions\Action;
 use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
@@ -113,6 +114,9 @@ class RatersRelationManager extends RelationManager
                 TextColumn::make('pivot.type')->label('Type')->badge()
                     ->formatStateUsing(fn ($state) => ucfirst($state->value)),
                 TextColumn::make('pivot.group.name'),
+                TextColumn::make('status')
+                    ->badge()
+                    ->getStateUsing(fn ($record) => $record->pivot->getStatus()),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -130,33 +134,13 @@ class RatersRelationManager extends RelationManager
             ->recordActions([
                 EditAction::make(),
                 DetachAction::make(),
-
                 Action::make('invite')
                     ->icon('heroicon-o-envelope')
                     ->action(function ($record) {
+                        /** @var \App\Models\Assessment $assessment */
                         $assessment = $this->getOwnerRecord();
-                        $rater = $record;
-
-                        // ✅ Generate signed URL (no expiry)
-                        $url = URL::signedRoute(
-                            'assessment-rater', // your colleague’s route name
-                            [
-                                'assessmentId' => $assessment->id,
-                                'raterId' => $rater->id,
-                            ]
-                        );
-
-                        // ✅ Send email
-                        Mail::raw(
-                            "You have been invited to complete an assessment.\n\n" .
-                            "Please use the link below:\n\n{$url}",
-                            function ($message) use ($rater) {
-                                $message->to($rater->email)
-                                    ->subject('You have been invited to complete an assessment');
-                            }
-                        );
-
-                        // ✅ Notify user in Filament
+                        app(RaterInvitationService::class)
+                            ->send($assessment, $record);
                         Notification::make()
                             ->title('Invitation sent')
                             ->success()

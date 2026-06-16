@@ -20,10 +20,16 @@ class AssessmentRater extends Pivot
         'rater_id',
         'type',
         'rater_group_id',
+        'invited_at',
+        'started_at',
+        'submitted_at',
     ];
 
     protected $casts = [
         'type' => RaterType::class,
+        'invited_at' => 'datetime',
+        'started_at' => 'datetime',
+        'submitted_at' => 'datetime',
     ];
 
     public function assessment(): BelongsTo
@@ -39,5 +45,14 @@ class AssessmentRater extends Pivot
     public function group(): BelongsTo
     {
         return $this->belongsTo(RaterGroup::class, 'rater_group_id');
+    }
+
+    public function getStatus(): string
+    {
+        if ($this->submitted_at) return 'Completed';
+        if ($this->started_at) return 'Started';
+        if ($this->invited_at) return 'Invited';
+
+        return 'Pending';
     }
 }
