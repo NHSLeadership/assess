@@ -6,6 +6,7 @@ use App\Enums\RaterType;
 use App\Filament\Resources\Raters\Schemas\RaterForm;
 use App\Models\Rater;
 use App\Models\RaterGroup;
+use Filament\Actions\Action;
 use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -18,6 +19,8 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rule;
 
 class RatersRelationManager extends RelationManager
@@ -127,6 +130,38 @@ class RatersRelationManager extends RelationManager
             ->recordActions([
                 EditAction::make(),
                 DetachAction::make(),
+
+                Action::make('invite')
+                    ->icon('heroicon-o-envelope')
+                    ->action(function ($record) {
+                        $assessment = $this->getOwnerRecord();
+                        $rater = $record;
+
+                        // ✅ Generate signed URL (no expiry)
+                        $url = URL::signedRoute(
+                            'assessment-rater', // your colleague’s route name
+                            [
+                                'assessmentId' => $assessment->id,
+                                'raterId' => $rater->id,
+                            ]
+                        );
+
+                        // ✅ Send email
+                        Mail::raw(
+                            "You have been invited to complete an assessment.\n\n" .
+                            "Please use the link below:\n\n{$url}",
+                            function ($message) use ($rater) {
+                                $message->to($rater->email)
+                                    ->subject('You have been invited to complete an assessment');
+                            }
+                        );
+
+                        // ✅ Notify user in Filament
+                        Notification::make()
+                            ->title('Invitation sent')
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
