@@ -1,10 +1,10 @@
 @component('mail::message')
-    You have been invited to complete an assessment.
+You have been invited to complete an assessment.
 
-    Please click the button below:
+Please click the button below:
 
 @component('mail::button', ['url' => $url])
-    Open assessment
+Open assessment
 @endcomponent
 
 For further guidance and support, please visit our

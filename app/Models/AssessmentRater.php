@@ -49,9 +49,15 @@ class AssessmentRater extends Pivot
 
     public function getStatus(): string
     {
-        if ($this->submitted_at) return 'Completed';
-        if ($this->started_at) return 'Started';
-        if ($this->invited_at) return 'Invited';
+        if ($this->submitted_at) {
+            return 'Completed';
+        }
+        if ($this->started_at) {
+            return 'Started';
+        }
+        if ($this->invited_at) {
+            return 'Invited';
+        }
 
         return 'Pending';
     }

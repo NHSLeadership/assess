@@ -134,6 +134,7 @@ class RatersRelationManager extends RelationManager
                 DetachAction::make(),
                 Action::make('invite')
                     ->icon('heroicon-o-envelope')
+                    ->disabled(fn ($record) => blank($record->email))
                     ->action(function ($record) {
                         /** @var \App\Models\Assessment $assessment */
                         $assessment = $this->getOwnerRecord();

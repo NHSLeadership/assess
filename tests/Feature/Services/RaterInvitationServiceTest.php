@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\RaterInvitationMail;
 
 test('it sends an invitation and sets invited_at', function () {
-    config()->set('mail.default', 'array');
     Mail::fake();
 
     $assessment = Assessment::factory()->create();

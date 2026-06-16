@@ -12,6 +12,16 @@ class RaterInvitationService
 {
     public function send(Assessment $assessment, Rater $rater): void
     {
+        if (blank($rater->email)) {
+            throw new \InvalidArgumentException('Rater must have an email address to be invited.');
+        }
+        $isAttached = $assessment->raters()
+            ->where('raters.id', $rater->id)
+            ->exists();
+        if (! $isAttached) {
+            throw new \InvalidArgumentException('Rater must be attached to the assessment before an invitation can be sent.');
+        }
+
         // Generate signed URL
         $url = URL::signedRoute(
             'assessment-rater',
