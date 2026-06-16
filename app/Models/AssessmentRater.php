@@ -55,4 +55,15 @@ class AssessmentRater extends Pivot
 
         return 'Pending';
     }
+
+    public function getStatusColour(): string
+    {
+        return match ($this->getStatus()) {
+            'Pending' => 'gray',
+            'Invited' => 'info',
+            'Started' => 'warning',
+            'Completed' => 'success',
+            default => 'gray',
+        };
+    }
 }

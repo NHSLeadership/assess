@@ -116,7 +116,8 @@ class RatersRelationManager extends RelationManager
                 TextColumn::make('pivot.group.name'),
                 TextColumn::make('status')
                     ->badge()
-                    ->getStateUsing(fn ($record) => $record->pivot->getStatus()),
+                    ->getStateUsing(fn ($record) => $record->pivot->getStatus())
+                    ->color(fn ($record) => $record->pivot->getStatusColour()),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
