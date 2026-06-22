@@ -17,5 +17,6 @@
             data-auto-track="{{ $umami->auto_track ? 'true' : 'false' }}"
             data-exclude-search="{{ $umami->exclude_search ? 'true' : 'false' }}"
             data-exclude-hash="{{ $umami->exclude_hash ? 'true' : 'false' }}"
+            data-performance="true"
     ></script>
 @endif
