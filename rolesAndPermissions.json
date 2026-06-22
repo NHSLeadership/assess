@@ -20,7 +20,8 @@
         "retentionEvent:viewAny","retentionEvent:view",
         "scaleOption:viewAny", "scaleOption:view", "scaleOption:create", "scaleOption:update", "scaleOption:delete", "scaleOption:restore", "scaleOption:forceDelete", "scaleOption:reorder",
         "scale:viewAny", "scale:view", "scale:create", "scale:update", "scale:delete", "scale:restore", "scale:forceDelete", "scale:reorder",
-        "signpost:viewAny", "signpost:view", "signpost:create", "signpost:update", "signpost:delete", "signpost:restore", "signpost:forceDelete", "signpost:reorder"
+        "signpost:viewAny", "signpost:view", "signpost:create", "signpost:update", "signpost:delete", "signpost:restore", "signpost:forceDelete", "signpost:reorder",
+        "settings:update"
       ]
     },
     "assess-support": {
