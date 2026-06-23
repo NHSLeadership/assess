@@ -26,9 +26,9 @@ class Rater extends Model
     protected static function booted(): void
     {
         static::saving(function (Rater $rater): void {
-            if ($rater->email) {
-                $rater->email_hash = self::emailHash($rater->email);
-            }
+            $rater->email_hash = filled($rater->email)
+                ? self::emailHash($rater->email)
+                : null;
         });
     }
 
