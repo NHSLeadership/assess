@@ -18,9 +18,13 @@ class Rater extends Model
         'email',
     ];
 
-    public function user(): BelongsTo
+    public function subject(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(
+            User::class,
+            'subject_id',
+            'user_id'
+        );
     }
 
     public function assessments(): BelongsToMany
