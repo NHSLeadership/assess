@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
 use App\Models\Rater;
@@ -11,6 +12,7 @@ use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\URL;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -24,10 +26,18 @@ class Summary extends Component
     public ?int $frameworkId = null;
 
     public ?int $assessmentId = null;
+    public ?int $raterId = null;
 
     public ?int $requiredCount = null;
 
     public ?int $answeredRequiredCount = null;
+
+    public function mount($frameworkId = null, $assessmentId = null, $raterId = null): void
+    {
+        $this->frameworkId = (int) $frameworkId;
+        $this->assessmentId = (int) $assessmentId;
+        $this->raterId = (int) $raterId;
+    }
 
     #[Computed]
     public function framework(): ?Framework
@@ -52,6 +62,7 @@ class Summary extends Component
             // There are unanswered questions, so we should resume there
             $this->redirect(route('questions', [
                 'assessmentId' => $this->assessmentId,
+                'raterId' => $this->raterId,
                 'nodeId' => $node?->id,
             ]));
         } else {
@@ -66,8 +77,32 @@ class Summary extends Component
             return collect();
         }
 
-        return app(FrameworkTraversalService::class)
+        $nodes = app(FrameworkTraversalService::class)
             ->orderedHierarchyNodes((int) $this->frameworkId);
+
+        return $nodes
+            ->filter(fn (Node $node) => $this->nodeHasVisibleQuestions($node))
+            ->values();
+    }
+
+    protected function nodeHasVisibleQuestions(Node $node): bool
+    {
+        $resolvedTexts = $this->resolvedQuestionTexts;
+
+        $questionIds = $node->questions->pluck('id');
+
+        return $questionIds->contains(
+            fn ($id) => array_key_exists($id, $resolvedTexts)
+        );
+    }
+
+    #[Computed]
+    public function resolvedQuestionTexts(): array
+    {
+        return \App\Services\QuestionTextResolver::optionsFor(
+            $this->assessment(),
+            AssessmentRater::where('assessment_id', $this->assessment()->id)->where('rater_id', $this->raterId)->firstOrFail()
+        );
     }
 
     #[Computed]
@@ -85,10 +120,22 @@ class Summary extends Component
             return null;
         }
 
+        if (!empty($this->raterId)) {
+            $url = URL::signedRoute('assessment-rater', [
+                'assessmentId' => $this->assessmentId,
+                'raterId' => $this->raterId,
+            ]);
+
+            $separator = str_contains($url, '?') ? '&' : '?';
+
+            $url .= $separator . 'nodeId=' . $nodeId . '&edit=edit';
+            return redirect($url);
+        }
+
         return redirect()->route('questions', [
             'assessmentId' => $this->assessmentId,
             'nodeId' => $nodeId,
-            'edit' => 'edit',
+            'action' => 'edit',
         ]);
     }
 
@@ -96,32 +143,46 @@ class Summary extends Component
     {
         try {
             $assessment = $this->assessment();
+
             if (!$assessment instanceof \App\Models\Assessment) {
                 session()->flash('error', __('alerts.errors.assessment-not-found'));
                 $this->dispatch('scroll-to-top');
-
-                return null;
-
-            }
-
-            if (! is_null($assessment->submitted_at)) {
-                session()->flash('error', __('alerts.errors.assessment-already-submitted'));
-                $this->dispatch('scroll-to-top');
-
                 return null;
             }
 
-            $assessment->submitted_at = now();
-            $assessment->save();
+            if (!empty($this->raterId)) {
 
-            // Disable notifications for now.
-            // $this->user?->notify(new AssessmentCompletedNotification($assessment));
+                $rater = $assessment->raters()
+                    ->where('raters.id', $this->raterId)
+                    ->firstOrFail();
 
-            return redirect()->route(
-                'assessment-completed', ['assessmentId' => $assessment?->id]
-            );
+                if (!is_null($rater->pivot->submitted_at)) {
+                    session()->flash('error', __('alerts.errors.assessment-already-submitted'));
+                    $this->dispatch('scroll-to-top');
+                    return null;
+                }
+
+                $assessment->raters()->updateExistingPivot($this->raterId, [
+                    'submitted_at' => now(),
+                ]);
+            } else {
+                if (!is_null($assessment->submitted_at)) {
+                    session()->flash('error', __('alerts.errors.assessment-already-submitted'));
+                    $this->dispatch('scroll-to-top');
+                    return null;
+                }
+
+                $assessment->update([
+                    'submitted_at' => now(),
+                ]);
+            }
+
+            return redirect()->route('assessment-completed', [
+                'assessmentId' => $assessment->id
+            ]);
+
         } catch (\Throwable $e) {
-            report($e); // log the error for debugging
+            report($e);
             session()->flash('error', $e->getMessage());
             $this->dispatch('scroll-to-top');
 
@@ -177,7 +238,7 @@ class Summary extends Component
     }
 
     #[Computed]
-    public function resolvedQuestionTexts(): array
+    public function resolvedQuestionTexts1(): array
     {
         return \App\Services\QuestionTextResolver::optionsFor(
             $this->assessment(),

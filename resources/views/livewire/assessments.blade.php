@@ -59,6 +59,7 @@
                 <livewire:questions
                         :assessmentId="$this->assessmentId"
                         :nodeId="$this->nodeId"
+                        :raterId="$this->raterId"
                         :edit="$this->edit ?? null"
                         :resolvedQuestionTexts="$this->resolvedQuestionTexts"
                         :wire:key="'questions-assessment-' . $this->assessmentId"

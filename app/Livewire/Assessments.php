@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\AssessmentRater;
 use App\Models\Node;
 use App\Services\FrameworkTraversalService;
 use App\Traits\AssessmentHelperTrait;
@@ -33,24 +34,33 @@ class Assessments extends Component
     public ?int $nodeId = null;
 
     public ?string $edit = null;
+    public ?int $raterId = null;
 
-    public function mount($assessmentId, $nodeId = null, ?string $edit = null)
+    public function mount($assessmentId, $raterId = null)
     {
 
+        if (request()->route()->getName() === 'assessment-rater' && ! request()->hasValidSignatureWhileIgnoring(['nodeId', 'edit'])) {
+            abort(403);
+        }
         // Assign parameters to public properties
         $this->assessmentId = (int) $assessmentId;
+        $this->raterId = (int) $raterId;
+        $nodeId = request('nodeId');
         $this->nodeId = $nodeId ? (int) $nodeId : null;
-        $this->edit = $edit;
+        $action = request('action');
+        $this->edit = $action;
 
         if (!isset($this->assessmentId) || $this->assessmentId === 0) {
             return redirect()->route('frameworks');
         }
 
-        // Redirect if not permitted to do an assessment for this framework now
-        $this->redirectIfAssessmentNotPermitted($this->assessment()?->framework?->id, $this->assessmentId);
-
-        // Redirect already submitted assignments to summary page
-        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework?->id, $this->edit);
+        //Skip these checks for raters
+        if (empty($this->raterId)) {
+            // Redirect if not permitted to do an assessment for this framework now
+            $this->redirectIfAssessmentNotPermitted($this->assessment()?->framework?->id, $this->assessmentId);
+            // Redirect already submitted assignments to summary page
+            $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework?->id, $this->edit);
+        }
 
         // Set initial current node so headings are correct on first render
         $nodes = $this->nodes();
@@ -77,7 +87,6 @@ class Assessments extends Component
         $nodes = app(FrameworkTraversalService::class)
             ->orderedQuestionNodes($this->assessment()->framework->id)
         ;
-
         return $nodes
             ->filter(fn (Node $node) => $this->nodeHasVisibleQuestions($node))
             ->values();
@@ -197,7 +206,7 @@ class Assessments extends Component
     {
         return \App\Services\QuestionTextResolver::optionsFor(
             $this->assessment(),
-            null
+            AssessmentRater::where('assessment_id', $this->assessment()->id)->first()
         );
     }
 

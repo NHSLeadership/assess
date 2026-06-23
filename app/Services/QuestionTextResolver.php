@@ -44,6 +44,7 @@ class QuestionTextResolver
         $map = [];
 
         foreach ($questions as $question) {
+
             $chosen = $question->variants->first(function ($variant) use ($selectedOptionIds) {
 
                 if ($variant->matches->isEmpty()) {
@@ -63,7 +64,6 @@ class QuestionTextResolver
 
             $map[$question->id] = $chosen?->text ?? $question->text;
         }
-
         return $map;
     }
 

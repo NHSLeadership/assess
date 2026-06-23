@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
 use App\Models\Rater;
@@ -124,9 +125,14 @@ trait AssessmentHelperTrait
             return null;
         }
 
+        if (!empty($this->raterId)) {
+            $userId = Assessment::find($this->assessmentId)?->value('user_id');
+        } else {
+            $userId = $this->user()?->user_id;
+        }
         return Assessment::with(['raters'])
             ->where('id', $this->assessmentId)
-            ->where('user_id', $this->user()?->user_id)
+            ->where('user_id', $userId)
             ->firstOrFail();
     }
 

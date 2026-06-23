@@ -15,6 +15,7 @@ use App\Traits\FormFieldValidationRulesTrait;
 use App\Traits\UserTrait;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
@@ -42,6 +43,7 @@ class Questions extends Component
     public ?int $nodeKeyId = null;
 
     public ?int $nodeId = null;
+    public ?int $raterId = null;
 
     public ?string $edit = null;
     public array $resolvedQuestionTexts = [];
@@ -62,10 +64,12 @@ class Questions extends Component
 
     public function mount(): void
     {
-        // Redirect if not permitted to do an assessment for this framework now
-        $this->redirectIfAssessmentNotPermitted($this->assessment()?->framework?->id, $this->assessmentId);
-
-        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework->id, $this->edit);
+        //Skip these checks for raters
+        if (empty($this->raterId)) {
+            // Redirect if not permitted to do an assessment for this framework now
+            $this->redirectIfAssessmentNotPermitted($this->assessment()?->framework?->id, $this->assessmentId);
+            $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework->id, $this->edit);
+        }
 
         /**
          * Pre-populate forms with defaults
@@ -428,10 +432,18 @@ class Questions extends Component
     {
         $this->validateAndSaveResponses();
 
+        if ($this->raterId !== null) {
+            $url = URL::signedRoute('assessment-rater-summary', [
+                'frameworkId' => $this->assessment()?->framework->id,
+                'assessmentId' => $this->assessmentId,
+                'raterId' => $this->raterId,
+            ]);
+            return redirect()->to($url);
+        }
         // Additional logic for finishing the assessment can be added here
         return redirect()->route(
             'summary',
-            ['frameworkId' => $this->assessment()?->framework->id, 'assessmentId' => $this->assessmentId]
+            ['frameworkId' => $this->assessment()?->framework->id, 'assessmentId' => $this->assessmentId, 'raterId' => $this->raterId]
         );
     }
 

@@ -14,6 +14,7 @@ use App\Traits\UserTrait;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Illuminate\Support\Facades\Log;
@@ -30,6 +31,15 @@ class Frameworks extends Component
 
     public function mount(): void
     {
+//        $url = URL::signedRoute('assessment-rater', [
+//            'assessmentId' => 9,
+//            'raterId' => 2,
+//        ]);
+//
+//        $separator = str_contains($url, '?') ? '&' : '?';
+//
+//        $url .= $separator . 'nodeId=1&edit=2';
+
         // Set default framework if none selected
         if ($this->frameworkId === null || $this->frameworkId === 0) {
             $framework = Framework::first();
