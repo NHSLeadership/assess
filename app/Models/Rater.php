@@ -18,6 +18,29 @@ class Rater extends Model
         'email',
     ];
 
+    protected $casts = [
+        'name' => 'encrypted',
+        'email' => 'encrypted',
+    ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (Rater $rater): void {
+            if ($rater->email) {
+                $rater->email_hash = self::emailHash($rater->email);
+            }
+        });
+    }
+
+    public static function emailHash(string $email): string
+    {
+        return hash_hmac(
+            'sha256',
+            strtolower(trim($email)),
+            config('app.key')
+        );
+    }
+
     public function subject(): BelongsTo
     {
         return $this->belongsTo(

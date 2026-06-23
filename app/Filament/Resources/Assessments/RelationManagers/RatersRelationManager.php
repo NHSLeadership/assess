@@ -47,7 +47,11 @@ class RatersRelationManager extends RelationManager
                     $subjectId = $this->getOwnerRecord()->user_id;
 
                     $existing = Rater::where('subject_id', $subjectId)
-                        ->where('email', $data['email'])
+//                        ->where('email', $data['email'])
+                        ->where(
+                            'email_hash',
+                            Rater::emailHash($data['email'])
+                        )
                         ->first();
 
                     if ($existing) {
@@ -59,15 +63,11 @@ class RatersRelationManager extends RelationManager
                         return $existing->id;
                     }
 
-                    $rater = Rater::firstOrCreate(
-                        [
-                            'subject_id' => $subjectId,
-                            'email' => $data['email'],
-                        ],
-                        [
-                            'name' => $data['name'],
-                        ]
-                    );
+                    $rater = Rater::create([
+                        'subject_id' => $subjectId,
+                        'name' => $data['name'],
+                        'email' => $data['email'],
+                    ]);
                     return $rater->id;
                 }),
             Select::make('type')
