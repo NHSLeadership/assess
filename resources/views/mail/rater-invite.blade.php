@@ -7,6 +7,10 @@ Please click the button below:
 Open assessment
 @endcomponent
 
+If the button above does not work, please copy and paste the following link into your browser:
+
+{{ $url }}
+
 For further guidance and support, please visit our
 [support page](https://support.leadershipacademy.nhs.uk/).
 
