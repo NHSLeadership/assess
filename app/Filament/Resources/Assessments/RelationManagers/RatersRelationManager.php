@@ -6,6 +6,8 @@ use App\Enums\RaterType;
 use App\Filament\Resources\Raters\Schemas\RaterForm;
 use App\Models\Rater;
 use App\Models\RaterGroup;
+use App\Services\RaterInvitationService;
+use Filament\Actions\Action;
 use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -18,7 +20,6 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Validation\Rule;
 
 class RatersRelationManager extends RelationManager
 {
@@ -110,6 +111,10 @@ class RatersRelationManager extends RelationManager
                 TextColumn::make('pivot.type')->label('Type')->badge()
                     ->formatStateUsing(fn ($state) => ucfirst($state->value)),
                 TextColumn::make('pivot.group.name'),
+                TextColumn::make('status')
+                    ->badge()
+                    ->getStateUsing(fn ($record) => $record->pivot->getStatus())
+                    ->color(fn ($record) => $record->pivot->getStatusColour()),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -127,6 +132,19 @@ class RatersRelationManager extends RelationManager
             ->recordActions([
                 EditAction::make(),
                 DetachAction::make(),
+                Action::make('invite')
+                    ->icon('heroicon-o-envelope')
+                    ->disabled(fn ($record) => blank($record->email))
+                    ->action(function ($record) {
+                        /** @var \App\Models\Assessment $assessment */
+                        $assessment = $this->getOwnerRecord();
+                        app(RaterInvitationService::class)
+                            ->send($assessment, $record);
+                        Notification::make()
+                            ->title('Invitation sent')
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

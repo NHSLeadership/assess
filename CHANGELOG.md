@@ -4,6 +4,11 @@
 # Assessment tool
 
 ---
+### v2.0.1
+> Updated: 16.06.2026
+1. Add rater invitation mechanism
+
+---
 ### v2.0.0
 > Updated: 11.06.2026
 1. Allow for external raters
