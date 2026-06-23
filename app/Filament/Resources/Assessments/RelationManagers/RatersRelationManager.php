@@ -47,7 +47,6 @@ class RatersRelationManager extends RelationManager
                     $subjectId = $this->getOwnerRecord()->user_id;
 
                     $existing = Rater::where('subject_id', $subjectId)
-//                        ->where('email', $data['email'])
                         ->where(
                             'email_hash',
                             Rater::emailHash($data['email'])
