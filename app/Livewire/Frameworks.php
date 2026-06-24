@@ -31,15 +31,6 @@ class Frameworks extends Component
 
     public function mount(): void
     {
-//        $url = URL::signedRoute('assessment-rater', [
-//            'assessmentId' => 9,
-//            'raterId' => 2,
-//        ]);
-//
-//        $separator = str_contains($url, '?') ? '&' : '?';
-//
-//        $url .= $separator . 'nodeId=1&edit=2';
-
         // Set default framework if none selected
         if ($this->frameworkId === null || $this->frameworkId === 0) {
             $framework = Framework::first();

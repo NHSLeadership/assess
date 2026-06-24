@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Enums\ResponseType;
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Node;
 use App\Models\Rater;
 use App\Models\Response;
@@ -195,6 +196,7 @@ class Questions extends Component
 
         $responses = $assessment->responses;
 
+        // TODO
         if ($onlyRequired) {
             $responses = $responses->filter(fn ($response) => $response->question->required ?? false);
         }
@@ -298,8 +300,12 @@ class Questions extends Component
         }
 
         $questions = $this->nodeQuestions()->keyBy('name');
-        $selfRaterId = $this->selfRater()?->id;
 
+        if (!empty($this->raterId)) {
+            $raterId = $this->raterId;
+        } else {
+            $raterId = $this->selfRater()?->id;
+        }
 
         foreach (($this->data ?? []) as $name => $value) {
 
@@ -328,7 +334,7 @@ class Questions extends Component
                 $value,
                 $question,
                 $this->assessmentId,
-                $selfRaterId
+                $raterId
             );
 
             // Save optional reflection for scale questions
@@ -341,7 +347,7 @@ class Questions extends Component
                     [
                         'assessment_id' => $this->assessmentId,
                         'question_id' => $question->id,
-                        'rater_id' => $selfRaterId,
+                        'rater_id' => $raterId,
                     ],
                     [
                         'textarea' => $reflection,
@@ -432,7 +438,7 @@ class Questions extends Component
     {
         $this->validateAndSaveResponses();
 
-        if ($this->raterId !== null) {
+        if (!empty($this->raterId)) {
             $url = URL::signedRoute('assessment-rater-summary', [
                 'frameworkId' => $this->assessment()?->framework->id,
                 'assessmentId' => $this->assessmentId,
@@ -443,7 +449,7 @@ class Questions extends Component
         // Additional logic for finishing the assessment can be added here
         return redirect()->route(
             'summary',
-            ['frameworkId' => $this->assessment()?->framework->id, 'assessmentId' => $this->assessmentId, 'raterId' => $this->raterId]
+            ['frameworkId' => $this->assessment()?->framework->id, 'assessmentId' => $this->assessmentId]
         );
     }
 
@@ -605,7 +611,10 @@ class Questions extends Component
             return [];
         }
 
-        return QuestionTextResolver::optionsFor($assessment, null);
+        return QuestionTextResolver::optionsFor(
+            $assessment,
+            AssessmentRater::where('assessment_id', $this->assessment()->id)->where('rater_id', $this->raterId)->first() ?? null
+        );
     }
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {

@@ -206,7 +206,7 @@ class Assessments extends Component
     {
         return \App\Services\QuestionTextResolver::optionsFor(
             $this->assessment(),
-            AssessmentRater::where('assessment_id', $this->assessment()->id)->first()
+            AssessmentRater::where('assessment_id', $this->assessment()->id)->where('rater_id', $this->raterId)->first() ?? null
         );
     }
 

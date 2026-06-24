@@ -1,7 +1,6 @@
 <div class="nhsuk-grid-row">
     <div class="nhsuk-grid-column-full">
         @include('livewire.alerts')
-
         @if (!empty($questions))
             <form wire:submit.prevent="storeNext()">
                 @foreach ($questions as $question)
@@ -55,7 +54,6 @@
                         <hr class="nhsuk-u-margin-top-0">
                     </div>
                 @endforeach
-
                 @if ($this->responses?->count())
                     {{-- Submit button continues to next page instead of pagination links --}}
                     <div>
@@ -78,7 +76,9 @@
                     </div>
                 @else
                     {{-- No responses yet, from the variant select page --}}
-                    <button wire:click.prevent="goToVariantSelection" class="nhsuk-button nhsuk-u-margin-right-3">Previous page</button>
+                    @if (empty($this->raterId))
+                        <button wire:click.prevent="goToVariantSelection" class="nhsuk-button nhsuk-u-margin-right-3">Previous page</button>
+                    @endif
                     <button class="nhsuk-button" type="submit">Save and continue</button>
                 @endif
             </form>

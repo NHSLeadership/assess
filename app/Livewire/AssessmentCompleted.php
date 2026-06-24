@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire;
 
 use App\Traits\AssessmentHelperTrait;
+use Illuminate\Support\Facades\URL;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -14,6 +15,9 @@ class AssessmentCompleted extends Component
 
     /** int|null */
     public $assessmentId;
+
+    /** int|null */
+    public $raterId;
 
     public function mount()
     {
@@ -26,12 +30,22 @@ class AssessmentCompleted extends Component
         }
     }
 
-    public function viewReport()
+    public function viewReport(): \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+
     {
-        return redirect()->route('assessment-report', [
-            'frameworkId' => $this->assessment()?->framework?->id,
-            'assessmentId' => $this->assessmentId,
-        ]);
+        if (!empty($this->raterId)) {
+            $url = URL::signedRoute('assessment-rater-report', [
+                'frameworkId' => $this->assessment()?->framework->id,
+                'assessmentId' => $this->assessmentId,
+                'raterId' => $this->raterId,
+            ]);
+            return redirect()->to($url);
+        } else {
+            return redirect()->route('assessment-report', [
+                'frameworkId' => $this->assessment()?->framework?->id,
+                'assessmentId' => $this->assessmentId,
+            ]);
+        }
     }
 
     #[Title('Assessment completed')]

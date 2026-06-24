@@ -101,14 +101,27 @@ class Summary extends Component
     {
         return \App\Services\QuestionTextResolver::optionsFor(
             $this->assessment(),
-            AssessmentRater::where('assessment_id', $this->assessment()->id)->where('rater_id', $this->raterId)->firstOrFail()
+            AssessmentRater::where('assessment_id', $this->assessment()->id)->where('rater_id', $this->raterId)->first() ?? null
         );
     }
 
     #[Computed]
     public function responses(): ?Collection
     {
-        return $this->assessment()?->responses()->get();
+        $assessment = $this->assessment();
+
+        if (!$assessment) {
+            return null;
+        }
+
+        if (!empty($this->raterId)) {
+
+            return $assessment->responses()
+                ->where('rater_id', $this->raterId)
+                ->get();
+        }
+
+        return $assessment->responses()->get();
     }
 
     /**
@@ -161,10 +174,21 @@ class Summary extends Component
                     $this->dispatch('scroll-to-top');
                     return null;
                 }
+                if (is_null($assessment->submitted_at)) {
+                    session()->flash('error', __('alerts.errors.assessment-not-submitted'));
+                    $this->dispatch('scroll-to-top');
+                    return null;
+                }
 
                 $assessment->raters()->updateExistingPivot($this->raterId, [
                     'submitted_at' => now(),
                 ]);
+                $url = URL::signedRoute('assessment-rater-completed', [
+                    'assessmentId' => $assessment->id,
+                    'raterId' => $this->raterId
+                ]);
+                return redirect()->to($url);
+
             } else {
                 if (!is_null($assessment->submitted_at)) {
                     session()->flash('error', __('alerts.errors.assessment-already-submitted'));
@@ -191,6 +215,24 @@ class Summary extends Component
     }
 
     #[Computed]
+    public function assessmentSubmitted(): bool
+    {
+        $assessment = $this->assessment();
+
+        if (!empty($this->raterId)) {
+
+            $rater = $assessment->raters()
+                ->where('raters.id', $this->raterId)
+                ->firstOrFail();
+
+            return $assessment->submitted_at
+                && $rater->pivot->submitted_at;
+        }
+
+        return (bool) $assessment->submitted_at;
+    }
+
+    #[Computed]
     public function rater()
     {
         if ($this->assessmentId === null || $this->assessmentId === 0 || empty($this->user()?->user_id)) {
@@ -206,19 +248,27 @@ class Summary extends Component
 
     public function viewReport()
     {
-        return redirect()->route('assessment-report', [
-            'frameworkId' => $this->frameworkId,
-            'assessmentId' => $this->assessmentId,
-        ]);
+        if (!empty($this->raterId)) {
+            $url = URL::signedRoute('assessment-rater-report', [
+                'frameworkId' => $this->frameworkId,
+                'assessmentId' => $this->assessmentId,
+                'raterId' => $this->raterId,
+            ]);
+            return redirect($url);
+        } else {
+            return redirect()->route('assessment-report', [
+                'frameworkId' => $this->frameworkId,
+                'assessmentId' => $this->assessmentId,
+            ]);
+        }
     }
 
     #[Computed]
-    public function requiredCount()
+    public function requiredCount(): int
     {
-        return $this->assessment?->framework
-            ->questions()
-            ->where('required', 1)
-            ->count();
+        return $this->responses?->filter(
+            fn ($r) => $r->question?->required
+        )->count() ?? 0;
     }
 
     #[Computed]

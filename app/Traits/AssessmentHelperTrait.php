@@ -130,10 +130,20 @@ trait AssessmentHelperTrait
         } else {
             $userId = $this->user()?->user_id;
         }
-        return Assessment::with(['raters'])
+
+        $query = Assessment::query();
+
+        if (!empty($this->raterId)) {
+            $query->with(['raters' => function ($q) {
+                $q->where('raters.id', $this->raterId);
+            }]);
+        }
+
+        return $query
             ->where('id', $this->assessmentId)
             ->where('user_id', $userId)
             ->firstOrFail();
+
     }
 
     public function redirectIfAssessmentNotPermitted(int $frameworkId, ?int $assessmentId = null): Redirector|RedirectResponse|null

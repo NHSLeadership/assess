@@ -65,7 +65,7 @@
                         :wire:key="'questions-assessment-' . $this->assessmentId"
                 />
 
-    @endforeach
+            @endforeach
 
             <hr class="nhsuk-u-margin-top-1">
 

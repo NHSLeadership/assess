@@ -10,7 +10,6 @@ use App\Livewire\Assessments;
 use App\Livewire\FrameworkInstructions;
 use App\Livewire\Frameworks;
 use App\Livewire\Home;
-use App\Livewire\RateAssessment;
 use App\Livewire\Review;
 use App\Livewire\ReviewRequest;
 use App\Livewire\Summary;
@@ -54,6 +53,10 @@ Route::group([
         ->name('assessment-rater');
     Route::get('/rate-assessment-summary/{frameworkId?}/{assessmentId?}/{raterId?}', Summary::class)
         ->name('assessment-rater-summary');
+    Route::get('/rate-assessment-completed/{assessmentId}/{raterId}', AssessmentCompleted::class)
+        ->name('assessment-rater-completed');
+    Route::get('/rate-assessment-report/{frameworkId}/{assessmentId}/{raterId}', AssessmentReport::class)
+        ->name('assessment-rater-report');
 
 });
 
