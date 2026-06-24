@@ -55,16 +55,28 @@ class Summary extends Component
         return Framework::all();
     }
 
-    public function continueAssessment(): void
+    public function continueAssessment(): RedirectResponse|\Illuminate\Routing\Redirector
     {
         $node = $this->getAssessmentResumeNode($this->assessmentId);
         if ($node instanceof \App\Models\Node) {
             // There are unanswered questions, so we should resume there
-            $this->redirect(route('questions', [
-                'assessmentId' => $this->assessmentId,
-                'raterId' => $this->raterId,
-                'nodeId' => $node?->id,
-            ]));
+            if (!empty($this->raterId)) {
+                $url = URL::signedRoute('assessment-rater', [
+                    'assessmentId' => $this->assessmentId,
+                    'raterId' => $this->raterId,
+                ]);
+
+                $separator = str_contains($url, '?') ? '&' : '?';
+
+                $url .= $separator . 'nodeId=' . $node?->id . '&edit=edit';
+                return redirect($url);
+            } else {
+                $this->redirect(route('questions', [
+                    'assessmentId' => $this->assessmentId,
+                    'raterId' => $this->raterId,
+                    'nodeId' => $node?->id,
+                ]));
+            }
         } else {
             $this->redirect(route('frameworks'));
         }
@@ -287,12 +299,4 @@ class Summary extends Component
         ]);
     }
 
-    #[Computed]
-    public function resolvedQuestionTexts1(): array
-    {
-        return \App\Services\QuestionTextResolver::optionsFor(
-            $this->assessment(),
-            $this->rater()?->pivot
-        );
-    }
 }

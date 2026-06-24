@@ -94,7 +94,7 @@ class AssessmentReport extends Component
         }
 
         // Use the shared service for all report data
-        $service = new AssessmentReportService($frameworkId, $assessmentId, $raterId);
+        $service = new AssessmentReportService($frameworkId, $assessmentId);
 
         $this->barCharts = $service->barCharts();
         $this->barChartsCompetency = $service->barChartsCompetency();

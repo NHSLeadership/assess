@@ -109,7 +109,7 @@
         @endforeach
 
         @php
-            $hasAllRequired = $this->answeredRequiredCount === $this->requiredCount;
+            $hasAllRequired = $this->answeredRequiredCount() === $this->requiredCount() && $this->requiredCount() > 0;
         @endphp
 
         @if (!$isSubmitted && !$hasAllRequired)

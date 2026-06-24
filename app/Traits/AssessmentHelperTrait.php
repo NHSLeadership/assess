@@ -126,7 +126,7 @@ trait AssessmentHelperTrait
         }
 
         if (!empty($this->raterId)) {
-            $userId = Assessment::find($this->assessmentId)?->value('user_id');
+            $userId = Assessment::find($this->assessmentId)?->user_id;
         } else {
             $userId = $this->user()?->user_id;
         }
