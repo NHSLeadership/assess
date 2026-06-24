@@ -54,7 +54,7 @@ it('redirects to questions when editAnswer receives a numeric nodeId', function 
         ->assertRedirect(route('questions', [
             'assessmentId' => $assessment->id,
             'nodeId' => 5,
-            'edit' => 'edit',
+            'action' => 'edit',
         ]));
 });
 
@@ -90,6 +90,7 @@ it('redirects to questions when a resume node exists', function () {
         ->call('continueAssessment')
         ->assertRedirect(route('questions', [
             'assessmentId' => $assessment->id,
+            'raterId' => 0,
             'nodeId' => $node->id,
         ]));
 });

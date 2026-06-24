@@ -53,7 +53,7 @@ test('invitation email contains signed url', function () {
 
         $html = $mail->render();
 
-        return str_contains($html, "assessment-rater/{$assessment->id}/{$rater->id}")
+        return str_contains($html, "rate-assessment/{$assessment->id}/{$rater->id}")
             && str_contains($html, 'signature=');
     });
 });
