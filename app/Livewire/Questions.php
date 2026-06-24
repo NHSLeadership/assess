@@ -268,21 +268,6 @@ class Questions extends Component
             Rater::where('subject_id', $assessment->user_id)->first();
     }
 
-    public function assessmentRater(): ?AssessmentRater
-    {
-        if ($this->cachedAssessmentRater !== null) {
-            return $this->cachedAssessmentRater;
-        }
-
-        if (empty($this->raterId) || empty($this->assessmentId)) {
-            return null;
-        }
-
-        return $this->cachedAssessmentRater = AssessmentRater::query()
-            ->where('assessment_id', $this->assessmentId)
-            ->where('rater_id', $this->raterId)
-            ->first();
-    }
 
     protected function currentResponseRaterId(): ?int
     {

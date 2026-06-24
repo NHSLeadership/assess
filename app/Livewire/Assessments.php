@@ -84,22 +84,6 @@ class Assessments extends Component
 
     }
 
-    public function assessmentRater(): ?AssessmentRater
-    {
-        if ($this->cachedAssessmentRater !== null) {
-            return $this->cachedAssessmentRater;
-        }
-
-        if (empty($this->raterId) || empty($this->assessmentId)) {
-            return null;
-        }
-
-        return $this->cachedAssessmentRater = AssessmentRater::query()
-            ->where('assessment_id', $this->assessmentId)
-            ->where('rater_id', $this->raterId)
-            ->first();
-    }
-
     #[Computed]
     public function nodes(): ?Collection
     {

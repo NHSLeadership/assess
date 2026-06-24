@@ -226,4 +226,21 @@ trait AssessmentHelperTrait
             ->raters
             ->firstWhere('user_id', $this->user()?->user_id);
     }
+
+    public function assessmentRater(): ?AssessmentRater
+    {
+        if ($this->cachedAssessmentRater !== null) {
+            return $this->cachedAssessmentRater;
+        }
+
+        if (empty($this->raterId) || empty($this->assessmentId)) {
+            return null;
+        }
+
+        return $this->cachedAssessmentRater = AssessmentRater::query()
+            ->where('assessment_id', $this->assessmentId)
+            ->where('rater_id', $this->raterId)
+            ->first();
+    }
+
 }
