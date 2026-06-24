@@ -50,6 +50,7 @@ class Questions extends Component
     public array $resolvedQuestionTexts = [];
     protected ?Assessment $cachedAssessment = null;
     protected ?Rater $cachedRater = null;
+    protected ?AssessmentRater $cachedAssessmentRater = null;
     protected ?\ArrayIterator $cachedNodes = null;
 
     public function assessment(): ?Assessment
@@ -70,6 +71,10 @@ class Questions extends Component
             // Redirect if not permitted to do an assessment for this framework now
             $this->redirectIfAssessmentNotPermitted($this->assessment()?->framework?->id, $this->assessmentId);
             $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework->id, $this->edit);
+        }
+
+        if (! empty($this->raterId) && ! $this->assessmentRater()) {
+            abort(404);
         }
 
         /**
@@ -192,11 +197,18 @@ class Questions extends Component
             return null;
         }
 
-        $assessment->loadMissing('responses.question');
+        $currentRaterId = $this->currentResponseRaterId();
 
-        $responses = $assessment->responses;
+        if ($currentRaterId === null) {
+            return collect();
+        }
 
-        // TODO
+        $responses = Response::query()
+            ->where('assessment_id', $assessment->id)
+            ->where('rater_id', $currentRaterId)
+            ->with('question')
+            ->get();
+
         if ($onlyRequired) {
             $responses = $responses->filter(fn ($response) => $response->question->required ?? false);
         }
@@ -256,6 +268,29 @@ class Questions extends Component
             Rater::where('subject_id', $assessment->user_id)->first();
     }
 
+    public function assessmentRater(): ?AssessmentRater
+    {
+        if ($this->cachedAssessmentRater !== null) {
+            return $this->cachedAssessmentRater;
+        }
+
+        if (empty($this->raterId) || empty($this->assessmentId)) {
+            return null;
+        }
+
+        return $this->cachedAssessmentRater = AssessmentRater::query()
+            ->where('assessment_id', $this->assessmentId)
+            ->where('rater_id', $this->raterId)
+            ->first();
+    }
+
+    protected function currentResponseRaterId(): ?int
+    {
+        return ! empty($this->raterId)
+            ? $this->raterId
+            : $this->selfRater()?->id;
+    }
+
     /**
      * Store responses and go to next question or node
      */
@@ -301,10 +336,12 @@ class Questions extends Component
 
         $questions = $this->nodeQuestions()->keyBy('name');
 
-        if (!empty($this->raterId)) {
-            $raterId = $this->raterId;
-        } else {
-            $raterId = $this->selfRater()?->id;
+        $raterId = $this->currentResponseRaterId();
+
+        if ($raterId === null) {
+            throw ValidationException::withMessages([
+                'rater' => 'Unable to determine who is responding to this assessment.',
+            ]);
         }
 
         foreach (($this->data ?? []) as $name => $value) {
@@ -481,8 +518,15 @@ class Questions extends Component
         $visibleQuestionIds = array_keys($this->resolvedQuestionTextMap());
         $visibleQuestionIdLookup = array_flip($visibleQuestionIds);
 
+        $currentRaterId = $this->currentResponseRaterId();
+
+        if ($currentRaterId === null) {
+            return null;
+        }
+
         // Question IDs already answered in this assessment.
         $answeredQuestionIds = Response::where('assessment_id', $this->assessmentId)
+            ->where('rater_id', $currentRaterId)
             ->pluck('question_id')
             ->all();
 
@@ -613,7 +657,7 @@ class Questions extends Component
 
         return QuestionTextResolver::optionsFor(
             $assessment,
-            AssessmentRater::where('assessment_id', $this->assessment()->id)->where('rater_id', $this->raterId)->first() ?? null
+            $this->assessmentRater()
         );
     }
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View

@@ -62,7 +62,7 @@
                         :raterId="$this->raterId"
                         :edit="$this->edit ?? null"
                         :resolvedQuestionTexts="$this->resolvedQuestionTexts"
-                        :wire:key="'questions-assessment-' . $this->assessmentId"
+                        :wire:key="'questions-assessment-' . $this->assessmentId . '-rater-' . ($this->raterId ?? 'self')"
                 />
 
             @endforeach

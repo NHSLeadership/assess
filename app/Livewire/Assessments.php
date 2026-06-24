@@ -35,6 +35,7 @@ class Assessments extends Component
 
     public ?string $edit = null;
     public ?int $raterId = null;
+    protected ?AssessmentRater $cachedAssessmentRater = null;
 
     public function mount($assessmentId, $raterId = null)
     {
@@ -42,9 +43,15 @@ class Assessments extends Component
         if (request()->route()->getName() === 'assessment-rater' && ! request()->hasValidSignatureWhileIgnoring(['nodeId', 'edit'])) {
             abort(403);
         }
+
         // Assign parameters to public properties
         $this->assessmentId = (int) $assessmentId;
-        $this->raterId = (int) $raterId;
+        $this->raterId = $raterId ? (int) $raterId : null;
+
+        if (! empty($this->raterId) && ! $this->assessmentRater()) {
+            abort(404);
+        }
+
         $nodeId = request('nodeId');
         $this->nodeId = $nodeId ? (int) $nodeId : null;
         $action = request('action');
@@ -75,6 +82,22 @@ class Assessments extends Component
 
         }
 
+    }
+
+    public function assessmentRater(): ?AssessmentRater
+    {
+        if ($this->cachedAssessmentRater !== null) {
+            return $this->cachedAssessmentRater;
+        }
+
+        if (empty($this->raterId) || empty($this->assessmentId)) {
+            return null;
+        }
+
+        return $this->cachedAssessmentRater = AssessmentRater::query()
+            ->where('assessment_id', $this->assessmentId)
+            ->where('rater_id', $this->raterId)
+            ->first();
     }
 
     #[Computed]
@@ -206,7 +229,7 @@ class Assessments extends Component
     {
         return \App\Services\QuestionTextResolver::optionsFor(
             $this->assessment(),
-            AssessmentRater::where('assessment_id', $this->assessment()->id)->where('rater_id', $this->raterId)->first() ?? null
+            $this->assessmentRater()
         );
     }
 
