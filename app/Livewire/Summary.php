@@ -276,11 +276,12 @@ class Summary extends Component
     }
 
     #[Computed]
-    public function requiredCount(): int
+    public function requiredCount()
     {
-        return $this->responses?->filter(
-            fn ($r) => $r->question?->required
-        )->count() ?? 0;
+        return $this->assessment?->framework
+            ->questions()
+            ->where('required', 1)
+            ->count();
     }
 
     #[Computed]
