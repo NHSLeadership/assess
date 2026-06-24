@@ -181,10 +181,22 @@ class Variants extends Component
                 ]);
                 $this->assessmentId = $assessment->id;
 
-                // Ensure rater record exists (no duplicates)
-                $rater = Rater::firstOrCreate(
-                    ['subject_id' => $this->user()?->user_id ?? null],
-                );
+                // Ensure rater record exists (no duplicates) and update if found
+                $selfRater = Rater::where('subject_id', $this->user()->user_id)
+                    ->orderBy('id')
+                    ->first();
+                if ($selfRater) {
+                    $selfRater->update([
+                        'name' => $this->user()->name,
+                        'email' => $this->user()->email,
+                    ]);
+                } else {
+                    Rater::create([
+                        'subject_id' => $this->user()->user_id,
+                        'name' => $this->user()->name,
+                        'email' => $this->user()->email,
+                    ]);
+                }
 
             }, 3); // retry count for deadlocks.
 

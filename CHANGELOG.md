@@ -10,6 +10,8 @@
 2. Add rater assessment
 3. Add data-performance to Umami analytics
 4. Encrypt rater details in database
+5. Store assessment subject details
+
 
 ---
 ### v2.0.0
