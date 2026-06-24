@@ -184,7 +184,7 @@ class Variants extends Component
                 ]);
                 $this->assessmentId = $assessment->id;
 
-                // Ensure rater record exists (no duplicates) and update if found
+                // Ensure a self rater record exists for this subject; update the oldest record if found
                 $selfRater = Rater::where('subject_id', $user->user_id)
                     ->orderBy('id')
                     ->lockForUpdate()
