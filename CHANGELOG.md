@@ -9,6 +9,7 @@
 1. Add rater invitation mechanism
 2. Add rater assessment
 3. Add data-performance to Umami analytics
+4. Encrypt rater details in database
 
 ---
 ### v2.0.0

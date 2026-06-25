@@ -10,8 +10,8 @@ class RaterForm
     public static function components(): array
     {
         return [
-            TextInput::make('name'),
-            TextInput::make('email')->email(),
+            TextInput::make('name')->required(),
+            TextInput::make('email')->email()->required(),
         ];
     }
 

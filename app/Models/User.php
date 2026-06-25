@@ -110,6 +110,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function raters(): HasMany
     {
-        return $this->hasMany(Rater::class);
+        return $this->hasMany(
+            Rater::class,
+            'subject_id',
+            'user_id'
+        );
     }
 }

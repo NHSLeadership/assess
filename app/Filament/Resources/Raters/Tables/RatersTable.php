@@ -14,15 +14,15 @@ class RatersTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->searchPlaceholder('Subject ID')
+            ->description('Search by Assessment Subject Academy ID only. Name and email searches are unavailable because rater details are encrypted.')
             ->columns([
                 TextColumn::make('subject_id')
                     ->label('Subject ID')
                     ->searchable(),
-                TextColumn::make('name')
-                    ->searchable(),
+                TextColumn::make('name'),
                 TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
+                    ->label('Email address'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

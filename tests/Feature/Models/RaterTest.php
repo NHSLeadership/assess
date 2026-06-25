@@ -35,12 +35,6 @@ test('rater can be created with factory', function () {
     expect($rater->exists)->toBeTrue()->toEqual(User::class);
 });
 
-test('rater user relationship returns null when no local users table exists', function () {
-    $rater = makeRater();
-
-    expect($rater->user)->toBeNull();
-});
-
 test('rater can belong to many assessments with pivot data', function () {
     $rater = makeRater();
 

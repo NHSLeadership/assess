@@ -18,9 +18,36 @@ class Rater extends Model
         'email',
     ];
 
-    public function user(): BelongsTo
+    protected $casts = [
+        'name' => 'encrypted',
+        'email' => 'encrypted',
+    ];
+
+    protected static function booted(): void
     {
-        return $this->belongsTo(User::class);
+        static::saving(function (Rater $rater): void {
+            $rater->email_hash = filled($rater->email)
+                ? self::emailHash($rater->email)
+                : null;
+        });
+    }
+
+    public static function emailHash(string $email): string
+    {
+        return hash_hmac(
+            'sha256',
+            strtolower(trim($email)),
+            config('app.key')
+        );
+    }
+
+    public function subject(): BelongsTo
+    {
+        return $this->belongsTo(
+            User::class,
+            'subject_id',
+            'user_id'
+        );
     }
 
     public function assessments(): BelongsToMany
