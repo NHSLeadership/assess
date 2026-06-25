@@ -32,7 +32,8 @@ Route::group([
     Route::get('/framework-instructions/{frameworkId?}/{assessmentId?}', FrameworkInstructions::class)->name('instructions');
 
     Route::get('/summary/{frameworkId?}/{assessmentId?}', Summary::class)->name('summary');
-    Route::get('/assessment/{assessmentId?}/{nodeId?}/{edit?}', Assessments::class)->name('questions');
+//    Route::get('/assessment/{assessmentId?}/{nodeId?}/{edit?}', Assessments::class)->name('questions');
+    Route::get('/assessment/{assessmentId?}', Assessments::class)->name('questions');
     Route::get('/assessment-completed/{assessmentId?}', AssessmentCompleted::class)->name('assessment-completed');
 
     Route::get('/assessment-report/{frameworkId}/{assessmentId}', AssessmentReport::class)->name('assessment-report');
@@ -46,10 +47,17 @@ Route::group([
 });
 
 Route::group([
-    'middleware' => 'signed',
+    'middleware' => 'signed:nodeId,edit',
 ], function (): void {
-    Route::get('/review/{hashId}', Review::class)->name('review');
-    Route::get('/assessment-rater/{assessmentId}/{raterId}', AssessmentRater::class)->name('assessment-rater');
+    Route::get('/rate-assessment/{assessmentId}/{raterId}', Assessments::class)
+        ->name('assessment-rater');
+    Route::get('/rate-assessment-summary/{frameworkId?}/{assessmentId?}/{raterId?}', Summary::class)
+        ->name('assessment-rater-summary');
+    Route::get('/rate-assessment-completed/{assessmentId}/{raterId}', AssessmentCompleted::class)
+        ->name('assessment-rater-completed');
+    Route::get('/rate-assessment-report/{frameworkId}/{assessmentId}/{raterId}', AssessmentReport::class)
+        ->name('assessment-rater-report');
+
 });
 
 require __DIR__.'/auth.php';

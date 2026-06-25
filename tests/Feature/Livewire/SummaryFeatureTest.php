@@ -54,7 +54,7 @@ it('redirects to questions when editAnswer receives a numeric nodeId', function 
         ->assertRedirect(route('questions', [
             'assessmentId' => $assessment->id,
             'nodeId' => 5,
-            'edit' => 'edit',
+            'action' => 'edit',
         ]));
 });
 
@@ -90,6 +90,7 @@ it('redirects to questions when a resume node exists', function () {
         ->call('continueAssessment')
         ->assertRedirect(route('questions', [
             'assessmentId' => $assessment->id,
+            'raterId' => 0,
             'nodeId' => $node->id,
         ]));
 });
@@ -403,4 +404,161 @@ it('returns all responses for the assessment', function () {
 
     $this->assertCount(2, $responses);
     $this->assertSame($expectedIds, $actualIds);
+});
+
+it('redirects to signed rater route when editAnswer is called with raterId', function () {
+
+    $user = makeAuthUser();
+    $this->be($user);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    $framework = Framework::factory()->create();
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+    ]);
+
+    $expectedUrl = URL::signedRoute('assessment-rater', [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    $separator = str_contains($expectedUrl, '?') ? '&' : '?';
+
+    $expectedUrl .= $separator . 'nodeId=5&edit=edit';
+
+    Livewire::test(Summary::class, [
+        'assessmentId' => $assessment->id,
+        'frameworkId' => $framework->id,
+        'raterId' => $rater->id,
+    ])
+        ->call('editAnswer', 5)
+        ->assertRedirect($expectedUrl);
+});
+
+it('redirects to signed rater report route when raterId is provided', function () {
+
+    $user = makeAuthUser();
+    $this->be($user);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    $framework = Framework::factory()->create();
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+    ]);
+
+    $expectedUrl = URL::signedRoute('assessment-rater-report', [
+        'frameworkId' => $framework->id,
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    Livewire::test(Summary::class, [
+        'frameworkId' => $framework->id,
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ])
+        ->call('viewReport')
+        ->assertRedirect($expectedUrl);
+});
+
+it('redirects to signed rater route when a resume node exists for rater', function () {
+
+    $user = makeAuthUser();
+    $this->be($user);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    $setup = createNodeWithQuestions(1, 'scale');
+    $framework = $setup['framework'];
+    $node = $setup['node'];
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+    ]);
+
+    $expectedUrl = URL::signedRoute('assessment-rater', [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    $separator = str_contains($expectedUrl, '?') ? '&' : '?';
+    $expectedUrl .= $separator . 'nodeId=' . $node->id . '&edit=edit';
+
+    Livewire::test(Summary::class, [
+        'assessmentId' => $assessment->id,
+        'frameworkId' => $framework->id,
+        'raterId' => $rater->id,
+    ])
+        ->call('continueAssessment')
+        ->assertRedirect($expectedUrl);
+});
+
+it('submits rater assessment and redirects to signed completed route', function () {
+
+    $user = makeAuthUser();
+    $this->be($user);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    $framework = Framework::factory()->create();
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+        'submitted_at' => now(), // ✅ required for rater submission
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'submitted_at' => null,
+    ]);
+
+    $expectedUrl = URL::signedRoute('assessment-rater-completed', [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    Livewire::test(Summary::class, [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ])
+        ->call('confirmSubmit')
+        ->assertRedirect($expectedUrl);
+
+    $this->assertDatabaseHas('assessment_rater', [
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'submitted_at' => now(), // you can relax this if needed
+    ]);
 });

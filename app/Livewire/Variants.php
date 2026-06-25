@@ -56,7 +56,7 @@ class Variants extends Component
         $this->redirectIfAssessmentNotPermitted($this->frameworkId, $this->assessmentId);
 
         // Redirect to summary if already submitted assessment
-        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->frameworkId);
+        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->frameworkId, $this->back);
 
         if (! empty($this->assessmentId) && ! $this->back) {
             $node = $this->getAssessmentResumeNode($this->assessmentId);

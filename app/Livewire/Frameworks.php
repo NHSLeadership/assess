@@ -14,6 +14,7 @@ use App\Traits\UserTrait;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Illuminate\Support\Facades\Log;

@@ -11,6 +11,7 @@ use App\Models\Question;
 use App\Models\Rater;
 use App\Models\Scale;
 use App\Models\ScaleOption;
+use App\Models\Response;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -210,4 +211,141 @@ it('shows validation errors when required questions are unanswered', function ()
             'data.question_'.$questions[0]->id,
             'data.question_'.$questions[1]->id,
         ]);
+});
+
+it('redirects to signed rater summary route when rater finishes assessment', function () {
+    $user = makeAuthUser();
+    Livewire::actingAs($user);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    $setup = createFrameworkWithNodeAndQuestions(1);
+
+    $framework = $setup['framework'];
+    $question = $setup['questions'][0];
+    $scaleOption = $setup['scaleOption'];
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+    ]);
+
+    $expectedUrl = URL::signedRoute('assessment-rater-summary', [
+        'frameworkId' => $framework->id,
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    Livewire::test(Questions::class, [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ])
+        ->set('data', [
+            $question->name => $scaleOption->id,
+        ])
+        ->call('finishAssessment')
+        ->assertRedirect($expectedUrl);
+
+    $this->assertDatabaseHas('responses', [
+        'assessment_id' => $assessment->id,
+        'question_id' => $question->id,
+        'rater_id' => $rater->id,
+        'scale_option_id' => $scaleOption->id,
+    ]);
+});
+
+it('resumes to first unanswered node for the current rater only', function () {
+    $user = makeAuthUser();
+    Livewire::actingAs($user);
+
+    $raterA = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    $raterB = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    $framework = Framework::factory()->create();
+
+    $nodeType = NodeType::factory()->create();
+
+    $nodeA = Node::factory()->create([
+        'framework_id' => $framework->id,
+        'node_type_id' => $nodeType->id,
+        'order' => 1,
+    ]);
+
+    $nodeB = Node::factory()->create([
+        'framework_id' => $framework->id,
+        'node_type_id' => $nodeType->id,
+        'order' => 2,
+    ]);
+
+    $scale = Scale::factory()->create();
+
+    $scaleOption = ScaleOption::factory()->create([
+        'scale_id' => $scale->id,
+    ]);
+
+    $questionA = Question::factory()->create([
+        'node_id' => $nodeA->id,
+        'response_type' => ResponseType::TYPE_SCALE->value,
+        'scale_id' => $scale->id,
+        'active' => true,
+        'required' => true,
+    ]);
+
+    $questionB = Question::factory()->create([
+        'node_id' => $nodeB->id,
+        'response_type' => ResponseType::TYPE_SCALE->value,
+        'scale_id' => $scale->id,
+        'active' => true,
+        'required' => true,
+    ]);
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $raterA->id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $raterB->id,
+    ]);
+
+    // Rater A has answered node A.
+    Response::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $raterA->id,
+        'question_id' => $questionA->id,
+        'scale_option_id' => $scaleOption->id,
+    ]);
+
+    // Rater B has answered node B.
+    // This must NOT count for rater A.
+    Response::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $raterB->id,
+        'question_id' => $questionB->id,
+        'scale_option_id' => $scaleOption->id,
+    ]);
+
+    Livewire::test(Questions::class, [
+        'assessmentId' => $assessment->id,
+        'raterId' => $raterA->id,
+    ])
+        ->assertSet('nodeKeyId', 1);
 });

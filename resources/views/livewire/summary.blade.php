@@ -15,6 +15,10 @@
             @endif
         @endif
 
+        @php
+            $isSubmitted = $this->assessmentSubmitted();
+        @endphp
+
         @foreach ($this->nodes as $node)
 
             {{-- Top-level node --}}
@@ -56,7 +60,7 @@
                             <div class="nhsuk-task-list__name-and-hint nhsuk-u-width-three-quarters">
 
                                 {{-- Title --}}
-                                @if(!empty($this->assessment->submitted_at))
+                                @if($isSubmitted)
                                     <strong>{!! $question->title !!}</strong>
                                 @else
                                     <a href="#" wire:click.prevent="editAnswer({{ $question->node_id }})"
@@ -105,8 +109,7 @@
         @endforeach
 
         @php
-            $isSubmitted = (bool) $this->assessment->submitted_at;
-            $hasAllRequired = $this->answeredRequiredCount === $this->requiredCount;
+            $hasAllRequired = $this->answeredRequiredCount() === $this->requiredCount() && $this->requiredCount() > 0;
         @endphp
 
         @if (!$isSubmitted && !$hasAllRequired)

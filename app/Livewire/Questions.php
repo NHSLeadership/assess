@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Enums\ResponseType;
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Node;
 use App\Models\Rater;
 use App\Models\Response;
@@ -15,6 +16,7 @@ use App\Traits\FormFieldValidationRulesTrait;
 use App\Traits\UserTrait;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
@@ -42,11 +44,13 @@ class Questions extends Component
     public ?int $nodeKeyId = null;
 
     public ?int $nodeId = null;
+    public ?int $raterId = null;
 
     public ?string $edit = null;
     public array $resolvedQuestionTexts = [];
     protected ?Assessment $cachedAssessment = null;
     protected ?Rater $cachedRater = null;
+    protected ?AssessmentRater $cachedAssessmentRater = null;
     protected ?\ArrayIterator $cachedNodes = null;
 
     public function assessment(): ?Assessment
@@ -62,10 +66,16 @@ class Questions extends Component
 
     public function mount(): void
     {
-        // Redirect if not permitted to do an assessment for this framework now
-        $this->redirectIfAssessmentNotPermitted($this->assessment()?->framework?->id, $this->assessmentId);
+        //Skip these checks for raters
+        if (empty($this->raterId)) {
+            // Redirect if not permitted to do an assessment for this framework now
+            $this->redirectIfAssessmentNotPermitted($this->assessment()?->framework?->id, $this->assessmentId);
+            $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework->id, $this->edit);
+        }
 
-        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework->id, $this->edit);
+        if (! empty($this->raterId) && ! $this->assessmentRater()) {
+            abort(404);
+        }
 
         /**
          * Pre-populate forms with defaults
@@ -187,9 +197,17 @@ class Questions extends Component
             return null;
         }
 
-        $assessment->loadMissing('responses.question');
+        $currentRaterId = $this->currentResponseRaterId();
 
-        $responses = $assessment->responses;
+        if ($currentRaterId === null) {
+            return collect();
+        }
+
+        $responses = Response::query()
+            ->where('assessment_id', $assessment->id)
+            ->where('rater_id', $currentRaterId)
+            ->with('question')
+            ->get();
 
         if ($onlyRequired) {
             $responses = $responses->filter(fn ($response) => $response->question->required ?? false);
@@ -250,6 +268,14 @@ class Questions extends Component
             Rater::where('subject_id', $assessment->user_id)->first();
     }
 
+
+    protected function currentResponseRaterId(): ?int
+    {
+        return ! empty($this->raterId)
+            ? $this->raterId
+            : $this->selfRater()?->id;
+    }
+
     /**
      * Store responses and go to next question or node
      */
@@ -294,8 +320,14 @@ class Questions extends Component
         }
 
         $questions = $this->nodeQuestions()->keyBy('name');
-        $selfRaterId = $this->selfRater()?->id;
 
+        $raterId = $this->currentResponseRaterId();
+
+        if ($raterId === null) {
+            throw ValidationException::withMessages([
+                'rater' => 'Unable to determine who is responding to this assessment.',
+            ]);
+        }
 
         foreach (($this->data ?? []) as $name => $value) {
 
@@ -324,7 +356,7 @@ class Questions extends Component
                 $value,
                 $question,
                 $this->assessmentId,
-                $selfRaterId
+                $raterId
             );
 
             // Save optional reflection for scale questions
@@ -337,7 +369,7 @@ class Questions extends Component
                     [
                         'assessment_id' => $this->assessmentId,
                         'question_id' => $question->id,
-                        'rater_id' => $selfRaterId,
+                        'rater_id' => $raterId,
                     ],
                     [
                         'textarea' => $reflection,
@@ -428,6 +460,14 @@ class Questions extends Component
     {
         $this->validateAndSaveResponses();
 
+        if (!empty($this->raterId)) {
+            $url = URL::signedRoute('assessment-rater-summary', [
+                'frameworkId' => $this->assessment()?->framework->id,
+                'assessmentId' => $this->assessmentId,
+                'raterId' => $this->raterId,
+            ]);
+            return redirect()->to($url);
+        }
         // Additional logic for finishing the assessment can be added here
         return redirect()->route(
             'summary',
@@ -463,8 +503,15 @@ class Questions extends Component
         $visibleQuestionIds = array_keys($this->resolvedQuestionTextMap());
         $visibleQuestionIdLookup = array_flip($visibleQuestionIds);
 
+        $currentRaterId = $this->currentResponseRaterId();
+
+        if ($currentRaterId === null) {
+            return null;
+        }
+
         // Question IDs already answered in this assessment.
         $answeredQuestionIds = Response::where('assessment_id', $this->assessmentId)
+            ->where('rater_id', $currentRaterId)
             ->pluck('question_id')
             ->all();
 
@@ -593,7 +640,10 @@ class Questions extends Component
             return [];
         }
 
-        return QuestionTextResolver::optionsFor($assessment, null);
+        return QuestionTextResolver::optionsFor(
+            $assessment,
+            $this->assessmentRater()
+        );
     }
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {

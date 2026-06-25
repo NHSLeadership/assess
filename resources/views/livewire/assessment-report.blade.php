@@ -6,21 +6,23 @@
                 {{ $this->framework->name ?? '' }}
             </h1>
             <h2 class="nhsuk-heading-l">Self-assessment report</h2>
-            <p>
-                <strong>For: {{ Auth()?->user()?->name ?? '' }}</strong>
-                <br>
-                <strong>Academy Id: {{ Auth()?->user()?->user_id ?? '' }}</strong>
-                <br>
-                <strong>
-                    Completed
-                    on {{ $this->assessment() ? \Carbon\Carbon::parse(data_get($this->assessment(), 'submitted_at'))->format('j F Y') : '' }}
-                </strong>
-                <br>
-                <strong>
-                    {{ $variantAttributeLabel }}
-                </strong>
-            </p>
-            @if(!empty(data_get($this->framework, 'report_intro')))
+            @if(empty($this->raterId))
+                <p>
+                    <strong>For: {{ Auth()?->user()?->name ?? '' }}</strong>
+                    <br>
+                    <strong>Academy Id: {{ Auth()?->user()?->user_id ?? '' }}</strong>
+                    <br>
+                    <strong>
+                        Completed
+                        on {{ $this->assessment() ? \Carbon\Carbon::parse(data_get($this->assessment(), 'submitted_at'))->format('j F Y') : '' }}
+                    </strong>
+                    <br>
+                    <strong>
+                        {{ $variantAttributeLabel }}
+                    </strong>
+                </p>
+            @endif
+            @if(!empty(data_get($this->framework, 'report_intro')) && !empty($this->user))
                 {!! \App\Support\RichTextRender::render(
                         $this->framework->report_intro,
                         $this->user,

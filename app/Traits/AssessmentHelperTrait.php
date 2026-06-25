@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
 use App\Models\Rater;
@@ -124,10 +125,25 @@ trait AssessmentHelperTrait
             return null;
         }
 
-        return Assessment::with(['raters'])
+        if (!empty($this->raterId)) {
+            $userId = Assessment::find($this->assessmentId)?->user_id;
+        } else {
+            $userId = $this->user()?->user_id;
+        }
+
+        $query = Assessment::query();
+
+        if (!empty($this->raterId)) {
+            $query->with(['raters' => function ($q) {
+                $q->where('raters.id', $this->raterId);
+            }]);
+        }
+
+        return $query
             ->where('id', $this->assessmentId)
-            ->where('user_id', $this->user()?->user_id)
+            ->where('user_id', $userId)
             ->firstOrFail();
+
     }
 
     public function redirectIfAssessmentNotPermitted(int $frameworkId, ?int $assessmentId = null): Redirector|RedirectResponse|null
@@ -210,4 +226,21 @@ trait AssessmentHelperTrait
             ->raters
             ->firstWhere('user_id', $this->user()?->user_id);
     }
+
+    public function assessmentRater(): ?AssessmentRater
+    {
+        if ($this->cachedAssessmentRater !== null) {
+            return $this->cachedAssessmentRater;
+        }
+
+        if (empty($this->raterId) || empty($this->assessmentId)) {
+            return null;
+        }
+
+        return $this->cachedAssessmentRater = AssessmentRater::query()
+            ->where('assessment_id', $this->assessmentId)
+            ->where('rater_id', $this->raterId)
+            ->first();
+    }
+
 }

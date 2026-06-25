@@ -7,6 +7,7 @@ use App\Exceptions\AssessmentNotFoundException;
 use App\Exceptions\AssessmentNotSubmittedException;
 use App\Exceptions\FrameworkNotFoundException;
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
 use App\Models\Rater;
@@ -27,6 +28,7 @@ class AssessmentReport extends Component
     public ?int $frameworkId = null;
 
     public ?int $assessmentId = null;
+    public ?int $raterId = null;
 
     public array $barCharts = [];
 
@@ -47,10 +49,11 @@ class AssessmentReport extends Component
      * @throws AssessmentFrameworkMismatchException
      * @throws AssessmentNotSubmittedException
      */
-    public function mount(int $frameworkId, int $assessmentId): void
+    public function mount(int $frameworkId, int $assessmentId, ?int $raterId = null): void
     {
         $this->frameworkId = $frameworkId;
         $this->assessmentId = $assessmentId;
+        $this->raterId = $raterId;
 
         // Validate framework
         if (!$this->framework() instanceof \App\Models\Framework) {
@@ -75,6 +78,19 @@ class AssessmentReport extends Component
                 assessmentId: $this->assessmentId,
                 message: __('alerts.errors.assessment-not-submitted')
             );
+        }
+
+        if (!empty($this->raterId)) {
+            $rater = $this->assessment()->raters()
+                ->where('raters.id', $this->raterId)
+                ->firstOrFail();
+
+            if (is_null($rater->pivot->submitted_at)) {
+                throw new AssessmentNotSubmittedException(
+                    assessmentId: $this->assessmentId,
+                    message: __('alerts.errors.assessment-rater-not-submitted')
+                );
+            }
         }
 
         // Use the shared service for all report data
@@ -110,6 +126,7 @@ class AssessmentReport extends Component
     #[Computed]
     public function nodes(): ?Collection
     {
+
         if ($this->frameworkId === null || $this->frameworkId === 0) {
             return null;
         }

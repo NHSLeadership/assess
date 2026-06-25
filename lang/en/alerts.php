@@ -22,6 +22,7 @@ return [
         'assessment-in-progress-title' => 'Assessment in progress',
         'assessment-not-belong-to-framework' => 'Assessment does not belong to this framework.',
         'assessment-not-submitted' => 'This assessment has not been submitted yet.',
+        'assessment-rater-not-submitted' => 'This assessment has not been submitted yet by the rater.',
         'framework-not-found' => 'Framework not found.',
     ],
     'success' => [

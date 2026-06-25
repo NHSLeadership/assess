@@ -2,15 +2,22 @@
 
 namespace App\Livewire;
 
+use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
+use App\Models\Question;
 use App\Models\Rater;
+use App\Models\Response;
+use App\Models\ScaleOption;
 use App\Notifications\AssessmentCompleted as AssessmentCompletedNotification;
 use App\Services\FrameworkTraversalService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\URL;
+use Livewire;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -24,10 +31,18 @@ class Summary extends Component
     public ?int $frameworkId = null;
 
     public ?int $assessmentId = null;
+    public ?int $raterId = null;
 
     public ?int $requiredCount = null;
 
     public ?int $answeredRequiredCount = null;
+
+    public function mount($frameworkId = null, $assessmentId = null, $raterId = null): void
+    {
+        $this->frameworkId = (int) $frameworkId;
+        $this->assessmentId = (int) $assessmentId;
+        $this->raterId = (int) $raterId;
+    }
 
     #[Computed]
     public function framework(): ?Framework
@@ -45,18 +60,31 @@ class Summary extends Component
         return Framework::all();
     }
 
-    public function continueAssessment(): void
+    public function continueAssessment(): RedirectResponse|\Illuminate\Routing\Redirector
     {
         $node = $this->getAssessmentResumeNode($this->assessmentId);
         if ($node instanceof \App\Models\Node) {
             // There are unanswered questions, so we should resume there
-            $this->redirect(route('questions', [
+            if (!empty($this->raterId)) {
+                $url = URL::signedRoute('assessment-rater', [
+                    'assessmentId' => $this->assessmentId,
+                    'raterId' => $this->raterId,
+                ]);
+
+                $separator = str_contains($url, '?') ? '&' : '?';
+                $url .= $separator . 'nodeId=' . $node->id . '&edit=edit';
+
+                return redirect($url);
+            }
+
+            return redirect()->route('questions', [
                 'assessmentId' => $this->assessmentId,
-                'nodeId' => $node?->id,
-            ]));
-        } else {
-            $this->redirect(route('frameworks'));
+                'raterId' => $this->raterId ?? 0,
+                'nodeId' => $node->id,
+            ]);
         }
+
+        return redirect()->route('frameworks');
     }
 
     #[Computed]
@@ -66,14 +94,51 @@ class Summary extends Component
             return collect();
         }
 
-        return app(FrameworkTraversalService::class)
+        $nodes = app(FrameworkTraversalService::class)
             ->orderedHierarchyNodes((int) $this->frameworkId);
+
+        return $nodes
+            ->filter(fn (Node $node) => $this->nodeHasVisibleQuestions($node))
+            ->values();
+    }
+
+    protected function nodeHasVisibleQuestions(Node $node): bool
+    {
+        $resolvedTexts = $this->resolvedQuestionTexts;
+
+        $questionIds = $node->questions->pluck('id');
+
+        return $questionIds->contains(
+            fn ($id) => array_key_exists($id, $resolvedTexts)
+        );
+    }
+
+    #[Computed]
+    public function resolvedQuestionTexts(): array
+    {
+        return \App\Services\QuestionTextResolver::optionsFor(
+            $this->assessment(),
+            AssessmentRater::where('assessment_id', $this->assessment()->id)->where('rater_id', $this->raterId)->first() ?? null
+        );
     }
 
     #[Computed]
     public function responses(): ?Collection
     {
-        return $this->assessment()?->responses()->get();
+        $assessment = $this->assessment();
+
+        if (!$assessment) {
+            return null;
+        }
+
+        if (!empty($this->raterId)) {
+
+            return $assessment->responses()
+                ->where('rater_id', $this->raterId)
+                ->get();
+        }
+
+        return $assessment->responses()->get();
     }
 
     /**
@@ -85,10 +150,22 @@ class Summary extends Component
             return null;
         }
 
+        if (!empty($this->raterId)) {
+            $url = URL::signedRoute('assessment-rater', [
+                'assessmentId' => $this->assessmentId,
+                'raterId' => $this->raterId,
+            ]);
+
+            $separator = str_contains($url, '?') ? '&' : '?';
+
+            $url .= $separator . 'nodeId=' . $nodeId . '&edit=edit';
+            return redirect($url);
+        }
+
         return redirect()->route('questions', [
             'assessmentId' => $this->assessmentId,
             'nodeId' => $nodeId,
-            'edit' => 'edit',
+            'action' => 'edit',
         ]);
     }
 
@@ -96,37 +173,80 @@ class Summary extends Component
     {
         try {
             $assessment = $this->assessment();
+
             if (!$assessment instanceof \App\Models\Assessment) {
                 session()->flash('error', __('alerts.errors.assessment-not-found'));
                 $this->dispatch('scroll-to-top');
-
-                return null;
-
-            }
-
-            if (! is_null($assessment->submitted_at)) {
-                session()->flash('error', __('alerts.errors.assessment-already-submitted'));
-                $this->dispatch('scroll-to-top');
-
                 return null;
             }
 
-            $assessment->submitted_at = now();
-            $assessment->save();
+            if (!empty($this->raterId)) {
 
-            // Disable notifications for now.
-            // $this->user?->notify(new AssessmentCompletedNotification($assessment));
+                $rater = $assessment->raters()
+                    ->where('raters.id', $this->raterId)
+                    ->firstOrFail();
 
-            return redirect()->route(
-                'assessment-completed', ['assessmentId' => $assessment?->id]
-            );
+                if (!is_null($rater->pivot->submitted_at)) {
+                    session()->flash('error', __('alerts.errors.assessment-already-submitted'));
+                    $this->dispatch('scroll-to-top');
+                    return null;
+                }
+                if (is_null($assessment->submitted_at)) {
+                    session()->flash('error', __('alerts.errors.assessment-not-submitted'));
+                    $this->dispatch('scroll-to-top');
+                    return null;
+                }
+
+                $assessment->raters()->updateExistingPivot($this->raterId, [
+                    'submitted_at' => now(),
+                ]);
+                $url = URL::signedRoute('assessment-rater-completed', [
+                    'assessmentId' => $assessment->id,
+                    'raterId' => $this->raterId
+                ]);
+                return redirect()->to($url);
+
+            } else {
+                if (!is_null($assessment->submitted_at)) {
+                    session()->flash('error', __('alerts.errors.assessment-already-submitted'));
+                    $this->dispatch('scroll-to-top');
+                    return null;
+                }
+
+                $assessment->update([
+                    'submitted_at' => now(),
+                ]);
+            }
+
+            return redirect()->route('assessment-completed', [
+                'assessmentId' => $assessment->id
+            ]);
+
         } catch (\Throwable $e) {
-            report($e); // log the error for debugging
+            report($e);
             session()->flash('error', $e->getMessage());
             $this->dispatch('scroll-to-top');
 
             return null;
         }
+    }
+
+    #[Computed]
+    public function assessmentSubmitted(): bool
+    {
+        $assessment = $this->assessment();
+
+        if (!empty($this->raterId)) {
+
+            $rater = $assessment->raters()
+                ->where('raters.id', $this->raterId)
+                ->firstOrFail();
+
+            return $assessment->submitted_at
+                && $rater->pivot->submitted_at;
+        }
+
+        return (bool) $assessment->submitted_at;
     }
 
     #[Computed]
@@ -145,10 +265,19 @@ class Summary extends Component
 
     public function viewReport()
     {
-        return redirect()->route('assessment-report', [
-            'frameworkId' => $this->frameworkId,
-            'assessmentId' => $this->assessmentId,
-        ]);
+        if (!empty($this->raterId)) {
+            $url = URL::signedRoute('assessment-rater-report', [
+                'frameworkId' => $this->frameworkId,
+                'assessmentId' => $this->assessmentId,
+                'raterId' => $this->raterId,
+            ]);
+            return redirect($url);
+        } else {
+            return redirect()->route('assessment-report', [
+                'frameworkId' => $this->frameworkId,
+                'assessmentId' => $this->assessmentId,
+            ]);
+        }
     }
 
     #[Computed]
@@ -176,12 +305,4 @@ class Summary extends Component
         ]);
     }
 
-    #[Computed]
-    public function resolvedQuestionTexts(): array
-    {
-        return \App\Services\QuestionTextResolver::optionsFor(
-            $this->assessment(),
-            $this->rater()?->pivot
-        );
-    }
 }
