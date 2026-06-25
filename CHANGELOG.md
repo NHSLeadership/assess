@@ -8,6 +8,7 @@
 > Updated: 25.06.2026
 1. Add rater invitation mechanism
 2. Add rater assessment
+3. Add data-performance to Umami analytics
 
 ---
 ### v2.0.0

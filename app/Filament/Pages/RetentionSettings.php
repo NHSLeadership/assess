@@ -18,6 +18,10 @@ class RetentionSettings extends SettingsPage
 
     protected array $auditOldValues = [];
 
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->can('settings:update') ?? false;
+    }
 
     public function form(Schema $schema): Schema
     {
