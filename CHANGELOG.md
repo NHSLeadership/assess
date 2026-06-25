@@ -12,7 +12,6 @@
 4. Encrypt rater details in database
 5. Store assessment subject details
 
-
 ---
 ### v2.0.0
 > Updated: 11.06.2026
