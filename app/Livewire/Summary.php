@@ -2,10 +2,14 @@
 
 namespace App\Livewire;
 
+use App\Models\Assessment;
 use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
+use App\Models\Question;
 use App\Models\Rater;
+use App\Models\Response;
+use App\Models\ScaleOption;
 use App\Notifications\AssessmentCompleted as AssessmentCompletedNotification;
 use App\Services\FrameworkTraversalService;
 use App\Traits\AssessmentHelperTrait;
@@ -13,6 +17,7 @@ use App\Traits\UserTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
+use Livewire;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -67,19 +72,19 @@ class Summary extends Component
                 ]);
 
                 $separator = str_contains($url, '?') ? '&' : '?';
+                $url .= $separator . 'nodeId=' . $node->id . '&edit=edit';
 
-                $url .= $separator . 'nodeId=' . $node?->id . '&edit=edit';
                 return redirect($url);
-            } else {
-                $this->redirect(route('questions', [
-                    'assessmentId' => $this->assessmentId,
-                    'raterId' => $this->raterId,
-                    'nodeId' => $node?->id,
-                ]));
             }
-        } else {
-            $this->redirect(route('frameworks'));
+
+            return redirect()->route('questions', [
+                'assessmentId' => $this->assessmentId,
+                'raterId' => $this->raterId ?? 0,
+                'nodeId' => $node->id,
+            ]);
         }
+
+        return redirect()->route('frameworks');
     }
 
     #[Computed]
