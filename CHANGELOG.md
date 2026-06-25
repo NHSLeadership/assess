@@ -4,9 +4,10 @@
 # Assessment tool
 
 ---
-### v2.0.1
-> Updated: 16.06.2026
+### v2.1.0
+> Updated: 25.06.2026
 1. Add rater invitation mechanism
+2. Add rater assessment
 
 ---
 ### v2.0.0
