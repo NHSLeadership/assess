@@ -265,7 +265,7 @@ class Questions extends Component
         }
 
         return $this->cachedRater =
-            Rater::where('subject_id', $assessment->user_id)->first();
+            Rater::where('subject_id', $assessment->user_id)->orderBy('id')->first();
     }
 
 

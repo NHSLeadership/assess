@@ -174,17 +174,33 @@ class Variants extends Component
     {
         try {
             DB::transaction(function (): void {
+
+                $user = $this->user();
+
                 // Create the assessment
                 $assessment = Assessment::create([
                     'framework_id' => $this->frameworkId,
-                    'user_id' => $this->user()->user_id,
+                    'user_id' => $user->user_id,
                 ]);
                 $this->assessmentId = $assessment->id;
 
-                // Ensure rater record exists (no duplicates)
-                $rater = Rater::firstOrCreate(
-                    ['subject_id' => $this->user()?->user_id ?? null],
-                );
+                // Ensure a self rater record exists for this subject; update the oldest record if found
+                $selfRater = Rater::where('subject_id', $user->user_id)
+                    ->orderBy('id')
+                    ->lockForUpdate()
+                    ->first();
+                if ($selfRater) {
+                    $selfRater->update([
+                        'name' => $user->name,
+                        'email' => $user->email,
+                    ]);
+                } else {
+                    Rater::create([
+                        'subject_id' => $user->user_id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                    ]);
+                }
 
             }, 3); // retry count for deadlocks.
 

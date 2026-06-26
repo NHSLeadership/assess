@@ -3,6 +3,7 @@
 use App\Livewire\Variants;
 use App\Models\Assessment;
 use App\Models\Framework;
+use App\Models\Rater;
 use App\Models\Response;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -168,4 +169,94 @@ it('redirects to instructions when goPrevious is called', function () {
             'frameworkId' => $framework->id,
             'assessmentId' => $assessment->id,
         ]));
+});
+
+it('creates a self rater when creating an assessment', function () {
+    $user = makeAuthUser();
+
+    $framework = Framework::factory()->create();
+
+    variantsLivewireTest($user, [
+        'frameworkId' => $framework->id,
+    ])
+        ->call('initialiseAssessment');
+
+    expect(
+        Rater::where('subject_id', $user->user_id)->count()
+    )->toBe(1);
+
+    $rater = Rater::where('subject_id', $user->user_id)
+        ->orderBy('id')
+        ->first();
+
+    expect($rater->name)
+        ->toBe($user->name)
+        ->and($rater->email)
+        ->toBe($user->email);
+});
+
+it('updates the existing self rater when creating another assessment', function () {
+    $user = makeAuthUser([
+        'name' => 'Andrew Blane',
+        'email' => 'andrew.blane@example.com',
+    ]);
+
+    $framework = Framework::factory()->create();
+
+    $rater = Rater::create([
+        'subject_id' => $user->user_id,
+        'name' => 'Old Name',
+        'email' => 'old@example.com',
+    ]);
+
+    variantsLivewireTest($user, [
+        'frameworkId' => $framework->id,
+    ])
+        ->call('initialiseAssessment');
+
+    expect(
+        Rater::where('subject_id', $user->user_id)->count()
+    )->toBe(1);
+
+    $rater->refresh();
+
+    expect($rater->name)
+        ->toBe('Andrew Blane')
+        ->and($rater->email)
+        ->toBe('andrew.blane@example.com');
+});
+
+it('uses the oldest rater as the self rater', function () {
+    $user = makeAuthUser([
+        'name' => 'Andrew Blane',
+        'email' => 'andrew.blane@example.com',
+    ]);
+
+    $framework = Framework::factory()->create();
+
+    $selfRater = Rater::create([
+        'subject_id' => $user->user_id,
+        'name' => 'Old Self',
+        'email' => 'old-self@example.com',
+    ]);
+
+    $externalRater = Rater::create([
+        'subject_id' => $user->user_id,
+        'name' => 'Tom',
+        'email' => 'tom@example.com',
+    ]);
+
+    variantsLivewireTest($user, [
+        'frameworkId' => $framework->id,
+    ])
+        ->call('initialiseAssessment');
+
+    $selfRater->refresh();
+    $externalRater->refresh();
+
+    expect($selfRater->name)->toBe('Andrew Blane')
+        ->and($selfRater->email)->toBe('andrew.blane@example.com');
+
+    expect($externalRater->name)->toBe('Tom')
+        ->and($externalRater->email)->toBe('tom@example.com');
 });
