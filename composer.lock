@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5b5b351412cfbd7ec0ef5e603b024bef",
+    "content-hash": "d5aaee6571d65409ac20c1d423ac4093",
     "packages": [
         {
             "name": "auth0/auth0-php",
@@ -2973,20 +2973,20 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v13.16.1",
+            "version": "v13.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "6135650d69bd9442e470bb1b343422081b076f1e"
+                "reference": "0802b7a81f3252d78200b8037ac183a686a529f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/6135650d69bd9442e470bb1b343422081b076f1e",
-                "reference": "6135650d69bd9442e470bb1b343422081b076f1e",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/0802b7a81f3252d78200b8037ac183a686a529f0",
+                "reference": "0802b7a81f3252d78200b8037ac183a686a529f0",
                 "shasum": ""
             },
             "require": {
-                "brick/math": "^0.14.2 || ^0.15 || ^0.16 || ^0.17",
+                "brick/math": "^0.14.2 || ^0.15 || ^0.16 || ^0.17 || ^0.18",
                 "composer-runtime-api": "^2.2",
                 "doctrine/inflector": "^2.0.5",
                 "dragonmantank/cron-expression": "^3.4",
@@ -3193,7 +3193,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-06-16T16:07:50+00:00"
+            "time": "2026-06-23T19:42:45+00:00"
         },
         {
             "name": "laravel/pennant",
@@ -12016,16 +12016,16 @@
         },
         {
             "name": "laravel/sail",
-            "version": "v1.62.0",
+            "version": "v1.63.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/sail.git",
-                "reference": "3aaeefc979f8ba6586fbc5b6e0b1b3638058f98e"
+                "reference": "51bbce3f803c1d386cabbb44e618c955a12ff5fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/sail/zipball/3aaeefc979f8ba6586fbc5b6e0b1b3638058f98e",
-                "reference": "3aaeefc979f8ba6586fbc5b6e0b1b3638058f98e",
+                "url": "https://api.github.com/repos/laravel/sail/zipball/51bbce3f803c1d386cabbb44e618c955a12ff5fc",
+                "reference": "51bbce3f803c1d386cabbb44e618c955a12ff5fc",
                 "shasum": ""
             },
             "require": {
@@ -12075,7 +12075,7 @@
                 "issues": "https://github.com/laravel/sail/issues",
                 "source": "https://github.com/laravel/sail"
             },
-            "time": "2026-05-27T04:02:01+00:00"
+            "time": "2026-06-18T08:54:14+00:00"
         },
         {
             "name": "mockery/mockery",
