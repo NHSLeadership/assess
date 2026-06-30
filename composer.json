@@ -22,7 +22,7 @@
         "openplain/filament-tree-view": "^0.5.6",
         "owen-it/laravel-auditing": "^14.0.6",
         "spatie/laravel-prometheus": "^1.6.0",
-        "symfony/yaml": "^8.1.0"
+        "symfony/yaml": "^8.1.1"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.5.0",
