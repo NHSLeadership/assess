@@ -4,6 +4,11 @@
 # Assessment tool
 
 ---
+### v2.1.2
+> Updated: 2.07.2026
+1. Fix login/registration link wording
+
+---
 ### v2.1.1
 > Updated: 2.07.2026
 1. Fix broken contact us link

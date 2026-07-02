@@ -23,7 +23,7 @@
                     <p>If you need to update your profile please visit the <a href="https://profile.leadershipacademy.nhs.uk" target="_blank">Academy Profile System</a>,
                 @else
                     {!! config('app.welcome') !!}
-                    <p>If you already have an Academy Profile:</p>
+                    <p>If you already have an NHS Leadership Academy Profile:</p>
 
                     <div class="nhsuk-action-link">
                         <a class="nhsuk-action-link__link" href="{{ route('login') }}">
@@ -36,7 +36,7 @@
                         </a>
                     </div>
 
-                    <p>Or register to create a new Academy Profile:</p>
+                    <p>Or register to create a new NHS Leadership Academy Profile:</p>
 
                     <div class="nhsuk-action-link">
                         <a class="nhsuk-action-link__link" href="https://profile.leadershipacademy.nhs.uk/register">
