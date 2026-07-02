@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "757c82428a88c40cc318abe2115c36ab",
+    "content-hash": "8b010ce6ee5c8e073c74a6e7f87bdf36",
     "packages": [
         {
             "name": "auth0/auth0-php",
@@ -2973,16 +2973,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v13.17.0",
+            "version": "v13.18.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "0802b7a81f3252d78200b8037ac183a686a529f0"
+                "reference": "7d66044819e269f05924793a6800022dc181d850"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/0802b7a81f3252d78200b8037ac183a686a529f0",
-                "reference": "0802b7a81f3252d78200b8037ac183a686a529f0",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/7d66044819e269f05924793a6800022dc181d850",
+                "reference": "7d66044819e269f05924793a6800022dc181d850",
                 "shasum": ""
             },
             "require": {
@@ -3193,20 +3193,20 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-06-23T19:42:45+00:00"
+            "time": "2026-07-02T18:35:20+00:00"
         },
         {
             "name": "laravel/pennant",
-            "version": "v1.23.0",
+            "version": "v1.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/pennant.git",
-                "reference": "d3d531d0ba640f9d0bd3580990fb205244e956ca"
+                "reference": "b99fbc8038eb2c0a2642e9e13077a75e892b61d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/pennant/zipball/d3d531d0ba640f9d0bd3580990fb205244e956ca",
-                "reference": "d3d531d0ba640f9d0bd3580990fb205244e956ca",
+                "url": "https://api.github.com/repos/laravel/pennant/zipball/b99fbc8038eb2c0a2642e9e13077a75e892b61d9",
+                "reference": "b99fbc8038eb2c0a2642e9e13077a75e892b61d9",
                 "shasum": ""
             },
             "require": {
@@ -3241,7 +3241,8 @@
             },
             "autoload": {
                 "files": [
-                    "src/helpers.php"
+                    "src/helpers.php",
+                    "src/functions.php"
                 ],
                 "psr-4": {
                     "Laravel\\Pennant\\": "src/"
@@ -3269,7 +3270,7 @@
                 "issues": "https://github.com/laravel/pennant/issues",
                 "source": "https://github.com/laravel/pennant"
             },
-            "time": "2026-03-19T02:27:39+00:00"
+            "time": "2026-06-28T17:14:13+00:00"
         },
         {
             "name": "laravel/prompts",
