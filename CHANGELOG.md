@@ -4,6 +4,11 @@
 # Assessment tool
 
 ---
+### v2.1.1
+> Updated: 2.07.2026
+1. Fix broken contact us link
+
+---
 ### v2.1.0
 > Updated: 25.06.2026
 1. Add rater invitation mechanism

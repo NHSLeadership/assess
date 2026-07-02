@@ -19,7 +19,7 @@
         </button>
 
         <h3>Need Help?</h3>
-        <p>If you need help on this assessment, please <a href="/contact">contact us</a> to let us know and we'll be
+        <p>If you need help on this assessment, please <a href="https://leadershipacademy.nhs.uk/contact-us/">contact us</a> to let us know and we'll be
             happy to help.</p>
 
     </div>
