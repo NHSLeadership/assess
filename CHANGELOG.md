@@ -8,6 +8,7 @@
 > Updated: 3.07.2026
 1. Fix broken contact us link
 2. Access control validation for assessment reports
+3. Heading text changes
 
 ---
 ### v2.1.0
