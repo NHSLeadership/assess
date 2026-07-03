@@ -7,7 +7,9 @@ use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
 use App\Models\Rater;
+use App\Models\RaterGroup;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
 use Livewire\Features\SupportRedirects\Redirector;
 
@@ -241,6 +243,48 @@ trait AssessmentHelperTrait
             ->where('assessment_id', $this->assessmentId)
             ->where('rater_id', $this->raterId)
             ->first();
+    }
+
+    public function addGroup(): void
+    {
+        $this->newGroupName = trim((string) $this->newGroupName);
+
+        $this->validate($this->groupRules());
+
+        $group = RaterGroup::create([
+            'subject_id' => $this->user()?->user_id,
+            'name' => $this->newGroupName,
+        ]);
+
+        $this->refreshGroupList();
+
+        $this->groupId = $group->id;
+        $this->newGroupName = null;
+        $this->showNewGroup = false;
+    }
+
+    public function groupRules(): array
+    {
+        return [
+            'newGroupName' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('rater_groups', 'name')
+                    ->where(fn ($query) => $query->where(
+                        'subject_id',
+                        $this->user()?->user_id
+                    )),
+            ],
+        ];
+    }
+
+    public function refreshGroupList(): void
+    {
+        $this->raterGroupList = RaterGroup::query()
+            ->where('subject_id', $this->user()?->user_id)
+            ->pluck('name', 'id')
+            ->toArray();
     }
 
 }

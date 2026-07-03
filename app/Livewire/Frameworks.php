@@ -81,11 +81,13 @@ class Frameworks extends Component
         }
 
         session()->flash(
-            'success',
-            __('Expiring assessments have been kept for another :count :unit.', [
-                'count' => $years,
-                'unit'  => \Illuminate\Support\Str::plural('year', $years),
-            ])
+            'success',[
+                'message' => __('Expiring assessments have been kept for another :count :unit.', [
+                    'count' => $years,
+                    'unit'  => \Illuminate\Support\Str::plural('year', $years),
+                ]),
+                'heading' => __('Expiring assessments'),
+            ]
         );
     }
 
@@ -109,7 +111,10 @@ class Frameworks extends Component
         try {
             $assessment = Assessment::findOrFail($id);
             $assessment->delete();
-            session()->flash('success', __('Assessment deleted.'));
+            session()->flash('success', [
+                'heading' => __('Assessment deleted.'),
+                'message' => __('alerts.success.deleted'),
+            ]);
         } catch (Throwable $e) {
             Log::error('Error deleting assessment', [
                 'assessment_id' => $id,

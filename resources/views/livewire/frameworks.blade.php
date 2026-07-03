@@ -153,6 +153,11 @@
                                         wire:click.prevent="askDelete({{ $assessment->id }})">
                                     {{ __('Delete') }}
                                 </button>
+                                <a href="{{ route('assessment-raters', ['frameworkId' => $this->framework?->id, 'assessmentId' => $assessment->id]) }}"
+                                   aria-describedby="{{ $assessment->slug }}-hint"
+                                   class="nhsuk-link">
+                                    {{ $this->getAssessmentTypeDisplay($assessment) }}
+                                </a>
                             @endif
                         </td>
                     </tr>

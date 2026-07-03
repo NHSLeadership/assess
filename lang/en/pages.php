@@ -59,4 +59,9 @@ return [
         'reflection-label' => 'Notes',
         'title' => 'Assessment summary',
     ],
+    'raters' => [
+        'title' => 'Assessment raters',
+        'add-rater' => 'Add a rater',
+        'edit-rater' => 'Edit rater',
+    ],
 ];

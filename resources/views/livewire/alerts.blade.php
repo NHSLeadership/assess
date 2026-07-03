@@ -16,20 +16,24 @@
     @endif
 
     @if (session()->has('success'))
+            @php
+                $success = session('success');
+            @endphp
 
-        <div class="nhsuk-notification-banner nhsuk-notification-banner--success" role="alert"
+            <div class="nhsuk-notification-banner nhsuk-notification-banner--success" role="alert"
              aria-labelledby="nhsuk-notification-banner-success-title" data-module="nhsuk-notification-banner">
             <div class="nhsuk-notification-banner__header">
                 <h2 class="nhsuk-notification-banner__title" id="nhsuk-notification-banner-success-title">
-                    {{ session('success-heading', __('alerts.success.deleted')) }}
+                    {{ $success['heading'] ?? __('alerts.success.deleted') }}
                 </h2>
             </div>
             <div class="nhsuk-notification-banner__content">
-                {!! session('success') !!}
+                {{ $success['message'] ?? __('The process finished successfully') }}
             </div>
         </div>
 
     @endif
+
 
     @if ($errors && count($errors))
 

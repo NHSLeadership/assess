@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AssessmentReportPdfController;
 use App\Livewire\AssessmentCompleted;
+use App\Livewire\AssessmentRater;
+use App\Livewire\AssessmentRaters;
 use App\Livewire\AssessmentReport;
 use App\Livewire\Assessments;
+use App\Livewire\EditRater;
 use App\Livewire\FrameworkInstructions;
 use App\Livewire\Frameworks;
 use App\Livewire\Home;
 use App\Livewire\ReviewRequest;
+use App\Livewire\SelectRater;
 use App\Livewire\Summary;
 use App\Livewire\Variants;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +41,12 @@ Route::group([
     Route::get('/assessment-report/{frameworkId}/{assessmentId}', AssessmentReport::class)->name('assessment-report');
     Route::post('/assessment-report/{frameworkId}/{assessmentId}', AssessmentReportPdfController::class)
         ->name('assessment-report-pdf');
+
+    Route::get('/assessment/{assessmentId}/raters', AssessmentRaters::class)->name('assessment-raters');
+    Route::get('/assessment/{assessmentId}/select-rater', SelectRater::class)->name('select-rater');
+    Route::get('/assessment/{assessmentId}/add-rater', EditRater::class)->name('create-rater');
+    Route::get('/assessment-rater/{assessmentRaterId}/edit', EditRater::class)->name('edit-rater');
+
 
     /**
      * Request review

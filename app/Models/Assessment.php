@@ -106,6 +106,7 @@ class Assessment extends Model
         return $this->belongsToMany(Rater::class, 'assessment_rater')
             ->using(AssessmentRater::class)
             ->withPivot([
+                'id',
                 'type',
                 'rater_group_id',
                 'invited_at',
