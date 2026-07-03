@@ -5,15 +5,16 @@
 
 ---
 ### v2.1.2
-> Updated: 2.07.2026
+> Updated: 3.07.2026
 1. Fix login/registration link wording
+2. Access control validation for assessment reports
+3. Heading text changes
 
 ---
 ### v2.1.1
 > Updated: 3.07.2026
 1. Fix broken contact us link
-2. Access control validation for assessment reports
-3. Heading text changes
+
 
 ---
 ### v2.1.0
