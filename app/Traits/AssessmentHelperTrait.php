@@ -10,8 +10,10 @@ use App\Models\Rater;
 use App\Models\RaterGroup;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Features\SupportRedirects\Redirector;
+use Throwable;
 
 trait AssessmentHelperTrait
 {
@@ -126,7 +128,6 @@ trait AssessmentHelperTrait
         if (empty($this->assessmentId)) {
             return null;
         }
-
         if (!empty($this->raterId)) {
             $userId = Assessment::find($this->assessmentId)?->user_id;
         } else {
@@ -234,7 +235,6 @@ trait AssessmentHelperTrait
         if ($this->cachedAssessmentRater !== null) {
             return $this->cachedAssessmentRater;
         }
-
         if (empty($this->raterId) || empty($this->assessmentId)) {
             return null;
         }
@@ -247,20 +247,42 @@ trait AssessmentHelperTrait
 
     public function addGroup(): void
     {
-        $this->newGroupName = trim((string) $this->newGroupName);
+        try {
+            $this->newGroupName = trim((string) $this->newGroupName);
 
-        $this->validate($this->groupRules());
+            $this->validate($this->groupRules());
 
-        $group = RaterGroup::create([
-            'subject_id' => $this->user()?->user_id,
-            'name' => $this->newGroupName,
-        ]);
+            $group = RaterGroup::create([
+                'subject_id' => $this->user()?->user_id,
+                'name' => $this->newGroupName,
+            ]);
 
-        $this->refreshGroupList();
+            $this->refreshGroupList();
 
-        $this->groupId = $group->id;
-        $this->newGroupName = null;
+            $this->groupId = $group->id;
+            $this->newGroupName = null;
+            $this->showNewGroup = false;
+
+        } catch (ValidationException $e) {
+            throw $e;
+
+        } catch (Throwable $e) {
+            report($e);
+
+            $this->addError(
+                'newGroupName',
+                'Unable to create the group. Please try again.'
+            );
+
+        }
+    }
+
+    public function cancelAddGroup(): void
+    {
         $this->showNewGroup = false;
+        $this->newGroupName = null;
+
+        $this->resetErrorBag('newGroupName');
     }
 
     public function groupRules(): array

@@ -191,11 +191,13 @@ class Summary extends Component
                     $this->dispatch('scroll-to-top');
                     return null;
                 }
-                if (is_null($assessment->submitted_at)) {
-                    session()->flash('error', __('alerts.errors.assessment-not-submitted'));
-                    $this->dispatch('scroll-to-top');
-                    return null;
-                }
+
+                //Uncomment if the rater is not allowed to submit assessment if the subject hasn't finished yet,
+                //if (is_null($assessment->submitted_at)) {
+                    //session()->flash('error', __('alerts.errors.assessment-not-submitted'));
+                    //$this->dispatch('scroll-to-top');
+                    //return null;
+                //}
 
                 $assessment->raters()->updateExistingPivot($this->raterId, [
                     'submitted_at' => now(),
@@ -283,6 +285,15 @@ class Summary extends Component
     #[Computed]
     public function requiredCount()
     {
+        if (!empty($this->raterId)) {
+            return $this->assessment?->framework
+                ->questions()->with('variants')
+                ->whereHas('variants', function ($query): void {
+                    $query->where('audience', 'rater');
+                })
+                ->count();
+        }
+
         return $this->assessment?->framework
             ->questions()
             ->where('required', 1)

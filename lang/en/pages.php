@@ -63,5 +63,7 @@ return [
         'title' => 'Assessment raters',
         'add-rater' => 'Add a rater',
         'edit-rater' => 'Edit rater',
+        'edit-rater-button' => 'Update rater',
+        'add-rater-button' => 'Add rater',
     ],
 ];

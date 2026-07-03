@@ -122,9 +122,6 @@ class SelectRater extends Component
         }
     }
 
-
-
-
     public function render()
     {
         return view('livewire.select-rater')

@@ -37,16 +37,10 @@ class EditRater extends Component
     public array $raterGroupList = [];
 
     public function mount(
-        ?int $assessmentId = null,
         ?int $assessmentRaterId = null
     ): void
     {
-        $this->assessmentId = $assessmentId;
         $this->assessmentRaterId = $assessmentRaterId;
-
-        if ($this->assessment?->user_id !== $this->user()?->user_id) {
-            abort(404);
-        }
 
         if (! empty($this->assessmentRaterId)) {
             $assessmentRater = AssessmentRater::findOrFail($this->assessmentRaterId);
@@ -63,6 +57,9 @@ class EditRater extends Component
 
             $this->type = $assessmentRater->type->value;
             $this->groupId = $assessmentRater->rater_group_id;
+        }
+        if ($this->assessment?->user_id !== $this->user()?->user_id) {
+            abort(404);
         }
 
         $this->raterTypeList = RaterType::options();
@@ -211,15 +208,8 @@ class EditRater extends Component
                 'error',
                 'Unable to save the rater. Please try again.'
             );
+            $this->dispatch('scroll-to-top');
         }
-    }
-
-    public function cancelAddGroup(): void
-    {
-        $this->showNewGroup = false;
-        $this->newGroupName = null;
-
-        $this->resetErrorBag('newGroupName');
     }
 
     public function isEditMode(): bool

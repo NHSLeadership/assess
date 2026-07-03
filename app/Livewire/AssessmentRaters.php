@@ -3,6 +3,8 @@
 namespace App\Livewire;
 
 use App\Models\AssessmentRater;
+use App\Models\Rater;
+use App\Services\RaterInvitationService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
 use Livewire\Component;
@@ -86,6 +88,34 @@ class AssessmentRaters extends Component
         $this->redirect(route('edit-rater', [
             'assessmentRaterId' => $id,
         ]));
+    }
+
+    public function inviteRater(int $raterId): void
+    {
+        try {
+            $rater = Rater::findOrFail($raterId);
+
+            app(RaterInvitationService::class)
+                ->send($this->assessment, $rater);
+
+            session()->flash('success', [
+                'heading' => __('Invitation sent'),
+                'message' => __('Invitation sent successfully.'),
+            ]);
+
+        } catch (Throwable $e) {
+            Log::error('Error sending rater invitation', [
+                'assessment_id' => $this->assessmentId,
+                'rater_id' => $raterId,
+                'message' => $e->getMessage(),
+                'exception' => $e,
+            ]);
+
+            session()->flash('error', [
+                'heading' => __('Invitation failed'),
+                'message' => __('Unable to send the invitation. Please try again.'),
+            ]);
+        }
     }
 
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
