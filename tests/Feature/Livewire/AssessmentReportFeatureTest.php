@@ -14,6 +14,7 @@ use App\Models\Rater;
 use App\Models\Response;
 use App\Models\Scale;
 use App\Models\ScaleOption;
+use App\Models\User;
 use App\Services\AssessmentReportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -57,6 +58,11 @@ it('throws AssessmentFrameworkMismatchException when assessment belongs to a dif
     $frameworkA = Framework::factory()->create();
     $frameworkB = Framework::factory()->create();
 
+    $user = User::factory()->make([
+        'user_id' => 1,
+    ]);
+    $this->actingAs($user);
+
     $assessment = Assessment::factory()->create([
         'user_id' => 1,
         'framework_id' => $frameworkB->id, // belongs to B
@@ -76,6 +82,11 @@ it('throws AssessmentFrameworkMismatchException when assessment belongs to a dif
 it('throws AssessmentNotSubmittedException when assessment is not submitted', function () {
     $framework = Framework::factory()->create();
 
+    $user = User::factory()->make([
+        'user_id' => 1,
+    ]);
+    $this->actingAs($user);
+
     $assessment = Assessment::factory()->create([
         'user_id' => 1,
         'framework_id' => $framework->id,
@@ -94,6 +105,11 @@ it('throws AssessmentNotSubmittedException when assessment is not submitted', fu
 
 it('populates report data when framework and assessment are valid and submitted', function () {
     $framework = Framework::factory()->create();
+
+    $user = User::factory()->make([
+        'user_id' => 1,
+    ]);
+    $this->actingAs($user);
 
     $assessment = Assessment::factory()->create([
         'user_id' => 1,

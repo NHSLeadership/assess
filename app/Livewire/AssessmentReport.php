@@ -65,6 +65,10 @@ class AssessmentReport extends Component
             throw new AssessmentNotFoundException(__('alerts.errors.assessment-not-found'));
         }
 
+        if ($this->assessment()->user_id !== $this->user()?->user_id) {
+            abort(404);
+        }
+
         if ($this->assessment()->framework_id !== $this->framework()->id) {
             throw new AssessmentFrameworkMismatchException(
                 assessmentId: $this->assessmentId,
