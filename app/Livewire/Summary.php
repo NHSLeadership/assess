@@ -206,6 +206,7 @@ class Summary extends Component
                     'assessmentId' => $assessment->id,
                     'raterId' => $this->raterId
                 ]);
+                dd($url);
                 return redirect()->to($url);
 
             } else {

@@ -8,6 +8,7 @@ use App\Models\Framework;
 use App\Models\Node;
 use App\Models\Rater;
 use App\Models\RaterGroup;
+use App\Services\QuestionTextResolver;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -28,10 +29,29 @@ trait AssessmentHelperTrait
             return null;
         }
 
-        $totalQuestions = $assessment->framework
-            ?->questions()
-            ->count() ?? 0;
-        $responseCount = $assessment->responses()->count() ?? 0;
+        $totalQuestions = 0;
+        $responseCount = 0;
+
+        if ($assessment->user_id === $this->user()?->user_id) {
+
+            $totalQuestions = count(
+                QuestionTextResolver::optionsFor($assessment, null)
+            );
+
+            if ($totalQuestions > 0) {
+                $selfRaterId = Rater::query()
+                    ->where('subject_id', $assessment->user_id)
+                    ->orderBy('id')
+                    ->value('id');
+
+                $responseCount = $selfRaterId
+                    ? $assessment->responses()
+                        ->where('rater_id', $selfRaterId)
+                        ->count()
+                    : 0;
+            }
+        }
+
         $allAnswered = $totalQuestions > 0 && $responseCount === $totalQuestions;
 
         $alreadySubmitted = ! is_null($assessment->submitted_at);

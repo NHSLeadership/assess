@@ -69,7 +69,6 @@ class Variants extends Component
             }
         }
 
-
         $this->data = $this->variantSelections()?->toArray();
 
         $variants = $this->frameworks()?->variantAttributes;

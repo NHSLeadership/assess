@@ -21,11 +21,15 @@ class AssessmentCompleted extends Component
 
     public function mount()
     {
+        if (request()->route()->getName() === 'assessment-rater-completed' && ! request()->hasValidSignatureWhileIgnoring(['nodeId', 'edit'])) {
+            abort(403);
+        }
+
         if (empty($this->assessmentId) || ! is_numeric($this->assessmentId)) {
             return redirect()->route('frameworks');
         }
 
-        if ($this->assessment()?->submitted_at === null) {
+        if ($this->assessment()?->submitted_at === null && request()->route()->getName() !== 'assessment-rater-completed') {
             return redirect()->route('frameworks');
         }
     }
