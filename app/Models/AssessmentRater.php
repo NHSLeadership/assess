@@ -13,6 +13,13 @@ class AssessmentRater extends Pivot
 
     protected $table = 'assessment_rater';
 
+    protected $primaryKey = 'id';
+
+    public $incrementing = true;
+
+    protected $keyType = 'int';
+
+
     public $timestamps = true;
 
     protected $fillable = [
