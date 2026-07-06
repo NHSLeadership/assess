@@ -17,7 +17,10 @@ class BackfillRatersFromAuth0 extends Command
         $dryRun = (bool) $this->option('dry-run');
 
         $raters = Rater::query()
-            ->whereNull('name')
+            ->where(function ($query) {
+                $query->whereNull('name')
+                    ->orWhereNull('email');
+            })
             ->orderBy('id')
             ->get();
 
