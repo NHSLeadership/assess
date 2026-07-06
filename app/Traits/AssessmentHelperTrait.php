@@ -29,27 +29,21 @@ trait AssessmentHelperTrait
             return null;
         }
 
-        $totalQuestions = 0;
-        $responseCount = 0;
+        $totalQuestions = count(
+            QuestionTextResolver::optionsFor($assessment, null)
+        );
 
-        if ($assessment->user_id === $this->user()?->user_id) {
+        if ($totalQuestions > 0) {
+            $selfRaterId = Rater::query()
+                ->where('subject_id', $assessment->user_id)
+                ->orderBy('id')
+                ->value('id');
 
-            $totalQuestions = count(
-                QuestionTextResolver::optionsFor($assessment, null)
-            );
-
-            if ($totalQuestions > 0) {
-                $selfRaterId = Rater::query()
-                    ->where('subject_id', $assessment->user_id)
-                    ->orderBy('id')
-                    ->value('id');
-
-                $responseCount = $selfRaterId
-                    ? $assessment->responses()
-                        ->where('rater_id', $selfRaterId)
-                        ->count()
-                    : 0;
-            }
+            $responseCount = $selfRaterId
+                ? $assessment->responses()
+                    ->where('rater_id', $selfRaterId)
+                    ->count()
+                : 0;
         }
 
         $allAnswered = $totalQuestions > 0 && $responseCount === $totalQuestions;

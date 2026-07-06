@@ -50,7 +50,7 @@ test('redirectIfSubmittedOrFinished redirects when all required questions are an
     $framework = Framework::factory()->create();
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $user->id,
+        'user_id' => $user->user_id,
     ]);
 
     $rater = Rater::factory()->create([
