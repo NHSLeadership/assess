@@ -71,12 +71,11 @@ class BackfillRatersFromAuth0 extends Command
                 }
 
                 if ($dryRun) {
+
                     $this->line(
                         sprintf(
-                            '[DRY RUN] subject_id=%s -> %s <%s>',
-                            $rater->subject_id,
-                            $name,
-                            $email
+                            '[DRY RUN] subject_id=%s',
+                            $rater->subject_id
                         )
                     );
 
