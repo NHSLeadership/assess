@@ -329,6 +329,7 @@ class Questions extends Component
             ]);
         }
 
+        $hasSavedResponse = false;
         foreach (($this->data ?? []) as $name => $value) {
 
             // Skip reflection keys entirely
@@ -358,6 +359,7 @@ class Questions extends Component
                 $this->assessmentId,
                 $raterId
             );
+            $hasSavedResponse = true;
 
             // Save optional reflection for scale questions
             if ($question['response_type'] === ResponseType::TYPE_SCALE->value) {
@@ -377,7 +379,28 @@ class Questions extends Component
                 );
             }
         }
+
+        if ($hasSavedResponse && $this->isRaterAssessment()) {
+            $this->markRaterAssessmentStarted();
+        }
+
     }
+    private function isRaterAssessment(): bool
+    {
+        return ! empty($this->raterId);
+    }
+
+    private function markRaterAssessmentStarted(): void
+    {
+        AssessmentRater::query()
+            ->where('assessment_id', $this->assessmentId)
+            ->where('rater_id', $this->raterId)
+            ->whereNull('started_at')
+            ->update([
+                'started_at' => now(),
+            ]);
+    }
+
 
     #[Computed]
     public function visibleRequiredCount(): int
