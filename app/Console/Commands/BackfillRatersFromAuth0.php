@@ -111,7 +111,7 @@ class BackfillRatersFromAuth0 extends Command
         $this->table(
             ['Status', 'Count'],
             [
-                ['Updated', $updated],
+                [$dryRun ? 'Would update' : 'Updated', $updated],
                 ['Skipped', $skipped],
                 ['Failed', $failed],
             ]
