@@ -8,6 +8,8 @@ use App\Models\Rater;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Services\RaterInvitationService;
+
 
 uses(RefreshDatabase::class);
 
@@ -124,8 +126,6 @@ test('askDetach sets pendingDetachId', function () {
         ->call('askDetach', 123)
         ->assertSet('pendingDetachId', 123);
 });
-
-use App\Services\RaterInvitationService;
 
 test('inviteRater sends invitation for selected rater', function () {
     $user = makeAuthUser(['user_id' => '1000000000']);

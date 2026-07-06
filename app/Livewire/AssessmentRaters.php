@@ -53,7 +53,7 @@ class AssessmentRaters extends Component
                     'message' => __('Rater detached successfully.'),
                 ]);
             } else {
-                session()->flash('error', __('Failed to delete assessment. Please try again.'));
+                session()->flash('error', __('Failed to detach rater. Please try again.'));
             }
 
         } catch (Throwable $e) {
@@ -63,7 +63,7 @@ class AssessmentRaters extends Component
                 'message' => $e->getMessage(),
                 'exception' => $e,
             ]);
-            session()->flash('error', __('Failed to delete assessment. Please try again.'));
+            session()->flash('error', __('Failed to detach rater. Please try again.'));
         } finally {
             $this->pendingDetachId = null;
         }

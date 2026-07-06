@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Models\Rater;
+use App\Models\RaterGroup;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Rater>
+ * @extends Factory<RaterGroup>
  */
 class RaterGroupFactory extends Factory
 {
@@ -21,8 +21,8 @@ class RaterGroupFactory extends Factory
     {
         return [
             'id' => $this->faker->unique()->numberBetween(1000, 999999), // if your PK is UUID
-            'subject_id' => $this->faker->unique()->numberBetween(1000, 999999),
-            'name' => $this->faker->name(),
+            'subject_id' => $this->faker->numberBetween(1000, 999999),
+            'name' => $this->faker->words(2, true),
         ];
     }
 }

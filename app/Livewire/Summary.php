@@ -192,13 +192,6 @@ class Summary extends Component
                     return null;
                 }
 
-                //Uncomment if the rater is not allowed to submit assessment if the subject hasn't finished yet,
-                //if (is_null($assessment->submitted_at)) {
-                    //session()->flash('error', __('alerts.errors.assessment-not-submitted'));
-                    //$this->dispatch('scroll-to-top');
-                    //return null;
-                //}
-
                 $assessment->raters()->updateExistingPivot($this->raterId, [
                     'submitted_at' => now(),
                 ]);

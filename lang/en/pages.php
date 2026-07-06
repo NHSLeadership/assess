@@ -61,6 +61,7 @@ return [
     ],
     'raters' => [
         'title' => 'Assessment raters',
+        'select-rater' => 'Select existing rater',
         'add-rater' => 'Add a rater',
         'edit-rater' => 'Edit rater',
         'edit-rater-button' => 'Update rater',

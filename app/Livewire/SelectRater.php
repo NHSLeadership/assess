@@ -92,9 +92,13 @@ class SelectRater extends Component
     {
         try {
             $this->validate();
+            $rater = Rater::query()
+                ->whereKey($this->selectedRaterId)
+                ->where('subject_id', $this->user()?->user_id)
+                ->firstOrFail();
             AssessmentRater::create([
                 'assessment_id' => $this->assessmentId,
-                'rater_id' => $this->selectedRaterId,
+                'rater_id' => $rater->id,
                 'type' => $this->type,
                 'rater_group_id' => $this->groupId,
             ]);

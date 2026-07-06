@@ -121,7 +121,7 @@
         @else
             <div class="nhsuk-inset-text nhsuk-u-margin-top-1">
                 <span class="nhsuk-u-visually-hidden">Information: </span>
-                <p>You haven't started any assessments in this framework.</p>
+                <p>No raters have been added to this assessment yet.</p>
             </div>
         @endif
 

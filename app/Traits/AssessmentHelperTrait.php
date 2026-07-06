@@ -46,7 +46,7 @@ trait AssessmentHelperTrait
                 : 0;
         }
 
-        $allAnswered = $totalQuestions > 0 && $responseCount === $totalQuestions;
+        $allAnswered = $totalQuestions > 0 && ($responseCount ?? 0) === $totalQuestions;
 
         $alreadySubmitted = ! is_null($assessment->submitted_at);
         if ((in_array($edit, [null, '', '0'], true) && $allAnswered) || $alreadySubmitted) {

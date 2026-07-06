@@ -37,9 +37,11 @@ class EditRater extends Component
     public array $raterGroupList = [];
 
     public function mount(
+        ?int $assessmentId = null,
         ?int $assessmentRaterId = null
     ): void
     {
+        $this->assessmentId = $assessmentId;
         $this->assessmentRaterId = $assessmentRaterId;
 
         if (! empty($this->assessmentRaterId)) {
@@ -152,7 +154,10 @@ class EditRater extends Component
 
                 $this->validate($this->existingRaterRules());
 
-                $rater = Rater::findOrFail($this->selectedRaterId);
+                $rater = Rater::query()
+                    ->whereKey($this->selectedRaterId)
+                    ->where('subject_id', $this->user()?->user_id)
+                    ->firstOrFail();
             }
 
             if ($this->assessmentRaterId) {
