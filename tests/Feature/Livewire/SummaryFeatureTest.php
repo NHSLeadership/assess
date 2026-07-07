@@ -434,7 +434,7 @@ it('redirects to signed rater route when editAnswer is called with raterId', fun
 
     $separator = str_contains($expectedUrl, '?') ? '&' : '?';
 
-    $expectedUrl .= $separator . 'nodeId=5&edit=edit';
+    $expectedUrl .= $separator . 'nodeId=5&action=edit';
 
     Livewire::test(Summary::class, [
         'assessmentId' => $assessment->id,
