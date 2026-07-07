@@ -49,8 +49,8 @@ class AssessmentRaters extends Component
             if($assessmentRater?->assessment?->user_id === $this->user()?->user_id) {
                 $assessmentRater->delete();
                 session()->flash('success', [
-                    'heading' => __('Rater detached'),
-                    'message' => __('Rater detached successfully.'),
+                    'heading' => __('Rater removed'),
+                    'message' => __('Rater removed successfully.'),
                 ]);
             } else {
                 session()->flash('error', __('Failed to detach rater. Please try again.'));

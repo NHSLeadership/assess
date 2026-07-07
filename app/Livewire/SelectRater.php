@@ -104,8 +104,8 @@ class SelectRater extends Component
             ]);
 
             session()->flash('success', [
-                'heading' => __('Rater attached'),
-                'message' => __('Rater attached successfully.'),
+                'heading' => __('Rater selected'),
+                'message' => __('Rater selected successfully.'),
             ]);
 
             $this->redirectRoute('assessment-raters', [
@@ -121,7 +121,7 @@ class SelectRater extends Component
 
             session()->flash(
                 'error',
-                'Unable to attach the rater.'
+                'Unable to select the rater.'
             );
         }
     }

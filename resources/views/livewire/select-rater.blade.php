@@ -47,7 +47,7 @@
                     <button
                             class="nhsuk-button"
                             type="submit">
-                        Attach rater
+                        Select rater
                     </button>
 
                 </div>

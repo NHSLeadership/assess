@@ -1,11 +1,11 @@
-<p class="nhsuk-body-s">{{ $message ?? __('Are you sure you want to detach this rater?') }}</p>
+<p class="nhsuk-body-s">{{ $message ?? __('Are you sure you want to remove this rater?') }}</p>
 <div class="nhsuk-button-group">
     <button
             type="button"
             wire:click="{{ $confirmAction ?? 'confirmDetach' }}"
             class="nhsuk-button nhsuk-button--warning nhsuk-button--small"
             data-prevent-double-click="true">
-        {{ $confirmLabel ?? __('Detach') }}
+        {{ $confirmLabel ?? __('Remove') }}
     </button>
     <button
             type="button"

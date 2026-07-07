@@ -86,16 +86,16 @@
                                         type="button"
                                         class="nhsuk-link"
                                         wire:click.prevent="askDetach({{ $rater->pivot->id }})">
-                                    {{ __('Detach') }}
+                                    {{ __('Remove') }}
                                 </button>
-                                |
+                                <br/>
                                 <button
                                         type="button"
                                         class="nhsuk-link"
                                         wire:click.prevent="editAssessmentRater({{ $rater->pivot->id }})">
                                     {{ __('Edit') }}
                                 </button>
-                                |
+                                <br/>
                                 @if($rater->pivot->invited_at)
                                     <button
                                             type="button"
@@ -125,5 +125,8 @@
             </div>
         @endif
 
+        <a class="nhsuk-back-link" href="{{ route('frameworks') }}">
+            {{ __('Home') }}
+        </a>
     </div>
 </div>
