@@ -237,8 +237,7 @@ class Summary extends Component
                 ->where('raters.id', $this->raterId)
                 ->firstOrFail();
 
-            return $assessment->submitted_at
-                && $rater->pivot->submitted_at;
+            return !empty($rater->pivot->submitted_at);
         }
 
         return (bool) $assessment->submitted_at;
