@@ -57,7 +57,7 @@ class AssessmentRaters extends Component
             }
 
         } catch (Throwable $e) {
-            Log::error('Error detaching rater', [
+            Log::error('Error removing rater', [
                 'assessment_id' => $this->assessmentId,
                 'assessment_rater_id' => $id,
                 'message' => $e->getMessage(),

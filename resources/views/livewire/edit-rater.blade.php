@@ -22,7 +22,7 @@
                     Name of the rater
                 @endslot
                 @slot('hint')
-                    The name of the rater you are attaching to this assessment.
+                    The name of the rater you are selecting to this assessment.
                 @endslot
             @endcomponent
 
@@ -34,7 +34,7 @@
                     Email of the rater
                 @endslot
                 @slot('hint')
-                    The email of the rater you are attaching to this assessment.
+                    The email of the rater you are selecting to this assessment.
                 @endslot
             @endcomponent
 
@@ -43,7 +43,7 @@
                     Type
                 @endslot
                 @slot('hint')
-                    The type of rater you are attaching to this assessment.
+                    The type of rater you are selecting to this assessment.
                 @endslot
             @endcomponent
 
