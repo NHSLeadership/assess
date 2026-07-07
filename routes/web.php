@@ -58,7 +58,7 @@ Route::group([
 
 if (config('app.assess_360_enabled')) {
     Route::group([
-        'middleware' => 'signed:nodeId,edit',
+        'middleware' => 'signed:nodeId,action',
     ], function (): void {
         Route::get('/rate-assessment/{assessmentId}/{raterId}', Assessments::class)
             ->name('assessment-rater');

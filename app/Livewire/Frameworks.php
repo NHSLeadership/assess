@@ -7,7 +7,9 @@ use App\Enums\RetentionActorType;
 use App\Enums\RetentionReason;
 use App\Models\Assessment;
 use App\Models\Framework;
+use App\Models\Rater;
 use App\Models\RetentionEvent;
+use App\Services\QuestionTextResolver;
 use App\Settings\Retention;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
@@ -198,18 +200,26 @@ class Frameworks extends Component
         }
 
         // Count only ACTIVE questions in the framework
-        $total = (int) ($assessment->framework?->questions()
-            ->where('active', true)
-            ->count() ?? 0);
+        $total = count(
+            QuestionTextResolver::optionsFor($assessment, null)
+        );
 
         if ($total <= 0) {
             return 'Not available';
         }
 
+        $selfRaterId = Rater::query()
+            ->where('subject_id', $assessment->user_id)
+            ->orderBy('id')
+            ->value('id');
+
         // Count only responses that belong to ACTIVE questions
-        $answered = (int) ($assessment->responses()
-            ->whereHas('question', fn ($q) => $q->where('active', true))
-            ->count());
+        $answered = $selfRaterId
+            ? $assessment->responses()
+                ->where('rater_id', $selfRaterId)
+                ->whereHas('question', fn ($q) => $q->where('active', true))
+                ->count()
+            : 0;
 
         $percentage = (int) round(($answered / $total) * 100);
 

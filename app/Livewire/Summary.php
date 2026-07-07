@@ -158,7 +158,7 @@ class Summary extends Component
 
             $separator = str_contains($url, '?') ? '&' : '?';
 
-            $url .= $separator . 'nodeId=' . $nodeId . '&edit=edit';
+            $url .= $separator . 'nodeId=' . $nodeId . '&action=edit';
             return redirect($url);
         }
 
