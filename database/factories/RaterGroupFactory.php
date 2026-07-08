@@ -20,7 +20,6 @@ class RaterGroupFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => $this->faker->unique()->numberBetween(1000, 999999), // if your PK is UUID
             'subject_id' => $this->faker->numberBetween(1000, 999999),
             'name' => $this->faker->words(2, true),
         ];

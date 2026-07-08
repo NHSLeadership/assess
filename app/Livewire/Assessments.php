@@ -33,7 +33,7 @@ class Assessments extends Component
 
     public ?int $nodeId = null;
 
-    public ?string $edit = null;
+    public ?string $action = null;
     public ?int $raterId = null;
     protected ?AssessmentRater $cachedAssessmentRater = null;
 
@@ -55,7 +55,7 @@ class Assessments extends Component
         $nodeId = request('nodeId');
         $this->nodeId = $nodeId ? (int) $nodeId : null;
         $action = request('action');
-        $this->edit = $action;
+        $this->action = $action;
 
         if (!isset($this->assessmentId) || $this->assessmentId === 0) {
             return redirect()->route('frameworks');
@@ -66,7 +66,7 @@ class Assessments extends Component
             // Redirect if not permitted to do an assessment for this framework now
             $this->redirectIfAssessmentNotPermitted($this->assessment()?->framework?->id, $this->assessmentId);
             // Redirect already submitted assignments to summary page
-            $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework?->id, $this->edit);
+            $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework?->id, $this->action);
         }
 
         // Set initial current node so headings are correct on first render

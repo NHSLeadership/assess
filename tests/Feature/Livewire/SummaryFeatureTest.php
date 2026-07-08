@@ -510,7 +510,7 @@ it('redirects to signed rater route when a resume node exists for rater', functi
     ]);
 
     $separator = str_contains($expectedUrl, '?') ? '&' : '?';
-    $expectedUrl .= $separator . 'nodeId=' . $node->id . '&edit=edit';
+    $expectedUrl .= $separator . 'nodeId=' . $node->id . '&action=edit';
 
     Livewire::test(Summary::class, [
         'assessmentId' => $assessment->id,

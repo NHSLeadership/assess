@@ -46,7 +46,7 @@ class Questions extends Component
     public ?int $nodeId = null;
     public ?int $raterId = null;
 
-    public ?string $edit = null;
+    public ?string $action = null;
     public array $resolvedQuestionTexts = [];
     protected ?Assessment $cachedAssessment = null;
     protected ?Rater $cachedRater = null;
@@ -70,7 +70,7 @@ class Questions extends Component
         if (empty($this->raterId)) {
             // Redirect if not permitted to do an assessment for this framework now
             $this->redirectIfAssessmentNotPermitted($this->assessment()?->framework?->id, $this->assessmentId);
-            $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework->id, $this->edit);
+            $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework->id, $this->action);
         }
 
         if (! empty($this->raterId) && ! $this->assessmentRater()) {
@@ -92,7 +92,7 @@ class Questions extends Component
             }
         }
 
-        if ($this->nodeId !== null && $this->nodeId !== 0 && $this->edit === 'edit') {
+        if ($this->nodeId !== null && $this->nodeId !== 0 && $this->action === 'edit') {
             // Explicit edit link from Summary -> honour it
             $this->goToNodeById($this->nodeId);
         } else {

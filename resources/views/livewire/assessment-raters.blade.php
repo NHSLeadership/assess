@@ -37,7 +37,11 @@
 
         @include('livewire.alerts')
 
-        @if ($this->assessment->raters()->count() > 0)
+        @php
+            $raters = $this->assessment->raters()->get();
+        @endphp
+
+        @if ($raters->isNotEmpty())
             <table class="nhsuk-table nhsuk-table-responsive" role="table">
                 <caption class="nhsuk-table__caption">
                     {{ __('Raters') }}
@@ -53,7 +57,7 @@
                     </tr>
                 </thead>
                 <tbody class="nhsuk-table__body">
-                @foreach ($this->assessment->raters()->get() as $rater)
+                @foreach ($raters as $rater)
                     <tr class="nhsuk-table__row" wire:key="assessment-{{ $rater->id }}" role="row">
                         <td class="nhsuk-table__cell" role="cell">
                             <span class="nhsuk-table-responsive__heading">Name</span>

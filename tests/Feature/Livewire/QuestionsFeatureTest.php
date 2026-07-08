@@ -86,7 +86,7 @@ it('jumps to the specified node when nodeId is provided', function () {
     Livewire::test(Questions::class, [
         'assessmentId' => $assessment->id,
         'nodeId' => $setup2['node']->id,
-        'edit' => 'edit',
+        'action' => 'edit',
     ])
         ->assertSet('nodeKeyId', 1);
 

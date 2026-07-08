@@ -21,7 +21,7 @@ class AssessmentCompleted extends Component
 
     public function mount()
     {
-        if (request()->route()->getName() === 'assessment-rater-completed' && ! request()->hasValidSignatureWhileIgnoring(['nodeId', 'edit'])) {
+        if (request()->route()->getName() === 'assessment-rater-completed' && ! request()->hasValidSignatureWhileIgnoring(['nodeId', 'action'])) {
             abort(403);
         }
 

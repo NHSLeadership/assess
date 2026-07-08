@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Assessment;
-use App\Models\Rater;
 use Carbon\Carbon;
 use Tests\Support\FrameworksFake;
 
@@ -67,34 +66,6 @@ test('getAssessmentStatusTag returns "Not started" for assessments with no respo
         ->and($result['text'])->toBe(__('Not started'))
         ->and($result['subtitle'])->toBeNull();
 });
-
-//test('getAssessmentStatusTag returns "Started" for assessments with partial responses', function () {
-//    $component = new FrameworksFake;
-//
-//    $rater = new Rater();
-//    $rater->subject_id = 1000000000;
-//
-//    $assessment = new Assessment();
-//    $assessment->id = 1;
-//    $assessment->user_id = 1000000000;
-//    $assessment->submitted_at = null;
-//    $assessment->created_at = Carbon::now();  // Add timestamp to avoid expiresAt() error
-//
-//    // Mock some responses
-//    $response1 = (object) ['id' => 1];
-//    $response2 = (object) ['id' => 2];
-//    $assessment->setRelation('responses', collect([$response1, $response2]));
-//
-//    // For "Started" state, we need the response count to NOT equal required questions count
-//    // This is a partial response state (not N+1 query issue, just incomplete)
-//    $result = $component->getAssessmentStatusTag($assessment);
-//
-//    expect($result)
-//        ->toHaveKeys(['class', 'text', 'subtitle'])
-//        ->and($result['class'])->toBe('nhsuk-tag--blue')
-//        ->and($result['text'])->toBe(__('Started'))
-//        ->and($result['subtitle'])->toBeNull();
-//});
 
 test('getAssessmentStatusTag returns "Completed" for submitted assessments', function () {
     $component = new FrameworksFake;

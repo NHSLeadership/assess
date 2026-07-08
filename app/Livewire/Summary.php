@@ -72,7 +72,7 @@ class Summary extends Component
                 ]);
 
                 $separator = str_contains($url, '?') ? '&' : '?';
-                $url .= $separator . 'nodeId=' . $node->id . '&edit=edit';
+                $url .= $separator . 'nodeId=' . $node->id . '&action=edit';
 
                 return redirect($url);
             }
