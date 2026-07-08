@@ -40,7 +40,7 @@ class Assessments extends Component
     public function mount($assessmentId, $raterId = null)
     {
 
-        if (request()->route()->getName() === 'assessment-rater' && ! request()->hasValidSignatureWhileIgnoring(['nodeId', 'action'])) {
+        if (request()->route()?->getName() === 'assessment-rater' && ! request()->hasValidSignatureWhileIgnoring(['nodeId', 'action'])) {
             abort(403);
         }
 
