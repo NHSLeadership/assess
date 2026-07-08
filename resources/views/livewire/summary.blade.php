@@ -109,7 +109,10 @@
         @endforeach
 
         @php
-            $hasAllRequired = $this->answeredRequiredCount() === $this->requiredCount() && $this->requiredCount() > 0;
+        $currentRaterId = $this->currentRaterId($this->assessment());
+        $requiredResponsesCount = $this->requiredResponsesCount($this->assessmentId, $currentRaterId);
+        $requiredQuestionsCount = $this->requiredQuestionsCount($this->assessment(), $currentRaterId);
+        $hasAllRequired = $requiredResponsesCount === $requiredQuestionsCount && $requiredQuestionsCount > 0;
         @endphp
 
         @if (!$isSubmitted && !$hasAllRequired)

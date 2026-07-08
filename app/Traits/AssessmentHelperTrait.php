@@ -6,8 +6,10 @@ use App\Models\Assessment;
 use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
+use App\Models\Question;
 use App\Models\Rater;
 use App\Models\RaterGroup;
+use App\Models\Response;
 use App\Services\QuestionTextResolver;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rule;
@@ -321,6 +323,45 @@ trait AssessmentHelperTrait
             ->where('subject_id', $this->user()?->user_id)
             ->pluck('name', 'id')
             ->toArray();
+    }
+
+    public function requiredResponsesCount(int $assessmentId, ?int $raterId = null): int
+    {
+        if (empty($raterId)) {
+            return 0;
+        }
+        return Response::query()
+            ->where('assessment_id', $assessmentId)
+            ->where('rater_id', $raterId)
+            ->whereHas('question', fn ($query) => $query->where('required', true))
+            ->count();
+    }
+
+    public function requiredQuestionsCount(
+        Assessment $assessment,
+        ?int $raterId = null
+    ): int
+    {
+        $assessmentRater = AssessmentRater::query()
+            ->where('assessment_id', $assessment->id)
+            ->where('rater_id', $raterId)
+            ->first();
+
+        $questionIds = array_keys(
+            QuestionTextResolver::optionsFor($assessment, $assessmentRater)
+        );
+
+        return Question::query()
+            ->whereIn('id', $questionIds)
+            ->where('required', true)
+            ->count();
+    }
+
+    protected function currentRaterId(Assessment $assessment): ?int
+    {
+        return ! empty($this->raterId)
+            ? $this->raterId
+            : Rater::where('subject_id', $assessment?->user_id)->orderBy('id')->first()?->id;
     }
 
 }

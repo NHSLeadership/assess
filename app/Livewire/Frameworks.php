@@ -283,6 +283,13 @@ class Frameworks extends Component
      */
     public function getAssessmentStatusTag(Assessment $assessment): array
     {
+        $selfRaterId = Rater::query()
+            ->where('subject_id', $assessment->user_id)
+            ->orderBy('id')
+            ->first()?->id;
+        $requiredResponsesCount = $this->requiredResponsesCount($assessment->id, $selfRaterId);
+        $requiredQuestionsCount = $this->requiredQuestionsCount($assessment, $selfRaterId);
+
         if ($assessment->isWithinExpiryWarningWindow()) {
             return [
                 'class' => 'nhsuk-tag--yellow',
@@ -298,7 +305,7 @@ class Frameworks extends Component
                     'text' => __('Not started'),
                     'subtitle' => null,
                 ];
-            } elseif ($assessment->responses?->count() === $assessment?->framework?->questions?->where('required', 1)->count()) {
+            } elseif ($requiredResponsesCount == $requiredQuestionsCount) {
                 return [
                     'class' => 'nhsuk-tag--orange',
                     'text' => __('Ready'),
