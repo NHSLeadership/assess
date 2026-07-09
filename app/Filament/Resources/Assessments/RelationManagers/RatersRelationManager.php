@@ -32,10 +32,21 @@ class RatersRelationManager extends RelationManager
                 ->label('Rater')
                 ->options(function () {
                     $assessment = $this->getOwnerRecord();
+
                     $attachedRaterIds = $assessment->raters()->pluck('raters.id');
+
+                    $selfRaterId = Rater::query()
+                        ->where('subject_id', $assessment->user_id)
+                        ->orderBy('id')
+                        ->value('id');
+
                     return Rater::query()
                         ->where('subject_id', $assessment->user_id)
                         ->whereNotIn('id', $attachedRaterIds)
+                        ->when(
+                            $selfRaterId,
+                            fn ($query) => $query->where('id', '!=', $selfRaterId)
+                        )
                         ->whereNotNull('name')
                         ->orderBy('name')
                         ->pluck('name', 'id');
@@ -45,6 +56,23 @@ class RatersRelationManager extends RelationManager
                 ->createOptionForm(RaterForm::components())
                 ->createOptionUsing(function ($data) {
                     $subjectId = $this->getOwnerRecord()->user_id;
+
+                    $selfRater = Rater::query()
+                        ->where('subject_id', $subjectId)
+                        ->orderBy('id')
+                        ->first();
+
+                    if (
+                        $selfRater &&
+                        $selfRater->email_hash === Rater::emailHash($data['email'])
+                    ) {
+                        Notification::make()
+                            ->title('You cannot add yourself as a rater')
+                            ->warning()
+                            ->send();
+
+                        return null;
+                    }
 
                     $existing = Rater::where('subject_id', $subjectId)
                         ->where(
