@@ -68,6 +68,7 @@ class Assessments extends Component
             // Redirect already submitted assignments to summary page
             $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework?->id, $this->action);
         }
+        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework?->id, $this->action);
 
         // Set initial current node so headings are correct on first render
         $nodes = $this->nodes();

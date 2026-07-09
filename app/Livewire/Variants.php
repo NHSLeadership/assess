@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Rater;
 use App\Services\UserAssessmentVariantSelectionService;
@@ -28,6 +29,8 @@ class Variants extends Component
     public ?array $data = null;
 
     public ?string $back = null;
+
+    protected ?AssessmentRater $cachedAssessmentRater = null;
 
     public function mount(?string $frameworkId = null, ?string $assessmentId = null)
     {

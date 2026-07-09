@@ -12,6 +12,7 @@ use App\Models\RaterGroup;
 use App\Models\Response;
 use App\Services\QuestionTextResolver;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
@@ -32,7 +33,10 @@ trait AssessmentHelperTrait
         }
 
         $totalQuestions = count(
-            QuestionTextResolver::optionsFor($assessment, null)
+            QuestionTextResolver::optionsFor(
+                $assessment,
+                $this->assessmentRater()
+            )
         );
 
         if ($totalQuestions > 0) {
@@ -41,17 +45,25 @@ trait AssessmentHelperTrait
                 ->orderBy('id')
                 ->value('id');
 
-            $responseCount = $selfRaterId
+            $currentRaterId = $this->currentRaterId($assessment);
+            $responseCount = $currentRaterId
                 ? $assessment->responses()
-                    ->where('rater_id', $selfRaterId)
+                    ->where('rater_id', $currentRaterId)
                     ->count()
                 : 0;
         }
 
         $allAnswered = $totalQuestions > 0 && ($responseCount ?? 0) === $totalQuestions;
-
         $alreadySubmitted = ! is_null($assessment->submitted_at);
         if ((in_array($edit, [null, '', '0'], true) && $allAnswered) || $alreadySubmitted) {
+
+            if (!empty($this->raterId)) {
+                $url = URL::signedRoute('assessment-rater-completed', [
+                    'assessmentId' => $assessment->id,
+                    'raterId' => $this->raterId
+                ]);
+                return redirect()->to($url);
+            }
             return redirect()->route('summary', [
                 'frameworkId' => $frameworkId,
                 'assessmentId' => $assessment?->id,
@@ -325,16 +337,29 @@ trait AssessmentHelperTrait
             ->toArray();
     }
 
-    public function requiredResponsesCount(int $assessmentId, ?int $raterId = null): int
+    public function responsesCount(int $assessmentId, ?int $raterId = null, bool $requiredOnly = false): int
     {
         if (empty($raterId)) {
             return 0;
         }
+//        return Response::query()
+//            ->where('assessment_id', $assessmentId)
+//            ->where('rater_id', $raterId)
+//            ->whereHas('question', fn ($query) => $query->where('required', true))
+//            ->count();
+
         return Response::query()
             ->where('assessment_id', $assessmentId)
             ->where('rater_id', $raterId)
-            ->whereHas('question', fn ($query) => $query->where('required', true))
+            ->when(
+                $requiredOnly,
+                fn ($query) => $query->whereHas(
+                    'question',
+                    fn ($query) => $query->where('required', true)
+                )
+            )
             ->count();
+
     }
 
     public function requiredQuestionsCount(

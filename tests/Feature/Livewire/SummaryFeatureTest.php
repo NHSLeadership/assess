@@ -445,41 +445,6 @@ it('redirects to signed rater route when editAnswer is called with raterId', fun
         ->assertRedirect($expectedUrl);
 });
 
-it('redirects to signed rater report route when raterId is provided', function () {
-
-    $user = makeAuthUser();
-    $this->be($user);
-
-    $rater = Rater::factory()->create([
-        'subject_id' => $user->user_id,
-    ]);
-
-    $framework = Framework::factory()->create();
-
-    $assessment = Assessment::factory()->create([
-        'framework_id' => $framework->id,
-        'user_id' => $user->user_id,
-    ]);
-
-    AssessmentRater::factory()->create([
-        'assessment_id' => $assessment->id,
-        'rater_id' => $rater->id,
-    ]);
-
-    $expectedUrl = URL::signedRoute('assessment-rater-report', [
-        'frameworkId' => $framework->id,
-        'assessmentId' => $assessment->id,
-        'raterId' => $rater->id,
-    ]);
-
-    Livewire::test(Summary::class, [
-        'frameworkId' => $framework->id,
-        'assessmentId' => $assessment->id,
-        'raterId' => $rater->id,
-    ])
-        ->call('viewReport')
-        ->assertRedirect($expectedUrl);
-});
 
 it('redirects to signed rater route when a resume node exists for rater', function () {
 

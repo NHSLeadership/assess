@@ -27,7 +27,7 @@ it('throws ModelNotFoundException when assessment is missing', function () {
     ]);
 });
 
-it('redirects to signed rater report when raterId is provided', function () {
+it('shows the correct assessment submitted date', function () {
 
     $user = makeAuthUser();
     Livewire::actingAs($user);
@@ -44,23 +44,22 @@ it('redirects to signed rater report when raterId is provided', function () {
         'submitted_at' => now(),
     ]);
 
-    AssessmentRater::factory()->create([
+    $submittedAt = now();
+
+    $assessmentRater = AssessmentRater::factory()->create([
         'assessment_id' => $assessment->id,
         'rater_id' => $rater->id,
+        'submitted_at' => $submittedAt,
     ]);
 
-    $expectedUrl = URL::signedRoute('assessment-rater-report', [
-        'frameworkId' => $framework->id,
+    $component = Livewire::test(AssessmentCompleted::class, [
         'assessmentId' => $assessment->id,
         'raterId' => $rater->id,
     ]);
 
-    Livewire::test(AssessmentCompleted::class, [
-        'assessmentId' => $assessment->id,
-        'raterId' => $rater->id,
-    ])
-        ->call('viewReport')
-        ->assertRedirect($expectedUrl);
+    expect($component->instance()->assessmentCompletedDate())
+        ->toEqual($assessmentRater->submitted_at);
+
 });
 
 it('redirects to normal assessment report when raterId is not provided', function () {

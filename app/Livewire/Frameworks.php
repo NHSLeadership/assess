@@ -287,7 +287,7 @@ class Frameworks extends Component
             ->where('subject_id', $assessment->user_id)
             ->orderBy('id')
             ->first()?->id;
-        $requiredResponsesCount = $this->requiredResponsesCount($assessment->id, $selfRaterId);
+        $requiredResponsesCount = $this->responsesCount($assessment->id, $selfRaterId, true);
         $requiredQuestionsCount = $this->requiredQuestionsCount($assessment, $selfRaterId);
 
         if ($assessment->isWithinExpiryWarningWindow()) {

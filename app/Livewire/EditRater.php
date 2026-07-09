@@ -141,12 +141,15 @@ class EditRater extends Component
                 $this->validate($this->raterRules());
 
                 $rater = $this->validateRaterDoesNotAlreadyExist();
-
                 if (! $rater) {
                     $rater = Rater::create([
                         'subject_id' => $this->user()?->user_id,
                         'name' => trim((string) $this->name),
                         'email' => trim((string) $this->email),
+                    ]);
+                } else {
+                    $rater->update([
+                        'name' => trim((string) $this->name),
                     ]);
                 }
 
