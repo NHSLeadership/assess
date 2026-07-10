@@ -43,7 +43,9 @@ class RaterInvitationMail extends Mailable
         $intro = "Dear {$this->rater->name},"
         . "<p> {$this->subjectName} has invited you to provide feedback as part of their assessment against the {$frameworkName}.</p>"
         . "<p>Your feedback will form part of their 360 assessment, helping them identity strengths and development opportunities as part of their ongoing professional development.</p>"
-        . "<p>Feedback should take around 15-20 minutes and can be completed across multiple sessions.</p>";
+        . "<p>Feedback should take around 15-20 minutes and can be completed across multiple sessions.</p>"
+        . "<p>Keep this email so you can reuse the link to resume feedback.</p>"
+        . "<p>Do not share with anyone else.</p>";
 
         return $intro;
     }
