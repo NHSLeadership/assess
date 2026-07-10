@@ -70,8 +70,8 @@ class Questions extends Component
         if (empty($this->raterId)) {
             // Redirect if not permitted to do an assessment for this framework now
             $this->redirectIfAssessmentNotPermitted($this->assessment()?->framework?->id, $this->assessmentId);
-            $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework->id, $this->action);
         }
+        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework->id, $this->action);
 
         if (! empty($this->raterId) && ! $this->assessmentRater()) {
             abort(404);

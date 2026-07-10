@@ -58,11 +58,20 @@ trait AssessmentHelperTrait
         if ((in_array($edit, [null, '', '0'], true) && $allAnswered) || $alreadySubmitted) {
 
             if (!empty($this->raterId)) {
-                $url = URL::signedRoute('assessment-rater-completed', [
-                    'assessmentId' => $assessment->id,
-                    'raterId' => $this->raterId
-                ]);
-                return redirect()->to($url);
+                if ($alreadySubmitted) {
+                    $url = URL::signedRoute('assessment-rater-completed', [
+                        'assessmentId' => $assessment->id,
+                        'raterId' => $this->raterId
+                    ]);
+                    return redirect()->to($url);
+                } else {
+                    $url = URL::signedRoute('assessment-rater-summary', [
+                        'frameworkId' => $this->assessment()?->framework->id,
+                        'assessmentId' => $this->assessmentId,
+                        'raterId' => $this->raterId,
+                    ]);
+                    return redirect()->to($url);
+                }
             }
             return redirect()->route('summary', [
                 'frameworkId' => $frameworkId,
