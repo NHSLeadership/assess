@@ -40,11 +40,6 @@ trait AssessmentHelperTrait
         );
 
         if ($totalQuestions > 0) {
-            $selfRaterId = Rater::query()
-                ->where('subject_id', $assessment->user_id)
-                ->orderBy('id')
-                ->value('id');
-
             $currentRaterId = $this->currentRaterId($assessment);
             $responseCount = $currentRaterId
                 ? $assessment->responses()
@@ -58,7 +53,7 @@ trait AssessmentHelperTrait
         if ((in_array($edit, [null, '', '0'], true) && $allAnswered) || $alreadySubmitted) {
 
             if (!empty($this->raterId)) {
-                if ($alreadySubmitted) {
+                if (!empty($this->assessmentRater()?->submitted_at)) {
                     $url = URL::signedRoute('assessment-rater-completed', [
                         'assessmentId' => $assessment->id,
                         'raterId' => $this->raterId
@@ -396,6 +391,19 @@ trait AssessmentHelperTrait
         return ! empty($this->raterId)
             ? $this->raterId
             : Rater::where('subject_id', $assessment?->user_id)->orderBy('id')->first()?->id;
+    }
+
+    public function assessmentCompletedDate(): ?\Illuminate\Support\Carbon
+    {
+        if ($this->raterId) {
+            return \App\Models\AssessmentRater::query()
+                ->where('assessment_id', $this->assessmentId)
+                ->where('rater_id', $this->raterId)
+                ->first()
+                ?->submitted_at;
+        }
+
+        return $this->assessment?->submitted_at;
     }
 
 }

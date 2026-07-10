@@ -1,7 +1,9 @@
 <?php
 
+use App\Livewire\AssessmentCompleted;
 use App\Livewire\SelectRater;
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
 use App\Models\NodeType;
@@ -247,4 +249,39 @@ test('addGroup prevents duplicate group names for same user', function () {
         ->set('newGroupName', 'Peers')
         ->call('addGroup')
         ->assertHasErrors(['newGroupName']);
+});
+
+it('shows the correct assessment submitted date', function () {
+
+    $user = makeAuthUser();
+    Livewire::actingAs($user);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    $framework = Framework::factory()->create();
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+        'submitted_at' => now(),
+    ]);
+
+    $submittedAt = now();
+
+    $assessmentRater = AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'submitted_at' => $submittedAt,
+    ]);
+
+    $component = Livewire::test(AssessmentCompleted::class, [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    expect($component->instance()->assessmentCompletedDate())
+        ->toEqual($assessmentRater->submitted_at);
+
 });

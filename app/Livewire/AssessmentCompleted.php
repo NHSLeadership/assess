@@ -52,18 +52,6 @@ class AssessmentCompleted extends Component
         }
     }
 
-    public function assessmentCompletedDate(): ?\Illuminate\Support\Carbon
-    {
-        if ($this->raterId) {
-            return \App\Models\AssessmentRater::query()
-                ->where('assessment_id', $this->assessmentId)
-                ->where('rater_id', $this->raterId)
-                ->first()
-                ?->submitted_at;
-        }
-
-        return $this->assessment?->submitted_at;
-    }
 
     #[Title('Assessment completed')]
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View

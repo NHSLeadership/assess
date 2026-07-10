@@ -127,10 +127,14 @@
                 Complete assessment
             </button>
         @else
-            <button class="nhsuk-button"
-                    wire:click.prevent="viewReport()">
-                View report
-            </button>
+            @if(!empty($this->raterId))
+                Your assessment was successfully completed on {{ $this->assessmentCompletedDate()?->format('d M Y \a\t H:i') }}.
+            @else
+                <button class="nhsuk-button"
+                        wire:click.prevent="viewReport()">
+                    View report
+                </button>
+            @endif
         @endif
     </div>
 </div>
