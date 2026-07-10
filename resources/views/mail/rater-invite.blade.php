@@ -1,7 +1,6 @@
 @component('mail::message')
 
-{!! $intro !!}
-
+{!! Illuminate\Mail\Markdown::parse($intro) !!}
 ---
 
 **Feedback for:** {{ $subjectName }}

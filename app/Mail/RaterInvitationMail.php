@@ -36,17 +36,24 @@ class RaterInvitationMail extends Mailable
             ?? $this->defaultInvitationIntro();
     }
 
+
     protected function defaultInvitationIntro(): string
     {
-        $frameworkName = $this->assessment->framework?->name ?? 'assessment framework';
+        $frameworkName = $this->assessment->framework?->name
+            ?? 'assessment framework';
 
-        $intro = "Dear {$this->rater->name},"
-        . "<p> {$this->subjectName} has invited you to provide feedback as part of their assessment against the {$frameworkName}.</p>"
-        . "<p>Your feedback will form part of their 360 assessment, helping them identity strengths and development opportunities as part of their ongoing professional development.</p>"
-        . "<p>Feedback should take around 15-20 minutes and can be completed across multiple sessions.</p>"
-        . "<p>Keep this email so you can reuse the link to resume feedback.</p>"
-        . "<p>Do not share with anyone else.</p>";
+        return <<<MARKDOWN
+Dear {$this->rater->name},
 
-        return $intro;
+{$this->subjectName} has invited you to provide feedback as part of their assessment against the {$frameworkName}.
+
+Your feedback will form part of their 360 assessment, helping them identify strengths and development opportunities as part of their ongoing professional development.
+
+Feedback should take around 15–20 minutes and can be completed across multiple sessions.
+
+Please keep this email so you can use the link to resume your feedback later.
+
+Please do not share this link with anyone else.
+MARKDOWN;
     }
 }
