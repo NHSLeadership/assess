@@ -71,17 +71,11 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (
             AuthenticationException $e,
-                                    $request
+            \Illuminate\Http\Request $request
         ) {
-            logger()->info('AuthenticationException', [
-                'livewire' => $request->hasHeader('X-Livewire'),
-                'url' => $request->path(),
-            ]);
-
-            if ($request->header('X-Livewire')) {
-                abort(419);
+            if ($request->hasHeader('X-Livewire')) {
+                return response('', 419);
             }
-
             return null;
         });
 
