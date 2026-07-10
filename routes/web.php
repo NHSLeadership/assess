@@ -14,9 +14,25 @@ use App\Livewire\Review;
 use App\Livewire\ReviewRequest;
 use App\Livewire\Summary;
 use App\Livewire\Variants;
+use App\Mail\RaterInvitationMail;
+use App\Models\Assessment;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', Home::class)->name('home');
+
+Route::get('/preview-rater-email', function () {
+
+    $mail = new \App\Mail\RaterInvitationMail(
+        assessment: \App\Models\Assessment::firstOrFail(),
+        rater: \App\Models\Rater::firstOrFail(),
+        url: 'https://example.com',
+        subjectName: 'Andrew Blane',
+        role: 'Manager',
+        groupName: 'DevOps',
+    );
+
+    return $mail->render();
+});
 
 Route::any('/admin/logout', fn(): \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse => redirect('/logout'))->name('filament.admin.logout');
 Route::any('/admin/login', fn(): \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse => redirect('/login'))->name('filament.admin.login');
