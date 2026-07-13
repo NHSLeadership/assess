@@ -159,3 +159,107 @@ test('inviteRater sends invitation for selected rater', function () {
         ])
         ->call('inviteRater', $rater->id);
 });
+
+it('returns 404 when user does not own the assessment', function () {
+    $owner = makeAuthUser(['user_id' => 1]);
+    $otherUser = makeAuthUser(['user_id' => 2]);
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $owner->user_id,
+    ]);
+
+    Livewire::actingAs($otherUser);
+
+    $this->get(route('assessment-raters', [
+        'assessmentId' => $assessment->id,
+    ]))
+        ->assertNotFound();
+});
+
+it('mounts successfully when user owns the assessment', function () {
+    $user = makeAuthUser();
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+    ]);
+
+    Livewire::actingAs($user);
+
+    Livewire::test(AssessmentRaters::class, [
+        'assessmentId' => $assessment->id,
+    ])
+        ->assertSet('assessmentId', $assessment->id);
+});
+
+it('clears the pending detach id', function () {
+    $user = makeAuthUser();
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+    ]);
+
+    Livewire::actingAs($user);
+
+    Livewire::test(AssessmentRaters::class, [
+        'assessmentId' => $assessment->id,
+    ])
+        ->set('pendingDetachId', 123)
+        ->call('cancelDetach')
+        ->assertSet('pendingDetachId', null);
+});
+
+it('returns early when there is no pending detach id', function () {
+    $user = makeAuthUser();
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+    ]);
+
+    Livewire::actingAs($user);
+
+    Livewire::test(AssessmentRaters::class, [
+        'assessmentId' => $assessment->id,
+    ])
+        ->set('pendingDetachId', null)
+        ->call('confirmDetach')
+        ->assertSet('pendingDetachId', null);
+
+    expect(session()->has('success'))->toBeFalse()
+        ->and(session()->has('error'))->toBeFalse();
+});
+
+it('redirects to create rater page', function () {
+    $user = makeAuthUser();
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+    ]);
+
+    Livewire::actingAs($user);
+
+    Livewire::test(AssessmentRaters::class, [
+        'assessmentId' => $assessment->id,
+    ])
+        ->call('addNewRater')
+        ->assertRedirect(route('create-rater', [
+            'assessmentId' => $assessment->id,
+        ]));
+});
+
+it('redirects to edit rater page', function () {
+    $user = makeAuthUser();
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+    ]);
+
+    Livewire::actingAs($user);
+
+    Livewire::test(AssessmentRaters::class, [
+        'assessmentId' => $assessment->id,
+    ])
+        ->call('editAssessmentRater', 123)
+        ->assertRedirect(route('edit-rater', [
+            'assessmentRaterId' => 123,
+        ]));
+});

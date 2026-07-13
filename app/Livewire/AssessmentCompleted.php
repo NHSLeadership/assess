@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
+use App\Models\AssessmentRater;
 use App\Traits\AssessmentHelperTrait;
 use Illuminate\Support\Facades\URL;
 use Livewire\Attributes\Title;
@@ -19,10 +20,15 @@ class AssessmentCompleted extends Component
     /** int|null */
     public $raterId;
 
+    protected ?AssessmentRater $cachedAssessmentRater = null;
+
+
     public function mount()
     {
-        if (request()->route()->getName() === 'assessment-rater-completed' && ! request()->hasValidSignatureWhileIgnoring(['nodeId', 'action'])) {
-            abort(403);
+        if (request()->route()->getName() === 'assessment-rater-completed') {
+            if (! request()->hasValidSignatureWhileIgnoring(['nodeId', 'action']) || !$this->assessmentRater() || empty($this->assessmentRater()?->submitted_at)) {
+                abort(404);
+            }
         }
 
         if (empty($this->assessmentId) || ! is_numeric($this->assessmentId)) {
@@ -37,21 +43,11 @@ class AssessmentCompleted extends Component
     public function viewReport(): \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
 
     {
-        if (!empty($this->raterId)) {
-            $url = URL::signedRoute('assessment-rater-report', [
-                'frameworkId' => $this->assessment()?->framework->id,
-                'assessmentId' => $this->assessmentId,
-                'raterId' => $this->raterId,
-            ]);
-            return redirect()->to($url);
-        } else {
-            return redirect()->route('assessment-report', [
-                'frameworkId' => $this->assessment()?->framework?->id,
-                'assessmentId' => $this->assessmentId,
-            ]);
-        }
+        return redirect()->route('assessment-report', [
+            'frameworkId' => $this->assessment()?->framework?->id,
+            'assessmentId' => $this->assessmentId,
+        ]);
     }
-
 
     #[Title('Assessment completed')]
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View

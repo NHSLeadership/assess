@@ -105,13 +105,6 @@ class Questions extends Component
 
         $this->dispatch('questions-next-node', $this->node()?->id);
     }
-    protected function orderedQuestions(?Node $node)
-    {
-        return $node?->questions()
-            ->where('active', true)
-            ->orderBy('order')
-            ->orderBy('id');
-    }
 
     public function nodeQuestions(): Collection
     {

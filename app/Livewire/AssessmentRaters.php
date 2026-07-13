@@ -47,7 +47,19 @@ class AssessmentRaters extends Component
         try {
             $assessmentRater = AssessmentRater::findOrFail($id);
             if($assessmentRater?->assessment?->user_id === $this->user()?->user_id) {
+                $rater = $assessmentRater->rater;
+
                 $assessmentRater->delete();
+
+                if (
+                    $rater &&
+                    ! AssessmentRater::query()
+                        ->where('rater_id', $rater->id)
+                        ->exists()
+                ) {
+                    $rater->delete();
+                }
+
                 session()->flash('success', [
                     'heading' => __('Rater removed'),
                     'message' => __('Rater removed successfully.'),

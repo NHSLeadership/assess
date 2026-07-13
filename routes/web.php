@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AssessmentReportPdfController;
 use App\Livewire\AssessmentCompleted;
-use App\Livewire\AssessmentRater;
 use App\Livewire\AssessmentRaters;
 use App\Livewire\AssessmentReport;
 use App\Livewire\Assessments;
