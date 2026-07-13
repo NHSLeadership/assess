@@ -14,6 +14,7 @@ test('it sends an invitation and sets invited_at', function () {
 
     // attach rater
     $assessment->raters()->attach($rater->id, [
+        'type' => \App\Enums\RaterType::Peer->value,
         'invited_at' => null,
     ]);
 
@@ -44,7 +45,9 @@ test('invitation email contains signed url', function () {
     $assessment = Assessment::factory()->create();
     $rater = Rater::factory()->create();
 
-    $assessment->raters()->attach($rater->id);
+    $assessment->raters()->attach($rater->id, [
+        'type' => \App\Enums\RaterType::Peer->value,
+    ]);
 
     app(RaterInvitationService::class)->send($assessment, $rater);
 

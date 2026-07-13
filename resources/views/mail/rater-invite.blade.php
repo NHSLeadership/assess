@@ -1,10 +1,18 @@
 @component('mail::message')
-You have been invited to complete an assessment.
 
-Please click the button below:
+{!! Illuminate\Mail\Markdown::parse($intro) !!}
+---
+
+**Feedback for:** {{ $subjectName }}
+
+**Your role:** {{ $role }}
+
+@if(filled($groupName))
+**Group:** {{ $groupName }}
+@endif
 
 @component('mail::button', ['url' => $url])
-Open assessment
+Provide feedback
 @endcomponent
 
 If the button above does not work, please copy and paste the following link into your browser:
@@ -14,7 +22,5 @@ If the button above does not work, please copy and paste the following link into
 For further guidance and support, please visit our
 [support page](https://support.leadershipacademy.nhs.uk/).
 
-Best regards,
-Assessment System Team
-W: [leadershipacademy.nhs.uk](https://leadershipacademy.nhs.uk) | Follow us: @NHSLeadership
+NHS Leadership Academy
 @endcomponent

@@ -32,8 +32,26 @@ class RaterInvitationService
         );
 
         // Send email
+        $assessmentRater = $assessment->raters()
+            ->where('raters.id', $rater->id)
+            ->firstOrFail();
+
+        $selfRater = Rater::query()
+            ->where('subject_id', $assessment->user_id)
+            ->orderBy('id')
+            ->first();
+
         Mail::to($rater->email)
-            ->send(new RaterInvitationMail($assessment, $rater, $url));
+            ->send(
+                new RaterInvitationMail(
+                    assessment: $assessment,
+                    rater: $rater,
+                    url: $url,
+                    subjectName: $selfRater?->name ?? 'Unknown',
+                    role: ucfirst($assessmentRater->pivot->type->value),
+                    groupName: $assessmentRater->pivot->group?->name,
+                )
+            );
 
         // Set invited_at timestamp
         $assessment->raters()->updateExistingPivot($rater->id, [

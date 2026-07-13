@@ -5,11 +5,12 @@
 
 ---
 ### v2.1.3
-> Updated: 07.07.2026
+> Updated: 10.07.2026
 1. Add service to back-fill rater details for existing assessments
 2. Manage 360 assessment raters
 2. Invite raters to complete 360 assessment
 3. Prevent raters selecting themselves as a rater
+4. Improve invitation email
 
 ---
 ### v2.1.2
