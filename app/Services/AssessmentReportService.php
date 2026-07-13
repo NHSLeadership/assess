@@ -27,7 +27,8 @@ class AssessmentReportService
 
     public function __construct(
         public int $frameworkId,
-        public int $assessmentId
+        public int $assessmentId,
+        public ?int $raterId = null
     ) {
 
         $this->assessment = Assessment::with([
@@ -63,7 +64,11 @@ class AssessmentReportService
 
     public function responses(): ?Collection
     {
-        return $this->assessment->responses;
+        return $this->assessment->responses
+            ->when(
+                $this->raterId,
+                fn ($responses) => $responses->where('rater_id', $this->raterId)
+            );
     }
 
     public function scaleOptions(): array

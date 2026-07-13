@@ -43,6 +43,8 @@ class AssessmentReport extends Component
     /** @var array<string, mixed> */
     public array $signposts;
 
+    protected ?AssessmentRater $cachedAssessmentRater = null;
+
     /**
      * @throws FrameworkNotFoundException
      * @throws AssessmentNotFoundException
@@ -51,6 +53,13 @@ class AssessmentReport extends Component
      */
     public function mount(int $frameworkId, int $assessmentId, ?int $raterId = null): void
     {
+        if (request()->route()?->getName() === 'assessment-rater-report' && ! request()->hasValidSignature()) {
+            abort(403);
+        }
+        if (! empty($this->raterId) && ! $this->assessmentRater()) {
+            abort(404);
+        }
+
         $this->frameworkId = $frameworkId;
         $this->assessmentId = $assessmentId;
         $this->raterId = $raterId;
@@ -65,7 +74,7 @@ class AssessmentReport extends Component
             throw new AssessmentNotFoundException(__('alerts.errors.assessment-not-found'));
         }
 
-        if ($this->assessment()->user_id !== $this->user()?->user_id) {
+        if (empty($this->raterId) && ($this->assessment()->user_id !== $this->user()?->user_id)) {
             abort(404);
         }
 
@@ -98,7 +107,7 @@ class AssessmentReport extends Component
         }
 
         // Use the shared service for all report data
-        $service = new AssessmentReportService($frameworkId, $assessmentId);
+        $service = new AssessmentReportService($frameworkId, $assessmentId, $this->raterId);
 
         $this->barCharts = $service->barCharts();
         $this->barChartsCompetency = $service->barChartsCompetency();
@@ -152,7 +161,14 @@ class AssessmentReport extends Component
     #[Computed]
     public function responses(): ?Collection
     {
-        return $this->assessment()?->responses()->get();
+        //return $this->assessment()?->responses()->get();
+        $query = $this->assessment()?->responses();
+
+        if ($this->raterId) {
+            $query->where('rater_id', $this->raterId);
+        }
+
+        return $query?->get();
     }
 
     #[Computed]

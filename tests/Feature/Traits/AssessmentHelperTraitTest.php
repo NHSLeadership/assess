@@ -1,11 +1,15 @@
 <?php
 
+use App\Livewire\AssessmentCompleted;
+use App\Livewire\SelectRater;
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
 use App\Models\NodeType;
 use App\Models\Question;
 use App\Models\Rater;
+use App\Models\RaterGroup;
 use App\Models\Response;
 use App\Models\Scale;
 use App\Models\ScaleOption;
@@ -50,7 +54,7 @@ test('redirectIfSubmittedOrFinished redirects when all required questions are an
     $framework = Framework::factory()->create();
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $user->id,
+        'user_id' => $user->user_id,
     ]);
 
     $rater = Rater::factory()->create([
@@ -203,4 +207,81 @@ test('allows starting a new assessment when cooldown has passed', function () {
     $response = $helper->redirectIfAssessmentNotPermitted($framework->id, null);
 
     expect($response)->toBeNull();
+});
+
+test('addGroup creates a new group and selects it', function () {
+    $user = makeAuthUser(['user_id' => '1000000000']);
+
+    Livewire::actingAs($user)
+        ->test(SelectRater::class, [
+            'assessmentId' => Assessment::factory()->create([
+                'user_id' => $user->user_id,
+            ])->id,
+        ])
+        ->set('showNewGroup', true)
+        ->set('newGroupName', 'Peers')
+        ->call('addGroup')
+        ->assertSet('showNewGroup', false)
+        ->assertSet('newGroupName', null);
+
+    $group = RaterGroup::query()
+        ->where('subject_id', $user->user_id)
+        ->where('name', 'Peers')
+        ->first();
+
+    expect($group)->not->toBeNull();
+});
+
+test('addGroup prevents duplicate group names for same user', function () {
+    $user = makeAuthUser(['user_id' => '1000000000']);
+
+    RaterGroup::create([
+        'subject_id' => $user->user_id,
+        'name' => 'Peers',
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(SelectRater::class, [
+            'assessmentId' => Assessment::factory()->create([
+                'user_id' => $user->user_id,
+            ])->id,
+        ])
+        ->set('newGroupName', 'Peers')
+        ->call('addGroup')
+        ->assertHasErrors(['newGroupName']);
+});
+
+it('shows the correct assessment submitted date', function () {
+
+    $user = makeAuthUser();
+    Livewire::actingAs($user);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    $framework = Framework::factory()->create();
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+        'submitted_at' => now(),
+    ]);
+
+    $submittedAt = now();
+
+    $assessmentRater = AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'submitted_at' => $submittedAt,
+    ]);
+
+    $component = Livewire::test(AssessmentCompleted::class, [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    expect($component->instance()->assessmentCompletedDate())
+        ->toEqual($assessmentRater->submitted_at);
+
 });

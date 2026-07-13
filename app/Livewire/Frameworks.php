@@ -7,7 +7,9 @@ use App\Enums\RetentionActorType;
 use App\Enums\RetentionReason;
 use App\Models\Assessment;
 use App\Models\Framework;
+use App\Models\Rater;
 use App\Models\RetentionEvent;
+use App\Services\QuestionTextResolver;
 use App\Settings\Retention;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
@@ -81,11 +83,13 @@ class Frameworks extends Component
         }
 
         session()->flash(
-            'success',
-            __('Expiring assessments have been kept for another :count :unit.', [
-                'count' => $years,
-                'unit'  => \Illuminate\Support\Str::plural('year', $years),
-            ])
+            'success',[
+                'message' => __('Expiring assessments have been kept for another :count :unit.', [
+                    'count' => $years,
+                    'unit'  => \Illuminate\Support\Str::plural('year', $years),
+                ]),
+                'heading' => __('Expiring assessments'),
+            ]
         );
     }
 
@@ -109,7 +113,10 @@ class Frameworks extends Component
         try {
             $assessment = Assessment::findOrFail($id);
             $assessment->delete();
-            session()->flash('success', __('Assessment deleted.'));
+            session()->flash('success', [
+                'heading' => __('Assessment deleted.'),
+                'message' => __('alerts.success.deleted'),
+            ]);
         } catch (Throwable $e) {
             Log::error('Error deleting assessment', [
                 'assessment_id' => $id,
@@ -193,18 +200,26 @@ class Frameworks extends Component
         }
 
         // Count only ACTIVE questions in the framework
-        $total = (int) ($assessment->framework?->questions()
-            ->where('active', true)
-            ->count() ?? 0);
+        $total = count(
+            QuestionTextResolver::optionsFor($assessment, null)
+        );
 
         if ($total <= 0) {
             return 'Not available';
         }
 
+        $selfRaterId = Rater::query()
+            ->where('subject_id', $assessment->user_id)
+            ->orderBy('id')
+            ->value('id');
+
         // Count only responses that belong to ACTIVE questions
-        $answered = (int) ($assessment->responses()
-            ->whereHas('question', fn ($q) => $q->where('active', true))
-            ->count());
+        $answered = $selfRaterId
+            ? $assessment->responses()
+                ->where('rater_id', $selfRaterId)
+                ->whereHas('question', fn ($q) => $q->where('active', true))
+                ->count()
+            : 0;
 
         $percentage = (int) round(($answered / $total) * 100);
 
@@ -268,6 +283,13 @@ class Frameworks extends Component
      */
     public function getAssessmentStatusTag(Assessment $assessment): array
     {
+        $selfRaterId = Rater::query()
+            ->where('subject_id', $assessment->user_id)
+            ->orderBy('id')
+            ->first()?->id;
+        $requiredResponsesCount = $this->responsesCount($assessment->id, $selfRaterId, true);
+        $requiredQuestionsCount = $this->requiredQuestionsCount($assessment, $selfRaterId);
+
         if ($assessment->isWithinExpiryWarningWindow()) {
             return [
                 'class' => 'nhsuk-tag--yellow',
@@ -283,7 +305,7 @@ class Frameworks extends Component
                     'text' => __('Not started'),
                     'subtitle' => null,
                 ];
-            } elseif ($assessment->responses?->count() === $assessment?->framework?->questions?->where('required', 1)->count()) {
+            } elseif ($requiredResponsesCount == $requiredQuestionsCount) {
                 return [
                     'class' => 'nhsuk-tag--orange',
                     'text' => __('Ready'),

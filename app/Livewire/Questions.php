@@ -46,7 +46,7 @@ class Questions extends Component
     public ?int $nodeId = null;
     public ?int $raterId = null;
 
-    public ?string $edit = null;
+    public ?string $action = null;
     public array $resolvedQuestionTexts = [];
     protected ?Assessment $cachedAssessment = null;
     protected ?Rater $cachedRater = null;
@@ -70,8 +70,8 @@ class Questions extends Component
         if (empty($this->raterId)) {
             // Redirect if not permitted to do an assessment for this framework now
             $this->redirectIfAssessmentNotPermitted($this->assessment()?->framework?->id, $this->assessmentId);
-            $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework->id, $this->edit);
         }
+        $this->redirectIfSubmittedOrFinished($this->assessment(), $this->assessment()?->framework->id, $this->action);
 
         if (! empty($this->raterId) && ! $this->assessmentRater()) {
             abort(404);
@@ -92,7 +92,7 @@ class Questions extends Component
             }
         }
 
-        if ($this->nodeId !== null && $this->nodeId !== 0 && $this->edit === 'edit') {
+        if ($this->nodeId !== null && $this->nodeId !== 0 && $this->action === 'edit') {
             // Explicit edit link from Summary -> honour it
             $this->goToNodeById($this->nodeId);
         } else {
@@ -104,13 +104,6 @@ class Questions extends Component
         }
 
         $this->dispatch('questions-next-node', $this->node()?->id);
-    }
-    protected function orderedQuestions(?Node $node)
-    {
-        return $node?->questions()
-            ->where('active', true)
-            ->orderBy('order')
-            ->orderBy('id');
     }
 
     public function nodeQuestions(): Collection
@@ -329,6 +322,7 @@ class Questions extends Component
             ]);
         }
 
+        $hasSavedResponse = false;
         foreach (($this->data ?? []) as $name => $value) {
 
             // Skip reflection keys entirely
@@ -358,6 +352,7 @@ class Questions extends Component
                 $this->assessmentId,
                 $raterId
             );
+            $hasSavedResponse = true;
 
             // Save optional reflection for scale questions
             if ($question['response_type'] === ResponseType::TYPE_SCALE->value) {
@@ -377,7 +372,28 @@ class Questions extends Component
                 );
             }
         }
+
+        if ($hasSavedResponse && $this->isRaterAssessment()) {
+            $this->markRaterAssessmentStarted();
+        }
+
     }
+    private function isRaterAssessment(): bool
+    {
+        return ! empty($this->raterId);
+    }
+
+    private function markRaterAssessmentStarted(): void
+    {
+        AssessmentRater::query()
+            ->where('assessment_id', $this->assessmentId)
+            ->where('rater_id', $this->raterId)
+            ->whereNull('started_at')
+            ->update([
+                'started_at' => now(),
+            ]);
+    }
+
 
     #[Computed]
     public function visibleRequiredCount(): int

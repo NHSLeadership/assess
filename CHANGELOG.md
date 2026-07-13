@@ -24,7 +24,6 @@
 > Updated: 3.07.2026
 1. Fix broken contact us link
 
-
 ---
 ### v2.1.0
 > Updated: 25.06.2026

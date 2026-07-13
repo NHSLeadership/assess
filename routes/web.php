@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AssessmentReportPdfController;
 use App\Livewire\AssessmentCompleted;
+use App\Livewire\AssessmentRaters;
 use App\Livewire\AssessmentReport;
 use App\Livewire\Assessments;
+use App\Livewire\EditRater;
 use App\Livewire\FrameworkInstructions;
 use App\Livewire\Frameworks;
 use App\Livewire\Home;
 use App\Livewire\ReviewRequest;
+//use App\Livewire\SelectRater;
 use App\Livewire\Summary;
 use App\Livewire\Variants;
 use Illuminate\Support\Facades\Route;
@@ -38,24 +41,31 @@ Route::group([
     Route::post('/assessment-report/{frameworkId}/{assessmentId}', AssessmentReportPdfController::class)
         ->name('assessment-report-pdf');
 
+    if (config('app.assess_360_enabled')) {
+        Route::get('/assessment/{assessmentId}/raters', AssessmentRaters::class)->name('assessment-raters');
+        //Route::get('/assessment/{assessmentId}/select-rater', SelectRater::class)->name('select-rater');
+        Route::get('/assessment/{assessmentId}/add-rater', EditRater::class)->name('create-rater');
+        Route::get('/assessment-rater/{assessmentRaterId}/edit', EditRater::class)->name('edit-rater');
+    }
+
+
     /**
      * Request review
      */
     Route::get('/request/{assessmentId}', ReviewRequest::class)->name('review-request');
 });
 
-Route::group([
-    'middleware' => 'signed:nodeId,edit',
-], function (): void {
-    Route::get('/rate-assessment/{assessmentId}/{raterId}', Assessments::class)
-        ->name('assessment-rater');
-    Route::get('/rate-assessment-summary/{frameworkId?}/{assessmentId?}/{raterId?}', Summary::class)
-        ->name('assessment-rater-summary');
-    Route::get('/rate-assessment-completed/{assessmentId}/{raterId}', AssessmentCompleted::class)
-        ->name('assessment-rater-completed');
-    Route::get('/rate-assessment-report/{frameworkId}/{assessmentId}/{raterId}', AssessmentReport::class)
-        ->name('assessment-rater-report');
+if (config('app.assess_360_enabled')) {
+    Route::group([
+        'middleware' => 'signed:nodeId,action',
+    ], function (): void {
+        Route::get('/rate-assessment/{assessmentId}/{raterId}', Assessments::class)
+            ->name('assessment-rater');
+        Route::get('/rate-assessment-summary/{frameworkId?}/{assessmentId?}/{raterId?}', Summary::class)
+            ->name('assessment-rater-summary');
+        Route::get('/rate-assessment-completed/{assessmentId}/{raterId}', AssessmentCompleted::class)
+            ->name('assessment-rater-completed');
 
-});
-
+    });
+}
 require __DIR__.'/auth.php';

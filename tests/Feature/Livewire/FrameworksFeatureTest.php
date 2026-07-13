@@ -735,3 +735,45 @@ it('hasVariantAttributes returns false when framework has no variant attributes'
             expect($component->instance()->hasVariantAttributes())->toBeFalse();
         });
 });
+
+test('getAssessmentStatusTag returns started when only some required questions are answered', function () {
+    $user = makeAuthUser();
+    $rater = raterForUser($user);
+
+    $setup = createFrameworkWithNodeAndQuestions(2);
+
+    $framework = $setup['framework'];
+    $question1 = $setup['questions']->get(0);
+    $question2 = $setup['questions']->get(1);
+    $scaleOption = $setup['scaleOption'];
+
+    $question1->update(['required' => true]);
+    $question2->update(['required' => true]);
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+        'submitted_at' => null,
+    ]);
+
+    Response::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'question_id' => $question1->id,
+        'scale_option_id' => $scaleOption->id,
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(Frameworks::class, [
+            'frameworkId' => $framework->id,
+        ])
+        ->tap(function ($component) use ($assessment) {
+            $result = $component
+                ->instance()
+                ->getAssessmentStatusTag($assessment->fresh());
+
+            expect($result['class'])->toBe('nhsuk-tag--blue');
+            expect($result['text'])->toBe(__('Started'));
+            expect($result['subtitle'])->toBeNull();
+        });
+});

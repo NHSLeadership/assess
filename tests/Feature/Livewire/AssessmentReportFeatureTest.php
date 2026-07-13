@@ -35,7 +35,7 @@ it('throws FrameworkNotFoundException when framework does not exist', function (
 
     $component->mount(
         frameworkId: 999,              // nonexistent
-        assessmentId: $assessment->id
+        assessmentId: $assessment->id,
     );
 });
 

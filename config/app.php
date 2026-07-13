@@ -149,4 +149,5 @@ return [
     'gotenberg_basic_auth_enabled' => env('GOTENBERG_BASIC_AUTH_ENABLED', false),
     'gotenberg_basic_auth_username' => env('GOTENBERG_BASIC_AUTH_USERNAME', false),
     'gotenberg_basic_auth_password' => env('GOTENBERG_BASIC_AUTH_PASSWORD', false),
+    'assess_360_enabled' => env('ASSESS_360_ENABLED', false),
 ];

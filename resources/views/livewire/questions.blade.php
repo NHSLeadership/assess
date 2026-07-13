@@ -57,7 +57,8 @@
                 @if ($this->responses?->count())
                     {{-- Submit button continues to next page instead of pagination links --}}
                     <div>
-                        @if($this->nodes()->key() + 1 > 0)
+                        {{-- For raters we dont have variant selections now --}}
+                        @if( (empty($this->raterId) && ($this->nodes()->key() + 1 > 0) || (!empty($this->raterId) && $this->nodes()->key() > 0)) )
                             <button wire:click.prevent="goPrevious" class="nhsuk-button nhsuk-u-margin-right-3">Previous page</button>
                         @endif
                         @if($this->nodes()->count() > $this->nodes()->key() + 1 )

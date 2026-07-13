@@ -86,7 +86,7 @@ it('jumps to the specified node when nodeId is provided', function () {
     Livewire::test(Questions::class, [
         'assessmentId' => $assessment->id,
         'nodeId' => $setup2['node']->id,
-        'edit' => 'edit',
+        'action' => 'edit',
     ])
         ->assertSet('nodeKeyId', 1);
 
@@ -348,4 +348,52 @@ it('resumes to first unanswered node for the current rater only', function () {
         'raterId' => $raterA->id,
     ])
         ->assertSet('nodeKeyId', 1);
+});
+
+it('returns textarea validation messages', function () {
+    $user = makeAuthUser();
+    Livewire::actingAs($user);
+
+    $question = Question::factory()->make([
+        'name' => 'comments',
+        'response_type' => ResponseType::TYPE_TEXTAREA->value,
+    ]);
+
+    $component = Mockery::mock(Questions::class, [])->makePartial();
+    $component->shouldAllowMockingProtectedMethods();
+
+    $component->shouldReceive('nodeQuestions')
+        ->once()
+        ->andReturn(collect([$question]));
+
+    $messages = invade($component)->messages();
+
+    $key = 'data.'.$question['name'];
+
+    expect($messages[$key . '.required'])
+        ->toBe('Enter your response')
+        ->and($messages[$key . '.max'])
+        ->toContain('Your response must be less than');
+});
+
+it('returns 404 when rater assessment does not exist', function () {
+    $user = makeAuthUser();
+
+    $framework = Framework::factory()->create();
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+    ]);
+
+    $this->actingAs($user);
+
+    $url = URL::signedRoute('assessment-rater', [
+        'frameworkId' => $framework->id,
+        'assessmentId' => $assessment->id,
+        'raterId' => 999999,
+    ]);
+
+    $this->get($url)
+        ->assertNotFound();
 });

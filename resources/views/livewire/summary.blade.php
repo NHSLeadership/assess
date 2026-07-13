@@ -109,7 +109,10 @@
         @endforeach
 
         @php
-            $hasAllRequired = $this->answeredRequiredCount() === $this->requiredCount() && $this->requiredCount() > 0;
+        $currentRaterId = $this->currentRaterId($this->assessment());
+        $requiredResponsesCount = $this->responsesCount($this->assessmentId, $currentRaterId, true);
+        $requiredQuestionsCount = $this->requiredQuestionsCount($this->assessment(), $currentRaterId);
+        $hasAllRequired = $requiredResponsesCount === $requiredQuestionsCount && $requiredQuestionsCount > 0;
         @endphp
 
         @if (!$isSubmitted && !$hasAllRequired)
@@ -124,10 +127,14 @@
                 Complete assessment
             </button>
         @else
-            <button class="nhsuk-button"
-                    wire:click.prevent="viewReport()">
-                View report
-            </button>
+            @if(!empty($this->raterId))
+                Your assessment was successfully completed on {{ $this->assessmentCompletedDate()?->format('d M Y \a\t H:i') }}.
+            @else
+                <button class="nhsuk-button"
+                        wire:click.prevent="viewReport()">
+                    View report
+                </button>
+            @endif
         @endif
     </div>
 </div>

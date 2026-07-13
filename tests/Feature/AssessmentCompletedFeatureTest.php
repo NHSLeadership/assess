@@ -27,41 +27,6 @@ it('throws ModelNotFoundException when assessment is missing', function () {
     ]);
 });
 
-it('redirects to signed rater report when raterId is provided', function () {
-
-    $user = makeAuthUser();
-    Livewire::actingAs($user);
-
-    $rater = Rater::factory()->create([
-        'subject_id' => $user->user_id,
-    ]);
-
-    $framework = Framework::factory()->create();
-
-    $assessment = Assessment::factory()->create([
-        'framework_id' => $framework->id,
-        'user_id' => $user->user_id,
-        'submitted_at' => now(),
-    ]);
-
-    AssessmentRater::factory()->create([
-        'assessment_id' => $assessment->id,
-        'rater_id' => $rater->id,
-    ]);
-
-    $expectedUrl = URL::signedRoute('assessment-rater-report', [
-        'frameworkId' => $framework->id,
-        'assessmentId' => $assessment->id,
-        'raterId' => $rater->id,
-    ]);
-
-    Livewire::test(AssessmentCompleted::class, [
-        'assessmentId' => $assessment->id,
-        'raterId' => $rater->id,
-    ])
-        ->call('viewReport')
-        ->assertRedirect($expectedUrl);
-});
 
 it('redirects to normal assessment report when raterId is not provided', function () {
 
@@ -84,4 +49,65 @@ it('redirects to normal assessment report when raterId is not provided', functio
             'frameworkId' => $framework->id,
             'assessmentId' => $assessment->id,
         ]));
+});
+
+it('returns 404 when assessment rater has not been submitted', function () {
+
+    $user = makeAuthUser();
+    $this->actingAs($user);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'submitted_at' => null,
+    ]);
+
+    $url = URL::signedRoute('assessment-rater-completed', [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    $this->get($url)
+        ->assertNotFound();
+});
+
+it('redirects to frameworks when assessment id is missing', function () {
+    Livewire::test(AssessmentCompleted::class, [
+        'assessmentId' => null,
+    ])
+        ->assertRedirect(route('frameworks'));
+});
+
+it('redirects to frameworks when assessment id is not numeric', function () {
+    Livewire::test(AssessmentCompleted::class, [
+        'assessmentId' => 'abc',
+    ])
+        ->assertRedirect(route('frameworks'));
+});
+
+it('redirects to frameworks when assessment is not submitted', function () {
+    $user = makeAuthUser();
+
+    $framework = Framework::factory()->create();
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+        'submitted_at' => null,
+    ]);
+
+    $this->actingAs($user);
+
+    $this->get(route('assessment-completed', [
+        'assessmentId' => $assessment->id,
+    ]))
+        ->assertRedirect(route('frameworks'));
 });

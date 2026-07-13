@@ -60,7 +60,7 @@
                         :assessmentId="$this->assessmentId"
                         :nodeId="$this->nodeId"
                         :raterId="$this->raterId"
-                        :edit="$this->edit ?? null"
+                        :action="$this->action ?? null"
                         :resolvedQuestionTexts="$this->resolvedQuestionTexts"
                         :wire:key="'questions-assessment-' . $this->assessmentId . '-rater-' . ($this->raterId ?? 'self')"
                 />

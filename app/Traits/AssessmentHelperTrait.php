@@ -6,10 +6,18 @@ use App\Models\Assessment;
 use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
+use App\Models\Question;
 use App\Models\Rater;
+use App\Models\RaterGroup;
+use App\Models\Response;
+use App\Services\QuestionTextResolver;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Features\SupportRedirects\Redirector;
+use Throwable;
 
 trait AssessmentHelperTrait
 {
@@ -24,14 +32,42 @@ trait AssessmentHelperTrait
             return null;
         }
 
-        $totalQuestions = $assessment->framework
-            ?->questions()
-            ->count() ?? 0;
-        $responseCount = $assessment->responses()->count() ?? 0;
-        $allAnswered = $totalQuestions > 0 && $responseCount === $totalQuestions;
+        $totalQuestions = count(
+            QuestionTextResolver::optionsFor(
+                $assessment,
+                $this->assessmentRater()
+            )
+        );
 
+        if ($totalQuestions > 0) {
+            $currentRaterId = $this->currentRaterId($assessment);
+            $responseCount = $currentRaterId
+                ? $assessment->responses()
+                    ->where('rater_id', $currentRaterId)
+                    ->count()
+                : 0;
+        }
+
+        $allAnswered = $totalQuestions > 0 && ($responseCount ?? 0) === $totalQuestions;
         $alreadySubmitted = ! is_null($assessment->submitted_at);
         if ((in_array($edit, [null, '', '0'], true) && $allAnswered) || $alreadySubmitted) {
+
+            if (!empty($this->raterId)) {
+                if (!empty($this->assessmentRater()?->submitted_at)) {
+                    $url = URL::signedRoute('assessment-rater-completed', [
+                        'assessmentId' => $assessment->id,
+                        'raterId' => $this->raterId
+                    ]);
+                    return redirect()->to($url);
+                } else {
+                    $url = URL::signedRoute('assessment-rater-summary', [
+                        'frameworkId' => $this->assessment()?->framework->id,
+                        'assessmentId' => $this->assessmentId,
+                        'raterId' => $this->raterId,
+                    ]);
+                    return redirect()->to($url);
+                }
+            }
             return redirect()->route('summary', [
                 'frameworkId' => $frameworkId,
                 'assessmentId' => $assessment?->id,
@@ -124,7 +160,6 @@ trait AssessmentHelperTrait
         if (empty($this->assessmentId)) {
             return null;
         }
-
         if (!empty($this->raterId)) {
             $userId = Assessment::find($this->assessmentId)?->user_id;
         } else {
@@ -232,7 +267,6 @@ trait AssessmentHelperTrait
         if ($this->cachedAssessmentRater !== null) {
             return $this->cachedAssessmentRater;
         }
-
         if (empty($this->raterId) || empty($this->assessmentId)) {
             return null;
         }
@@ -241,6 +275,135 @@ trait AssessmentHelperTrait
             ->where('assessment_id', $this->assessmentId)
             ->where('rater_id', $this->raterId)
             ->first();
+    }
+
+    public function addGroup(): void
+    {
+        try {
+            $this->newGroupName = trim((string) $this->newGroupName);
+
+            $this->validate($this->groupRules());
+
+            $group = RaterGroup::create([
+                'subject_id' => $this->user()?->user_id,
+                'name' => $this->newGroupName,
+            ]);
+
+            $this->refreshGroupList();
+
+            $this->groupId = $group->id;
+            $this->newGroupName = null;
+            $this->showNewGroup = false;
+
+        } catch (ValidationException $e) {
+            throw $e;
+
+        } catch (Throwable $e) {
+            report($e);
+
+            $this->addError(
+                'newGroupName',
+                'Unable to create the group. Please try again.'
+            );
+
+        }
+    }
+
+    public function cancelAddGroup(): void
+    {
+        $this->showNewGroup = false;
+        $this->newGroupName = null;
+
+        $this->resetErrorBag('newGroupName');
+    }
+
+    public function groupRules(): array
+    {
+        return [
+            'newGroupName' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('rater_groups', 'name')
+                    ->where(fn ($query) => $query->where(
+                        'subject_id',
+                        $this->user()?->user_id
+                    )),
+            ],
+        ];
+    }
+
+    public function refreshGroupList(): void
+    {
+        $this->raterGroupList = RaterGroup::query()
+            ->where('subject_id', $this->user()?->user_id)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
+    public function responsesCount(int $assessmentId, ?int $raterId = null, bool $requiredOnly = false): int
+    {
+        if (empty($raterId)) {
+            return 0;
+        }
+//        return Response::query()
+//            ->where('assessment_id', $assessmentId)
+//            ->where('rater_id', $raterId)
+//            ->whereHas('question', fn ($query) => $query->where('required', true))
+//            ->count();
+
+        return Response::query()
+            ->where('assessment_id', $assessmentId)
+            ->where('rater_id', $raterId)
+            ->when(
+                $requiredOnly,
+                fn ($query) => $query->whereHas(
+                    'question',
+                    fn ($query) => $query->where('required', true)
+                )
+            )
+            ->count();
+
+    }
+
+    public function requiredQuestionsCount(
+        Assessment $assessment,
+        ?int $raterId = null
+    ): int
+    {
+        $assessmentRater = AssessmentRater::query()
+            ->where('assessment_id', $assessment->id)
+            ->where('rater_id', $raterId)
+            ->first();
+
+        $questionIds = array_keys(
+            QuestionTextResolver::optionsFor($assessment, $assessmentRater)
+        );
+
+        return Question::query()
+            ->whereIn('id', $questionIds)
+            ->where('required', true)
+            ->count();
+    }
+
+    protected function currentRaterId(Assessment $assessment): ?int
+    {
+        return ! empty($this->raterId)
+            ? $this->raterId
+            : Rater::where('subject_id', $assessment?->user_id)->orderBy('id')->first()?->id;
+    }
+
+    public function assessmentCompletedDate(): ?\Illuminate\Support\Carbon
+    {
+        if ($this->raterId) {
+            return \App\Models\AssessmentRater::query()
+                ->where('assessment_id', $this->assessmentId)
+                ->where('rater_id', $this->raterId)
+                ->first()
+                ?->submitted_at;
+        }
+
+        return $this->assessment?->submitted_at;
     }
 
 }

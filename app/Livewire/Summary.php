@@ -72,7 +72,7 @@ class Summary extends Component
                 ]);
 
                 $separator = str_contains($url, '?') ? '&' : '?';
-                $url .= $separator . 'nodeId=' . $node->id . '&edit=edit';
+                $url .= $separator . 'nodeId=' . $node->id . '&action=edit';
 
                 return redirect($url);
             }
@@ -158,7 +158,7 @@ class Summary extends Component
 
             $separator = str_contains($url, '?') ? '&' : '?';
 
-            $url .= $separator . 'nodeId=' . $nodeId . '&edit=edit';
+            $url .= $separator . 'nodeId=' . $nodeId . '&action=edit';
             return redirect($url);
         }
 
@@ -188,11 +188,6 @@ class Summary extends Component
 
                 if (!is_null($rater->pivot->submitted_at)) {
                     session()->flash('error', __('alerts.errors.assessment-already-submitted'));
-                    $this->dispatch('scroll-to-top');
-                    return null;
-                }
-                if (is_null($assessment->submitted_at)) {
-                    session()->flash('error', __('alerts.errors.assessment-not-submitted'));
                     $this->dispatch('scroll-to-top');
                     return null;
                 }
@@ -242,8 +237,7 @@ class Summary extends Component
                 ->where('raters.id', $this->raterId)
                 ->firstOrFail();
 
-            return $assessment->submitted_at
-                && $rater->pivot->submitted_at;
+            return !empty($rater->pivot->submitted_at);
         }
 
         return (bool) $assessment->submitted_at;
@@ -283,6 +277,15 @@ class Summary extends Component
     #[Computed]
     public function requiredCount()
     {
+        if (!empty($this->raterId)) {
+            return $this->assessment?->framework
+                ->questions()->with('variants')
+                ->whereHas('variants', function ($query): void {
+                    $query->where('audience', 'rater');
+                })
+                ->count();
+        }
+
         return $this->assessment?->framework
             ->questions()
             ->where('required', 1)
