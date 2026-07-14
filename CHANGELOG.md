@@ -11,6 +11,7 @@
 3. Invite raters to complete 360 assessment
 4. Prevent subjects selecting themselves as a rater
 5. Improve invitation email
+6. Display custom error messages
 
 ---
 ### v2.1.2
