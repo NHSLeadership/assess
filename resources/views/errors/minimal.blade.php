@@ -1,7 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>@yield('code')</h1>
-    <h2>@yield('message')</h2>
-    <p>@yield('explanation')</p>
+    <h1>@yield('code') @yield('title')</h1>
+
+    @hasSection('message')
+        <p class="nhsuk-body-l">@yield('message')</p>
+    @endif
+
+    <div class="nhsuk-body">
+        @yield('explanation')
+    </div>
 @endsection
