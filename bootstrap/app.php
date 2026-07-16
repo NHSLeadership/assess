@@ -2,6 +2,7 @@
 
 use App\Providers\AuthServiceProvider;
 use Auth0\Laravel\Exceptions\Controllers\CallbackControllerException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -66,6 +67,18 @@ return Application::configure(basePath: dirname(__DIR__))
             session()->flush();
             return redirect()->route('home');
         });
+
+
+        $exceptions->render(function (
+            AuthenticationException $e,
+            \Illuminate\Http\Request $request
+        ) {
+            if ($request->hasHeader('X-Livewire')) {
+                return response('', 419);
+            }
+            return null;
+        });
+
 
     })
     ->withProviders([

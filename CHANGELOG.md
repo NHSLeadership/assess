@@ -5,13 +5,14 @@
 
 ---
 ### v2.1.3
-> Updated: 10.07.2026
+> Updated: 13.07.2026
 1. Add service to back-fill rater details for existing assessments
 2. Manage 360 assessment raters
 3. Invite raters to complete 360 assessment
 4. Prevent subjects selecting themselves as a rater
 5. Improve invitation email
 6. Display custom error messages
+7. Fix unresponsive Livewire actions after session expiry
 
 ---
 ### v2.1.2
