@@ -20,18 +20,46 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->renderable(function (CallbackControllerException $e) {
 
-            $raw = $e->getMessage();
-            $auth0Error = strtok($raw, ':');
-            [$status, $message] = match ($auth0Error) {
-                'access_denied' => [403, 'This action is unauthorised.'],
+            [$auth0Error, $description] = array_pad(
+                explode(':', $e->getMessage(), 2),
+                2,
+                ''
+            );
+
+            $auth0Error = trim($auth0Error);
+            $description = trim($description);
+
+            [$status, $fallbackMessage] = match ($auth0Error) {
+                'access_denied' => [
+                    403,
+                    'This action is unauthorised.',
+                ],
+
                 'login_required',
                 'consent_required',
-                'interaction_required' => [401, 'You need to sign in to continue.'],
-                'server_error' => [500, 'We are experiencing technical difficulties. Please try again later.'],
-                default => [400, 'We could not complete your request.'],
+                'interaction_required' => [
+                    401,
+                    'You need to sign in to continue.',
+                ],
+
+                'server_error' => [
+                    500,
+                    'We are experiencing technical difficulties. Please try again later.',
+                ],
+
+                default => [
+                    400,
+                    'We could not complete your request.',
+                ],
             };
 
-            throw new HttpException($status, $message, $e);
+            throw new HttpException(
+                $status,
+                $description !== ''
+                    ? $description
+                    : $fallbackMessage,
+                $e
+            );
         });
 
         $exceptions->renderable(function (\Auth0\SDK\Exception\StateException $e) {
