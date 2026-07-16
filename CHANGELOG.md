@@ -13,6 +13,7 @@
 5. Improve invitation email
 6. Display custom error messages
 7. Fix unresponsive Livewire actions after session expiry
+8. Remove textarea from responses form for privacy
 
 ---
 ### v2.1.2
