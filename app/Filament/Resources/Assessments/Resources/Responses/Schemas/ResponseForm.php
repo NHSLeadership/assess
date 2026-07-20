@@ -86,10 +86,6 @@ class ResponseForm
                             ->pluck('label', 'id')
                             ->toArray();
                     }),
-                Textarea::make('textarea')
-                    ->label('Notes')
-                    ->required(fn (Get $get) => $get('question_id') && Question::query()->whereKey($get('question_id'))->value('response_type') === 'textarea')
-                    ->columnSpanFull(),
             ]);
     }
 }
