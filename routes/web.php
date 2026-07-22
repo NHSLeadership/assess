@@ -53,17 +53,16 @@ Route::group([
     Route::get('/request/{assessmentId}', ReviewRequest::class)->name('review-request');
 });
 
-if (config('app.assess_360_enabled')) {
-    Route::group([
-        'middleware' => 'signed:nodeId,action',
-    ], function (): void {
-        Route::get('/rate-assessment/{assessmentId}/{raterId}', Assessments::class)
-            ->name('assessment-rater');
-        Route::get('/rate-assessment-summary/{frameworkId?}/{assessmentId?}/{raterId?}', Summary::class)
-            ->name('assessment-rater-summary');
-        Route::get('/rate-assessment-completed/{assessmentId}/{raterId}', AssessmentCompleted::class)
-            ->name('assessment-rater-completed');
+Route::group([
+    'middleware' => 'signed:nodeId,action',
+], function (): void {
+    Route::get('/rate-assessment/{assessmentId}/{raterId}', Assessments::class)
+        ->name('assessment-rater');
+    Route::get('/rate-assessment-summary/{frameworkId?}/{assessmentId?}/{raterId?}', Summary::class)
+        ->name('assessment-rater-summary');
+    Route::get('/rate-assessment-completed/{assessmentId}/{raterId}', AssessmentCompleted::class)
+        ->name('assessment-rater-completed');
 
-    });
-}
+});
+
 require __DIR__.'/auth.php';
