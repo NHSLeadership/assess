@@ -1,10 +1,17 @@
 <?php
 
+use App\Enums\RaterType;
 use App\Livewire\Assessments;
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
 use App\Models\NodeType;
+use App\Models\Question;
+use App\Models\Rater;
+use App\Models\Response;
+use App\Models\Scale;
+use App\Models\ScaleOption;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 

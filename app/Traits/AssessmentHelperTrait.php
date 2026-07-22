@@ -47,9 +47,10 @@ trait AssessmentHelperTrait
                     ->count()
                 : 0;
         }
-
         $allAnswered = $totalQuestions > 0 && ($responseCount ?? 0) === $totalQuestions;
-        $alreadySubmitted = ! is_null($assessment->submitted_at);
+        $alreadySubmitted = ! empty($this->raterId)
+            ? ! is_null($this->assessmentRater()?->submitted_at)
+            : ! is_null($assessment->submitted_at);
         if ((in_array($edit, [null, '', '0'], true) && $allAnswered) || $alreadySubmitted) {
 
             if (!empty($this->raterId)) {
@@ -73,7 +74,6 @@ trait AssessmentHelperTrait
                 'assessmentId' => $assessment?->id,
             ]);
         }
-
         return null;
     }
 
@@ -395,15 +395,14 @@ trait AssessmentHelperTrait
 
     public function assessmentCompletedDate(): ?\Illuminate\Support\Carbon
     {
-        if ($this->raterId) {
+        if (!empty($this->raterId)) {
             return \App\Models\AssessmentRater::query()
                 ->where('assessment_id', $this->assessmentId)
                 ->where('rater_id', $this->raterId)
                 ->first()
                 ?->submitted_at;
         }
-
-        return $this->assessment?->submitted_at;
+        return $this->assessment()?->submitted_at;
     }
 
 }
