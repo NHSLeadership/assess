@@ -72,20 +72,38 @@ class EditRater extends Component
 
     protected function existingRaterRules(): array
     {
-        return [
-            'selectedRaterId' => ['required', 'integer'],
-            'type' => ['required'],
-            'groupId' => ['nullable', 'integer'],
-        ];
+        return array_merge(
+            $this->commonRules(),
+            [
+                'selectedRaterId' => ['required', 'integer'],
+            ]
+        );
+
     }
 
     protected function raterRules(): array
     {
+        return array_merge(
+            $this->commonRules(),
+            [
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'email:rfc'],
+            ]
+        );
+
+    }
+
+    protected function commonRules(): array
+    {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email:rfc'],
             'type' => ['required'],
-            'groupId' => ['nullable', 'integer'],
+            'groupId' => [
+                Rule::requiredIf(
+                    $this->type === RaterType::Other->value
+                ),
+                'nullable',
+                'integer',
+            ],
         ];
     }
 
@@ -94,6 +112,7 @@ class EditRater extends Component
     {
         return [
             'newGroupName.unique' => 'A group with this name already exists.',
+            'groupId.required' => 'Please select a group when the rater type is other.',
         ];
     }
 

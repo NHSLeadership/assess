@@ -7,6 +7,8 @@
 ### v2.1.4
 > Updated: 23.07.2026
 1. Fix rater submission checks in 360 assessment flow
+2. Make rater group mandatory if type selected is other
+2. Security update
 
 ### v2.1.3
 > Updated: 13.07.2026
