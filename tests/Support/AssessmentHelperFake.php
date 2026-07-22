@@ -10,17 +10,15 @@ class AssessmentHelperFake
     use AssessmentHelperTrait;
 
     public $user;
+
+    public ?int $assessmentId = null;
+
+    public ?int $raterId = null;
+
     protected ?AssessmentRater $cachedAssessmentRater = null;
 
     public function __construct($user = null)
     {
         $this->user = $user;
     }
-
-    public ?int $assessmentId = null {
-        set {
-            $this->assessmentId = $value;
-        }
-    }
-
 }

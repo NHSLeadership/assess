@@ -287,12 +287,12 @@ test('rater opening assessment for the first time is shown the first node', func
 
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $user->id,
+        'user_id' => $user->user_id,
         'submitted_at' => null,
     ]);
 
     $rater = Rater::factory()->create([
-        'subject_id' => $user->id,
+        'subject_id' => $user->user_id,
     ]);
 
     AssessmentRater::factory()->create([
@@ -321,11 +321,11 @@ test('rater assessment route returns forbidden when signature is invalid', funct
 
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $user->id,
+        'user_id' => $user->user_id,
     ]);
 
     $rater = Rater::factory()->create([
-        'subject_id' => $user->id,
+        'subject_id' => $user->user_id,
     ]);
 
     AssessmentRater::factory()->create([
@@ -350,11 +350,11 @@ test('assessment-rater route returns 404 for unknown assessment rater', function
 
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $user->id,
+        'user_id' => $user->user_id,
     ]);
 
     $rater = Rater::factory()->create([
-        'subject_id' => $user->id,
+        'subject_id' => $user->user_id,
     ]);
 
     $url = URL::signedRoute('assessment-rater', [
@@ -373,11 +373,11 @@ test('rater assessment route loads successfully when signature is valid', functi
 
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $user->id,
+        'user_id' => $user->user_id,
     ]);
 
     $rater = Rater::factory()->create([
-        'subject_id' => $user->id,
+        'subject_id' => $user->user_id,
     ]);
 
     AssessmentRater::factory()->create([
@@ -394,26 +394,3 @@ test('rater assessment route loads successfully when signature is valid', functi
         ->assertOk();
 });
 
-test('assessment-rater route returns 404 when assessment rater does not exist', function () {
-    $user = makeAuthUser(['user_id' => '1000000000']);
-
-    $framework = Framework::factory()->create();
-
-    $assessment = Assessment::factory()->create([
-        'framework_id' => $framework->id,
-        'user_id' => $user->id,
-    ]);
-
-    $rater = Rater::factory()->create([
-        'subject_id' => $user->id,
-    ]);
-
-
-    $url = URL::signedRoute('assessment-rater', [
-        'assessmentId' => $assessment->id,
-        'raterId' => $rater->id,
-    ]);
-
-    $this->get($url)
-        ->assertNotFound();
-});

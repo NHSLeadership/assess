@@ -294,12 +294,12 @@ test('redirectIfSubmittedOrFinished redirects rater to completed page when rater
 
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $user->id,
+        'user_id' => $user->user_id,
         'submitted_at' => null, // subject has not submitted
     ]);
 
     $rater = Rater::factory()->create([
-        'subject_id' => $user->id,
+        'subject_id' => $user->user_id,
     ]);
 
     AssessmentRater::factory()->create([
@@ -347,12 +347,12 @@ test('redirectIfSubmittedOrFinished redirects rater to summary page when all que
 
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $user->id,
+        'user_id' => $user->user_id,
         'submitted_at' => null,
     ]);
 
     $rater = Rater::factory()->create([
-        'subject_id' => $user->id,
+        'subject_id' => $user->user_id,
     ]);
 
     AssessmentRater::factory()->create([
@@ -402,12 +402,12 @@ test('rater is redirected to completed page when assessment has already been sub
 
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $user->id,
+        'user_id' => $user->user_id,
         'submitted_at' => null, // subject has not submitted
     ]);
 
     $rater = Rater::factory()->create([
-        'subject_id' => $user->id,
+        'subject_id' => $user->user_id,
     ]);
 
     AssessmentRater::factory()->create([
@@ -431,8 +431,8 @@ test('rater is redirected to completed page when assessment has already been sub
         'raterId' => $rater->id,
     ]);
 
-    expect($response)->not->toBeNull();
-    expect($response->getTargetUrl())->toBe($expectedUrl);
+    expect($response)->not->toBeNull()
+        ->and($response->getTargetUrl())->toBe($expectedUrl);
 });
 
 test('redirectIfSubmittedOrFinished does not treat rater as submitted when only assessment is submitted', function () {
@@ -442,7 +442,7 @@ test('redirectIfSubmittedOrFinished does not treat rater as submitted when only 
 
     $assessment = Assessment::factory()->create([
         'framework_id' => $framework->id,
-        'user_id' => $user->id,
+        'user_id' => $user->user_id,
         'submitted_at' => now(), // subject submitted
     ]);
 

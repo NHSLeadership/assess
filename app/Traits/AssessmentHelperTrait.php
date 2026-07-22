@@ -62,7 +62,7 @@ trait AssessmentHelperTrait
                     return redirect()->to($url);
                 } else {
                     $url = URL::signedRoute('assessment-rater-summary', [
-                        'frameworkId' => $this->assessment()?->framework->id,
+                        'frameworkId' => $frameworkId,
                         'assessmentId' => $this->assessmentId,
                         'raterId' => $this->raterId,
                     ]);
