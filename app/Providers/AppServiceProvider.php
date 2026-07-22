@@ -25,5 +25,7 @@ class AppServiceProvider extends ServiceProvider
         Feature::define('rich-editor-custom-blocks', fn ($user): bool =>
             $user && $user->can('framework:update')
         );
+
+        Feature::define('assess_360_enabled', fn (): bool => false);
     }
 }

@@ -7,6 +7,7 @@ use App\Models\Rater;
 use App\Services\RaterInvitationService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
+use Laravel\Pennant\Feature;
 use Livewire\Component;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -21,6 +22,11 @@ class AssessmentRaters extends Component
 
     public function mount($assessmentId): void
     {
+        abort_unless(
+            Feature::active('assess_360_enabled'),
+            404
+        );
+
         $this->assessmentId = $assessmentId;
         if ($this->assessment?->user_id !== $this->user()?->user_id) {
             abort(404);

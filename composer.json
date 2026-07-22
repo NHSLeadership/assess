@@ -16,7 +16,7 @@
         "flowframe/laravel-trend": "^0.5",
         "jeffersongoncalves/filament-umami": "3.x-dev",
         "laravel/framework": "^13.19.0",
-        "laravel/pennant": "^1.24.0",
+        "laravel/pennant": "^1.24",
         "laravel/tinker": "^3.0.2",
         "livewire/volt": "^1.10.5",
         "openplain/filament-tree-view": "^0.5.6",

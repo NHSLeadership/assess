@@ -17,6 +17,8 @@ uses(RefreshDatabase::class);
 test('mount loads existing assessment rater details for editing', function () {
     $user = makeAuthUser(['user_id' => '1000000000']);
 
+    Feature::for($user)->activate('assess_360_enabled');
+
     $framework = Framework::factory()->create();
 
     $assessment = Assessment::factory()->create([
@@ -53,6 +55,8 @@ test('mount loads existing assessment rater details for editing', function () {
 test('store prevents duplicate rater being added to assessment', function () {
     $user = makeAuthUser(['user_id' => '1000000000']);
 
+    Feature::for($user)->activate('assess_360_enabled');
+
     $framework = Framework::factory()->create();
 
     $assessment = Assessment::factory()->create([
@@ -88,6 +92,8 @@ test('store prevents duplicate rater being added to assessment', function () {
 
 test('useSelectedRater loads selected rater details', function () {
     $user = makeAuthUser(['user_id' => '1000000000']);
+
+    Feature::for($user)->activate('assess_360_enabled');
 
     $framework = Framework::factory()->create();
 

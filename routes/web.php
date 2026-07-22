@@ -41,12 +41,10 @@ Route::group([
     Route::post('/assessment-report/{frameworkId}/{assessmentId}', AssessmentReportPdfController::class)
         ->name('assessment-report-pdf');
 
-    if (config('app.assess_360_enabled')) {
-        Route::get('/assessment/{assessmentId}/raters', AssessmentRaters::class)->name('assessment-raters');
-        //Route::get('/assessment/{assessmentId}/select-rater', SelectRater::class)->name('select-rater');
-        Route::get('/assessment/{assessmentId}/add-rater', EditRater::class)->name('create-rater');
-        Route::get('/assessment-rater/{assessmentRaterId}/edit', EditRater::class)->name('edit-rater');
-    }
+    Route::get('/assessment/{assessmentId}/raters', AssessmentRaters::class)->name('assessment-raters');
+    //Route::get('/assessment/{assessmentId}/select-rater', SelectRater::class)->name('select-rater');
+    Route::get('/assessment/{assessmentId}/add-rater', EditRater::class)->name('create-rater');
+    Route::get('/assessment-rater/{assessmentRaterId}/edit', EditRater::class)->name('edit-rater');
 
 
     /**
