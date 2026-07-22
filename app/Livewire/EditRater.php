@@ -103,6 +103,13 @@ class EditRater extends Component
                 ),
                 'nullable',
                 'integer',
+                Rule::exists('rater_groups', 'id')->where(
+                    fn ($query) => $query->where(
+                        'subject_id',
+                        $this->user()?->user_id
+                    )
+                ),
+
             ],
         ];
     }

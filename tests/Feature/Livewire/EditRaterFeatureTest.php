@@ -66,7 +66,7 @@ test('store prevents duplicate rater being added to assessment', function () {
         'email' => 'existing@example.com',
     ]);
 
-    $raterGroup = RaterGroup::factory()->create();
+    $raterGroup = RaterGroup::factory()->create(['subject_id' => $user->user_id]);
     AssessmentRater::factory()->create([
         'assessment_id' => $assessment->id,
         'rater_id' => $rater->id,
