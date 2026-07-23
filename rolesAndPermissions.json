@@ -61,6 +61,11 @@
         "scale:viewAny", "scale:view", "scale:create", "scale:update", "scale:delete", "scale:restore", "scale:reorder",
         "signpost:viewAny", "signpost:view", "signpost:create", "signpost:update", "signpost:delete", "signpost:restore", "signpost:reorder"
       ]
+    },
+    "assess-360": {
+        "permissions": [
+            "assess:360"
+        ]
     }
   }
 }

@@ -14,13 +14,10 @@ use Livewire\Livewire;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Services\RaterInvitationService;
 
-
 uses(RefreshDatabase::class);
 
 test('confirmDetach deletes assessment rater owned by current user', function () {
     $user = makeAuthUser(['user_id' => '1000000000']);
-
-    Feature::for($user)->activate('assess_360_enabled');
 
     $framework = Framework::factory()->create();
 
@@ -56,8 +53,6 @@ test('confirmDetach deletes assessment rater owned by current user', function ()
 
 test('confirmDetach does not delete assessment rater owned by another user', function () {
     $user = makeAuthUser(['user_id' => '1000000000']);
-
-    Feature::for($user)->activate('assess_360_enabled');
 
     $framework = Framework::factory()->create();
 
@@ -99,12 +94,8 @@ test('confirmDetach does not delete assessment rater owned by another user', fun
     )->toBeTrue();
 });
 
-
-
 test('mount fails when assessment is owned by another user', function () {
     $user = makeAuthUser(['user_id' => '1000000000']);
-
-    Feature::for($user)->activate('assess_360_enabled');
 
     $framework = Framework::factory()->create();
 
@@ -121,8 +112,6 @@ test('mount fails when assessment is owned by another user', function () {
 
 test('askDetach sets pendingDetachId', function () {
     $user = makeAuthUser(['user_id' => '1000000000']);
-
-    Feature::for($user)->activate('assess_360_enabled');
 
     $framework = Framework::factory()->create();
 
@@ -141,8 +130,6 @@ test('askDetach sets pendingDetachId', function () {
 
 test('inviteRater sends invitation for selected rater', function () {
     $user = makeAuthUser(['user_id' => '1000000000']);
-
-    Feature::for($user)->activate('assess_360_enabled');
 
     $framework = Framework::factory()->create();
 
@@ -177,8 +164,6 @@ test('inviteRater sends invitation for selected rater', function () {
 it('returns 404 when user does not own the assessment', function () {
     $owner = makeAuthUser(['user_id' => 1]);
 
-    Feature::for($owner)->activate('assess_360_enabled');
-
     $otherUser = makeAuthUser(['user_id' => 2]);
 
     $assessment = Assessment::factory()->create([
@@ -196,8 +181,6 @@ it('returns 404 when user does not own the assessment', function () {
 it('mounts successfully when user owns the assessment', function () {
     $user = makeAuthUser();
 
-    Feature::for($user)->activate('assess_360_enabled');
-
     $assessment = Assessment::factory()->create([
         'user_id' => $user->user_id,
     ]);
@@ -212,8 +195,6 @@ it('mounts successfully when user owns the assessment', function () {
 
 it('clears the pending detach id', function () {
     $user = makeAuthUser();
-
-    Feature::for($user)->activate('assess_360_enabled');
 
     $assessment = Assessment::factory()->create([
         'user_id' => $user->user_id,
@@ -231,8 +212,6 @@ it('clears the pending detach id', function () {
 
 it('returns early when there is no pending detach id', function () {
     $user = makeAuthUser();
-
-    Feature::for($user)->activate('assess_360_enabled');
 
     $assessment = Assessment::factory()->create([
         'user_id' => $user->user_id,
@@ -254,8 +233,6 @@ it('returns early when there is no pending detach id', function () {
 it('redirects to create rater page', function () {
     $user = makeAuthUser();
 
-    Feature::for($user)->activate('assess_360_enabled');
-
     $assessment = Assessment::factory()->create([
         'user_id' => $user->user_id,
     ]);
@@ -273,8 +250,6 @@ it('redirects to create rater page', function () {
 
 it('redirects to edit rater page', function () {
     $user = makeAuthUser();
-
-    Feature::for($user)->activate('assess_360_enabled');
 
     $assessment = Assessment::factory()->create([
         'user_id' => $user->user_id,
