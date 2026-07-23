@@ -62,7 +62,7 @@
                             <button wire:click.prevent="goPrevious" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-3">Previous page</button>
                         @endif
                         @if($this->nodes()->count() > $this->nodes()->key() + 1 )
-                            @if ($this->requiredResponses?->count() === $this->visibleRequiredCount || $this->nodes()->count() === $this->nodes()->key() + 1)
+                            @if ($this->requiredResponses?->count() === $this->visibleRequiredCount)
                                 <button wire:submit.prevent="storeNext" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-3" type="submit">Save and continue</button>
                             @else
                                 <button wire:submit.prevent="storeNext" class="nhsuk-button nhsuk-u-margin-right-3" type="submit">Save and continue</button>
