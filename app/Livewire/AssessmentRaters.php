@@ -24,7 +24,7 @@ class AssessmentRaters extends Component
 
         //@TODO Remove abort statement once 360 is live
         abort_unless(
-            app()->environment('testing')
+            app()->runningUnitTests()
             || $this->user()->can('assess:360'),
             404
         );

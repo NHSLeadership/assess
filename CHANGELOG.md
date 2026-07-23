@@ -10,7 +10,7 @@
 2. Make rater group mandatory if type selected is other
 3. Security update
 4. Pagination button improvements
-5. Restrict 360 functionality to only those with permission
+5. Control 360 functionality with permissions
 
 ---
 ### v2.1.3
