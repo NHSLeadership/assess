@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\RaterType;
 use App\Exceptions\AssessmentFrameworkMismatchException;
 use App\Exceptions\AssessmentNotFoundException;
 use App\Exceptions\AssessmentNotSubmittedException;
@@ -294,7 +295,9 @@ it('returns the rater for the assessment', function () {
     ]);
 
     // Pivot: rater ↔ assessment
-    $rater->assessments()->attach($assessment->id);
+    $rater->assessments()->attach($assessment->id, [
+        'type' => RaterType::Peer->value,
+    ]);
 
     $component = new AssessmentReport;
     $component->assessmentId = $assessment->id;

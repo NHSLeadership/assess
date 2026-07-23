@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\RaterType;
 use App\Models\Assessment;
 use App\Models\Rater;
 use App\Services\RaterInvitationService;
@@ -14,7 +15,7 @@ test('it sends an invitation and sets invited_at', function () {
 
     // attach rater
     $assessment->raters()->attach($rater->id, [
-        'type' => \App\Enums\RaterType::Peer->value,
+        'type' => RaterType::Peer->value,
         'invited_at' => null,
     ]);
 
@@ -46,7 +47,7 @@ test('invitation email contains signed url', function () {
     $rater = Rater::factory()->create();
 
     $assessment->raters()->attach($rater->id, [
-        'type' => \App\Enums\RaterType::Peer->value,
+        'type' => RaterType::Peer->value,
     ]);
 
     app(RaterInvitationService::class)->send($assessment, $rater);
@@ -66,6 +67,7 @@ test('status precedence is correct', function () {
     $rater = Rater::factory()->create();
 
     $assessment->raters()->attach($rater->id, [
+        'type' => RaterType::Peer->value,
         'invited_at' => now(),
         'started_at' => now(),
         'submitted_at' => now(),
