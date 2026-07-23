@@ -11,6 +11,7 @@
 3. Security update
 4. Pagination button improvements
 5. Control 360 functionality with permissions
+6. Remove "self" as default assessment rater type
 
 ---
 ### v2.1.3

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\RaterType;
 use App\Models\Assessment;
 use App\Models\Rater;
 use App\Services\RaterInvitationService;
@@ -66,6 +67,7 @@ test('status precedence is correct', function () {
     $rater = Rater::factory()->create();
 
     $assessment->raters()->attach($rater->id, [
+        'type' => RaterType::Peer->value,
         'invited_at' => now(),
         'started_at' => now(),
         'submitted_at' => now(),
