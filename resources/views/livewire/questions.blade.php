@@ -59,14 +59,18 @@
                     <div>
                         {{-- For raters we dont have variant selections now --}}
                         @if( (empty($this->raterId) && ($this->nodes()->key() + 1 > 0) || (!empty($this->raterId) && $this->nodes()->key() > 0)) )
-                            <button wire:click.prevent="goPrevious" class="nhsuk-button nhsuk-u-margin-right-3">Previous page</button>
+                            <button wire:click.prevent="goPrevious" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-3">Previous page</button>
                         @endif
                         @if($this->nodes()->count() > $this->nodes()->key() + 1 )
-                            <button wire:submit.prevent="storeNext" class="nhsuk-button nhsuk-u-margin-right-3" type="submit">Save and continue</button>
+                            @if ($this->requiredResponses?->count() === $this->visibleRequiredCount)
+                                <button wire:submit.prevent="storeNext" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-3" type="submit">Save and continue</button>
+                            @else
+                                <button wire:submit.prevent="storeNext" class="nhsuk-button nhsuk-u-margin-right-3" type="submit">Save and continue</button>
+                            @endif
                         @endif
 
                         @if ($this->requiredResponses?->count() === $this->visibleRequiredCount || $this->nodes()->count() === $this->nodes()->key() + 1)
-                            <button wire:click.prevent="finishAssessment" class="nhsuk-button nhsuk-u-margin-right-3" >View summary</button>
+                            <button wire:click.prevent="finishAssessment" class="nhsuk-button nhsuk-u-margin-right-3" >Save and review</button>
                             @if ($this->requiredResponses?->count() === $this->visibleRequiredCount)
                                 <div class="nhsuk-inset-text">
                                     <span class="nhsuk-u-visually-hidden">Information: </span>
@@ -78,7 +82,7 @@
                 @else
                     {{-- No responses yet, from the variant select page --}}
                     @if (empty($this->raterId))
-                        <button wire:click.prevent="goToVariantSelection" class="nhsuk-button nhsuk-u-margin-right-3">Previous page</button>
+                        <button wire:click.prevent="goToVariantSelection" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-3">Previous page</button>
                     @endif
                     <button class="nhsuk-button" type="submit">Save and continue</button>
                 @endif
