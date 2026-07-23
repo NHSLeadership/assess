@@ -7,6 +7,7 @@ use App\Models\AssessmentRater;
 use App\Models\Rater;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use Throwable;
