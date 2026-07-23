@@ -102,6 +102,7 @@ test('redirectIfSubmittedOrFinished redirects when assessment is already submitt
     ]);
 
     $helper = new AssessmentHelperFake;
+    $helper->assessmentId = $assessment->id;
 
     $response = $helper->redirectIfSubmittedOrFinished($assessment, $framework->id);
 
@@ -284,4 +285,187 @@ it('shows the correct assessment submitted date', function () {
     expect($component->instance()->assessmentCompletedDate())
         ->toEqual($assessmentRater->submitted_at);
 
+});
+
+test('redirectIfSubmittedOrFinished redirects rater to completed page when rater assessment is submitted', function () {
+    $user = makeAuthUser(['user_id' => '1000000000']);
+
+    $framework = Framework::factory()->create();
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+        'submitted_at' => null, // subject has not submitted
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'submitted_at' => now(),
+    ]);
+
+    $helper = new AssessmentHelperFake;
+
+    $helper->assessmentId = $assessment->id;
+    $helper->raterId = $rater->id;
+
+    $response = $helper->redirectIfSubmittedOrFinished(
+        $assessment,
+        $framework->id
+    );
+
+    $expectedUrl = URL::signedRoute('assessment-rater-completed', [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    expect($response)->not->toBeNull()
+        ->and($response->getTargetUrl())->toBe($expectedUrl);
+});
+
+test('redirectIfSubmittedOrFinished redirects rater to summary page when all questions answered but not submitted', function () {
+    $user = makeAuthUser(['user_id' => '1000000000']);
+
+    $framework = Framework::factory()->create();
+
+    $node = Node::factory()->create([
+        'framework_id' => $framework->id,
+        'order' => 1,
+    ]);
+
+    $questions = Question::factory()
+        ->count(2)
+        ->create([
+            'node_id' => $node->id,
+            'active' => true,
+            'required' => true,
+        ]);
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+        'submitted_at' => null,
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'submitted_at' => null,
+    ]);
+
+    $scale = Scale::factory()->create();
+
+    $scaleOption = ScaleOption::factory()->create([
+        'scale_id' => $scale->id,
+    ]);
+
+    foreach ($questions as $question) {
+        Response::factory()->create([
+            'assessment_id' => $assessment->id,
+            'question_id' => $question->id,
+            'rater_id' => $rater->id,
+            'scale_option_id' => $scaleOption->id,
+        ]);
+    }
+
+    $helper = new AssessmentHelperFake;
+    $helper->assessmentId = $assessment->id;
+    $helper->raterId = $rater->id;
+
+    $response = $helper->redirectIfSubmittedOrFinished(
+        $assessment,
+        $framework->id
+    );
+
+    $expectedUrl = URL::signedRoute('assessment-rater-summary', [
+        'frameworkId' => $framework->id,
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    expect($response)->not->toBeNull()
+        ->and($response->getTargetUrl())->toBe($expectedUrl);
+});
+
+test('rater is redirected to completed page when assessment has already been submitted', function () {
+    $user = makeAuthUser(['user_id' => '1000000000']);
+
+    $framework = Framework::factory()->create();
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+        'submitted_at' => null, // subject has not submitted
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'submitted_at' => now(),
+    ]);
+
+    $helper = new AssessmentHelperFake;
+
+    $helper->assessmentId = $assessment->id;
+    $helper->raterId = $rater->id;
+
+    $response = $helper->redirectIfSubmittedOrFinished(
+        $assessment,
+        $framework->id
+    );
+
+    $expectedUrl = URL::signedRoute('assessment-rater-completed', [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    expect($response)->not->toBeNull()
+        ->and($response->getTargetUrl())->toBe($expectedUrl);
+});
+
+test('redirectIfSubmittedOrFinished does not treat rater as submitted when only assessment is submitted', function () {
+    $user = makeAuthUser(['user_id' => '1000000000']);
+
+    $framework = Framework::factory()->create();
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+        'submitted_at' => now(), // subject submitted
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'submitted_at' => null, // rater not submitted
+    ]);
+
+    $helper = new AssessmentHelperFake;
+
+    $helper->assessmentId = $assessment->id;
+    $helper->raterId = $rater->id;
+
+    $response = $helper->redirectIfSubmittedOrFinished(
+        $assessment,
+        $framework->id,
+        '1' // avoid allAnswered path
+    );
+
+    expect($response)->toBeNull();
 });

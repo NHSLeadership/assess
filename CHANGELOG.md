@@ -4,6 +4,10 @@
 # Assessment tool
 
 ---
+### v2.1.4
+> Updated: 23.07.2026
+1. Fix rater submission checks in 360 assessment flow
+
 ### v2.1.3
 > Updated: 13.07.2026
 1. Add service to back-fill rater details for existing assessments

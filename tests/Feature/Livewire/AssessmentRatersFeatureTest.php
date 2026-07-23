@@ -1,9 +1,13 @@
 <?php
 
+use App\Enums\RaterType;
 use App\Livewire\AssessmentRaters;
+use App\Livewire\Assessments;
 use App\Models\Assessment;
 use App\Models\AssessmentRater;
 use App\Models\Framework;
+use App\Models\Node;
+use App\Models\Question;
 use App\Models\Rater;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -263,3 +267,130 @@ it('redirects to edit rater page', function () {
             'assessmentRaterId' => 123,
         ]));
 });
+
+
+test('rater opening assessment for the first time is shown the first node', function () {
+    $user = makeAuthUser(['user_id' => '1000000000']);
+
+    $framework = Framework::factory()->create();
+
+    $node = Node::factory()->create([
+        'framework_id' => $framework->id,
+        'order' => 1,
+    ]);
+
+    $question = Question::factory()->create([
+        'node_id' => $node->id,
+        'active' => true,
+        'required' => true,
+    ]);
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+        'submitted_at' => null,
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'type' => RaterType::Manager,
+        'started_at' => null,
+        'submitted_at' => null,
+    ]);
+
+    $component = Livewire::test(Assessments::class, [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    expect($component->instance()->resolvedQuestionTexts)
+        ->toHaveKey($question->id);
+
+    $component->assertSet('currentNode.id', $node->id);
+});
+
+test('rater assessment route returns forbidden when signature is invalid', function () {
+    $user = makeAuthUser(['user_id' => '1000000000']);
+
+    $framework = Framework::factory()->create();
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'submitted_at' => null,
+    ]);
+
+    $url = route('assessment-rater', [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    $this->get($url)
+        ->assertForbidden();
+});
+
+test('assessment-rater route returns 404 for unknown assessment rater', function () {
+    $user = makeAuthUser(['user_id' => '1000000000']);
+
+    $framework = Framework::factory()->create();
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    $url = URL::signedRoute('assessment-rater', [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    $this->get($url)
+        ->assertNotFound();
+});
+
+test('rater assessment route loads successfully when signature is valid', function () {
+    $user = makeAuthUser(['user_id' => '1000000000']);
+
+    $framework = Framework::factory()->create();
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+    ]);
+
+    $url = URL::signedRoute('assessment-rater', [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    $this->get($url)
+        ->assertOk();
+});
+
