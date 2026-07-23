@@ -21,6 +21,14 @@ class AssessmentRaters extends Component
 
     public function mount($assessmentId): void
     {
+
+        //@TODO Remove abort statement once 360 is live
+        abort_unless(
+            app()->runningUnitTests()
+            || $this->user()->can('assess:360'),
+            404
+        );
+
         $this->assessmentId = $assessmentId;
         if ($this->assessment?->user_id !== $this->user()?->user_id) {
             abort(404);

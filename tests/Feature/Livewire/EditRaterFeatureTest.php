@@ -11,7 +11,6 @@ use App\Models\RaterGroup;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
-
 uses(RefreshDatabase::class);
 
 test('mount loads existing assessment rater details for editing', function () {

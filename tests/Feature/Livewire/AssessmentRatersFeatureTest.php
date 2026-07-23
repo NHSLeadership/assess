@@ -14,7 +14,6 @@ use Livewire\Livewire;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Services\RaterInvitationService;
 
-
 uses(RefreshDatabase::class);
 
 test('confirmDetach deletes assessment rater owned by current user', function () {
@@ -95,8 +94,6 @@ test('confirmDetach does not delete assessment rater owned by another user', fun
     )->toBeTrue();
 });
 
-
-
 test('mount fails when assessment is owned by another user', function () {
     $user = makeAuthUser(['user_id' => '1000000000']);
 
@@ -166,6 +163,7 @@ test('inviteRater sends invitation for selected rater', function () {
 
 it('returns 404 when user does not own the assessment', function () {
     $owner = makeAuthUser(['user_id' => 1]);
+
     $otherUser = makeAuthUser(['user_id' => 2]);
 
     $assessment = Assessment::factory()->create([

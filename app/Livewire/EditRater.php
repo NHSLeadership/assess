@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Enums\RaterType;
 use App\Models\AssessmentRater;
 use App\Models\Rater;
-use App\Models\RaterGroup;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
 use Illuminate\Validation\Rule;
@@ -41,6 +40,13 @@ class EditRater extends Component
         ?int $assessmentRaterId = null
     ): void
     {
+        //@TODO Remove abort statement once 360 is live
+        abort_unless(
+            app()->runningUnitTests()
+            || $this->user()->can('assess:360'),
+            404
+        );
+
         $this->assessmentId = $assessmentId;
         $this->assessmentRaterId = $assessmentRaterId;
 

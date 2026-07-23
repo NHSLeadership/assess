@@ -41,12 +41,10 @@ Route::group([
     Route::post('/assessment-report/{frameworkId}/{assessmentId}', AssessmentReportPdfController::class)
         ->name('assessment-report-pdf');
 
-    if (config('app.assess_360_enabled')) {
-        Route::get('/assessment/{assessmentId}/raters', AssessmentRaters::class)->name('assessment-raters');
-        //Route::get('/assessment/{assessmentId}/select-rater', SelectRater::class)->name('select-rater');
-        Route::get('/assessment/{assessmentId}/add-rater', EditRater::class)->name('create-rater');
-        Route::get('/assessment-rater/{assessmentRaterId}/edit', EditRater::class)->name('edit-rater');
-    }
+    Route::get('/assessment/{assessmentId}/raters', AssessmentRaters::class)->name('assessment-raters');
+    //Route::get('/assessment/{assessmentId}/select-rater', SelectRater::class)->name('select-rater');
+    Route::get('/assessment/{assessmentId}/add-rater', EditRater::class)->name('create-rater');
+    Route::get('/assessment-rater/{assessmentRaterId}/edit', EditRater::class)->name('edit-rater');
 
 
     /**
@@ -55,17 +53,16 @@ Route::group([
     Route::get('/request/{assessmentId}', ReviewRequest::class)->name('review-request');
 });
 
-if (config('app.assess_360_enabled')) {
-    Route::group([
-        'middleware' => 'signed:nodeId,action',
-    ], function (): void {
-        Route::get('/rate-assessment/{assessmentId}/{raterId}', Assessments::class)
-            ->name('assessment-rater');
-        Route::get('/rate-assessment-summary/{frameworkId?}/{assessmentId?}/{raterId?}', Summary::class)
-            ->name('assessment-rater-summary');
-        Route::get('/rate-assessment-completed/{assessmentId}/{raterId}', AssessmentCompleted::class)
-            ->name('assessment-rater-completed');
+Route::group([
+    'middleware' => 'signed:nodeId,action',
+], function (): void {
+    Route::get('/rate-assessment/{assessmentId}/{raterId}', Assessments::class)
+        ->name('assessment-rater');
+    Route::get('/rate-assessment-summary/{frameworkId?}/{assessmentId?}/{raterId?}', Summary::class)
+        ->name('assessment-rater-summary');
+    Route::get('/rate-assessment-completed/{assessmentId}/{raterId}', AssessmentCompleted::class)
+        ->name('assessment-rater-completed');
 
-    });
-}
+});
+
 require __DIR__.'/auth.php';

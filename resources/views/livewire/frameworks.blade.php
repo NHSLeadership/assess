@@ -153,7 +153,8 @@
                                         wire:click.prevent="askDelete({{ $assessment->id }})">
                                     {{ __('Delete') }}
                                 </button>
-                                @if (config('app.assess_360_enabled'))
+                                {{--@TODO Remove if statement once 360 is live --}}
+                                @if (app()->runningUnitTests() || $this->user()?->can('assess:360'))
                                     <a href="{{ route('assessment-raters', ['frameworkId' => $this->framework?->id, 'assessmentId' => $assessment->id]) }}"
                                        aria-describedby="{{ $assessment->slug }}-hint"
                                        class="nhsuk-link">

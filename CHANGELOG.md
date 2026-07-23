@@ -10,7 +10,9 @@
 2. Make rater group mandatory if type selected is other
 3. Security update
 4. Pagination button improvements
+5. Control 360 functionality with permissions
 
+---
 ### v2.1.3
 > Updated: 13.07.2026
 1. Add service to back-fill rater details for existing assessments
