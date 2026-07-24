@@ -81,8 +81,10 @@
                     </div>
                 @else
                     {{-- No responses yet, from the variant select page --}}
-                    @if (empty($this->raterId))
+                    @if (!empty($this->raterId))
                         <button wire:click.prevent="goToRaters()" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-3">Previous page</button>
+                    @else
+                        <button wire:click.prevent="goToVariantSelection" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-3">Previous page</button>
                     @endif
                     <button class="nhsuk-button" type="submit">Save and continue</button>
                 @endif
