@@ -37,7 +37,7 @@
 
     @if ($errors && count($errors))
 
-        <div class="nhsuk-error-summary" id="error-summary"
+        <div class="nhsuk-error-summary nhsuk-u-margin-top-2" id="error-summary"
              aria-labelledby="error-summary-title" role="alert" tabindex="-1">
             <h2 class="nhsuk-error-summary__title" id="error-summary-title">
                 {{ session('error-heading', __('alerts.errors.title')) }}
