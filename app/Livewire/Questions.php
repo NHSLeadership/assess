@@ -457,6 +457,7 @@ class Questions extends Component
     public function goPrevious(): void
     {
         $this->resetPage(pageName: $this->pageName);
+        $this->resetErrorBag();
 
         if ($this->nodeKeyId > 0) {
             $this->nodes->seek($this->nodeKeyId - 1);

@@ -5,13 +5,14 @@
 
 ---
 ### v2.1.14
-> Updated: 23.07.2026
+> Updated: 24.07.2026
 1. Fix rater submission checks in 360 assessment flow
 2. Make rater group mandatory if type selected is other
 3. Security update
 4. Pagination button improvements
 5. Control 360 functionality with permissions
 6. Remove "self" as default assessment rater type
+7. Fix validation messages persisting when navigating to a previous question
 
 ---
 ### v2.1.3
