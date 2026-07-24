@@ -129,8 +129,19 @@
             </div>
         @endif
 
-        <a class="nhsuk-back-link" href="{{ route('frameworks') }}">
-            {{ __('Home') }}
-        </a>
+            @if($this->source === 'variants')
+                <button wire:click.prevent="goToVariantSelection()" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-3">Previous</button>
+                @if ($raters->isEmpty())
+                    <a class="nhsuk-action-link nhsuk-u-float-right" href="#" wire:click.prevent="goToQuestions()">
+                        {{ __('Skip this step') }}
+                    </a>
+                @else
+                    <button wire:click.prevent="goToQuestions()" class="nhsuk-button nhsuk-u-margin-right-3">Continue</button>
+                @endif
+            @else
+                <a class="nhsuk-back-link" href="{{ route('frameworks') }}">
+                    {{ __('Home') }}
+                </a>
+            @endif
     </div>
 </div>

@@ -89,10 +89,14 @@ it('goPrevious on the first node redirects to variant selection', function () {
     ])
         ->set('nodeKeyId', 0)
         ->call('goPrevious')
-        ->assertRedirect(route('variants', [
-            'frameworkId' => $framework->id,
+//        ->assertRedirect(route('variants', [
+//            'frameworkId' => $framework->id,
+//            'assessmentId' => $assessment->id,
+//            'back' => 1,
+//        ]));
+        ->assertRedirect(route('assessment-raters', [
             'assessmentId' => $assessment->id,
-            'back' => 1,
+            'source' => 'variants',
         ]));
 });
 

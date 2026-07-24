@@ -18,10 +18,10 @@ class AssessmentRaters extends Component
 
     public ?int $assessmentId = null;
     public ?int $pendingDetachId = null;
+    public ?string $source = null;
 
     public function mount($assessmentId): void
     {
-
         //@TODO Remove abort statement once 360 is live
         abort_unless(
             app()->runningUnitTests()
@@ -33,6 +33,7 @@ class AssessmentRaters extends Component
         if ($this->assessment?->user_id !== $this->user()?->user_id) {
             abort(404);
         }
+        $this->source = request('source');
     }
 
     public function askDetach(int $id): void
@@ -93,6 +94,7 @@ class AssessmentRaters extends Component
     {
         $this->redirect(route('create-rater', [
             'assessmentId' => $this->assessmentId,
+            'source' => $this->source,
         ]));
     }
 
@@ -107,6 +109,7 @@ class AssessmentRaters extends Component
     {
         $this->redirect(route('edit-rater', [
             'assessmentRaterId' => $id,
+            'source' => $this->source,
         ]));
     }
 
@@ -136,6 +139,32 @@ class AssessmentRaters extends Component
                 'message' => __('Unable to send the invitation. Please try again.'),
             ]);
         }
+    }
+
+    public function goToQuestions(): void
+    {
+        $this->redirect(
+            route('questions',
+                [
+                    'assessmentId' => $this->assessmentId,
+                    'nodeId' => null,
+                ]
+            )
+        );
+    }
+
+    public function goToVariantSelection(): void
+    {
+        $this->redirect(
+            route(
+                'variants',
+                [
+                    'frameworkId' => $this->assessment()?->framework->id,
+                    'assessmentId' => $this->assessmentId,
+                    'back' => 1,
+                ]
+            )
+        );
     }
 
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View

@@ -34,6 +34,7 @@ class EditRater extends Component
     public array $existingRaterList = [];
     public array $raterTypeList = [];
     public array $raterGroupList = [];
+    public ?string $source = null;
 
     public function mount(
         ?int $assessmentId = null,
@@ -74,6 +75,7 @@ class EditRater extends Component
 
         $this->refreshGroupList();
         $this->refreshRaterList();
+        $this->source = request('source');
     }
 
     protected function existingRaterRules(): array
@@ -230,9 +232,18 @@ class EditRater extends Component
                 ]);
             }
 
-            $this->redirectRoute('assessment-raters', [
-                'assessmentId' => $this->assessmentId,
-            ]);
+//            $this->redirectRoute('assessment-raters', [
+//                'assessmentId' => $this->assessmentId,
+//                'source' => $this->source,
+//            ]);
+            $this->redirect(
+                route('assessment-raters',
+                    [
+                        'assessmentId' => $this->assessmentId,
+                        'source' => $this->source,
+                    ]
+                )
+            );
 
         } catch (ValidationException $e) {
             throw $e;
