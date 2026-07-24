@@ -213,6 +213,58 @@ it('shows validation errors when required questions are unanswered', function ()
         ]);
 });
 
+it('clears validation errors when navigating to the previous question', function () {
+    $user = makeAuthUser();
+    Livewire::actingAs($user);
+
+    $framework = Framework::factory()->create();
+
+    $nodeType = NodeType::factory()->create();
+
+    // Need at least 2 nodes so goPrevious() does not redirect away
+    $node1 = Node::factory()->create([
+        'framework_id' => $framework->id,
+        'node_type_id' => $nodeType->id,
+        'order' => 1,
+    ]);
+
+    $node2 = Node::factory()->create([
+        'framework_id' => $framework->id,
+        'node_type_id' => $nodeType->id,
+        'order' => 2,
+    ]);
+
+    $scale = Scale::factory()->create();
+
+    Question::factory()->create([
+        'node_id' => $node1->id,
+        'response_type' => ResponseType::TYPE_SCALE->value,
+        'scale_id' => $scale->id,
+        'required' => true,
+    ]);
+
+    Question::factory()->create([
+        'node_id' => $node2->id,
+        'response_type' => ResponseType::TYPE_SCALE->value,
+        'scale_id' => $scale->id,
+        'required' => true,
+    ]);
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+    ]);
+
+    Livewire::test(Questions::class, [
+        'assessmentId' => $assessment->id,
+    ])
+        ->set('nodeKeyId', 1) // simulate being on second node
+        ->call('storeNext')
+        ->assertHasErrors()
+        ->call('goPrevious')
+        ->assertHasNoErrors();
+});
+
 it('redirects to signed rater summary route when rater finishes assessment', function () {
     $user = makeAuthUser();
     Livewire::actingAs($user);
