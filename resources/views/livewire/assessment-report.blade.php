@@ -152,6 +152,85 @@
                     {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
                     {{ $node->name }}
                 </h4>
+                @php
+                    $feedback = $raterFeedback->get($node->id);
+                @endphp
+                    @if($feedback)
+
+                        <h5 class="nhsuk-heading-xs">
+                            360 Feedback
+                        </h5>
+
+                        @foreach($feedback['scores_by_type'] as $type => $score)
+
+                            <div class="nhsuk-u-margin-bottom-3">
+
+                                <strong>
+                                    {{ Str::plural(\App\Enums\RaterType::from($type)->name) }}
+                                </strong>
+
+                                <div>
+                                    Average score:
+                                    <strong>{{ $score['average'] }}</strong>
+                                </div>
+
+                                @php
+                                    $groups = data_get(
+                                        $feedback,
+                                        "groups_by_type.$type",
+                                        collect()
+                                    );
+                                @endphp
+
+                                @if($groups->isNotEmpty())
+
+                                    <div class="nhsuk-u-margin-top-2 nhsuk-u-margin-left-4">
+
+                                        <strong>Group breakdown</strong>
+
+                                        <ul class="nhsuk-list nhsuk-list--bullet">
+
+                                            @foreach($groups as $groupName => $group)
+
+                                                <li>
+                                                    {{ $groupName }}
+                                                    :
+                                                    <strong>{{ $group['average'] }}</strong>
+                                                </li>
+
+                                            @endforeach
+
+                                        </ul>
+
+                                    </div>
+
+                                @endif
+
+                            </div>
+
+                        @endforeach
+
+                        @if($feedback['comments']->isNotEmpty())
+
+                            <div class="nhsuk-u-margin-top-4">
+
+                                <strong>Comments</strong>
+
+                                <ul class="nhsuk-list nhsuk-list--bullet">
+
+                                    @foreach($feedback['comments'] as $comment)
+
+                                        <li>{{ $comment }}</li>
+
+                                    @endforeach
+
+                                </ul>
+
+                            </div>
+
+                        @endif
+
+                    @endif
             @endif
 
 

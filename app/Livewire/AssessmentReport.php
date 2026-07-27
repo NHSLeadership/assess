@@ -45,6 +45,8 @@ class AssessmentReport extends Component
 
     protected ?AssessmentRater $cachedAssessmentRater = null;
 
+    public Collection $raterFeedback;
+
     /**
      * @throws FrameworkNotFoundException
      * @throws AssessmentNotFoundException
@@ -108,6 +110,8 @@ class AssessmentReport extends Component
 
         // Use the shared service for all report data
         $service = new AssessmentReportService($frameworkId, $assessmentId, $this->raterId);
+
+        $this->raterFeedback = $service->raterFeedbackByStandard();
 
         $this->barCharts = $service->barCharts();
         $this->barChartsCompetency = $service->barChartsCompetency();

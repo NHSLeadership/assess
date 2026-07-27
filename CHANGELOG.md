@@ -4,6 +4,11 @@
 # Assessment tool
 
 ---
+### v2.2.0
+> Updated: 27.07.2026
+1. Include rater responses in assessment report
+
+---
 ### v2.1.5
 > Updated: 05.08.2026
 1. Makes rater groups optional for all rater types

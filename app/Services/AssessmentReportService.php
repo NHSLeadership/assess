@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\RaterType;
 use App\Enums\ResponseType;
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
 use App\Models\Rater;
@@ -24,6 +26,8 @@ class AssessmentReportService
     private readonly ?Collection $nodes;
 
     private readonly ?Rater $rater;
+
+    private const MIN_GROUP_SIZE = 2;
 
     public function __construct(
         public int $frameworkId,
@@ -399,5 +403,113 @@ class AssessmentReportService
 
         // return array of Signpost models for this specific node
         return $query->get()->all();
+    }
+
+    public function raterFeedbackByStandard(): Collection
+    {
+        $assessmentRaters = AssessmentRater::query()
+            ->where('assessment_id', $this->assessmentId)
+            ->with('group')
+            ->get()
+            ->keyBy('rater_id');
+
+        $responses = $this->assessment()
+            ->responses
+            ->whereNotNull('rater_id')
+            ->loadMissing([
+                'question.node',
+                'scaleOption',
+                'rater',
+            ]);
+
+        return $responses
+            ->groupBy('question.node_id')
+            ->map(function (Collection $standardResponses) use ($assessmentRaters) {
+
+                $scoresByType = $standardResponses
+                    ->filter(fn ($r) => $r->scaleOption)
+                    ->groupBy(function ($response) use ($assessmentRaters) {
+
+                        return $assessmentRaters
+                            ->get($response->rater_id)
+                            ?->type
+                            ?->value
+                            ?? RaterType::Other->value;
+                    })
+                    ->map(function (Collection $responses) {
+
+                        return [
+                            'rater_count' => $responses
+                                ->pluck('rater_id')
+                                ->unique()
+                                ->count(),
+
+                            'average' => round(
+                                $responses->avg(
+                                    fn ($response) => $response->scaleOption?->value
+                                ),
+                                1
+                            ),
+                        ];
+                    });
+
+                $groupsByType = $standardResponses
+                    ->filter(fn ($r) => $r->scaleOption)
+                    ->groupBy(function ($response) use ($assessmentRaters) {
+
+                        return $assessmentRaters
+                            ->get($response->rater_id)
+                            ?->type
+                            ?->value
+                            ?? RaterType::Other->value;
+                    })
+                    ->map(function (Collection $typeResponses) use ($assessmentRaters) {
+
+                        return $typeResponses
+                            ->groupBy(function ($response) use ($assessmentRaters) {
+
+                                return $assessmentRaters
+                                    ->get($response->rater_id)
+                                    ?->group
+                                    ?->name;
+                            })
+                            ->filter()
+                            ->filter(function (Collection $groupResponses) {
+
+                                return $groupResponses
+                                        ->pluck('rater_id')
+                                        ->unique()
+                                        ->count() >= self::MIN_GROUP_SIZE;
+                            })
+                            ->map(function (Collection $groupResponses) {
+
+                                return [
+                                    'rater_count' => $groupResponses
+                                        ->pluck('rater_id')
+                                        ->unique()
+                                        ->count(),
+
+                                    'average' => round(
+                                        $groupResponses->avg(
+                                            fn ($response) => $response->scaleOption?->value
+                                        ),
+                                        1
+                                    ),
+                                ];
+                            });
+                    });
+
+                $comments = $standardResponses
+                    ->pluck('textarea')
+                    ->filter()
+                    ->shuffle()
+                    ->values();
+
+                return [
+                    'scores_by_type' => $scoresByType,
+                    'groups_by_type' => $groupsByType,
+                    'comments' => $comments,
+                ];
+            });
     }
 }
