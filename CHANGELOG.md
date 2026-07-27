@@ -4,8 +4,8 @@
 # Assessment tool
 
 ---
-### v2.1.14
-> Updated: 24.07.2026
+### v2.1.4
+> Updated: 27.07.2026
 1. Fix rater submission checks in 360 assessment flow
 2. Make rater group mandatory if type selected is other
 3. Security update
