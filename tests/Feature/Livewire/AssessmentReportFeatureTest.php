@@ -138,6 +138,7 @@ it('populates report data when framework and assessment are valid and submitted'
     $service->shouldReceive('variantAttributeLabel')->andReturn('Variant Label');
     $service->shouldReceive('nodes')->andReturn(collect([$node]));
     $service->shouldReceive('signpostsForNode')->with($node)->andReturn(['signpost']);
+    $service->shouldReceive('raterFeedbackByStandard')->andReturn(collect());
 
     $component = new AssessmentReport;
     $component->mount($framework->id, $assessment->id);
