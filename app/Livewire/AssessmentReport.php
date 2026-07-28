@@ -49,6 +49,10 @@ class AssessmentReport extends Component
 
     public bool $reportAvailable = true;
 
+    public int $totalRaters = 0;
+
+    public int $completedRaters = 0;
+
     /**
      * @throws FrameworkNotFoundException
      * @throws AssessmentNotFoundException
@@ -114,12 +118,24 @@ class AssessmentReport extends Component
 
         $this->reportAvailable = $this->assessment()->is360Complete();
 
-        if (! $this->reportAvailable) {
-            return;
-        }
+        $this->totalRaters = $this->assessment()
+            ->raters()
+            ->count();
+
+        $this->completedRaters = $this->assessment()
+            ->raters()
+            ->wherePivotNotNull('submitted_at')
+            ->count();
+
+        $this->reportAvailable = $this->assessment()->is360Complete();
 
         // Use the shared service for all report data
         $service = new AssessmentReportService($frameworkId, $assessmentId, $this->raterId);
+        $this->variantAttributeLabel = $service->variantAttributeLabel();
+
+        if (! $this->reportAvailable) {
+            return;
+        }
 
         $this->raterFeedback = $service->raterFeedbackByStandard();
 
@@ -128,7 +144,7 @@ class AssessmentReport extends Component
         $radar = $service->radarChart();
         $this->radarData = $radar['data'];
         $this->radarOptions = $radar['options'];
-        $this->variantAttributeLabel = $service->variantAttributeLabel();
+//        $this->variantAttributeLabel = $service->variantAttributeLabel();
 
         $this->signposts = [];
 

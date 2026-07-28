@@ -4,7 +4,7 @@
             <h1 class="nhsuk-heading-xl">
                 {{ $this->framework->name ?? '' }}
             </h1>
-            <h2 class="nhsuk-heading-l">Self-assessment report</h2>
+            <h2 class="nhsuk-heading-l">Assessment report</h2>
             @if(empty($this->raterId))
                 <p>
                     <strong>For: {{ Auth()?->user()?->name ?? '' }}</strong>
@@ -321,7 +321,9 @@
                     360 feedback is still being collected
                 </h1>
                 <div class="nhsuk-panel__body">
-                    Your report will become available once all invited raters have submitted their feedback
+                    {{ $completedRaters }} of {{ $totalRaters }}
+                    invited raters have submitted feedback
+                    <p>Your report will become available once all invited raters have submitted their feedback</p>
                 </div>
             </div>
 
