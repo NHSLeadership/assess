@@ -132,9 +132,7 @@
             @if($this->source === 'variants')
                 <button wire:click.prevent="goToVariantSelection()" class="nhsuk-button nhsuk-button--secondary nhsuk-u-margin-right-3">Previous</button>
                 @if ($raters->isEmpty())
-                    <a class="nhsuk-action-link nhsuk-u-float-right" href="#" wire:click.prevent="goToQuestions()">
-                        {{ __('Skip this step') }}
-                    </a>
+                    <button wire:click.prevent="goToQuestions()" class="nhsuk-button nhsuk-u-margin-right-3">Skip this step</button>
                 @else
                     <button wire:click.prevent="goToQuestions()" class="nhsuk-button nhsuk-u-margin-right-3">Continue</button>
                 @endif
