@@ -29,7 +29,7 @@ class AssessmentReportService
 
     private readonly ?Rater $rater;
 
-    private const MIN_GROUP_SIZE = 2;
+    private const MIN_GROUP_SIZE = 3;
 
     public function __construct(
         public int $frameworkId,
