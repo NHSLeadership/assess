@@ -4,7 +4,13 @@
             <h1 class="nhsuk-heading-xl">
                 {{ $this->framework->name ?? '' }}
             </h1>
-            <h2 class="nhsuk-heading-l">Assessment report</h2>
+            <h2 class="nhsuk-heading-l">
+                @if($this->totalRaters == 0)
+                    Self-assessment report
+                @else
+                    360 assessment report
+                @endif
+            </h2>
             @if(empty($this->raterId))
                 <p>
                     <strong>For: {{ Auth()?->user()?->name ?? '' }}</strong>
@@ -103,7 +109,7 @@
 
                     {{-- BAR CHART --}}
                     @php
-                        $chart = collect($barChartsCompetency)->firstWhere('node_id', $node->id);
+                        $chart = data_get($barCharts, $node->id);
                     @endphp
 
                     @if ($chart)
@@ -337,7 +343,14 @@
     <script>
         window.radarData = @json($radarData);
         window.radarOptions = @json($radarOptions);
-        window.barCharts = @json($barChartsCompetency);
+        window.barCharts = @json(array_values($barCharts));
+        window.barCharts.forEach(cfg => {
+            new Chart(ctx, {
+                type: 'bar',
+                data: cfg.data,
+                options: cfg.options,
+            });
+        });
         window.csrfToken = "{{ csrf_token() }}";
         window.pdfPostUrl = "/assessment-report/{{ $frameworkId }}/{{ $assessmentId }}";
     </script>

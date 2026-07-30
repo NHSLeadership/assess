@@ -129,8 +129,12 @@ class AssessmentReport extends Component
 
         $this->reportAvailable = $this->assessment()->is360Complete();
 
-        // Use the shared service for all report data
-        $service = new AssessmentReportService($frameworkId, $assessmentId, $this->raterId);
+        $service = new AssessmentReportService(
+            $frameworkId,
+            $assessmentId,
+            $this->raterId
+        );
+
         $this->variantAttributeLabel = $service->variantAttributeLabel();
 
         if (! $this->reportAvailable) {
@@ -139,17 +143,27 @@ class AssessmentReport extends Component
 
         $this->raterFeedback = $service->raterFeedbackByStandard();
 
-        $this->barCharts = $service->barCharts();
-        $this->barChartsCompetency = $service->barChartsCompetency();
-        $radar = $service->radarChart();
+        $radar = $service->radarChart(
+            hasRaters: $this->totalRaters > 0
+        );
+
         $this->radarData = $radar['data'];
         $this->radarOptions = $radar['options'];
-//        $this->variantAttributeLabel = $service->variantAttributeLabel();
 
         $this->signposts = [];
 
+        $this->barCharts = [];
+
         foreach ($service->nodes() as $node) {
+
+            $chart = $service->barChart($node);
+
+            if ($chart) {
+                $this->barCharts[$node->id] = $chart;
+            }
+
             $signposts = $service->signpostsForNode($node);
+
             if ($signposts !== []) {
                 $this->signposts[$node->id] = $signposts;
             }
@@ -219,5 +233,15 @@ class AssessmentReport extends Component
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.assessment-report');
+    }
+
+    #[Computed]
+    public function reportService(): AssessmentReportService
+    {
+        return new AssessmentReportService(
+            $this->frameworkId,
+            $this->assessmentId,
+            $this->raterId
+        );
     }
 }

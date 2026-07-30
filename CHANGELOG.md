@@ -5,7 +5,7 @@
 
 ---
 ### v2.2.0
-> Updated: 27.07.2026
+> Updated: 30.07.2026
 1. Include rater responses in assessment report
 
 ---
