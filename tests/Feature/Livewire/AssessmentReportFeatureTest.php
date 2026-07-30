@@ -129,8 +129,12 @@ it('populates report data when framework and assessment are valid and submitted'
 
     // Mock the service that mount() instantiates
     $service = Mockery::mock('overload:'.AssessmentReportService::class);
-    $service->shouldReceive('barCharts')->andReturn(['bar']);
-    $service->shouldReceive('barChartsCompetency')->andReturn(['competency']);
+    $service->shouldReceive('barChart')
+        ->with($node)
+        ->andReturn([
+            'node_id' => $node->id,
+            'id' => 'barChart_'.$node->id,
+        ]);
     $service->shouldReceive('radarChart')->andReturn([
         'data' => ['radar-data'],
         'options' => ['radar-options'],
@@ -143,14 +147,18 @@ it('populates report data when framework and assessment are valid and submitted'
     $component = new AssessmentReport;
     $component->mount($framework->id, $assessment->id);
 
-    expect($component->barCharts)->toBe(['bar'])
-        ->and($component->barChartsCompetency)->toBe(['competency'])
-        ->and($component->radarData)->toBe(['radar-data'])
-        ->and($component->radarOptions)->toBe(['radar-options'])
-        ->and($component->variantAttributeLabel)->toBe('Variant Label')
-        ->and($component->signposts)->toBe([
-            $node->id => ['signpost'],
-        ]);
+    expect($component->barCharts)->toBe([
+        $node->id => [
+            'node_id' => $node->id,
+            'id' => 'barChart_'.$node->id,
+        ],
+    ])
+    ->and($component->radarData)->toBe(['radar-data'])
+    ->and($component->radarOptions)->toBe(['radar-options'])
+    ->and($component->variantAttributeLabel)->toBe('Variant Label')
+    ->and($component->signposts)->toBe([
+        $node->id => ['signpost'],
+    ]);
 });
 
 it('returns nodes for the framework in the correct order', function () {

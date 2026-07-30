@@ -344,13 +344,6 @@
         window.radarData = @json($radarData);
         window.radarOptions = @json($radarOptions);
         window.barCharts = @json(array_values($barCharts));
-        window.barCharts.forEach(cfg => {
-            new Chart(ctx, {
-                type: 'bar',
-                data: cfg.data,
-                options: cfg.options,
-            });
-        });
         window.csrfToken = "{{ csrf_token() }}";
         window.pdfPostUrl = "/assessment-report/{{ $frameworkId }}/{{ $assessmentId }}";
     </script>
