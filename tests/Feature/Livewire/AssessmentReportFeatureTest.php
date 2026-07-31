@@ -130,7 +130,7 @@ it('populates report data when framework and assessment are valid and submitted'
     // Mock the service that mount() instantiates
     $service = Mockery::mock('overload:'.AssessmentReportService::class);
     $service->shouldReceive('barChart')
-        ->with($node)
+        ->with($node, false)
         ->andReturn([
             'node_id' => $node->id,
             'id' => 'barChart_'.$node->id,
