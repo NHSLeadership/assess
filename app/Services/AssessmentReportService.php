@@ -96,7 +96,10 @@ class AssessmentReportService
     /* ---------------------------------------------------------
        BAR CHART
     --------------------------------------------------------- */
-    public function barChart(Node $node): ?array
+    public function barChart(
+        Node $node,
+        bool $hasRaters = false
+    ): ?array
     {
         $children = $this->nodes()
             ->where('parent_id', $node->id);
@@ -105,12 +108,14 @@ class AssessmentReportService
             return null;
         }
 
-        $include360 = Question::query()
-            ->whereIn('node_id', $children->pluck('id'))
-            ->whereHas('variants', function ($query): void {
-                $query->where('audience', Audience::Rater);
-            })
-            ->exists();
+        $include360 =
+            $hasRaters &&
+            Question::query()
+                ->whereIn('node_id', $children->pluck('id'))
+                ->whereHas('variants', function ($query): void {
+                    $query->where('audience', Audience::Rater);
+                })
+                ->exists();
 
         $labels = [];
         $selfValues = [];
@@ -161,6 +166,7 @@ class AssessmentReportService
                 'tickColor' => '#212b32',
                 'legendLabelsColor' => '#212b32',
                 'gridColor' => 'rgba(0,0,0,0.1)',
+                'showLegend' => $include360,
             ],
         ];
     }
@@ -234,6 +240,7 @@ class AssessmentReportService
                 'legendLabelsColor' => '#212b32',
                 'useScaleLabels' => $useScaleLabels,
                 'tickLabels' => $scaleOptionsModified,
+                'showLegend' => $hasRaters,
 
                 'plugins' => [
                     'legend' => [

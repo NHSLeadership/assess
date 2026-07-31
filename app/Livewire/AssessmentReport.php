@@ -156,7 +156,10 @@ class AssessmentReport extends Component
 
         foreach ($service->nodes() as $node) {
 
-            $chart = $service->barChart($node);
+            $chart = $service->barChart(
+                $node,
+                hasRaters: $this->totalRaters > 0
+            );
 
             if ($chart) {
                 $this->barCharts[$node->id] = $chart;

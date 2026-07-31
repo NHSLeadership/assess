@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 plugins: {
                     legend: {
+                        display: radarOptions.showLegend ?? true,
                         labels: {
                             color: radarOptions.legendLabelsColor
                         }
@@ -99,6 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 indexAxis: 'y',
                 plugins: {
                     legend: {
+                        display: chart.options.showLegend ?? true,
                         labels: {
                             font: {
                                 size: window.innerWidth < 600 ? 8 : 18
