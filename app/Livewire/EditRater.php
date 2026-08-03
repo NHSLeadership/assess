@@ -104,9 +104,6 @@ class EditRater extends Component
         return [
             'type' => ['required'],
             'groupId' => [
-                Rule::requiredIf(
-                    $this->type === RaterType::Other->value
-                ),
                 'nullable',
                 'integer',
                 Rule::exists('rater_groups', 'id')->where(
@@ -125,7 +122,6 @@ class EditRater extends Component
     {
         return [
             'newGroupName.unique' => 'A group with this name already exists.',
-            'groupId.required' => 'Please select a group when the rater type is other.',
         ];
     }
 
