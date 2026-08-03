@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "64d98e03e223be6bd28a5d4414f5c530",
+    "content-hash": "92023b788df65b94f67d929b8d8a83ac",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -7615,16 +7615,16 @@
         },
         {
             "name": "spatie/laravel-prometheus",
-            "version": "1.6.0",
+            "version": "1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-prometheus.git",
-                "reference": "3b8e8715c64fc7137a29916f360560cbeceb8bb8"
+                "reference": "754501373782778117ff2a82dae02bb0bcfcd891"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-prometheus/zipball/3b8e8715c64fc7137a29916f360560cbeceb8bb8",
-                "reference": "3b8e8715c64fc7137a29916f360560cbeceb8bb8",
+                "url": "https://api.github.com/repos/spatie/laravel-prometheus/zipball/754501373782778117ff2a82dae02bb0bcfcd891",
+                "reference": "754501373782778117ff2a82dae02bb0bcfcd891",
                 "shasum": ""
             },
             "require": {
@@ -7685,9 +7685,9 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-prometheus/issues",
-                "source": "https://github.com/spatie/laravel-prometheus/tree/1.6.0"
+                "source": "https://github.com/spatie/laravel-prometheus/tree/1.6.1"
             },
-            "time": "2026-04-27T19:28:14+00:00"
+            "time": "2026-07-13T08:08:14+00:00"
         },
         {
             "name": "spatie/laravel-settings",
@@ -10622,16 +10622,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v8.1.1",
+            "version": "v8.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "8e4cdd4311683516be06944f4b85244063cdb886"
+                "reference": "faabdbe998e8c5c599dceffa27aa265b185c0736"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/8e4cdd4311683516be06944f4b85244063cdb886",
-                "reference": "8e4cdd4311683516be06944f4b85244063cdb886",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/faabdbe998e8c5c599dceffa27aa265b185c0736",
+                "reference": "faabdbe998e8c5c599dceffa27aa265b185c0736",
                 "shasum": ""
             },
             "require": {
@@ -10674,7 +10674,7 @@
             "description": "Loads and dumps YAML files",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/yaml/tree/v8.1.1"
+                "source": "https://github.com/symfony/yaml/tree/v8.1.2"
             },
             "funding": [
                 {
@@ -10694,7 +10694,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-06-09T11:06:24+00:00"
+            "time": "2026-07-22T15:42:13+00:00"
         },
         {
             "name": "thecodingmachine/safe",
