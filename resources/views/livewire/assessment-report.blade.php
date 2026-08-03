@@ -152,6 +152,89 @@
                                 </tbody>
                             </table>
                         @endif
+                            @php
+
+                                // Build a list of all visible groups across the standards in this area
+                                $groupColumns = collect();
+
+                                $standards = $this->nodes
+                                    ->where('parent_id', $node->id);
+
+                                foreach ($standards as $standard) {
+
+                                    $standardFeedback = $raterFeedback->get($standard->id);
+
+                                    foreach (($standardFeedback['groups_by_type'] ?? []) as $groups) {
+                                        foreach ($groups as $groupName => $groupData) {
+                                            $groupColumns->put($groupName, true);
+                                        }
+                                    }
+                                }
+
+                            @endphp
+
+                            @if($groupColumns->isNotEmpty())
+
+                                <h5>Group breakdown</h5>
+
+                                <table class="nhsuk-table">
+
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Standard</th>
+
+                                        @foreach($groupColumns as $groupName => $unused)
+                                            <th scope="col">{{ $groupName }}</th>
+                                        @endforeach
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                    @foreach($standards as $standard)
+
+                                        @php
+                                            $standardFeedback = $raterFeedback->get($standard->id);
+                                        @endphp
+
+                                        <tr>
+
+                                            <th scope="row">
+                                                {{ $standard->name }}
+                                            </th>
+
+                                            @foreach($groupColumns as $groupName => $unused)
+
+                                                @php
+                                                    $groupAverage = null;
+
+                                                    foreach (($standardFeedback['groups_by_type'] ?? []) as $groups) {
+
+                                                        if (isset($groups[$groupName])) {
+                                                            $groupAverage = $groups[$groupName]['average'];
+                                                            break;
+                                                        }
+                                                    }
+                                                @endphp
+
+                                                <td>
+                                                    {{ $groupAverage !== null
+                                                        ? $this->reportService->scoreLabel($groupAverage)
+                                                        : '—'
+                                                    }}
+                                                </td>
+
+                                            @endforeach
+
+                                        </tr>
+
+                                    @endforeach
+
+                                    </tbody>
+
+                                </table>
+
+                            @endif
                     @endif
 
                 {{-- SUBSECTION (has children) --}}
