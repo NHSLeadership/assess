@@ -169,18 +169,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
-        console.log(
-            chart.id,
-            chart.data.datasets.map(d => ({
-                label: d.label,
-                data: d.data
-            }))
-        );
-        console.log(chart.id, {
-            labels: chart.data.labels,
-            datasets: chart.data.datasets
-        });
-
     });
 
     /* -----------------------------

@@ -55,7 +55,7 @@
             @if (!empty($radarData))
                 <h2>Results</h2>
                     <div class="nhsuk-u-margin-bottom-5" wire:ignore>
-                        <h3>Average scores for standards</h3>
+                        <h3>Scores for all standards</h3>
                         <canvas id="radarChart" style="width: 90%" aria-describedby="radar-desc"></canvas>
 
                         {{-- Accessible alternative chart for screen readers --}}
@@ -114,6 +114,7 @@
 
                     @if ($chart)
                         <div class="nhsuk-u-margin-bottom-5" wire:ignore>
+                            <h5>Scores for standards within area</h5>
                             <canvas id="{{ $chart['id'] }}" style="width: 100%; max-width: 900px;" aria-describedby="chart-desc-{{ $chart['id'] }}"></canvas>
 
                             {{-- Accessible alternative chart for screen readers --}}
@@ -167,7 +168,7 @@
 
                         @if ($chart)
                             <div class="nhsuk-u-margin-bottom-5" wire:ignore>
-                                <h5>Your ratings</h5>
+                                <h5>Scores for competencies within standard</h5>
                                 <canvas
                                         id="{{ $chart['id'] }}"
                                         style="width: 100%; max-width: 900px;"
