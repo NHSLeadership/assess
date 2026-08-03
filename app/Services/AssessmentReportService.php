@@ -256,10 +256,11 @@ class AssessmentReportService
             [
                 'label' => 'Self',
                 'data' => $selfValues,
-                'backgroundColor' => $this->chartBackgroundColor,
-                'borderColor' => $this->chartBorderColor,
-                'pointBackgroundColor' => '#4F46E5',
-                'borderWidth' => 2,
+                'backgroundColor' => 'transparent',
+                'borderColor' => '#004281',
+                'pointBackgroundColor' => '#004281',
+                'borderWidth' => 3,
+                'fill' => false,
             ],
         ];
 
@@ -267,10 +268,12 @@ class AssessmentReportService
             $datasets[] = [
                 'label' => '360',
                 'data' => $raterValues,
-                'backgroundColor' => 'rgba(0,133,63,0.2)',
+                'backgroundColor' => 'transparent',
                 'borderColor' => '#00853F',
                 'pointBackgroundColor' => '#00853F',
-                'borderWidth' => 2,
+                'borderWidth' => 3,
+                'borderDash' => [8, 4],
+                'fill' => false,
             ];
         }
 

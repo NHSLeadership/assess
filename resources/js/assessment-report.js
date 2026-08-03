@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     legend: {
                         display: radarOptions.showLegend ?? true,
                         labels: {
-                            color: radarOptions.legendLabelsColor
+                            color: radarOptions.legendLabelsColor,
                         }
                     }
                 }
