@@ -114,45 +114,44 @@
 
                     @if ($chart)
                         <div class="nhsuk-u-margin-bottom-5" wire:ignore>
-                            <h5>Scores for standards within area</h5>
+                            <h5>Bar chart of standards in area</h5>
                             <canvas id="{{ $chart['id'] }}" style="width: 100%; max-width: 900px;" aria-describedby="chart-desc-{{ $chart['id'] }}"></canvas>
-
-                            {{-- Accessible alternative chart for screen readers --}}
-                            <div id="chart-desc-{{ $chart['id'] }}" class="nhsuk-u-visually-hidden">
-                                <p>Bar chart showing scores for {{ $node->name }}.</p>
-                                @php
-                                    $labels = data_get($chart, 'data.labels', []);
-                                    $datasets = data_get($chart, 'data.datasets', []);
-                                @endphp
-                                @if(!empty($labels) && !empty($datasets))
-                                    <table>
-                                        <caption>Bar chart data for {{ $node->name }}</caption>
-                                        <thead>
-                                            <tr>
-                                                <th scope="col">Label</th>
-                                                    @foreach($datasets as $ds)
-                                                        @php
-                                                            $dsLabel = data_get($ds, 'label', 'Series');
-                                                        @endphp
-                                                            <th scope="col">{{ is_array($dsLabel) ? implode(' ', $dsLabel) : $dsLabel }}</th>
-                                                    @endforeach
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach($labels as $i => $label)
-                                                <tr>
-                                                    <th scope="row">{{ is_array($label) ? implode(' ', $label) : $label }}</th>
-                                                    @foreach($datasets as $ds)
-                                                        @php $cell = data_get($ds, 'data.' . $i, ''); @endphp
-                                                        <td>{{ is_array($cell) ? implode(', ', $cell) : $cell }}</td>
-                                                    @endforeach
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                @endif
-                            </div>
                         </div>
+                        @php
+                            $labels = data_get($chart, 'data.labels', []);
+                            $datasets = data_get($chart, 'data.datasets', []);
+                        @endphp
+
+                        @if(!empty($labels) && !empty($datasets))
+                            <h5>Table of standards in area</h5>
+                            <table class="nhsuk-table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Standard</th>
+                                    @foreach($datasets as $ds)
+                                        <th scope="col">{{ data_get($ds, 'label') }}</th>
+                                    @endforeach
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach($labels as $i => $label)
+                                    <tr>
+                                        <th scope="row">{{ $label }}</th>
+
+                                        @foreach($datasets as $ds)
+                                            @php
+                                                $score = data_get($ds, 'data.' . $i);
+                                            @endphp
+
+                                            <td>
+                                                {{ $this->reportService->scoreLabel($score) }}
+                                            </td>
+                                        @endforeach
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        @endif
                     @endif
 
                 {{-- SUBSECTION (has children) --}}
@@ -168,13 +167,54 @@
 
                         @if ($chart)
                             <div class="nhsuk-u-margin-bottom-5" wire:ignore>
-                                <h5>Scores for competencies within standard</h5>
+                                <h5>Bar chart of competencies in standard</h5>
                                 <canvas
                                         id="{{ $chart['id'] }}"
                                         style="width: 100%; max-width: 900px;"
                                         aria-describedby="chart-desc-{{ $chart['id'] }}"
                                 ></canvas>
                             </div>
+
+                            @php
+                                $labels = data_get($chart, 'data.labels', []);
+                                $datasets = data_get($chart, 'data.datasets', []);
+                            @endphp
+
+                            @if(!empty($labels) && !empty($datasets))
+
+                                <h5>Table of competencies in standard</h5>
+
+                                <table class="nhsuk-table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Competency</th>
+
+                                        @foreach($datasets as $ds)
+                                            <th scope="col">{{ data_get($ds, 'label') }}</th>
+                                        @endforeach
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+                                    @foreach($labels as $i => $label)
+                                        <tr>
+                                            <th scope="row">{{ $label }}</th>
+
+                                            @foreach($datasets as $ds)
+                                                @php
+                                                    $score = data_get($ds, 'data.' . $i);
+                                                @endphp
+
+                                                <td>
+                                                    {{ $this->reportService->scoreLabel($score) }}
+                                                </td>
+                                            @endforeach
+
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            @endif
                         @endif
                     @php
                         $feedback = $raterFeedback->get($node->id);

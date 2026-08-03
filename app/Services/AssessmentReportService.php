@@ -574,4 +574,31 @@ class AssessmentReportService
             })
             ->exists();
     }
+
+    public function scoreLabel(?float $score): ?string
+    {
+        if ($score === null) {
+            return null;
+        }
+
+        $labels = array_values($this->scaleOptions());
+
+        $lower = (int) floor($score);
+        $upper = (int) ceil($score);
+
+        if ($lower === $upper) {
+            return $labels[$lower - 1] ?? null;
+        }
+
+        $decimal = $score - $lower;
+
+        $lowerLabel = $labels[$lower - 1] ?? null;
+        $upperLabel = $labels[$upper - 1] ?? null;
+
+        return match (true) {
+            $decimal <= 0.3 => "Above {$lowerLabel}",
+            $decimal >= 0.7 => "Below {$upperLabel}",
+            default => "Between {$lowerLabel} and {$upperLabel}",
+        };
+    }
 }
