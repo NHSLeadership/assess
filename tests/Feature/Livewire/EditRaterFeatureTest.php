@@ -113,7 +113,7 @@ test('useSelectedRater loads selected rater details', function () {
         ->assertSet('showNewRater', false);
 });
 
-test('store requires group when rater type is other', function () {
+test('store allows other rater without group', function () {
     $user = makeAuthUser(['user_id' => '1000000000']);
 
     $framework = Framework::factory()->create();
@@ -127,14 +127,11 @@ test('store requires group when rater type is other', function () {
         ->test(EditRater::class, [
             'assessmentId' => $assessment->id,
         ])
-        ->set('name', 'Test Rater')
-        ->set('email', 'test@example.com')
+        ->set('name', 'Other Rater')
+        ->set('email', 'other@example.com')
         ->set('type', RaterType::Other->value)
-        ->set('groupId', null)
         ->call('store')
-        ->assertHasErrors([
-            'groupId' => 'required',
-        ]);
+        ->assertHasNoErrors();
 });
 
 test('store allows manager without group', function () {
