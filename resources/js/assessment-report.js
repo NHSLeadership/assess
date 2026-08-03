@@ -85,12 +85,15 @@ document.addEventListener('DOMContentLoaded', function () {
     barCharts.forEach(chart => {
         const ctx = document.getElementById(chart.id);
         if (!ctx) return;
-        chart.data.datasets[0].barThickness =
-            window.innerWidth < 600 ? 15 : 30;
+        chart.data.datasets.forEach(dataset => {
+            dataset.barThickness =
+                window.innerWidth < 600 ? 10 : 15;
+        });
 
         const barCount = chart.data.labels.length;
+        const datasetCount = chart.data.datasets.length;
 
-        ctx.height = window.innerWidth < 600 ? barCount * 40 : barCount * 100;
+        ctx.height = 220;
 
         new Chart(ctx, {
             type: 'bar',
@@ -133,19 +136,24 @@ document.addEventListener('DOMContentLoaded', function () {
                             font: {
                                 size: window.innerWidth < 600 ? 6 : 16
                             },
-                            callback: function(value) {
+                            callback: function(value, index) {
 
-                                // wrap the label
-                                const full = chart.data.labels[value];
-                                const words = full.split(' ');
+                                const label = chart.data.labels[index];
+
+                                if (!label) {
+                                    return '';
+                                }
+
+                                const words = label.split(' ');
                                 const lines = [];
                                 let current = '';
 
                                 words.forEach(word => {
-                                    if ((current + word).length > 18) { // adjust 18 if needed
+                                    if ((current + word).length > 40) {
                                         lines.push(current.trim());
                                         current = '';
                                     }
+
                                     current += word + ' ';
                                 });
 
@@ -153,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     lines.push(current.trim());
                                 }
 
-                                return lines; // renders arrays as multi-line labels
+                                return lines;
                             }
                         },
                         grid: {color: chart.options.gridColor},
@@ -161,6 +169,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
+        console.log(
+            chart.id,
+            chart.data.datasets.map(d => ({
+                label: d.label,
+                data: d.data
+            }))
+        );
+        console.log(chart.id, {
+            labels: chart.data.labels,
+            datasets: chart.data.datasets
+        });
+
     });
 
     /* -----------------------------

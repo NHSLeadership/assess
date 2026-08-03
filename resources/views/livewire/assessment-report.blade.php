@@ -160,27 +160,43 @@
                         {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
                         {{ $node->name }}
                     </h4>
+                        {{-- BAR CHART --}}
+                        @php
+                            $chart = data_get($barCharts, $node->id);
+                        @endphp
+
+                        @if ($chart)
+                            <div class="nhsuk-u-margin-bottom-5" wire:ignore>
+                                <h5>Your ratings</h5>
+                                <canvas
+                                        id="{{ $chart['id'] }}"
+                                        style="width: 100%; max-width: 900px;"
+                                        aria-describedby="chart-desc-{{ $chart['id'] }}"
+                                ></canvas>
+                            </div>
+                        @endif
                     @php
                         $feedback = $raterFeedback->get($node->id);
                     @endphp
-                        @if($feedback && $feedback['comments']->isNotEmpty())
+                    @if($feedback && $feedback['comments']->isNotEmpty())
 
-                            <h5 class="nhsuk-heading-xs">
-                                360 feedback notes:
-                            </h5>
+                        <h5 class="nhsuk-heading-xs">
+                            360 feedback:
+                        </h5>
 
-                            <div class="nhsuk-u-margin-bottom-4">
+                        <div class="nhsuk-u-margin-bottom-4">
 
-                                @foreach($feedback['comments'] as $comment)
+                            @foreach($feedback['comments'] as $comment)
 
-                                    <div class="nhsuk-body nhsuk-u-margin-bottom-2">
-                                        {{ $comment }}
-                                    </div>
+                                <div class="nhsuk-body nhsuk-u-margin-bottom-2">
+                                    {{ $comment }}
+                                </div>
 
-                                @endforeach
+                            @endforeach
 
-                            </div>
-                        @endif
+                        </div>
+                    @endif
+
                 @endif
 
                 {{-- RESPONSES (leaf nodes only) --}}

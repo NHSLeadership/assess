@@ -119,7 +119,13 @@ class AssessmentReportService
 
         $labels = [];
         $selfValues = [];
-        $raterValues = [];
+
+        $raterTypes = AssessmentRater::query()
+            ->where('assessment_id', $this->assessmentId)
+            ->pluck('type')
+            ->unique();
+
+        $raterTypeValues = [];
 
         foreach ($children as $child) {
 
@@ -127,25 +133,66 @@ class AssessmentReportService
 
             $selfValues[] = $this->averageForNode($child);
 
-            if ($include360) {
-                $raterValues[] = $this->averageRaterScoreForStandard($child);
+            foreach ($raterTypes as $type) {
+
+                $responses = $this->responsesForRaterType($type);
+
+                $raterTypeValues[$type->value][] =
+                    $this->averageForNode(
+                        $child,
+                        $responses
+                    );
             }
         }
 
         $datasets = [[
-            'label' => 'Self assessment',
+            'label' => 'Self',
             'data' => $selfValues,
             'backgroundColor' => $this->chartBackgroundColor,
             'borderColor' => $this->chartBorderColor,
             'borderWidth' => 1,
         ]];
 
-        if ($include360) {
+        $colours = [
+            RaterType::Manager->value => [
+                'background' => '#dbeafe',
+                'border' => '#2563eb',
+            ],
+            RaterType::Peer->value => [
+                'background' => '#dcfce7',
+                'border' => '#16a34a',
+            ],
+            RaterType::Report->value => [
+                'background' => '#fef3c7',
+                'border' => '#d97706',
+            ],
+            RaterType::Other->value => [
+                'background' => '#e5e7eb',
+                'border' => '#6b7280',
+            ],
+        ];
+        foreach ($raterTypes as $type) {
+
+            $colour = $colours[$type->value] ?? [
+                'background' => '#e5e7eb',
+                'border' => '#6b7280',
+            ];
+
+            $data = $raterTypeValues[$type->value] ?? [];
+
+            if (
+                collect($data)
+                    ->filter(fn ($value) => $value !== null)
+                    ->isEmpty()
+            ) {
+                continue;
+            }
+
             $datasets[] = [
-                'label' => '360 feedback',
-                'data' => $raterValues,
-                'backgroundColor' => '#cce5d8',
-                'borderColor' => '#00853F',
+                'label' => str_replace('_', ' ', $type->name),
+                'data' => $data,
+                'backgroundColor' => $colour['background'],
+                'borderColor' => $colour['border'],
                 'borderWidth' => 1,
             ];
         }
@@ -207,7 +254,7 @@ class AssessmentReportService
 
         $datasets = [
             [
-                'label' => 'Self assessment',
+                'label' => 'Self',
                 'data' => $selfValues,
                 'backgroundColor' => $this->chartBackgroundColor,
                 'borderColor' => $this->chartBorderColor,
@@ -218,7 +265,7 @@ class AssessmentReportService
 
         if ($hasRaters) {
             $datasets[] = [
-                'label' => '360 feedback',
+                'label' => '360',
                 'data' => $raterValues,
                 'backgroundColor' => 'rgba(0,133,63,0.2)',
                 'borderColor' => '#00853F',
@@ -275,47 +322,50 @@ class AssessmentReportService
         return $lines;
     }
 
-    private function descendantLeafNodes(Node $node): Collection
+    private function descendantNodesIncludingSelf(Node $node): Collection
     {
         $all = $this->nodes();
-        // build map: parent_id => [nodes]
+
         $childrenMap = [];
+
         foreach ($all as $n) {
             $childrenMap[$n->parent_id ?? 0][] = $n;
         }
 
         $stack = [$node];
-        $leaves = collect();
+
+        $nodes = collect();
 
         while ($stack !== []) {
+
             /** @var Node $current */
             $current = array_pop($stack);
-            $children = $childrenMap[$current->id] ?? [];
 
-            if ($children === []) {
-                $leaves->push($current);
-            } else {
-                foreach ($children as $child) {
-                    $stack[] = $child;
-                }
+            $nodes->push($current);
+
+            foreach ($childrenMap[$current->id] ?? [] as $child) {
+                $stack[] = $child;
             }
         }
 
-        return $leaves;
+        return $nodes;
     }
 
-    public function averageForNode(Node $node): ?float
+    public function averageForNode(
+        Node $node,
+        ?Collection $responses = null
+    ): ?float
     {
-        $leafNodes = $this->descendantLeafNodes($node);
+        $responses ??= $this->responses();
 
-        if ($leafNodes->isEmpty()) {
-            return null;
-        }
+        $nodeIds = $this->descendantNodesIncludingSelf($node)
+            ->pluck('id')
+            ->toArray();
 
-        $leafIds = $leafNodes->pluck('id')->toArray();
-
-        $scaleResponses = $this->responses()->filter(fn ($r): bool => in_array($r->question->node_id, $leafIds, true) &&
-            $r->question->response_type === ResponseType::TYPE_SCALE->value
+        $scaleResponses = $responses->filter(
+            fn ($r): bool =>
+                in_array($r->question->node_id, $nodeIds, true)
+                && $r->question->response_type === ResponseType::TYPE_SCALE->value
         );
 
         if ($scaleResponses->isEmpty()) {
@@ -323,9 +373,25 @@ class AssessmentReportService
         }
 
         return round(
-            $scaleResponses->avg(fn ($r): int => (int) ($r->scaleOption->value ?? 0)),
+            $scaleResponses->avg(
+                fn ($r): int => (int) ($r->scaleOption->value ?? 0)
+            ),
             1
         );
+    }
+
+    private function responsesForRaterType(
+        RaterType $type
+    ): Collection
+    {
+        $raterIds = AssessmentRater::query()
+            ->where('assessment_id', $this->assessmentId)
+            ->where('type', $type)
+            ->pluck('rater_id');
+
+        return $this->assessment()
+            ->responses
+            ->whereIn('rater_id', $raterIds);
     }
 
     public function signpostsForNode(Node $node): array
