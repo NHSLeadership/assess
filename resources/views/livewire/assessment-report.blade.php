@@ -123,34 +123,37 @@
                         @endphp
 
                         @if(!empty($labels) && !empty($datasets))
-                            <h5>Table of standards in area</h5>
-                            <table class="nhsuk-table">
-                                <thead>
-                                <tr>
-                                    <th scope="col">Standard</th>
-                                    @foreach($datasets as $ds)
-                                        <th scope="col">{{ data_get($ds, 'label') }}</th>
-                                    @endforeach
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($labels as $i => $label)
+                            {{-- Accessible alternative chart for screen readers --}}
+                            <div id="standards-bar-desc" class="nhsuk-u-visually-hidden">
+                                <h5>Table of standards in area</h5>
+                                <table class="nhsuk-table">
+                                    <thead>
                                     <tr>
-                                        <th scope="row">{{ $label }}</th>
-
+                                        <th scope="col">Standard</th>
                                         @foreach($datasets as $ds)
-                                            @php
-                                                $score = data_get($ds, 'data.' . $i);
-                                            @endphp
-
-                                            <td>
-                                                {{ $this->reportService->scoreLabel($score) }}
-                                            </td>
+                                            <th scope="col">{{ data_get($ds, 'label') }}</th>
                                         @endforeach
                                     </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($labels as $i => $label)
+                                        <tr>
+                                            <th scope="row">{{ $label }}</th>
+
+                                            @foreach($datasets as $ds)
+                                                @php
+                                                    $score = data_get($ds, 'data.' . $i);
+                                                @endphp
+
+                                                <td>
+                                                    {{ $this->reportService->scoreLabel($score) }}
+                                                </td>
+                                            @endforeach
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         @endif
                             @php
 
@@ -264,39 +267,41 @@
                             @endphp
 
                             @if(!empty($labels) && !empty($datasets))
+                                {{-- Accessible alternative chart for screen readers --}}
+                                <div id="competencies-bar-desc" class="nhsuk-u-visually-hidden">
+                                    <h5>Table of competencies in standard</h5>
 
-                                <h5>Table of competencies in standard</h5>
-
-                                <table class="nhsuk-table">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col">Competency</th>
-
-                                        @foreach($datasets as $ds)
-                                            <th scope="col">{{ data_get($ds, 'label') }}</th>
-                                        @endforeach
-                                    </tr>
-                                    </thead>
-
-                                    <tbody>
-                                    @foreach($labels as $i => $label)
+                                    <table class="nhsuk-table">
+                                        <thead>
                                         <tr>
-                                            <th scope="row">{{ $label }}</th>
+                                            <th scope="col">Competency</th>
 
                                             @foreach($datasets as $ds)
-                                                @php
-                                                    $score = data_get($ds, 'data.' . $i);
-                                                @endphp
-
-                                                <td>
-                                                    {{ $this->reportService->scoreLabel($score) }}
-                                                </td>
+                                                <th scope="col">{{ data_get($ds, 'label') }}</th>
                                             @endforeach
-
                                         </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
+                                        </thead>
+
+                                        <tbody>
+                                        @foreach($labels as $i => $label)
+                                            <tr>
+                                                <th scope="row">{{ $label }}</th>
+
+                                                @foreach($datasets as $ds)
+                                                    @php
+                                                        $score = data_get($ds, 'data.' . $i);
+                                                    @endphp
+
+                                                    <td>
+                                                        {{ $this->reportService->scoreLabel($score) }}
+                                                    </td>
+                                                @endforeach
+
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             @endif
                         @endif
                     @php
