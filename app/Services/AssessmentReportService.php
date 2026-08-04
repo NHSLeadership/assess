@@ -476,50 +476,38 @@ class AssessmentReportService
                         ];
                     });
 
-                $groupsByType = $standardResponses
+                $groups = $standardResponses
                     ->filter(fn ($r) => $r->scaleOption)
                     ->groupBy(function ($response) use ($assessmentRaters) {
 
                         return $assessmentRaters
                             ->get($response->rater_id)
-                            ?->type
-                            ?->value
-                            ?? RaterType::Other->value;
+                            ?->group
+                            ?->name;
                     })
-                    ->map(function (Collection $typeResponses) use ($assessmentRaters) {
+                    ->filter()
+                    ->filter(function (Collection $groupResponses) {
 
-                        return $typeResponses
-                            ->groupBy(function ($response) use ($assessmentRaters) {
+                        return $groupResponses
+                                ->pluck('rater_id')
+                                ->unique()
+                                ->count() >= self::MIN_GROUP_SIZE;
+                    })
+                    ->map(function (Collection $groupResponses) {
 
-                                return $assessmentRaters
-                                    ->get($response->rater_id)
-                                    ?->group
-                                    ?->name;
-                            })
-                            ->filter()
-                            ->filter(function (Collection $groupResponses) {
+                        return [
+                            'rater_count' => $groupResponses
+                                ->pluck('rater_id')
+                                ->unique()
+                                ->count(),
 
-                                return $groupResponses
-                                        ->pluck('rater_id')
-                                        ->unique()
-                                        ->count() >= self::MIN_GROUP_SIZE;
-                            })
-                            ->map(function (Collection $groupResponses) {
-
-                                return [
-                                    'rater_count' => $groupResponses
-                                        ->pluck('rater_id')
-                                        ->unique()
-                                        ->count(),
-
-                                    'average' => round(
-                                        $groupResponses->avg(
-                                            fn ($response) => $response->scaleOption?->value
-                                        ),
-                                        1
-                                    ),
-                                ];
-                            });
+                            'average' => round(
+                                $groupResponses->avg(
+                                    fn ($response) => $response->scaleOption?->value
+                                ),
+                                1
+                            ),
+                        ];
                     });
 
                 $comments = $standardResponses
@@ -530,7 +518,7 @@ class AssessmentReportService
 
                 return [
                     'scores_by_type' => $scoresByType,
-                    'groups_by_type' => $groupsByType,
+                    'groups' => $groups,
                     'comments' => $comments,
                 ];
             });

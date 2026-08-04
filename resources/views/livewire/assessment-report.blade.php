@@ -155,89 +155,82 @@
                                 </table>
                             </div>
                         @endif
-                            @php
+                        @php
 
-                                // Build a list of all visible groups across the standards in this area
-                                $groupColumns = collect();
+                            // Build a list of all visible groups across the standards in this area
+                            $groupColumns = collect();
 
-                                $standards = $this->nodes
-                                    ->where('parent_id', $node->id);
+                            $standards = $this->nodes
+                                ->where('parent_id', $node->id);
 
-                                foreach ($standards as $standard) {
+                            foreach ($standards as $standard) {
 
-                                    $standardFeedback = $raterFeedback->get($standard->id);
+                                $standardFeedback = $raterFeedback->get($standard->id);
 
-                                    foreach (($standardFeedback['groups_by_type'] ?? []) as $groups) {
-                                        foreach ($groups as $groupName => $groupData) {
-                                            $groupColumns->put($groupName, true);
-                                        }
-                                    }
+                                foreach (($standardFeedback['groups'] ?? []) as $groupName => $groupData) {
+                                    $groupColumns->put($groupName, true);
                                 }
+                            }
 
-                            @endphp
+                        @endphp
 
-                            @if($groupColumns->isNotEmpty())
+                        @if($groupColumns->isNotEmpty())
 
-                                <h5>Group breakdown</h5>
+                            <h5>Group breakdown</h5>
 
-                                <table class="nhsuk-table">
+                            <table class="nhsuk-table">
 
-                                    <thead>
+                                <thead>
+                                <tr>
+                                    <th scope="col">Standard</th>
+
+                                    @foreach($groupColumns as $groupName => $unused)
+                                        <th scope="col">{{ $groupName }}</th>
+                                    @endforeach
+                                </tr>
+                                </thead>
+
+                                <tbody>
+
+                                @foreach($standards as $standard)
+
+                                    @php
+                                        $standardFeedback = $raterFeedback->get($standard->id);
+                                    @endphp
+
                                     <tr>
-                                        <th scope="col">Standard</th>
+
+                                        <th scope="row">
+                                            {{ $standard->name }}
+                                        </th>
 
                                         @foreach($groupColumns as $groupName => $unused)
-                                            <th scope="col">{{ $groupName }}</th>
+
+                                            @php
+                                                $groupAverage = data_get(
+                                                    $standardFeedback,
+                                                    'groups.' . $groupName . '.average'
+                                                );
+                                            @endphp
+
+                                            <td>
+                                                {{ $groupAverage !== null
+                                                    ? $this->reportService->scoreLabel($groupAverage)
+                                                    : '—'
+                                                }}
+                                            </td>
+
                                         @endforeach
+
                                     </tr>
-                                    </thead>
 
-                                    <tbody>
+                                @endforeach
 
-                                    @foreach($standards as $standard)
+                                </tbody>
 
-                                        @php
-                                            $standardFeedback = $raterFeedback->get($standard->id);
-                                        @endphp
+                            </table>
 
-                                        <tr>
-
-                                            <th scope="row">
-                                                {{ $standard->name }}
-                                            </th>
-
-                                            @foreach($groupColumns as $groupName => $unused)
-
-                                                @php
-                                                    $groupAverage = null;
-
-                                                    foreach (($standardFeedback['groups_by_type'] ?? []) as $groups) {
-
-                                                        if (isset($groups[$groupName])) {
-                                                            $groupAverage = $groups[$groupName]['average'];
-                                                            break;
-                                                        }
-                                                    }
-                                                @endphp
-
-                                                <td>
-                                                    {{ $groupAverage !== null
-                                                        ? $this->reportService->scoreLabel($groupAverage)
-                                                        : '—'
-                                                    }}
-                                                </td>
-
-                                            @endforeach
-
-                                        </tr>
-
-                                    @endforeach
-
-                                    </tbody>
-
-                                </table>
-
-                            @endif
+                        @endif
                     @endif
 
                 {{-- SUBSECTION (has children) --}}
