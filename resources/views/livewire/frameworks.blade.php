@@ -158,7 +158,8 @@
                                 </div>
                                 {{--@TODO Remove if statement once 360 is live --}}
                                 @if (app()->runningUnitTests() || $this->user()?->can('assess:360'))
-                                    @if(! $assessment->reportAvailable())
+                                    @php $reportAvailable = $assessment->reportAvailable(); @endphp
+                                    @if(! $reportAvailable)
                                         <div class="nhsuk-u-margin-bottom-1">
                                             <a href="{{ route('assessment-raters', ['frameworkId' => $this->framework?->id, 'assessmentId' => $assessment->id]) }}"
                                                aria-describedby="{{ $assessment->slug }}-hint"
@@ -174,7 +175,7 @@
                                         </div>
                                     @endif
                                 @endif
-                                @if($assessment->reportAvailable())
+                                @if($reportAvailable)
                                     <div class="nhsuk-u-margin-bottom-1">
                                         <a href="{{ route('assessment-report', [
                                             'frameworkId' => $this->framework->id,

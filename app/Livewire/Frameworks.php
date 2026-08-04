@@ -273,9 +273,10 @@ class Frameworks extends Component
      */
     public function getAssessmentTypeDisplay(Assessment $assessment): string
     {
-        return $assessment->raters()->exists()
-            ? '360 assessment'
-            : 'Self assessment';
+        $hasRaters = $assessment->relationLoaded('raters')
+            ? $assessment->raters->isNotEmpty()
+            : $assessment->raters()->exists();
+        return $hasRaters ? '360 assessment' : 'Self assessment';
     }
 
     /**
