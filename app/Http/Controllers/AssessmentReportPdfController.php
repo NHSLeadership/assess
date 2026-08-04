@@ -41,10 +41,11 @@ class AssessmentReportPdfController extends Controller
         $framework = $service->framework();
 
         $charts = [];
+        $hasRaters = $service->assessment()->raters()->exists();
 
         foreach ($service->nodes() as $node) {
 
-            $chart = $service->barChart($node);
+            $chart = $service->barChart($node, hasRaters: $hasRaters);
 
             if ($chart) {
                 $charts[] = $chart;

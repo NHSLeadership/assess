@@ -124,7 +124,7 @@
 
                         @if(!empty($labels) && !empty($datasets))
                             {{-- Accessible alternative chart for screen readers --}}
-                            <div id="standards-bar-desc" class="nhsuk-u-visually-hidden">
+                            <div id="chart-desc-{{ $chart['id'] }}" class="nhsuk-u-visually-hidden">
                                 <h5>Table of standards in area</h5>
                                 <table class="nhsuk-table">
                                     <thead>
@@ -146,7 +146,7 @@
                                                 @endphp
 
                                                 <td>
-                                                    {{ $this->reportService->scoreLabel($score) }}
+                                                    {{ $this->reportService->scoreLabel($score) ?? '—' }}
                                                 </td>
                                             @endforeach
                                         </tr>
@@ -167,7 +167,7 @@
 
                                 $standardFeedback = $raterFeedback->get($standard->id);
 
-                                foreach (($standardFeedback['groups'] ?? []) as $groupName => $groupData) {
+                                foreach (data_get($standardFeedback, 'groups', []) as $groupName => $groupData) {
                                     $groupColumns->put($groupName, true);
                                 }
                             }

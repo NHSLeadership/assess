@@ -116,18 +116,16 @@ class AssessmentReport extends Component
             }
         }
 
-        $this->reportAvailable = $this->assessment()->is360Complete();
+        $ratersQuery = $this->assessment()->raters();
 
-        $this->totalRaters = $this->assessment()
-            ->raters()
-            ->count();
+        $this->totalRaters = $ratersQuery->count();
 
-        $this->completedRaters = $this->assessment()
-            ->raters()
+        $this->completedRaters = (clone $ratersQuery)
             ->wherePivotNotNull('submitted_at')
             ->count();
 
-        $this->reportAvailable = $this->assessment()->is360Complete();
+        $this->reportAvailable =
+            $this->totalRaters === 0 || $this->completedRaters === $this->totalRaters;
 
         $service = new AssessmentReportService(
             $frameworkId,

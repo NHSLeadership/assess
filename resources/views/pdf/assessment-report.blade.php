@@ -189,7 +189,7 @@ if (!empty(Auth()?->user()?->user_id)) {
 
                     $standardFeedback = $raterFeedback->get($standard->id);
 
-                    foreach (($standardFeedback['groups'] ?? []) as $groupName => $groupData) {
+                    foreach (data_get($standardFeedback, 'groups', []) as $groupName => $groupData) {
                         $groupColumns->put($groupName, true);
                     }
                 }
