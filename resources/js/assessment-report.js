@@ -1,3 +1,4 @@
+import pattern from 'patternomaly';
 document.addEventListener('DOMContentLoaded', function () {
     /* -----------------------------
         1. RENDER RADAR CHART
@@ -86,14 +87,67 @@ document.addEventListener('DOMContentLoaded', function () {
         const ctx = document.getElementById(chart.id);
         if (!ctx) return;
         chart.data.datasets.forEach(dataset => {
-            dataset.barThickness =
-                window.innerWidth < 600 ? 10 : 15;
+            dataset.categoryPercentage = 0.9;
+            dataset.barPercentage = 0.8;
+            dataset.maxBarThickness = 25;
         });
 
         const barCount = chart.data.labels.length;
-        const datasetCount = chart.data.datasets.length;
 
-        ctx.height = 220;
+        const visibleDatasetCount = chart.data.datasets.filter(dataset =>
+            dataset.data.some(value => value !== null)
+        ).length;
+
+        ctx.height = Math.max(
+            220,
+            barCount * visibleDatasetCount * 30
+        );
+
+        const datasetOrder = {
+            'Self': 1,
+            'Manager': 2,
+            'Peer': 3,
+            'Report': 4,
+            'Other': 5,
+        };
+
+        chart.data.datasets.sort((a, b) => {
+            return (
+                (datasetOrder[a.label] ?? 999) -
+                (datasetOrder[b.label] ?? 999)
+            );
+        });
+
+        chart.data.datasets.forEach(dataset => {
+
+            switch (dataset.label) {
+
+                case 'Self':
+                    dataset.backgroundColor ='#005EB8';
+                    break;
+
+                case 'Manager':
+                    dataset.backgroundColor =
+                        pattern.draw('diagonal', '#009639');
+                    break;
+
+                case 'Peer':
+                    dataset.backgroundColor =
+                        pattern.draw('zigzag-vertical', '#DA291C');
+                    break;
+
+                case 'Report':
+                    dataset.backgroundColor =
+                        pattern.draw('diagonal-right-left', '#ED8B00');
+                    break;
+
+                case 'Other':
+                    dataset.backgroundColor =
+                        pattern.draw('cross', '#AE2573');
+                    break;
+
+            }
+        });
 
         new Chart(ctx, {
             type: 'bar',
