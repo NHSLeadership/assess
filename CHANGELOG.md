@@ -5,8 +5,9 @@
 
 ---
 ### v2.1.5
-> Updated: 03.08.2026
+> Updated: 04.08.2026
 1. Makes rater groups optional for all rater types
+2. Improve guidance for rater group selection
 
 ### v2.1.4
 > Updated: 27.07.2026

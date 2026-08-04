@@ -9,13 +9,13 @@
         @endslot
 
         @slot('hint')
-            The rater group.
+            The rater group. Grouping raters is optional. Use groups to organise raters, for example by team or department. Any group you create can be assigned to multiple raters.
         @endslot
     @endcomponent
 
     <a href="#"
        wire:click.prevent="$toggle('showNewGroup')"
-       class="nhsuk-link">
+       class="nhsuk-link nhsuk-u-display-block nhsuk-u-margin-top-2">
         Add new group
     </a>
 
