@@ -63,6 +63,9 @@ class AssessmentReportPdfController extends Controller
             'signposts' => $signposts,
             'isMobile' => false,
             'variantAttributeLabel' => $service->variantAttributeLabel(),
+            'raterFeedback' => $service->raterFeedbackByStandard(),
+            'reportService' => $service,
+            'totalRaters' => $service->assessment()->raters()->count(),
 
             // Engine‑specific HTML handling
             'frameworkCustomHtml' => $forGotenberg
