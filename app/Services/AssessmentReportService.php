@@ -531,6 +531,8 @@ class AssessmentReportService
             ->whereNotNull('rater_id')
             ->filter(fn ($response) =>
                 $response->question?->node_id === $standard->id
+                && $response->question?->response_type === ResponseType::TYPE_SCALE->value
+                && $response->scaleOption
             );
 
         if ($responses->isEmpty()) {
@@ -539,7 +541,7 @@ class AssessmentReportService
 
         return round(
             $responses->avg(
-                fn ($response) => (int) ($response->scaleOption?->value ?? 0)
+                fn ($response) => (int) $response->scaleOption->value
             ),
             1
         );
