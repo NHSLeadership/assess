@@ -139,4 +139,20 @@ class Assessment extends Model
                     ?? null,
         ];
     }
+
+    public function reportAvailable(): bool
+    {
+        if (!$this->submitted_at) {
+            return false;
+        }
+
+        $totalRaters = $this->raters()->count();
+
+        $completedRaters = $this->raters()
+            ->wherePivotNotNull('submitted_at')
+            ->count();
+
+        return $totalRaters === 0
+            || $completedRaters === $totalRaters;
+    }
 }

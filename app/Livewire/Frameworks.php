@@ -273,8 +273,10 @@ class Frameworks extends Component
      */
     public function getAssessmentTypeDisplay(Assessment $assessment): string
     {
-        $type = $this->loggedInRater($assessment)?->pivot?->assessment_type ?? 'self assessment';
-        return ucfirst(strtolower($type));
+        $hasRaters = $assessment->relationLoaded('raters')
+            ? $assessment->raters->isNotEmpty()
+            : $assessment->raters()->exists();
+        return $hasRaters ? '360 assessment' : 'Self assessment';
     }
 
     /**

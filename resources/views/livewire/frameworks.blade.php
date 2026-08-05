@@ -147,19 +147,46 @@
                             @if ($this->pendingDeleteId === $assessment->id)
                                 @include('livewire.partials.confirm-delete')
                             @else
-                                <button
-                                        type="button"
-                                        class="nhsuk-link"
-                                        wire:click.prevent="askDelete({{ $assessment->id }})">
-                                    {{ __('Delete') }}
-                                </button>
+                                <div class="nhsuk-u-margin-bottom-1">
+                                    <button
+                                            type="button"
+                                            class="nhsuk-link"
+                                            style="white-space: nowrap;"
+                                            wire:click.prevent="askDelete({{ $assessment->id }})">
+                                        {{ __('Delete') }}
+                                    </button>
+                                </div>
                                 {{--@TODO Remove if statement once 360 is live --}}
                                 @if (app()->runningUnitTests() || $this->user()?->can('assess:360'))
-                                    <a href="{{ route('assessment-raters', ['frameworkId' => $this->framework?->id, 'assessmentId' => $assessment->id]) }}"
-                                       aria-describedby="{{ $assessment->slug }}-hint"
-                                       class="nhsuk-link">
-                                        {{ __('Raters') }}
-                                    </a>
+                                    @php $reportAvailable = $assessment->reportAvailable(); @endphp
+                                    @if(! $reportAvailable)
+                                        <div class="nhsuk-u-margin-bottom-1">
+                                            <a href="{{ route('assessment-raters', ['frameworkId' => $this->framework?->id, 'assessmentId' => $assessment->id]) }}"
+                                               aria-describedby="{{ $assessment->slug }}-hint"
+                                               class="nhsuk-link"
+                                               style="white-space: nowrap;"
+                                            >
+                                                @if($assessment->raters->count())
+                                                    {{ __('Manage raters') }}
+                                                @else
+                                                    {{ __('Convert to 360') }}
+                                                @endif
+                                            </a>
+                                        </div>
+                                    @endif
+                                @endif
+                                @if($reportAvailable)
+                                    <div class="nhsuk-u-margin-bottom-1">
+                                        <a href="{{ route('assessment-report', [
+                                            'frameworkId' => $this->framework->id,
+                                            'assessmentId' => $assessment->id,
+                                        ]) }}"
+                                        class="nhsuk-link"
+                                           style="white-space: nowrap;"
+                                        >
+                                        View report
+                                        </a>
+                                    </div>
                                 @endif
                             @endif
                         </td>

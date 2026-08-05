@@ -67,3 +67,53 @@ test('assessment casts submitted_at to Carbon when persisted', function () {
 
     expect($assessment->submitted_at)->toBeInstanceOf(Carbon::class);
 });
+
+test('report is not available when assessment is not submitted', function () {
+
+    $assessment = Assessment::factory()->create([
+        'submitted_at' => null,
+    ]);
+
+    expect($assessment->reportAvailable())->toBeFalse();
+});
+
+test('report is available for submitted self assessment', function () {
+
+    $assessment = Assessment::factory()->create([
+        'submitted_at' => now(),
+    ]);
+
+    expect($assessment->reportAvailable())->toBeTrue();
+});
+
+test('report is not available when 360 raters are incomplete', function () {
+
+    $assessment = Assessment::factory()->create([
+        'submitted_at' => now(),
+    ]);
+
+    $rater = Rater::factory()->create();
+
+    $assessment->raters()->attach($rater->id, [
+        'type' => RaterType::Peer,
+        'submitted_at' => null,
+    ]);
+
+    expect($assessment->reportAvailable())->toBeFalse();
+});
+
+test('report is available when all 360 raters have submitted', function () {
+
+    $assessment = Assessment::factory()->create([
+        'submitted_at' => now(),
+    ]);
+
+    $rater = Rater::factory()->create();
+
+    $assessment->raters()->attach($rater->id, [
+        'type' => RaterType::Peer,
+        'submitted_at' => now(),
+    ]);
+
+    expect($assessment->reportAvailable())->toBeTrue();
+});
