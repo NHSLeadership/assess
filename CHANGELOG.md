@@ -4,17 +4,13 @@
 # Assessment tool
 
 ---
-### v2.2.0
-> Updated: 04.08.2026
-1. Include rater responses in assessment report
-
----
 ### v2.1.5
 > Updated: 05.08.2026
 1. Makes rater groups optional for all rater types
 2. Improve guidance for rater group selection
 3. Route 360 flow through raters step
 4. Frameworks table tweaks
+5. Include rater responses in assessment report
 
 ### v2.1.4
 > Updated: 27.07.2026
