@@ -99,7 +99,7 @@
 
                 {{-- SECTION (top-level) --}}
                 @if (empty($node->parent))
-                    <div class="nhsuk-u-padding-2">
+                    <div class="nhsuk-u-padding-bottom-2">
                         <h3 class="nhsuk-heading-m nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0"
                             style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};">
                             {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
