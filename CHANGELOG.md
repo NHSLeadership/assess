@@ -10,6 +10,7 @@
 2. Improve guidance for rater group selection
 3. Route 360 flow through raters step
 4. Frameworks table tweaks
+5. Include rater responses in assessment report
 
 ### v2.1.4
 > Updated: 27.07.2026

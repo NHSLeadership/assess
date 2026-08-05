@@ -41,9 +41,17 @@ class AssessmentReport extends Component
     public ?string $variantAttributeLabel = null;
 
     /** @var array<string, mixed> */
-    public array $signposts;
+    public array $signposts = [];
 
     protected ?AssessmentRater $cachedAssessmentRater = null;
+
+    public Collection $raterFeedback;
+
+    public bool $reportAvailable = true;
+
+    public int $totalRaters = 0;
+
+    public int $completedRaters = 0;
 
     /**
      * @throws FrameworkNotFoundException
@@ -63,6 +71,8 @@ class AssessmentReport extends Component
         $this->frameworkId = $frameworkId;
         $this->assessmentId = $assessmentId;
         $this->raterId = $raterId;
+
+        $this->raterFeedback = collect();
 
         // Validate framework
         if (!$this->framework() instanceof \App\Models\Framework) {
@@ -106,20 +116,55 @@ class AssessmentReport extends Component
             }
         }
 
-        // Use the shared service for all report data
-        $service = new AssessmentReportService($frameworkId, $assessmentId, $this->raterId);
+        $ratersQuery = $this->assessment()->raters();
 
-        $this->barCharts = $service->barCharts();
-        $this->barChartsCompetency = $service->barChartsCompetency();
-        $radar = $service->radarChart();
+        $this->totalRaters = $ratersQuery->count();
+
+        $this->completedRaters = (clone $ratersQuery)
+            ->wherePivotNotNull('submitted_at')
+            ->count();
+
+        $this->reportAvailable =
+            $this->totalRaters === 0 || $this->completedRaters === $this->totalRaters;
+
+        $service = new AssessmentReportService(
+            $frameworkId,
+            $assessmentId,
+            $this->raterId
+        );
+
+        $this->variantAttributeLabel = $service->variantAttributeLabel();
+
+        if (! $this->reportAvailable) {
+            return;
+        }
+
+        $this->raterFeedback = $service->raterFeedbackByStandard();
+
+        $radar = $service->radarChart(
+            hasRaters: $this->totalRaters > 0
+        );
+
         $this->radarData = $radar['data'];
         $this->radarOptions = $radar['options'];
-        $this->variantAttributeLabel = $service->variantAttributeLabel();
 
         $this->signposts = [];
 
+        $this->barCharts = [];
+
         foreach ($service->nodes() as $node) {
+
+            $chart = $service->barChart(
+                $node,
+                hasRaters: $this->totalRaters > 0
+            );
+
+            if ($chart) {
+                $this->barCharts[$node->id] = $chart;
+            }
+
             $signposts = $service->signpostsForNode($node);
+
             if ($signposts !== []) {
                 $this->signposts[$node->id] = $signposts;
             }
@@ -189,5 +234,15 @@ class AssessmentReport extends Component
     public function render(): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
         return view('livewire.assessment-report');
+    }
+
+    #[Computed]
+    public function reportService(): AssessmentReportService
+    {
+        return new AssessmentReportService(
+            $this->frameworkId,
+            $this->assessmentId,
+            $this->raterId
+        );
     }
 }

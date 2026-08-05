@@ -2,7 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Self-assessment Report</title>
+    <title>
+        @if($totalRaters == 0)
+            Self-assessment report
+        @else
+            360 assessment report
+        @endif
+    </title>
 
     <style>
         html {
@@ -116,7 +122,13 @@
 
     @if (!empty($framework))
         <h1>{{ data_get($framework, 'name') }}</h1>
-        <h2>Self-assessment report</h2>
+        <h2>
+            @if($totalRaters == 0)
+                Self-assessment report
+            @else
+                360 assessment report
+            @endif
+        </h2>
     @endif
 
     <strong>For: {{ Auth()?->user()?->name ?? '' }}</strong>
@@ -130,7 +142,7 @@
     @endphp
     <br>
     <strong>
-        Completed on {{ $assessment ? \Carbon\Carbon::parse(data_get($assessment, 'submitted_at'))->format('j F Y') : '' }}
+        Self-assessment completed: {{ $assessment ? \Carbon\Carbon::parse(data_get($assessment, 'submitted_at'))->format('j F Y') : '' }}
     </strong>
     <br>
     <strong>
@@ -151,7 +163,7 @@
     @if (!empty($radarImage))
         <div class="page-break"></div>
         <h2>Results</h2>
-        <h3>Average scores for standards</h3>
+        <h3>Scores for all standards</h3>
         <br>
         <div class="section align-center">
             <img
@@ -183,9 +195,84 @@
                 @endphp
 
                 @if ($chart && !empty(data_get($barImages, $chart['id'])))
+                    <h5>Bar chart of standards in area</h5>
                     <img src="{{ data_get($barImages, $chart['id']) }}" class="bar-chart-img" alt="Bar chart">
-                    <div class="page-break"></div>
                 @endif
+
+                @php
+
+                    $groupColumns = collect();
+
+                    $standards = $nodes
+                        ->where('parent_id', $node->id);
+
+                    foreach ($standards as $standard) {
+
+                        $standardFeedback = $raterFeedback->get($standard->id);
+
+                        foreach (data_get($standardFeedback, 'groups', []) as $groupName => $groupData) {
+                            $groupColumns->put($groupName, true);
+                        }
+                    }
+
+                @endphp
+
+                @if($groupColumns->isNotEmpty())
+
+                    <h4>Group breakdown</h4>
+
+                    <table width="100%" border="1" cellspacing="0" cellpadding="5">
+
+                        <thead>
+                        <tr>
+                            <th>Standard</th>
+
+                            @foreach($groupColumns as $groupName => $unused)
+                                <th>{{ $groupName }}</th>
+                            @endforeach
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        @foreach($standards as $standard)
+
+                            @php
+                                $standardFeedback = $raterFeedback->get($standard->id);
+                            @endphp
+
+                            <tr>
+
+                                <td>{{ $standard->name }}</td>
+
+                                @foreach($groupColumns as $groupName => $unused)
+
+                                    @php
+                                        $groupAverage = data_get(
+                                            $standardFeedback,
+                                            'groups.' . $groupName . '.average'
+                                        );
+                                    @endphp
+
+                                    <td>
+                                        {{ $groupAverage !== null
+                                            ? $reportService->scoreLabel($groupAverage)
+                                            : '—'
+                                        }}
+                                    </td>
+
+                                @endforeach
+
+                            </tr>
+
+                        @endforeach
+
+                        </tbody>
+
+                    </table>
+
+                @endif
+
             </div>
 
             {{-- SUBSECTION (has children) --}}
@@ -196,6 +283,36 @@
                     {{ $node->name }}
                 </h3>
             </div>
+            @php
+                $chart = collect($barCharts)
+                    ->firstWhere('node_id', $node->id);
+            @endphp
+            @if ($chart && !empty(data_get($barImages, $chart['id'])))
+                <h4>Bar chart of competencies in standard</h4>
+                <img src="{{ data_get($barImages, $chart['id']) }}" class="bar-chart-img" alt="Bar chart">
+            @endif
+
+            @php
+                $feedback = $raterFeedback->get($node->id);
+            @endphp
+            @if($feedback && $feedback['comments']->isNotEmpty())
+
+                <h5 class="nhsuk-heading-xs">
+                    360 feedback:
+                </h5>
+
+                <div class="nhsuk-u-margin-bottom-4">
+
+                    @foreach($feedback['comments'] as $comment)
+
+                        <div class="nhsuk-body nhsuk-u-margin-bottom-2">
+                            {{ $comment }}
+                        </div>
+
+                    @endforeach
+
+                </div>
+            @endif
         @endif
 
 
@@ -207,7 +324,11 @@
 
 
         {{-- LEAF NODE RESPONSES --}}
-        @if ($nodeResponses->count())
+        @if (
+            $node->children->isEmpty()
+            && $nodeResponses
+            && $nodeResponses->count()
+        )
             <ul class="task-list">
                 @foreach ($nodeResponses as $response)
                     <li class="task-item">

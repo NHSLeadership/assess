@@ -40,6 +40,18 @@ class AssessmentReportPdfController extends Controller
 
         $framework = $service->framework();
 
+        $charts = [];
+        $hasRaters = $service->assessment()->raters()->exists();
+
+        foreach ($service->nodes() as $node) {
+
+            $chart = $service->barChart($node, hasRaters: $hasRaters);
+
+            if ($chart) {
+                $charts[] = $chart;
+            }
+        }
+
         return [
             'framework' => $framework,
             'nodes' => $service->nodes(),
@@ -48,10 +60,13 @@ class AssessmentReportPdfController extends Controller
             'rater' => $service->rater(),
             'radarImage' => $request->radarImage,
             'barImages' => $barImages,
-            'barCharts' => $service->barChartsCompetency(),
+            'barCharts' => $charts,
             'signposts' => $signposts,
             'isMobile' => false,
             'variantAttributeLabel' => $service->variantAttributeLabel(),
+            'raterFeedback' => $service->raterFeedbackByStandard(),
+            'reportService' => $service,
+            'totalRaters' => $service->assessment()->raters()->count(),
 
             // Engine‑specific HTML handling
             'frameworkCustomHtml' => $forGotenberg
@@ -68,12 +83,6 @@ class AssessmentReportPdfController extends Controller
         $service = new AssessmentReportService($frameworkId, $assessmentId);
 
         $data = $this->buildPdfData($service, $request, false);
-
-        logger()->info('PDF generated', [
-            'engine' => config('app.pdf_engine'),
-            'assessment_id' => $assessmentId,
-            'user_id' => auth()?->id(),
-        ]);
 
         return Pdf::loadView('pdf.assessment-report', $data)
             ->download('assessment-report.pdf');
@@ -120,12 +129,6 @@ class AssessmentReportPdfController extends Controller
                     'Gotenberg failed with status ' . $response->status()
                 );
             }
-
-            logger()->info('PDF generated', [
-                'engine' => config('app.pdf_engine'),
-                'assessment_id' => $assessmentId,
-                'user_id' => auth()?->id(),
-            ]);
 
             return response($response->body(), 200, [
                 'Content-Type' => 'application/pdf',

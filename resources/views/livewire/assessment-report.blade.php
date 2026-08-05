@@ -1,11 +1,16 @@
 <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
     <div class="nhsuk-grid-column-full">
-
         @if (!empty($this->framework))
             <h1 class="nhsuk-heading-xl">
                 {{ $this->framework->name ?? '' }}
             </h1>
-            <h2 class="nhsuk-heading-l">Self-assessment report</h2>
+            <h2 class="nhsuk-heading-l">
+                @if($this->totalRaters == 0)
+                    Self-assessment report
+                @else
+                    360 assessment report
+                @endif
+            </h2>
             @if(empty($this->raterId))
                 <p>
                     <strong>For: {{ Auth()?->user()?->name ?? '' }}</strong>
@@ -13,8 +18,8 @@
                     <strong>Academy Id: {{ Auth()?->user()?->user_id ?? '' }}</strong>
                     <br>
                     <strong>
-                        Completed
-                        on {{ $this->assessment() ? \Carbon\Carbon::parse(data_get($this->assessment(), 'submitted_at'))->format('j F Y') : '' }}
+                        Self-assessment completed:
+                        {{ $this->assessment() ? \Carbon\Carbon::parse(data_get($this->assessment(), 'submitted_at'))->format('j F Y') : '' }}
                     </strong>
                     <br>
                     <strong>
@@ -22,110 +27,55 @@
                     </strong>
                 </p>
             @endif
-            @if(!empty(data_get($this->framework, 'report_intro')) && !empty($this->user))
-                {!! \App\Support\RichTextRender::render(
-                        $this->framework->report_intro,
-                        $this->user,
-                        $this->framework,
-                        [
-                            'barCharts' => $barCharts,
-                            'assessment'=> $this->assessment(),
-                            'framework' => $this->framework,
-                        ]
-                    )
-                !!}
+        @endif
+        @if($reportAvailable)
+            @if (!empty($this->framework))
+                @if(!empty(data_get($this->framework, 'report_intro')) && !empty($this->user))
+                    {!! \App\Support\RichTextRender::render(
+                            $this->framework->report_intro,
+                            $this->user,
+                            $this->framework,
+                            [
+                                'barCharts' => $barCharts,
+                                'assessment'=> $this->assessment(),
+                                'framework' => $this->framework,
+                            ]
+                        )
+                    !!}
+                @endif
+
+                @if(!empty(data_get($this->framework, 'report_html')))
+                    <p>{!! data_get($this->framework, 'report_html') !!}</p>
+                @endif
+
             @endif
 
-            @if(!empty(data_get($this->framework, 'report_html')))
-                <p>{!! data_get($this->framework, 'report_html') !!}</p>
-            @endif
-
-        @endif
 
 
-
-        @if (!empty($radarData))
-            <h2>Results</h2>
-                <div class="nhsuk-u-margin-bottom-5" wire:ignore>
-                    <h3>Average scores for standards</h3>
-                    <canvas id="radarChart" style="width: 90%" aria-describedby="radar-desc"></canvas>
-
-                    {{-- Accessible alternative chart for screen readers --}}
-                    <div id="radar-desc" class="nhsuk-u-visually-hidden">
-                        <p>Radar chart showing average scores for standards.</p>
-                        @if(!empty($radarData) && is_array($radarData))
-                            @php
-                                $labels = data_get($radarData, 'labels', []);
-                                $datasets = data_get($radarData, 'datasets', []);
-                            @endphp
-                            <table>
-                                <caption>Radar chart data: average scores for standards</caption>
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Standard</th>
-                                            @foreach($datasets as $ds)
-                                                @php
-                                                    $dsLabel = data_get($ds, 'label', 'Series');
-                                                @endphp
-                                                <th scope="col">{{ is_array($dsLabel) ? implode(' ', $dsLabel) : $dsLabel }}</th>
-                                            @endforeach
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($labels as $i => $label)
-                                        <tr>
-                                            <th scope="row">{{ is_array($label) ? implode(' ', $label) : $label }}</th>
-                                            @foreach($datasets as $ds)
-                                                @php $cell = data_get($ds, 'data.' . $i, ''); @endphp
-                                                <td>{{ is_array($cell) ? implode(', ', $cell) : $cell }}</td>
-                                            @endforeach
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        @endif
-                    </div>
-                </div>
-        @endif
-        @foreach ($this->nodes as $node)
-
-            {{-- SECTION (top-level) --}}
-            @if (empty($node->parent))
-                <div class="nhsuk-u-padding-2">
-                    <h3 class="nhsuk-heading-m nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0"
-                        style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};">
-                        {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
-                        {{ $node->name }}
-                    </h3>
-                </div>
-
-                {{-- BAR CHART --}}
-                @php
-                    $chart = collect($barChartsCompetency)->firstWhere('node_id', $node->id);
-                @endphp
-
-                @if ($chart)
+            @if (!empty($radarData))
+                <h2>Results</h2>
                     <div class="nhsuk-u-margin-bottom-5" wire:ignore>
-                        <canvas id="{{ $chart['id'] }}" style="width: 100%; max-width: 900px;" aria-describedby="chart-desc-{{ $chart['id'] }}"></canvas>
+                        <h3>Scores for all standards</h3>
+                        <canvas id="radarChart" style="width: 90%" aria-describedby="radar-desc"></canvas>
 
                         {{-- Accessible alternative chart for screen readers --}}
-                        <div id="chart-desc-{{ $chart['id'] }}" class="nhsuk-u-visually-hidden">
-                            <p>Bar chart showing scores for {{ $node->name }}.</p>
-                            @php
-                                $labels = data_get($chart, 'data.labels', []);
-                                $datasets = data_get($chart, 'data.datasets', []);
-                            @endphp
-                            @if(!empty($labels) && !empty($datasets))
+                        <div id="radar-desc" class="nhsuk-u-visually-hidden">
+                            <p>Radar chart showing average scores for standards.</p>
+                            @if(!empty($radarData) && is_array($radarData))
+                                @php
+                                    $labels = data_get($radarData, 'labels', []);
+                                    $datasets = data_get($radarData, 'datasets', []);
+                                @endphp
                                 <table>
-                                    <caption>Bar chart data for {{ $node->name }}</caption>
+                                    <caption>Radar chart data: average scores for standards</caption>
                                     <thead>
                                         <tr>
-                                            <th scope="col">Label</th>
+                                            <th scope="col">Standard</th>
                                                 @foreach($datasets as $ds)
                                                     @php
                                                         $dsLabel = data_get($ds, 'label', 'Series');
                                                     @endphp
-                                                        <th scope="col">{{ is_array($dsLabel) ? implode(' ', $dsLabel) : $dsLabel }}</th>
+                                                    <th scope="col">{{ is_array($dsLabel) ? implode(' ', $dsLabel) : $dsLabel }}</th>
                                                 @endforeach
                                         </tr>
                                     </thead>
@@ -144,95 +94,329 @@
                             @endif
                         </div>
                     </div>
-                @endif
+            @endif
+            @foreach ($this->nodes as $node)
+
+                {{-- SECTION (top-level) --}}
+                @if (empty($node->parent))
+                    <div class="nhsuk-u-padding-bottom-2">
+                        <h3 class="nhsuk-heading-m nhsuk-u-padding-2 nhsuk-u-display-inline-block nhsuk-u-margin-top-0 nhsuk-u-margin-bottom-0"
+                            style="background-color: {{ \App\Enums\NodeColour::from($node->colour)?->hex() ?? 'red' }};">
+                            {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
+                            {{ $node->name }}
+                        </h3>
+                    </div>
+
+                    {{-- BAR CHART --}}
+                    @php
+                        $chart = data_get($barCharts, $node->id);
+                    @endphp
+
+                    @if ($chart)
+                        <div class="nhsuk-u-margin-bottom-5" wire:ignore>
+                            <h5>Bar chart of standards in area</h5>
+                            <canvas id="{{ $chart['id'] }}" style="width: 100%; max-width: 900px;" aria-describedby="chart-desc-{{ $chart['id'] }}"></canvas>
+                        </div>
+                        @php
+                            $labels = data_get($chart, 'data.labels', []);
+                            $datasets = data_get($chart, 'data.datasets', []);
+                        @endphp
+
+                        @if(!empty($labels) && !empty($datasets))
+                            {{-- Accessible alternative chart for screen readers --}}
+                            <div id="chart-desc-{{ $chart['id'] }}" class="nhsuk-u-visually-hidden">
+                                <h5>Table of standards in area</h5>
+                                <table class="nhsuk-table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Standard</th>
+                                        @foreach($datasets as $ds)
+                                            <th scope="col">{{ data_get($ds, 'label') }}</th>
+                                        @endforeach
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($labels as $i => $label)
+                                        <tr>
+                                            <th scope="row">{{ $label }}</th>
+
+                                            @foreach($datasets as $ds)
+                                                @php
+                                                    $score = data_get($ds, 'data.' . $i);
+                                                @endphp
+
+                                                <td>
+                                                    {{ $this->reportService->scoreLabel($score) ?? '—' }}
+                                                </td>
+                                            @endforeach
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endif
+                        @php
+
+                            // Build a list of all visible groups across the standards in this area
+                            $groupColumns = collect();
+
+                            $standards = $this->nodes
+                                ->where('parent_id', $node->id);
+
+                            foreach ($standards as $standard) {
+
+                                $standardFeedback = $raterFeedback->get($standard->id);
+
+                                foreach (data_get($standardFeedback, 'groups', []) as $groupName => $groupData) {
+                                    $groupColumns->put($groupName, true);
+                                }
+                            }
+
+                        @endphp
+
+                        @if($groupColumns->isNotEmpty())
+
+                            <h5>Group breakdown</h5>
+
+                            <table class="nhsuk-table">
+
+                                <thead>
+                                <tr>
+                                    <th scope="col">Standard</th>
+
+                                    @foreach($groupColumns as $groupName => $unused)
+                                        <th scope="col">{{ $groupName }}</th>
+                                    @endforeach
+                                </tr>
+                                </thead>
+
+                                <tbody>
+
+                                @foreach($standards as $standard)
+
+                                    @php
+                                        $standardFeedback = $raterFeedback->get($standard->id);
+                                    @endphp
+
+                                    <tr>
+
+                                        <th scope="row">
+                                            {{ $standard->name }}
+                                        </th>
+
+                                        @foreach($groupColumns as $groupName => $unused)
+
+                                            @php
+                                                $groupAverage = data_get(
+                                                    $standardFeedback,
+                                                    'groups.' . $groupName . '.average'
+                                                );
+                                            @endphp
+
+                                            <td>
+                                                {{ $groupAverage !== null
+                                                    ? $this->reportService->scoreLabel($groupAverage)
+                                                    : '—'
+                                                }}
+                                            </td>
+
+                                        @endforeach
+
+                                    </tr>
+
+                                @endforeach
+
+                                </tbody>
+
+                            </table>
+
+                        @endif
+                    @endif
 
                 {{-- SUBSECTION (has children) --}}
-            @elseif ($node->children->count())
-                <h4 class="nhsuk-heading-s">
-                    {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
-                    {{ $node->name }}
-                </h4>
-            @endif
+                @elseif ($node->children->count())
+                    <h4 class="nhsuk-heading-s">
+                        {{ config('app.show_node_type_prefix') && $node?->type?->name ? $node->type->name . ': ' : '' }}
+                        {{ $node->name }}
+                    </h4>
+                        {{-- BAR CHART --}}
+                        @php
+                            $chart = data_get($barCharts, $node->id);
+                        @endphp
 
-
-
-            {{-- RESPONSES (leaf nodes only) --}}
-            @php
-                $nodeResponses = $this->responses
-                    ?->filter(fn ($r) => $r->question?->node_id == $node->id);
-            @endphp
-
-            @if ($nodeResponses && $nodeResponses->count())
-                <ul class="nhsuk-task-list nhsuk-list--border">
-
-                    @foreach ($nodeResponses as $response)
-                        <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link nhsuk-u-padding-left-2">
-
-                            <div class="nhsuk-task-list__name-and-hint nhsuk-u-width-three-quarters">
-
-                                <strong>{{ $response->question->title }}</strong>
-                                <br>
-
-                                {!! \App\Services\QuestionTextResolver::textFor(
-                                        $this->assessment(),
-                                        $this->rater()?->pivot,
-                                        $response->question->id
-                                    ) ?? $response->question?->hint !!}
-
-                                @php
-                                    $type = $response->question?->response_type;
-                                @endphp
-
-                                @if ($type === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
-                                    <div class="nhsuk-task-list__hint">
-                                        {{ $response->textarea }}
-                                    </div>
-
-                                @elseif ($type === \App\Enums\ResponseType::TYPE_SCALE->value)
-                                    <div class="nhsuk-task-list__hint">
-                                        <strong class="nhsuk-tag nhsuk-tag--blue">
-                                            {{ $response->scaleOption?->label }} {{ !empty($response->scaleOption?->description) ? ' - ' . $response->scaleOption->description : '' }}
-                                        </strong>
-                                        @if(!empty($response->textarea))
-                                            <div class="nhsuk-u-margin-top-2">
-                                                <strong>{{ __('pages.summary.reflection-label') }}</strong>
-                                                <br>
-                                                {{ $response->textarea }}
-                                            </div>
-                                        @endif
-                                    </div>
-                                @endif
+                        @if ($chart)
+                            <div class="nhsuk-u-margin-bottom-5" wire:ignore>
+                                <h5>Bar chart of competencies in standard</h5>
+                                <canvas
+                                        id="{{ $chart['id'] }}"
+                                        style="width: 100%; max-width: 900px;"
+                                        aria-describedby="chart-desc-{{ $chart['id'] }}"
+                                ></canvas>
                             </div>
-                        </li>
-                    @endforeach
 
-                </ul>
-            @endif
+                            @php
+                                $labels = data_get($chart, 'data.labels', []);
+                                $datasets = data_get($chart, 'data.datasets', []);
+                            @endphp
 
-            {{-- SIGNPOSTS (always show if exist) --}}
-            @php
-                $nodeSignposts = data_get($this->signposts, $node->id, []);
-            @endphp
+                            @if(!empty($labels) && !empty($datasets))
+                                {{-- Accessible alternative chart for screen readers --}}
+                                <div id="competencies-bar-desc" class="nhsuk-u-visually-hidden">
+                                    <h5>Table of competencies in standard</h5>
 
-            <x-signpost-banner :signposts="$nodeSignposts" title="Development resources" :banner-id="$node->id"/>
-        @endforeach
+                                    <table class="nhsuk-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Competency</th>
 
-        <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
-            <div class="nhsuk-grid-column-full nhsuk-u-margin-bottom-5">
-                @if (!empty(data_get($this->framework, 'report_ending')))
-                    {!! data_get($this->framework, 'report_ending') !!}
+                                            @foreach($datasets as $ds)
+                                                <th scope="col">{{ data_get($ds, 'label') }}</th>
+                                            @endforeach
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        @foreach($labels as $i => $label)
+                                            <tr>
+                                                <th scope="row">{{ $label }}</th>
+
+                                                @foreach($datasets as $ds)
+                                                    @php
+                                                        $score = data_get($ds, 'data.' . $i);
+                                                    @endphp
+
+                                                    <td>
+                                                        {{ $this->reportService->scoreLabel($score) }}
+                                                    </td>
+                                                @endforeach
+
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @endif
+                        @endif
+                    @php
+                        $feedback = $raterFeedback->get($node->id);
+                    @endphp
+                    @if($feedback && $feedback['comments']->isNotEmpty())
+
+                        <h5 class="nhsuk-heading-xs">
+                            360 feedback:
+                        </h5>
+
+                        <div class="nhsuk-u-margin-bottom-4">
+
+                            @foreach($feedback['comments'] as $comment)
+
+                                <div class="nhsuk-body nhsuk-u-margin-bottom-2">
+                                    {{ $comment }}
+                                </div>
+
+                            @endforeach
+
+                        </div>
+                    @endif
+
                 @endif
-            </div>
-        </div>
 
-        <div class="nhsuk-u-margin-bottom-4">
-            <button id="downloadPdfBtn" class="nhsuk-button" data-label-default="Download PDF">
-                Download PDF
-            </button>
-            <p id="mobilePdfNote" class="nhsuk-body" style="display:none;">
-                PDF download is available on larger screens.
-            </p>
-        </div>
+                {{-- RESPONSES (leaf nodes only) --}}
+                @php
+                    $nodeResponses = $this->responses
+                        ?->filter(fn ($r) => $r->question?->node_id == $node->id);
+                @endphp
+
+                    @if (
+                        $node->children->isEmpty()
+                        && $nodeResponses
+                        && $nodeResponses->count()
+                    )
+                    <ul class="nhsuk-task-list nhsuk-list--border">
+
+                        @foreach ($nodeResponses as $response)
+                            <li class="nhsuk-task-list__item nhsuk-task-list__item--with-link nhsuk-u-padding-left-2">
+
+                                <div class="nhsuk-task-list__name-and-hint nhsuk-u-width-three-quarters">
+
+                                    <strong>{{ $response->question->title }}</strong>
+                                    <br>
+
+                                    {!! \App\Services\QuestionTextResolver::textFor(
+                                            $this->assessment(),
+                                            $this->rater()?->pivot,
+                                            $response->question->id
+                                        ) ?? $response->question?->hint !!}
+
+                                    @php
+                                        $type = $response->question?->response_type;
+                                    @endphp
+
+                                    @if ($type === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
+                                        <div class="nhsuk-task-list__hint">
+                                            {{ $response->textarea }}
+                                        </div>
+
+                                    @elseif ($type === \App\Enums\ResponseType::TYPE_SCALE->value)
+                                        <div class="nhsuk-task-list__hint">
+                                            <strong class="nhsuk-tag nhsuk-tag--blue">
+                                                {{ $response->scaleOption?->label }} {{ !empty($response->scaleOption?->description) ? ' - ' . $response->scaleOption->description : '' }}
+                                            </strong>
+                                            @if(!empty($response->textarea))
+                                                <div class="nhsuk-u-margin-top-2">
+                                                    <strong>{{ __('pages.summary.reflection-label') }}</strong>
+                                                    <br>
+                                                    {{ $response->textarea }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </div>
+                            </li>
+                        @endforeach
+
+                    </ul>
+                @endif
+
+                {{-- SIGNPOSTS (always show if exist) --}}
+                @php
+                    $nodeSignposts = data_get($this->signposts, $node->id, []);
+                @endphp
+
+                <x-signpost-banner :signposts="$nodeSignposts" title="Development resources" :banner-id="$node->id"/>
+            @endforeach
+
+            <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
+                <div class="nhsuk-grid-column-full nhsuk-u-margin-bottom-5">
+                    @if (!empty(data_get($this->framework, 'report_ending')))
+                        {!! data_get($this->framework, 'report_ending') !!}
+                    @endif
+                </div>
+            </div>
+
+            <div class="nhsuk-u-margin-bottom-4">
+                <button id="downloadPdfBtn" class="nhsuk-button" data-label-default="Download PDF">
+                    Download PDF
+                </button>
+                <p id="mobilePdfNote" class="nhsuk-body" style="display:none;">
+                    PDF download is available on larger screens.
+                </p>
+            </div>
+        @else
+
+            <div class="nhsuk-panel">
+                <h1 class="nhsuk-panel__title">
+                    360 feedback is still being collected
+                </h1>
+                <div class="nhsuk-panel__body">
+                    {{ $completedRaters }} of {{ $totalRaters }}
+                    invited raters have submitted feedback
+                    <p>Your report will become available once all invited raters have submitted their feedback</p>
+                </div>
+            </div>
+
+        @endif
+
     </div>
 
 </div>
@@ -241,7 +425,7 @@
     <script>
         window.radarData = @json($radarData);
         window.radarOptions = @json($radarOptions);
-        window.barCharts = @json($barChartsCompetency);
+        window.barCharts = @json(array_values($barCharts));
         window.csrfToken = "{{ csrf_token() }}";
         window.pdfPostUrl = "/assessment-report/{{ $frameworkId }}/{{ $assessmentId }}";
     </script>

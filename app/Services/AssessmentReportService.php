@@ -2,10 +2,14 @@
 
 namespace App\Services;
 
+use App\Enums\Audience;
+use App\Enums\RaterType;
 use App\Enums\ResponseType;
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
+use App\Models\Question;
 use App\Models\Rater;
 use App\Models\ScaleOption;
 use App\Models\Signpost;
@@ -24,6 +28,8 @@ class AssessmentReportService
     private readonly ?Collection $nodes;
 
     private readonly ?Rater $rater;
+
+    private const MIN_GROUP_SIZE = 3;
 
     public function __construct(
         public int $frameworkId,
@@ -88,157 +94,128 @@ class AssessmentReportService
     }
 
     /* ---------------------------------------------------------
-       BAR CHARTS
+       BAR CHART
     --------------------------------------------------------- */
-    public function barCharts(): array
+    public function barChart(
+        Node $node,
+        bool $hasRaters = false
+    ): ?array
     {
-        $areas = $this->nodes()->whereNull('parent_id');
+        $children = $this->nodes()
+            ->where('parent_id', $node->id);
 
-        foreach ($areas as $area) {
-
-            $standards = $this->nodes()->filter(fn ($n): bool => $n->parent_id === $area->id);
-
-            if ($standards->isEmpty()) {
-                continue;
-            }
-
-            $labels = [];
-            $values = [];
-
-            foreach ($standards as $standard) {
-
-                $leafNodes = $this->nodes()->filter(fn ($n): bool => $n->children->count() === 0 &&
-                    $n->parent_id === $standard->id
-                );
-
-                if ($leafNodes->isEmpty()) {
-                    continue;
-                }
-
-                $scaleResponses = $this->responses()->filter(fn ($r): bool => $leafNodes->pluck('id')->contains($r->question->node_id) &&
-                    $r->question->response_type === ResponseType::TYPE_SCALE->value
-                );
-
-                if ($scaleResponses->isEmpty()) {
-                    continue;
-                }
-
-                $avg = round(
-                    $scaleResponses->avg(fn ($r): int => (int) ($r->scaleOption->value ?? 0)),
-                    2
-                );
-
-                $labels[] = $standard->name;
-                $values[] = $avg;
-            }
-
-            if ($labels === []) {
-                continue;
-            }
-
-            $this->barCharts[] = [
-                'node_id' => $area->id,
-                'id' => 'barChart_'.$area->id,
-                'scaleOptions' => $this->scaleOptions(),
-                'title' => $area->name,
-                'description' => $area->description ?? '',
-                'data' => [
-                    'labels' => $labels,
-                    'datasets' => [[
-                        'label' => 'Self assessment',
-                        'data' => $values,
-                        'backgroundColor' => $this->chartBackgroundColor,
-                        'borderColor' => $this->chartBorderColor,
-                        'borderWidth' => 1,
-                    ]],
-                ],
-                'options' => [
-                    'min' => 1,
-                    'max' => 5,
-                    'tickColor' => '#212b32',
-                    'legendLabelsColor' => '#212b32',
-                    'gridColor' => 'rgba(0,0,0,0.1)',
-                ],
-            ];
+        if ($children->isEmpty()) {
+            return null;
         }
 
-        return $this->barCharts;
-    }
+        $include360 =
+            $hasRaters &&
+            Question::query()
+                ->whereIn('node_id', $children->pluck('id'))
+                ->whereHas('variants', function ($query): void {
+                    $query->where('audience', Audience::Rater);
+                })
+                ->exists();
 
-    /* ---------------------------------------------------------
-       BAR CHART - COMPETENCY LEVELS
-    --------------------------------------------------------- */
-    public function barChartsCompetency(): array
-    {
-        $areas = $this->nodes()->whereNull('parent_id');
-        $charts = [];
+        $labels = [];
+        $selfValues = [];
 
-        foreach ($areas as $area) {
+        $raterTypes = AssessmentRater::query()
+            ->where('assessment_id', $this->assessmentId)
+            ->pluck('type')
+            ->unique();
 
-            $standards = $this->nodes()->filter(fn ($n): bool => $n->parent_id === $area->id);
+        $raterTypeValues = [];
 
-            if ($standards->isEmpty()) {
-                continue;
-            }
+        foreach ($children as $child) {
 
-            $labels = [];
-            $values = [];
+            $labels[] = $child->name;
 
-            foreach ($standards as $standard) {
+            $selfValues[] = $this->averageForNode($child);
 
-                $leafNodes = $this->nodes()->filter(fn ($n): bool => $n->children->count() === 0 &&
-                    $n->parent_id === $standard->id
-                );
+            foreach ($raterTypes as $type) {
 
-                foreach ($leafNodes as $leaf) {
+                $responses = $this->responsesForRaterType($type);
 
-                    $response = $this->responses()->first(fn ($r): bool => $r->question->node_id === $leaf->id &&
-                        $r->question->response_type === ResponseType::TYPE_SCALE->value
+                $raterTypeValues[$type->value][] =
+                    $this->averageForNode(
+                        $child,
+                        $responses
                     );
-
-                    if (! $response) {
-                        continue;
-                    }
-
-                    $labels[] = $leaf->name;
-                    $values[] = (int) ($response->scaleOption->value ?? 0);
-                }
             }
+        }
 
-            if ($labels === []) {
+        $datasets = [[
+            'label' => 'Self',
+            'data' => $selfValues,
+            'backgroundColor' => $this->chartBackgroundColor,
+            'borderColor' => $this->chartBorderColor,
+            'borderWidth' => 1,
+        ]];
+
+        $colours = [
+            RaterType::Manager->value => [
+                'background' => '#dbeafe',
+                'border' => '#2563eb',
+            ],
+            RaterType::Peer->value => [
+                'background' => '#dcfce7',
+                'border' => '#16a34a',
+            ],
+            RaterType::Report->value => [
+                'background' => '#fef3c7',
+                'border' => '#d97706',
+            ],
+            RaterType::Other->value => [
+                'background' => '#e5e7eb',
+                'border' => '#6b7280',
+            ],
+        ];
+        foreach ($raterTypes as $type) {
+
+            $colour = $colours[$type->value] ?? [
+                'background' => '#e5e7eb',
+                'border' => '#6b7280',
+            ];
+
+            $data = $raterTypeValues[$type->value] ?? [];
+
+            if (
+                collect($data)
+                    ->filter(fn ($value) => $value !== null)
+                    ->isEmpty()
+            ) {
                 continue;
             }
 
-            $charts[] = [
-                'node_id' => $area->id,
-                'id' => 'barChartCompetency_'.$area->id,
-                'scaleOptions' => $this->scaleOptions(),
-                'title' => $area->name,
-                'description' => $area->description ?? '',
-                'data' => [
-                    'labels' => $labels,
-                    'datasets' => [[
-                        'label' => 'Self assessment',
-                        'data' => $values,
-                        'backgroundColor' => $this->chartBackgroundColor,
-                        'borderColor' => $this->chartBorderColor,
-                        'borderWidth' => 1,
-                        // 'barThickness' => 20,
-                    ]],
-                ],
-                'options' => [
-                    'min' => 1,
-                    'max' => 5,
-                    'tickColor' => '#212b32',
-                    'legendLabelsColor' => '#212b32',
-                    'gridColor' => 'rgba(0,0,0,0.1)',
-                    'categoryPercentage' => 10,
-                    'barPercentage' => 10,
-                ],
+            $datasets[] = [
+                'label' => str_replace('_', ' ', $type->name),
+                'data' => $data,
+                'backgroundColor' => $colour['background'],
+                'borderColor' => $colour['border'],
+                'borderWidth' => 1,
             ];
         }
 
-        return $charts;
+        return [
+            'node_id' => $node->id,
+            'id' => 'barChart_'.$node->id,
+            'scaleOptions' => $this->scaleOptions(),
+            'title' => $node->name,
+            'description' => $node->description ?? '',
+            'data' => [
+                'labels' => $labels,
+                'datasets' => $datasets,
+            ],
+            'options' => [
+                'min' => 1,
+                'max' => 5,
+                'tickColor' => '#212b32',
+                'legendLabelsColor' => '#212b32',
+                'gridColor' => 'rgba(0,0,0,0.1)',
+                'showLegend' => $include360,
+            ],
+        ];
     }
 
     /* ---------------------------------------------------------
@@ -248,38 +225,62 @@ class AssessmentReportService
     /**
      * Generate a radar chart with one data point per standard
      */
-    public function radarChart(bool $useScaleLabels = true): array
-    {
-        // Ensure bar charts are generated
-        if ($this->barCharts === []) {
-            $this->barCharts();
-        }
-
+    public function radarChart(
+        bool $useScaleLabels = true,
+        bool $hasRaters = false
+    ): array {
         $labels = [];
-        $values = [];
+
+        $selfValues = [];
+        $raterValues = [];
 
         $scaleOptions = $this->scaleOptions();
         $scaleOptionsModified = array_values($scaleOptions);
 
-        foreach ($this->barCharts as $chart) {
-            // Each bar chart has multiple labels and values
-            foreach ($chart['data']['labels'] as $i => $label) {
-                $labels[] = $this->wrapLabel($label);
-                $values[] = $chart['data']['datasets'][0]['data'][$i];
+        foreach (
+            $this->nodes()
+                ->whereNotNull('parent_id')
+                ->filter(fn ($n) => $n->children->count() > 0)
+            as $standard
+        ) {
+            $labels[] = $this->wrapLabel($standard->name);
+
+            $selfValues[] = $this->averageForNode($standard);
+
+            if ($hasRaters) {
+                $raterValues[] = $this->averageRaterScoreForStandard($standard);
             }
+        }
+
+        $datasets = [
+            [
+                'label' => 'Self',
+                'data' => $selfValues,
+                'backgroundColor' => 'transparent',
+                'borderColor' => '#004281',
+                'pointBackgroundColor' => '#004281',
+                'borderWidth' => 3,
+                'fill' => false,
+            ],
+        ];
+
+        if ($hasRaters) {
+            $datasets[] = [
+                'label' => '360',
+                'data' => $raterValues,
+                'backgroundColor' => 'transparent',
+                'borderColor' => '#00853F',
+                'pointBackgroundColor' => '#00853F',
+                'borderWidth' => 3,
+                'borderDash' => [8, 4],
+                'fill' => false,
+            ];
         }
 
         return [
             'data' => [
                 'labels' => $labels,
-                'datasets' => [[
-                    'label' => 'Self assessment',
-                    'data' => $values,
-                    'backgroundColor' => $this->chartBackgroundColor,
-                    'borderColor' => $this->chartBorderColor,
-                    'pointBackgroundColor' => '#4F46E5',
-                    'borderWidth' => 2,
-                ]],
+                'datasets' => $datasets,
             ],
             'options' => [
                 'min' => 1,
@@ -289,6 +290,13 @@ class AssessmentReportService
                 'legendLabelsColor' => '#212b32',
                 'useScaleLabels' => $useScaleLabels,
                 'tickLabels' => $scaleOptionsModified,
+                'showLegend' => $hasRaters,
+
+                'plugins' => [
+                    'legend' => [
+                        'display' => $hasRaters,
+                    ],
+                ],
             ],
         ];
     }
@@ -317,47 +325,50 @@ class AssessmentReportService
         return $lines;
     }
 
-    private function descendantLeafNodes(Node $node): Collection
+    private function descendantNodesIncludingSelf(Node $node): Collection
     {
         $all = $this->nodes();
-        // build map: parent_id => [nodes]
+
         $childrenMap = [];
+
         foreach ($all as $n) {
             $childrenMap[$n->parent_id ?? 0][] = $n;
         }
 
         $stack = [$node];
-        $leaves = collect();
+
+        $nodes = collect();
 
         while ($stack !== []) {
+
             /** @var Node $current */
             $current = array_pop($stack);
-            $children = $childrenMap[$current->id] ?? [];
 
-            if ($children === []) {
-                $leaves->push($current);
-            } else {
-                foreach ($children as $child) {
-                    $stack[] = $child;
-                }
+            $nodes->push($current);
+
+            foreach ($childrenMap[$current->id] ?? [] as $child) {
+                $stack[] = $child;
             }
         }
 
-        return $leaves;
+        return $nodes;
     }
 
-    public function averageForNode(Node $node): ?float
+    public function averageForNode(
+        Node $node,
+        ?Collection $responses = null
+    ): ?float
     {
-        $leafNodes = $this->descendantLeafNodes($node);
+        $responses ??= $this->responses();
 
-        if ($leafNodes->isEmpty()) {
-            return null;
-        }
+        $nodeIds = $this->descendantNodesIncludingSelf($node)
+            ->pluck('id')
+            ->toArray();
 
-        $leafIds = $leafNodes->pluck('id')->toArray();
-
-        $scaleResponses = $this->responses()->filter(fn ($r): bool => in_array($r->question->node_id, $leafIds, true) &&
-            $r->question->response_type === ResponseType::TYPE_SCALE->value
+        $scaleResponses = $responses->filter(
+            fn ($r): bool =>
+                in_array($r->question->node_id, $nodeIds, true)
+                && $r->question->response_type === ResponseType::TYPE_SCALE->value
         );
 
         if ($scaleResponses->isEmpty()) {
@@ -365,9 +376,25 @@ class AssessmentReportService
         }
 
         return round(
-            $scaleResponses->avg(fn ($r): int => (int) ($r->scaleOption->value ?? 0)),
+            $scaleResponses->avg(
+                fn ($r): int => (int) ($r->scaleOption->value ?? 0)
+            ),
             1
         );
+    }
+
+    private function responsesForRaterType(
+        RaterType $type
+    ): Collection
+    {
+        $raterIds = AssessmentRater::query()
+            ->where('assessment_id', $this->assessmentId)
+            ->where('type', $type)
+            ->pluck('rater_id');
+
+        return $this->assessment()
+            ->responses
+            ->whereIn('rater_id', $raterIds);
     }
 
     public function signpostsForNode(Node $node): array
@@ -399,5 +426,169 @@ class AssessmentReportService
 
         // return array of Signpost models for this specific node
         return $query->get()->all();
+    }
+
+    public function raterFeedbackByStandard(): Collection
+    {
+        $assessmentRaters = AssessmentRater::query()
+            ->where('assessment_id', $this->assessmentId)
+            ->with('group')
+            ->get()
+            ->keyBy('rater_id');
+
+        $responses = $this->assessment()
+            ->responses
+            ->whereNotNull('rater_id')
+            ->loadMissing([
+                'question.node',
+                'scaleOption',
+                'rater',
+            ]);
+
+        return $responses
+            ->groupBy('question.node_id')
+            ->map(function (Collection $standardResponses) use ($assessmentRaters) {
+
+                $scoresByType = $standardResponses
+                    ->filter(fn ($r) => $r->scaleOption)
+                    ->groupBy(function ($response) use ($assessmentRaters) {
+
+                        return $assessmentRaters
+                            ->get($response->rater_id)
+                            ?->type
+                            ?->value
+                            ?? RaterType::Other->value;
+                    })
+                    ->map(function (Collection $responses) {
+
+                        return [
+                            'rater_count' => $responses
+                                ->pluck('rater_id')
+                                ->unique()
+                                ->count(),
+
+                            'average' => round(
+                                $responses->avg(
+                                    fn ($response) => $response->scaleOption?->value
+                                ),
+                                1
+                            ),
+                        ];
+                    });
+
+                $groups = $standardResponses
+                    ->filter(fn ($r) => $r->scaleOption)
+                    ->groupBy(function ($response) use ($assessmentRaters) {
+
+                        return $assessmentRaters
+                            ->get($response->rater_id)
+                            ?->group
+                            ?->name;
+                    })
+                    ->filter(fn ($responses, $groupName) => filled($groupName))
+                    ->filter(function (Collection $groupResponses) {
+
+                        return $groupResponses
+                                ->pluck('rater_id')
+                                ->unique()
+                                ->count() >= self::MIN_GROUP_SIZE;
+                    })
+                    ->map(function (Collection $groupResponses) {
+
+                        return [
+                            'rater_count' => $groupResponses
+                                ->pluck('rater_id')
+                                ->unique()
+                                ->count(),
+
+                            'average' => round(
+                                $groupResponses->avg(
+                                    fn ($response) => $response->scaleOption?->value
+                                ),
+                                1
+                            ),
+                        ];
+                    });
+
+                $comments = $standardResponses
+                    ->pluck('textarea')
+                    ->filter()
+                    ->shuffle()
+                    ->values();
+
+                return [
+                    'scores_by_type' => $scoresByType,
+                    'groups' => $groups,
+                    'comments' => $comments,
+                ];
+            });
+    }
+
+    public function averageRaterScoreForStandard(Node $standard): ?float
+    {
+        $responses = $this->assessment()
+            ->responses
+            ->whereNotNull('rater_id')
+            ->filter(fn ($response) =>
+                $response->question?->node_id === $standard->id
+                && $response->question?->response_type === ResponseType::TYPE_SCALE->value
+                && $response->scaleOption
+            );
+
+        if ($responses->isEmpty()) {
+            return null;
+        }
+
+        return round(
+            $responses->avg(
+                fn ($response) => (int) $response->scaleOption->value
+            ),
+            1
+        );
+    }
+
+    private function childNodesHaveRaterQuestions(Node $node): bool
+    {
+        $childIds = $this->nodes()
+            ->where('parent_id', $node->id)
+            ->pluck('id');
+
+        if ($childIds->isEmpty()) {
+            return false;
+        }
+
+        return Question::query()
+            ->whereIn('node_id', $childIds)
+            ->whereHas('variants', function ($query): void {
+                $query->where('audience', Audience::Rater);
+            })
+            ->exists();
+    }
+
+    public function scoreLabel(?float $score): ?string
+    {
+        if ($score === null) {
+            return null;
+        }
+
+        $labels = array_values($this->scaleOptions());
+
+        $lower = (int) floor($score);
+        $upper = (int) ceil($score);
+
+        if ($lower === $upper) {
+            return $labels[$lower - 1] ?? null;
+        }
+
+        $decimal = $score - $lower;
+
+        $lowerLabel = $labels[$lower - 1] ?? null;
+        $upperLabel = $labels[$upper - 1] ?? null;
+
+        return match (true) {
+            $decimal <= 0.3 => "Above {$lowerLabel}",
+            $decimal >= 0.7 => "Below {$upperLabel}",
+            default => "Between {$lowerLabel} and {$upperLabel}",
+        };
     }
 }
