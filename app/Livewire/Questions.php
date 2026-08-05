@@ -463,7 +463,12 @@ class Questions extends Component
             $this->nodes->seek($this->nodeKeyId - 1);
             $this->nodeKeyId = $this->nodes->key();
         } else {
-            $this->goToVariantSelection();
+            if ($this->user()?->can('assess:360')) {
+                $this->goToRaters();
+            } else {
+                $this->goToVariantSelection();
+            }
+
         }
 
         $this->dispatch('questions-next-node', $this->node()?->id);
@@ -506,6 +511,18 @@ class Questions extends Component
                     'back' => 1,
                 ]
             );
+    }
+
+    public function goToRaters(): void
+    {
+        $this->redirect(
+            route('assessment-raters',
+                [
+                    'assessmentId' => $this->assessmentId,
+                    'source' => 'variants',
+                ]
+            )
+        );
     }
 
     protected function findResumeNodeId(): ?int

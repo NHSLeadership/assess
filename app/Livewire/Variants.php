@@ -140,14 +140,27 @@ class Variants extends Component
                 }
             }
 
-            $this->redirect(
-                route('questions',
-                    [
-                        'assessmentId' => $this->assessmentId,
-                        'nodeId' => null,
-                    ]
-                )
-            );
+            if ($this->user()?->can('assess:360')) {
+                $this->redirect(
+                    route('assessment-raters',
+                        [
+                            'frameworkId' => $this->frameworkId,
+                            'assessmentId' => $this->assessmentId,
+                            'source' => 'variants'
+                        ]
+                    )
+                );
+            } else {
+                $this->redirect(
+                    route('questions',
+                        [
+                            'assessmentId' => $this->assessmentId,
+                            'nodeId' => null,
+                        ]
+                    )
+                );
+            }
+
         } else {
             $this->dispatch(
                 'alert',
