@@ -485,7 +485,7 @@ class AssessmentReportService
                             ?->group
                             ?->name;
                     })
-                    ->filter()
+                    ->filter(fn ($responses, $groupName) => filled($groupName))
                     ->filter(function (Collection $groupResponses) {
 
                         return $groupResponses
