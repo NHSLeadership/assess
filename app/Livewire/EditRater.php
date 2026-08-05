@@ -232,10 +232,6 @@ class EditRater extends Component
                 ]);
             }
 
-//            $this->redirectRoute('assessment-raters', [
-//                'assessmentId' => $this->assessmentId,
-//                'source' => $this->source,
-//            ]);
             $this->redirect(
                 route('assessment-raters',
                     [

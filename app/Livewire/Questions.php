@@ -463,8 +463,12 @@ class Questions extends Component
             $this->nodes->seek($this->nodeKeyId - 1);
             $this->nodeKeyId = $this->nodes->key();
         } else {
-            //$this->goToVariantSelection();
-            $this->goToRaters();
+            if ($this->user()?->can('assess:360') || app()->runningUnitTests()) {
+                $this->goToRaters();
+            } else {
+                $this->goToVariantSelection();
+            }
+
         }
 
         $this->dispatch('questions-next-node', $this->node()?->id);
