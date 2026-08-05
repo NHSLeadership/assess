@@ -41,11 +41,13 @@ class AssessmentReport extends Component
     public ?string $variantAttributeLabel = null;
 
     /** @var array<string, mixed> */
-    public array $signposts;
+    public array $signposts = [];
 
     protected ?AssessmentRater $cachedAssessmentRater = null;
 
     public Collection $raterFeedback;
+
+    public bool $reportAvailable = true;
 
     /**
      * @throws FrameworkNotFoundException
@@ -65,6 +67,8 @@ class AssessmentReport extends Component
         $this->frameworkId = $frameworkId;
         $this->assessmentId = $assessmentId;
         $this->raterId = $raterId;
+
+        $this->raterFeedback = collect();
 
         // Validate framework
         if (!$this->framework() instanceof \App\Models\Framework) {
@@ -106,6 +110,12 @@ class AssessmentReport extends Component
                     message: __('alerts.errors.assessment-rater-not-submitted')
                 );
             }
+        }
+
+        $this->reportAvailable = $this->assessment()->is360Complete();
+
+        if (! $this->reportAvailable) {
+            return;
         }
 
         // Use the shared service for all report data

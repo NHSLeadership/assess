@@ -140,6 +140,17 @@ class Assessment extends Model
         ];
     }
 
+    public function is360Complete(): bool
+    {
+        if (is_null($this->submitted_at)) {
+            return false;
+        }
+
+        return ! $this->raters()
+            ->wherePivotNull('submitted_at')
+            ->exists();
+    }
+
     public function reportAvailable(): bool
     {
         if (!$this->submitted_at) {
