@@ -463,7 +463,7 @@ class Questions extends Component
             $this->nodes->seek($this->nodeKeyId - 1);
             $this->nodeKeyId = $this->nodes->key();
         } else {
-            if ($this->user()?->can('assess:360') || app()->runningUnitTests()) {
+            if ($this->user()?->can('assess:360')) {
                 $this->goToRaters();
             } else {
                 $this->goToVariantSelection();

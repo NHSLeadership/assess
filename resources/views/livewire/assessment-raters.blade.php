@@ -80,11 +80,11 @@
                             </td>
                             <td class="nhsuk-table__cell" role="cell">
                                 <span class="nhsuk-table-responsive__heading">Type</span>
-                                {{ $rater->pivot->type ?? '-' }}
+                                {{ $rater->pivot->type?->name ?? '-' }}
                             </td>
                             <td class="nhsuk-table__cell" role="cell">
                                 <span class="nhsuk-table-responsive__heading">Group</span>
-                                {{ $rater->pivot->group->name ?? '-' }}
+                                {{ $rater->pivot->group?->name ?? '-' }}
 
                             </td>
                             <td class="nhsuk-table__cell" role="cell">
