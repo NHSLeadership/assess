@@ -27,14 +27,14 @@
     "require-dev": {
         "driftingly/rector-laravel": "^2.5.0",
         "fakerphp/faker": "^1.24.1",
-        "fruitcake/laravel-debugbar": "^4.4.0",
+        "fruitcake/laravel-debugbar": "^4.4.1",
         "larastan/larastan": "^3.10.0",
         "laravel/pail": "^1.2.7",
         "laravel/pint": "^1.29.3",
         "laravel/sail": "^1.63.0",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^8.9.5",
-        "pestphp/pest": "^4.7.7",
+        "pestphp/pest": "^4.7.8",
         "pestphp/pest-plugin-laravel": "^4.1.0",
         "rector/rector": "^2.5.8"
     },
