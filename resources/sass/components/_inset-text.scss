@@ -3,49 +3,49 @@
    ========================================================================== */
 
 .nhsuk-inset-text__dark-green {
-    border-left: $nhsuk-border-width-inset-text solid $color_nhsuk-dark-green;
+  border-left: $nhsuk-border-width-inset-text solid $color_nhsuk-dark-green;
 
-    @include mq($media-type: print) {
-        border-color: $nhsuk-print-text-color;
-    }
+  @media print {
+    border-color: $nhsuk-print-text-color;
+  }
 }
 
 .nhsuk-inset-text__dark-pink {
-    border-left: $nhsuk-border-width-inset-text solid $color_nhsuk-dark-pink;
+  border-left: $nhsuk-border-width-inset-text solid $color_nhsuk-dark-pink;
 
-    @include mq($media-type: print) {
-        border-color: $nhsuk-print-text-color;
-    }
+  @media print {
+    border-color: $nhsuk-print-text-color;
+  }
 }
 
 .nhsuk-inset-text__green {
-    border-left: $nhsuk-border-width-inset-text solid $color_nhsuk-green;
+  border-left: $nhsuk-border-width-inset-text solid $color_nhsuk-green;
 
-    @include mq($media-type: print) {
-        border-color: $nhsuk-print-text-color;
-    }
+  @media print {
+    border-color: $nhsuk-print-text-color;
+  }
 }
 
 .nhsuk-inset-text__pink {
-    border-left: $nhsuk-border-width-inset-text solid $color_nhsuk-pink;
+  border-left: $nhsuk-border-width-inset-text solid $color_nhsuk-pink;
 
-    @include mq($media-type: print) {
-        border-color: $nhsuk-print-text-color;
-    }
+  @media print {
+    border-color: $nhsuk-print-text-color;
+  }
 }
 
 .nhsuk-inset-text__orange {
-    border-left: $nhsuk-border-width-inset-text solid $color_nhsuk-orange;
+  border-left: $nhsuk-border-width-inset-text solid $color_nhsuk-orange;
 
-    @include mq($media-type: print) {
-        border-color: $nhsuk-print-text-color;
-    }
+  @media print {
+    border-color: $nhsuk-print-text-color;
+  }
 }
 
 .nhsuk-inset-text__red {
-    border-left: $nhsuk-border-width-inset-text solid $color_nhsuk-red;
+  border-left: $nhsuk-border-width-inset-text solid $color_nhsuk-red;
 
-    @include mq($media-type: print) {
-        border-color: $nhsuk-print-text-color;
-    }
+  @media print {
+    border-color: $nhsuk-print-text-color;
+  }
 }
