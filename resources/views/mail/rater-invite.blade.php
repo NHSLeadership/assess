@@ -15,11 +15,11 @@
 Provide feedback
 @endcomponent
 
-If the button above does not work, please copy and paste the following link into your browser:
+If the button above does not work copy and paste the following link into your browser:
 
 {{ $url }}
 
-For further guidance and support, please visit our
+For further guidance and support visit our
 [support page](https://support.leadershipacademy.nhs.uk/).
 
 NHS Leadership Academy
