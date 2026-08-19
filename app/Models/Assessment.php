@@ -33,6 +33,10 @@ class Assessment extends Model
         'target_completion_date' => 'date',
     ];
 
+    public function getTypeAttribute(): string
+    {
+        return $this->raters()->exists() ? '360' : 'Self';
+    }
 
     public function effectiveLastUpdatedAt(): ?Carbon
     {

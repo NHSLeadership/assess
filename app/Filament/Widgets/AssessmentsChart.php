@@ -4,51 +4,17 @@ namespace App\Filament\Widgets;
 
 use App\Models\Assessment;
 use Carbon\Carbon;
-use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Widgets\ChartWidget;
-use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
 use Illuminate\Contracts\Support\Htmlable;
 
 class AssessmentsChart extends ChartWidget
 {
-    use HasFiltersSchema;
+    use InteractsWithPageFilters;
 
     protected static ?int $sort = 2;
-
-    public function filtersSchema(Schema $schema): Schema
-    {
-        return $schema->components([
-            Forms\Components\Select::make('status')
-                ->options([
-                    'all' => 'All',
-                    'started' => 'Started',
-                    'completed' => 'Completed',
-                ])
-                ->default('all'),
-
-            Forms\Components\DatePicker::make('startDate')
-                ->minDate('1/1/2026')
-                ->maxDate(now()->endOfMonth())
-                ->default('1/1/2026'),
-
-            Forms\Components\DatePicker::make('endDate')
-                ->minDate('1/1/2026')
-                ->maxDate(now()->endOfMonth())
-                ->default(now()->endOfMonth()),
-
-            Forms\Components\Select::make('interval')
-                ->options([
-                    'day' => 'Per day',
-                    'week' => 'Per week',
-                    'month' => 'Per month',
-                    'year' => 'Per year',
-                ])
-                ->default('month'),
-        ]);
-    }
 
     protected function applyFilters($query): void
     {
@@ -58,6 +24,14 @@ class AssessmentsChart extends ChartWidget
             $query->whereNull('submitted_at');
         } elseif ($status === 'completed') {
             $query->whereNotNull('submitted_at');
+        }
+
+        $type = $this->filters['type'] ?? 'all';
+
+        if ($type === '360') {
+            $query->has('raters');
+        } elseif ($type === 'self') {
+            $query->doesntHave('raters');
         }
     }
 
@@ -107,7 +81,29 @@ class AssessmentsChart extends ChartWidget
         $start = Carbon::parse($startDate);
         $end = Carbon::parse($endDate);
 
-        return ucfirst($status).' assessments between '.$start->format('d F Y').' and '.$end->format('d F Y');
+        $type = $this->filters['type'] ?? 'all';
+
+        $typePrefix = match ($type) {
+            '360' => '360',
+            'self' => 'self',
+            default => '',
+        };
+
+        $statusPrefix = match ($status) {
+            'started' => 'started',
+            'completed' => 'completed',
+            default => '',
+        };
+
+        $title = trim("$statusPrefix $typePrefix");
+
+        return ucfirst(
+            ($title ? "$title assessments" : 'all assessments')
+            . ' between '
+            . $start->format('d F Y')
+            . ' and '
+            . $end->format('d F Y')
+        );
     }
 
     protected function getType(): string

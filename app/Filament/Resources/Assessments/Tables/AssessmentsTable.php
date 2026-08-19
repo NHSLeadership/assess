@@ -7,6 +7,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class AssessmentsTable
@@ -17,6 +18,9 @@ class AssessmentsTable
             ->columns([
                 TextColumn::make('user_id')->label('Subject'),
                 TextColumn::make('framework.name'),
+                TextColumn::make('type')
+                    ->badge()
+                    ->color(fn ($state) => $state === '360' ? 'warning' : 'success'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
@@ -28,7 +32,15 @@ class AssessmentsTable
                     ->sortable(),
             ])
             ->filters([
-                //
+                TernaryFilter::make('is_360')
+                    ->label('Type')
+                    ->placeholder('All')
+                    ->trueLabel('360')
+                    ->falseLabel('Self')
+                    ->queries(
+                        true: fn ($query) => $query->has('raters'),
+                        false: fn ($query) => $query->doesntHave('raters'),
+                    ),
             ])
             ->recordActions([
                 EditAction::make(),
