@@ -51,9 +51,9 @@ Your feedback will form part of their 360 assessment, helping them identify stre
 
 Feedback should take around 15–20 minutes and can be completed across multiple sessions.
 
-Please keep this email so you can use the link to resume your feedback later.
+Keep this email so you can use the link to resume your feedback later.
 
-Please do not share this link with anyone else.
+Do not share this link with anyone else.
 MARKDOWN;
     }
 }
