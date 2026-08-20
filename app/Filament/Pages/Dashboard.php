@@ -17,6 +17,7 @@ class Dashboard extends BaseDashboard
     {
         return null;
     }
+
     public function filtersForm(Schema $schema): Schema
     {
         return $schema->components([
@@ -45,15 +46,6 @@ class Dashboard extends BaseDashboard
                 ->minDate('1/1/2026')
                 ->maxDate(now()->endOfMonth())
                 ->default(now()->endOfMonth()),
-
-            Select::make('interval')
-                ->options([
-                    'day' => 'Per day',
-                    'week' => 'Per week',
-                    'month' => 'Per month',
-                    'year' => 'Per year',
-                ])
-                ->default('month'),
         ]);
     }
 }

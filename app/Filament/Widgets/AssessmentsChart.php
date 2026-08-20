@@ -14,7 +14,19 @@ class AssessmentsChart extends ChartWidget
 {
     use InteractsWithPageFilters;
 
+    public ?string $filter = 'month';
     protected static ?int $sort = 2;
+
+
+    protected function getFilters(): ?array
+    {
+        return [
+            'day' => 'Per day',
+            'week' => 'Per week',
+            'month' => 'Per month',
+            'year' => 'Per year',
+        ];
+    }
 
     protected function applyFilters($query): void
     {
@@ -37,15 +49,15 @@ class AssessmentsChart extends ChartWidget
 
     protected function getData(): array
     {
-        $status = $this->filters['status'] ?? 'all';
         $startDate = $this->filters['startDate'] ?? '1/1/2026';
         $endDate = $this->filters['endDate'] ?? now()->endOfMonth();
-        $interval = $this->filters['interval'] ?? 'month';
+        $interval = $this->filter ?? 'month';
 
         $start = Carbon::parse($startDate);
         $end = Carbon::parse($endDate);
 
         $builder = Assessment::query();
+
         $this->applyFilters($builder);
 
         /** @var 'day'|'week'|'month'|'year' $interval */
@@ -76,12 +88,12 @@ class AssessmentsChart extends ChartWidget
     public function getHeading(): Htmlable|string|null
     {
         $status = $this->filters['status'] ?? 'all';
+        $type = $this->filters['type'] ?? 'all';
         $startDate = $this->filters['startDate'] ?? '1/1/2026';
         $endDate = $this->filters['endDate'] ?? now()->endOfMonth();
+
         $start = Carbon::parse($startDate);
         $end = Carbon::parse($endDate);
-
-        $type = $this->filters['type'] ?? 'all';
 
         $typePrefix = match ($type) {
             '360' => '360',
