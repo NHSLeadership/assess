@@ -23,6 +23,10 @@ class AssessmentsTable
                 TextColumn::make('type')
                     ->badge()
                     ->color(fn ($state) => $state === '360' ? 'warning' : 'success'),
+                TextColumn::make('feedback_status')
+                    ->badge()
+                    ->color(fn ($state) => $state === 'Completed' ? 'success' : 'warning')
+                    ->label('Feedback'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),

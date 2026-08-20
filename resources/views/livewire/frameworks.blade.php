@@ -7,6 +7,12 @@
                 $assessments = $this->frameworkAssessments();
             @endphp
 
+            {{--@TODO Remove this section once 360 is live --}}
+            @php
+                $show360Functionality = app()->runningUnitTests()
+                    || $this->user()?->can('assess:360');
+            @endphp
+
             <h1 class="nhsuk-heading-l">{{ config('app.name') }}</h1>
 
             <div class="nhsuk-body">
@@ -97,6 +103,10 @@
                         <th scope="col" class="nhsuk-table__header" role="columnheader">Last updated</th>
                         <th scope="col" class="nhsuk-table__header" role="columnheader">Progress</th>
                         <th scope="col" class="nhsuk-table__header" role="columnheader">Status</th>
+                        {{--@TODO Remove if statement once 360 is live --}}
+                        @if ($show360Functionality)
+                            <th scope="col" class="nhsuk-table__header" role="columnheader">Feedback</th>
+                        @endif
                         <th scope="col" class="nhsuk-table__header" role="columnheader">Actions</th>
                     </tr>
                 </thead>
@@ -142,6 +152,20 @@
                                 </div>
                             @endif
                         </td>
+                        {{--@TODO Remove if statement once 360 is live --}}
+                        @if ($show360Functionality)
+                            <td class="nhsuk-table__cell" role="cell">
+                                <span class="nhsuk-table-responsive__heading">Feedback</span>
+
+                                @if ($assessment->feedback_status)
+                                    <strong class="nhsuk-tag {{ $assessment->feedback_status === 'Completed' ? 'nhsuk-tag--green' : 'nhsuk-tag--orange' }}">
+                                        {{ $assessment->feedback_status }}
+                                    </strong>
+                                @else
+                                    -
+                                @endif
+                            </td>
+                        @endif
                         <td class="nhsuk-table__cell" role="cell">
                             <span class="nhsuk-table-responsive__heading">Actions</span>
                             @if ($this->pendingDeleteId === $assessment->id)
@@ -158,22 +182,20 @@
                                 </div>
                                 @php $reportAvailable = $assessment->reportAvailable(); @endphp
                                 {{--@TODO Remove if statement once 360 is live --}}
-                                @if (app()->runningUnitTests() || $this->user()?->can('assess:360'))
-                                    @if(! $reportAvailable)
-                                        <div class="nhsuk-u-margin-bottom-1">
-                                            <a href="{{ route('assessment-raters', ['frameworkId' => $this->framework?->id, 'assessmentId' => $assessment->id]) }}"
-                                               aria-describedby="{{ $assessment->slug }}-hint"
-                                               class="nhsuk-link"
-                                               style="white-space: nowrap;"
-                                            >
-                                                @if($assessment->raters->count())
-                                                    {{ __('Manage raters') }}
-                                                @else
-                                                    {{ __('Convert to 360') }}
-                                                @endif
-                                            </a>
-                                        </div>
-                                    @endif
+                                @if ($show360Functionality)
+                                <div class="nhsuk-u-margin-bottom-1">
+                                        <a href="{{ route('assessment-raters', ['frameworkId' => $this->framework?->id, 'assessmentId' => $assessment->id]) }}"
+                                           aria-describedby="{{ $assessment->slug }}-hint"
+                                           class="nhsuk-link"
+                                           style="white-space: nowrap;"
+                                        >
+                                            @if($assessment->raters->count())
+                                                {{ __('Manage raters') }}
+                                            @else
+                                                {{ __('Convert to 360') }}
+                                            @endif
+                                        </a>
+                                    </div>
                                 @endif
                                 @if($reportAvailable)
                                     <div class="nhsuk-u-margin-bottom-1">

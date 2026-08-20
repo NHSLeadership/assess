@@ -1,8 +1,10 @@
 <?php
 
+use App\Enums\RaterType;
 use App\Livewire\Frameworks;
 use App\Models\Assessment;
 use App\Models\Framework;
+use App\Models\Rater;
 use App\Models\Response;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -776,4 +778,61 @@ test('getAssessmentStatusTag returns started when only some required questions a
             expect($result['text'])->toBe(__('Started'));
             expect($result['subtitle'])->toBeNull();
         });
+});
+
+it('shows convert to 360 for completed self assessments', function () {
+    $user = makeAuthUser([
+        'permissions' => [
+            [
+                'permission_name' => 'assess:360',
+            ],
+        ],
+    ]);
+
+    actingAs($user);
+
+    $framework = Framework::factory()->create();
+
+    Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+        'submitted_at' => now(),
+    ]);
+
+    Livewire::test(Frameworks::class, [
+        'frameworkId' => $framework->id,
+    ])
+        ->assertSee('Convert to 360');
+});
+
+it('shows manage raters instead of convert to 360 for 360 assessments', function () {
+    $user = makeAuthUser([
+        'permissions' => [
+            [
+                'permission_name' => 'assess:360',
+            ],
+        ],
+    ]);
+
+    actingAs($user);
+
+    $framework = Framework::factory()->create();
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+        'submitted_at' => now(),
+    ]);
+
+    $rater = Rater::factory()->create();
+
+    $assessment->raters()->attach($rater->id, [
+        'type' => RaterType::Peer,
+    ]);
+
+    Livewire::test(Frameworks::class, [
+        'frameworkId' => $framework->id,
+    ])
+        ->assertSee('Manage raters')
+        ->assertDontSee('Convert to 360');
 });

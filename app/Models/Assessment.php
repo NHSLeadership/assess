@@ -35,12 +35,12 @@ class Assessment extends Model
 
     public function getTypeAttribute(): string
     {
-        if (! $this->exists) {
+        if (!$this->exists) {
             return 'Self';
         }
 
         if (array_key_exists('raters_count', $this->attributes)) {
-            return ((int) $this->attributes['raters_count']) > 0 ? '360' : 'Self';
+            return ((int)$this->attributes['raters_count']) > 0 ? '360' : 'Self';
         }
 
         if ($this->relationLoaded('raters')) {
@@ -64,8 +64,8 @@ class Assessment extends Model
             $this->submitted_at,
             $latestResponseUpdatedAt,
         ])
-            ->filter(fn ($date) => $date instanceof Carbon)
-            ->sortBy(fn (Carbon $date) => $date->getTimestamp())
+            ->filter(fn($date) => $date instanceof Carbon)
+            ->sortBy(fn(Carbon $date) => $date->getTimestamp())
             ->last();
     }
 
@@ -74,7 +74,7 @@ class Assessment extends Model
         $settings = app(Retention::class);
 
         $lastUpdatedAt = $this->effectiveLastUpdatedAt() ?? $this->created_at;
-        if (! $lastUpdatedAt instanceof Carbon) {
+        if (!$lastUpdatedAt instanceof Carbon) {
             throw new \LogicException('Cannot determine expiry date for an assessment without any timestamps.');
         }
 
@@ -139,12 +139,12 @@ class Assessment extends Model
 
     public function notificationRecipient(): ?array
     {
-        $userName = (string) $this->user_id;
+        $userName = (string)$this->user_id;
 
         $authUser = app(Auth0UserService::class)
             ->getUserByUsername($userName);
 
-        if (! $authUser || empty($authUser['email'])) {
+        if (!$authUser || empty($authUser['email'])) {
             return null;
         }
 
@@ -162,7 +162,7 @@ class Assessment extends Model
             return false;
         }
 
-        return ! $this->raters()
+        return !$this->raters()
             ->wherePivotNull('submitted_at')
             ->exists();
     }
@@ -181,5 +181,38 @@ class Assessment extends Model
 
         return $totalRaters === 0
             || $completedRaters === $totalRaters;
+    }
+
+    public function getFeedbackStatusAttribute(): ?string
+    {
+        if ($this->relationLoaded('raters')) {
+            $totalRaters = $this->raters->count();
+
+            if ($totalRaters === 0) {
+                return null;
+            }
+
+            $completedRaters = $this->raters
+                ->filter(fn($rater) => $rater->pivot->submitted_at !== null)
+                ->count();
+
+            return $completedRaters === $totalRaters
+                ? 'Completed'
+                : "{$completedRaters} of {$totalRaters}";
+        }
+
+        $totalRaters = $this->raters()->count();
+
+        if ($totalRaters === 0) {
+            return null;
+        }
+
+        $completedRaters = $this->raters()
+            ->wherePivotNotNull('submitted_at')
+            ->count();
+
+        return $completedRaters === $totalRaters
+            ? 'Completed'
+            : "{$completedRaters} of {$totalRaters}";
     }
 }
