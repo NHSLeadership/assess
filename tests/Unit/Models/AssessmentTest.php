@@ -24,3 +24,9 @@ test('assessment has correct fillable attributes defined', function () {
         'notes',
     ]);
 });
+
+test('unsaved assessment has self type', function () {
+    $assessment = new Assessment;
+
+    expect($assessment->type)->toBe('Self');
+});

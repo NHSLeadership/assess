@@ -117,3 +117,56 @@ test('report is available when all 360 raters have submitted', function () {
 
     expect($assessment->reportAvailable())->toBeTrue();
 });
+
+test('assessment without raters has self type', function () {
+    expect($this->assessment->type)->toBe('Self');
+});
+
+test('assessment with raters has 360 type', function () {
+    $rater = Rater::factory()->create();
+
+    $this->assessment->raters()->attach($rater->id, [
+        'type' => RaterType::Peer,
+    ]);
+
+    expect($this->assessment->type)->toBe('360');
+});
+
+test('assessment type uses preloaded raters count', function () {
+    $rater = Rater::factory()->create();
+
+    $this->assessment->raters()->attach($rater->id, [
+        'type' => RaterType::Peer,
+    ]);
+
+    $assessment = Assessment::query()
+        ->withCount('raters')
+        ->findOrFail($this->assessment->id);
+
+    expect($assessment->raters_count)->toBe(1)
+        ->and($assessment->type)->toBe('360');
+});
+
+test('assessment type is self when preloaded raters count is zero', function () {
+    $assessment = Assessment::query()
+        ->withCount('raters')
+        ->findOrFail($this->assessment->id);
+
+    expect($assessment->raters_count)->toBe(0)
+        ->and($assessment->type)->toBe('Self');
+});
+
+test('assessment type uses eager loaded raters relationship', function () {
+    $rater = Rater::factory()->create();
+
+    $this->assessment->raters()->attach($rater->id, [
+        'type' => RaterType::Peer,
+    ]);
+
+    $assessment = Assessment::query()
+        ->with('raters')
+        ->findOrFail($this->assessment->id);
+
+    expect($assessment->relationLoaded('raters'))->toBeTrue()
+        ->and($assessment->type)->toBe('360');
+});

@@ -4,6 +4,12 @@
 # Assessment tool
 
 ---
+### v2.1.6
+> Updated: 19.08.2026
+1. Remove "please" from rater invitation email
+2. Improve admin dashboard filtering
+
+---
 ### v2.1.5
 > Updated: 05.08.2026
 1. Makes rater groups optional for all rater types

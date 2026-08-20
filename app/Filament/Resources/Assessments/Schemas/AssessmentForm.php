@@ -11,6 +11,8 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
@@ -21,91 +23,104 @@ class AssessmentForm
     {
         return $schema
             ->components([
-                TextInput::make('user_id')
-                    ->label('Subject')
-                    ->disabled()
-                    ->dehydrated()
-                    ->default(auth()->id())
-                    ->required(),
-
-                Select::make('framework_id')
-                    ->relationship('framework', 'name')
-                    ->required()
-                    ->live()
-                    // When framework changes, (re)seed the repeater with one item per attribute:
-                    ->afterStateUpdated(function (Set $set, ?int $state) {
-                        if (! $state) {
-                            $set('variantSelections', []);
-
-                            return;
-                        }
-                        $attributes = FrameworkVariantAttribute::query()
-                            ->where('framework_id', $state)
-                            ->orderBy('order')
-                            ->get();
-                        $set('variantSelections', $attributes->map(fn ($attr) => [
-                            'framework_variant_attribute_id' => $attr->id,
-                            'framework_variant_option_id' => null,
-                        ])->toArray());
-                    }),
-
-                Repeater::make('variantSelections')
-                    ->label(null) // or keep 'Framework variants' if you want a section title
-                    ->relationship('variantSelections')
-                    ->visible(fn (Get $get) => filled($get('framework_id')))
-                    ->default(function (Get $get) {
-                        $frameworkId = $get('framework_id');
-                        if (! $frameworkId) {
-                            return [];
-                        }
-
-                        return FrameworkVariantAttribute::query()
-                            ->where('framework_id', $frameworkId)
-                            ->orderBy('order')
-                            ->get()
-                            ->map(fn ($attr) => [
-                                'framework_variant_attribute_id' => $attr->id,
-                                'framework_variant_option_id' => null,
-                            ])->toArray();
-                    })
-
-                    // Lock rows
-                    ->addable(false)
-                    ->deletable(false)
-                    ->reorderable(false)
-
-                    // ✅ Remove expander look + header text
-                    ->collapsible(false)
-                    ->collapsed(false)
-                    ->itemLabel(fn () => '') // <- empty label prevents showing the header text
-
+                Section::make('Assessment details')
+                    ->columnSpanFull()
+                    ->columns(2)
                     ->schema([
-                        Hidden::make('framework_variant_attribute_id'),
+                        TextInput::make('user_id')
+                            ->columnStart(1)
+                            ->label('Subject')
+                            ->disabled()
+                            ->dehydrated()
+                            ->default(auth()->id())
+                            ->required(),
 
-                        // ✅ Put the attribute name on the Radio label
-                        Radio::make('framework_variant_option_id')
-                            ->label(function (Get $get) {
-                                $attrId = $get('framework_variant_attribute_id');
+                        TextEntry::make('type')
+                            ->columnStart(2)
+                            ->badge()
+                            ->color(fn ($state) => $state === '360' ? 'warning' : 'success'),
 
-                                return optional(
-                                    FrameworkVariantAttribute::find($attrId)
-                                )->label ?? 'Attribute';
-                            })
+                        Select::make('framework_id')
+                            ->columnStart(1)
+                            ->relationship('framework', 'name')
                             ->required()
-                            ->inline() // horizontal options
-                            ->options(function (Get $get) {
-                                $attrId = $get('framework_variant_attribute_id');
+                            ->live()
+                            ->afterStateUpdated(function (Set $set, ?int $state) {
+                                if (! $state) {
+                                    $set('variantSelections', []);
 
-                                return FrameworkVariantOption::query()
-                                    ->where('framework_variant_attribute_id', $attrId)
+                                    return;
+                                }
+
+                                $attributes = FrameworkVariantAttribute::query()
+                                    ->where('framework_id', $state)
                                     ->orderBy('order')
-                                    ->pluck('label', 'id')
-                                    ->toArray();
-                            }),
-                    ])
-                    ->columns(1),
+                                    ->get();
 
-                DateTimePicker::make('target_completion_date')->default(now()->addMonth()),
+                                $set('variantSelections', $attributes->map(fn ($attr) => [
+                                    'framework_variant_attribute_id' => $attr->id,
+                                    'framework_variant_option_id' => null,
+                                ])->toArray());
+                            }),
+
+                        DateTimePicker::make('target_completion_date')
+                            ->default(now()->addMonth())
+                            ->columnStart(2),
+
+                        Repeater::make('variantSelections')
+                            ->label(null)
+                            ->relationship('variantSelections')
+                            ->visible(fn (Get $get) => filled($get('framework_id')))
+                            ->default(function (Get $get) {
+                                $frameworkId = $get('framework_id');
+
+                                if (! $frameworkId) {
+                                    return [];
+                                }
+
+                                return FrameworkVariantAttribute::query()
+                                    ->where('framework_id', $frameworkId)
+                                    ->orderBy('order')
+                                    ->get()
+                                    ->map(fn ($attr) => [
+                                        'framework_variant_attribute_id' => $attr->id,
+                                        'framework_variant_option_id' => null,
+                                    ])->toArray();
+                            })
+
+                            ->addable(false)
+                            ->deletable(false)
+                            ->reorderable(false)
+
+                            ->collapsible(false)
+                            ->collapsed(false)
+                            ->itemLabel(fn () => '')
+
+                            ->schema([
+                                Hidden::make('framework_variant_attribute_id'),
+
+                                Radio::make('framework_variant_option_id')
+                                    ->label(function (Get $get) {
+                                        $attrId = $get('framework_variant_attribute_id');
+
+                                        return optional(
+                                            FrameworkVariantAttribute::find($attrId)
+                                        )->label ?? 'Attribute';
+                                    })
+                                    ->required()
+                                    ->inline()
+                                    ->options(function (Get $get) {
+                                        $attrId = $get('framework_variant_attribute_id');
+
+                                        return FrameworkVariantOption::query()
+                                            ->where('framework_variant_attribute_id', $attrId)
+                                            ->orderBy('order')
+                                            ->pluck('label', 'id')
+                                            ->toArray();
+                                    }),
+                            ]),
+                    ]),
+
                 Textarea::make('notes')
                     ->columnSpanFull(),
             ]);

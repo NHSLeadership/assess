@@ -4,50 +4,28 @@ namespace App\Filament\Widgets;
 
 use App\Models\Assessment;
 use Carbon\Carbon;
-use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Widgets\ChartWidget;
-use Filament\Widgets\ChartWidget\Concerns\HasFiltersSchema;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
 use Illuminate\Contracts\Support\Htmlable;
 
 class AssessmentsChart extends ChartWidget
 {
-    use HasFiltersSchema;
+    use InteractsWithPageFilters;
 
+    public ?string $filter = 'month';
     protected static ?int $sort = 2;
 
-    public function filtersSchema(Schema $schema): Schema
+
+    protected function getFilters(): ?array
     {
-        return $schema->components([
-            Forms\Components\Select::make('status')
-                ->options([
-                    'all' => 'All',
-                    'started' => 'Started',
-                    'completed' => 'Completed',
-                ])
-                ->default('all'),
-
-            Forms\Components\DatePicker::make('startDate')
-                ->minDate('1/1/2026')
-                ->maxDate(now()->endOfMonth())
-                ->default('1/1/2026'),
-
-            Forms\Components\DatePicker::make('endDate')
-                ->minDate('1/1/2026')
-                ->maxDate(now()->endOfMonth())
-                ->default(now()->endOfMonth()),
-
-            Forms\Components\Select::make('interval')
-                ->options([
-                    'day' => 'Per day',
-                    'week' => 'Per week',
-                    'month' => 'Per month',
-                    'year' => 'Per year',
-                ])
-                ->default('month'),
-        ]);
+        return [
+            'day' => 'Per day',
+            'week' => 'Per week',
+            'month' => 'Per month',
+            'year' => 'Per year',
+        ];
     }
 
     protected function applyFilters($query): void
@@ -59,19 +37,27 @@ class AssessmentsChart extends ChartWidget
         } elseif ($status === 'completed') {
             $query->whereNotNull('submitted_at');
         }
+
+        $type = $this->filters['type'] ?? 'all';
+
+        if ($type === '360') {
+            $query->has('raters');
+        } elseif ($type === 'self') {
+            $query->doesntHave('raters');
+        }
     }
 
     protected function getData(): array
     {
-        $status = $this->filters['status'] ?? 'all';
         $startDate = $this->filters['startDate'] ?? '1/1/2026';
         $endDate = $this->filters['endDate'] ?? now()->endOfMonth();
-        $interval = $this->filters['interval'] ?? 'month';
+        $interval = $this->filter ?? 'month';
 
         $start = Carbon::parse($startDate);
         $end = Carbon::parse($endDate);
 
         $builder = Assessment::query();
+
         $this->applyFilters($builder);
 
         /** @var 'day'|'week'|'month'|'year' $interval */
@@ -102,12 +88,34 @@ class AssessmentsChart extends ChartWidget
     public function getHeading(): Htmlable|string|null
     {
         $status = $this->filters['status'] ?? 'all';
+        $type = $this->filters['type'] ?? 'all';
         $startDate = $this->filters['startDate'] ?? '1/1/2026';
         $endDate = $this->filters['endDate'] ?? now()->endOfMonth();
+
         $start = Carbon::parse($startDate);
         $end = Carbon::parse($endDate);
 
-        return ucfirst($status).' assessments between '.$start->format('d F Y').' and '.$end->format('d F Y');
+        $typePrefix = match ($type) {
+            '360' => '360',
+            'self' => 'self',
+            default => '',
+        };
+
+        $statusPrefix = match ($status) {
+            'started' => 'started',
+            'completed' => 'completed',
+            default => '',
+        };
+
+        $title = trim("$statusPrefix $typePrefix");
+
+        return ucfirst(
+            ($title ? "$title assessments" : 'all assessments')
+            . ' between '
+            . $start->format('d F Y')
+            . ' and '
+            . $end->format('d F Y')
+        );
     }
 
     protected function getType(): string
