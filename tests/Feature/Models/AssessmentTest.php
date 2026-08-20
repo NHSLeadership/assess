@@ -170,3 +170,29 @@ test('assessment type uses eager loaded raters relationship', function () {
     expect($assessment->relationLoaded('raters'))->toBeTrue()
         ->and($assessment->type)->toBe('360');
 });
+
+test('feedback status is null for self assessment', function () {
+    expect($this->assessment->feedback_status)->toBeNull();
+});
+
+test('feedback status shows progress for incomplete 360 assessment', function () {
+    $rater = Rater::factory()->create();
+
+    $this->assessment->raters()->attach($rater->id, [
+        'type' => RaterType::Peer,
+        'submitted_at' => null,
+    ]);
+
+    expect($this->assessment->feedback_status)->toBe('0 of 1');
+});
+
+test('feedback status is completed when all raters have submitted', function () {
+    $rater = Rater::factory()->create();
+
+    $this->assessment->raters()->attach($rater->id, [
+        'type' => RaterType::Peer,
+        'submitted_at' => now(),
+    ]);
+
+    expect($this->assessment->feedback_status)->toBe('Completed');
+});

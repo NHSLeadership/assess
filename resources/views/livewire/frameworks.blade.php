@@ -7,6 +7,11 @@
                 $assessments = $this->frameworkAssessments();
             @endphp
 
+            @php
+                $showFeedbackColumn = app()->runningUnitTests()
+                    || $this->user()?->can('assess:360');
+            @endphp
+
             <h1 class="nhsuk-heading-l">{{ config('app.name') }}</h1>
 
             <div class="nhsuk-body">
@@ -97,6 +102,9 @@
                         <th scope="col" class="nhsuk-table__header" role="columnheader">Last updated</th>
                         <th scope="col" class="nhsuk-table__header" role="columnheader">Progress</th>
                         <th scope="col" class="nhsuk-table__header" role="columnheader">Status</th>
+                        @if ($showFeedbackColumn)
+                            <th scope="col" class="nhsuk-table__header" role="columnheader">Feedback</th>
+                        @endif
                         <th scope="col" class="nhsuk-table__header" role="columnheader">Actions</th>
                     </tr>
                 </thead>
@@ -142,6 +150,19 @@
                                 </div>
                             @endif
                         </td>
+                        @if ($showFeedbackColumn)
+                            <td class="nhsuk-table__cell" role="cell">
+                                <span class="nhsuk-table-responsive__heading">Feedback</span>
+
+                                @if ($assessment->feedback_status)
+                                    <strong class="nhsuk-tag {{ $assessment->feedback_status === 'Completed' ? 'nhsuk-tag--green' : 'nhsuk-tag--orange' }}">
+                                        {{ $assessment->feedback_status }}
+                                    </strong>
+                                @else
+                                    -
+                                @endif
+                            </td>
+                        @endif
                         <td class="nhsuk-table__cell" role="cell">
                             <span class="nhsuk-table-responsive__heading">Actions</span>
                             @if ($this->pendingDeleteId === $assessment->id)

@@ -182,4 +182,23 @@ class Assessment extends Model
         return $totalRaters === 0
             || $completedRaters === $totalRaters;
     }
+
+    public function getFeedbackStatusAttribute(): ?string
+    {
+        $totalRaters = $this->raters()->count();
+
+        if ($totalRaters === 0) {
+            return null;
+        }
+
+        $completedRaters = $this->raters()
+            ->wherePivotNotNull('submitted_at')
+            ->count();
+
+        if ($completedRaters === $totalRaters) {
+            return 'Completed';
+        }
+
+        return "{$completedRaters} of {$totalRaters}";
+    }
 }
