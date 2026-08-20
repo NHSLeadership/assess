@@ -7,8 +7,9 @@
                 $assessments = $this->frameworkAssessments();
             @endphp
 
+            {{--@TODO Remove this section once 360 is live --}}
             @php
-                $showFeedbackColumn = app()->runningUnitTests()
+                $show360Functionality = app()->runningUnitTests()
                     || $this->user()?->can('assess:360');
             @endphp
 
@@ -102,7 +103,8 @@
                         <th scope="col" class="nhsuk-table__header" role="columnheader">Last updated</th>
                         <th scope="col" class="nhsuk-table__header" role="columnheader">Progress</th>
                         <th scope="col" class="nhsuk-table__header" role="columnheader">Status</th>
-                        @if ($showFeedbackColumn)
+                        {{--@TODO Remove if statement once 360 is live --}}
+                        @if ($show360Functionality)
                             <th scope="col" class="nhsuk-table__header" role="columnheader">Feedback</th>
                         @endif
                         <th scope="col" class="nhsuk-table__header" role="columnheader">Actions</th>
@@ -150,7 +152,8 @@
                                 </div>
                             @endif
                         </td>
-                        @if ($showFeedbackColumn)
+                        {{--@TODO Remove if statement once 360 is live --}}
+                        @if ($show360Functionality)
                             <td class="nhsuk-table__cell" role="cell">
                                 <span class="nhsuk-table-responsive__heading">Feedback</span>
 
@@ -179,8 +182,8 @@
                                 </div>
                                 @php $reportAvailable = $assessment->reportAvailable(); @endphp
                                 {{--@TODO Remove if statement once 360 is live --}}
-                                @if (app()->runningUnitTests() || $this->user()?->can('assess:360'))
-                                    <div class="nhsuk-u-margin-bottom-1">
+                                @if ($show360Functionality)
+                                <div class="nhsuk-u-margin-bottom-1">
                                         <a href="{{ route('assessment-raters', ['frameworkId' => $this->framework?->id, 'assessmentId' => $assessment->id]) }}"
                                            aria-describedby="{{ $assessment->slug }}-hint"
                                            class="nhsuk-link"
