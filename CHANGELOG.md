@@ -5,9 +5,10 @@
 
 ---
 ### v2.1.6
-> Updated: 19.08.2026
+> Updated: 20.08.2026
 1. Remove "please" from rater invitation email
 2. Improve admin dashboard filtering
+3. Add feedback status column to assessment tables
 
 ---
 ### v2.1.5
