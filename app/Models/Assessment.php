@@ -35,6 +35,18 @@ class Assessment extends Model
 
     public function getTypeAttribute(): string
     {
+        if (! $this->exists) {
+            return 'Self';
+        }
+
+        if (array_key_exists('raters_count', $this->attributes)) {
+            return ((int) $this->attributes['raters_count']) > 0 ? '360' : 'Self';
+        }
+
+        if ($this->relationLoaded('raters')) {
+            return $this->raters->isNotEmpty() ? '360' : 'Self';
+        }
+
         return $this->raters()->exists() ? '360' : 'Self';
     }
 
