@@ -26,9 +26,6 @@ class EditRater extends Component
     public ?string $name = null;
     public ?string $email = null;
     public ?string $type = null;
-
-    public bool $showNewGroup = false;
-    public ?string $newGroupName = null;
     public bool $showNewRater = true;
     public ?int $selectedRaterId = null;
     public array $existingRaterList = [];

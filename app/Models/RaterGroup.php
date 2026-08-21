@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RaterGroup extends Model
 {
@@ -20,8 +21,11 @@ class RaterGroup extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function raters()
+    public function assessmentRaters(): HasMany
     {
-        return $this->hasMany(Rater::class, 'group_id');
+        return $this->hasMany(
+            AssessmentRater::class,
+            'rater_group_id'
+        );
     }
 }

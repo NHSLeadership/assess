@@ -11,6 +11,7 @@ use App\Livewire\EditRater;
 use App\Livewire\FrameworkInstructions;
 use App\Livewire\Frameworks;
 use App\Livewire\Home;
+use App\Livewire\ManageRaterGroups;
 use App\Livewire\ReviewRequest;
 //use App\Livewire\SelectRater;
 use App\Livewire\Summary;
@@ -45,6 +46,9 @@ Route::group([
     //Route::get('/assessment/{assessmentId}/select-rater', SelectRater::class)->name('select-rater');
     Route::get('/assessment/{assessmentId}/add-rater', EditRater::class)->name('create-rater');
     Route::get('/assessment-rater/{assessmentRaterId}/edit', EditRater::class)->name('edit-rater');
+    Route::get(
+        '/assessments/{assessmentId}/raters/groups', ManageRaterGroups::class
+    )->name('manage-rater-groups');
 
 
     /**
