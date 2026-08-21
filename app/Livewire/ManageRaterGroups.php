@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Assessment;
 use App\Models\AssessmentRater;
 use App\Models\RaterGroup;
 use App\Traits\UserTrait;
@@ -21,6 +22,11 @@ class ManageRaterGroups extends Component
     public function mount(int $assessmentId): void
     {
         $this->assessmentId = $assessmentId;
+        $assessment = Assessment::query()
+            ->whereKey($assessmentId)
+            ->where('user_id', $this->user()->user_id)
+            ->firstOrFail();
+        $this->assessmentId = $assessment->id;
     }
 
     public function getGroupsProperty()
@@ -34,8 +40,10 @@ class ManageRaterGroups extends Component
 
     public function editGroup(int $groupId): void
     {
-        $group = RaterGroup::findOrFail($groupId);
-
+        $group = RaterGroup::query()
+            ->whereKey($groupId)
+            ->where('subject_id', $this->user()->user_id)
+            ->firstOrFail();
         $this->editingGroupId = $group->id;
         $this->name = $group->name;
     }
@@ -54,12 +62,16 @@ class ManageRaterGroups extends Component
         ]);
 
         if ($this->editingGroupId) {
-            RaterGroup::findOrFail($this->editingGroupId)->update([
-                'name' => $this->name,
-            ]);
+            RaterGroup::query()
+                ->whereKey($this->editingGroupId)
+                ->where('subject_id', $this->user()->user_id)
+                ->firstOrFail()
+                ->update([
+                    'name' => $this->name,
+                ]);
         } else {
             RaterGroup::create([
-                'subject_id' => auth()->user()->user_id,
+                'subject_id' => $this->user()->user_id,
                 'name' => $this->name,
             ]);
         }
@@ -72,13 +84,22 @@ class ManageRaterGroups extends Component
 
     public function deleteGroup(int $groupId): void
     {
+        $group = RaterGroup::query()
+            ->whereKey($groupId)
+            ->where('subject_id', $this->user()->user_id)
+            ->firstOrFail();
+
         AssessmentRater::query()
-            ->where('rater_group_id', $groupId)
+            ->where('rater_group_id', $group->id)
+            ->whereHas('assessment', fn ($query) => $query->where(
+                'user_id',
+                $this->user()->user_id
+            ))
             ->update([
                 'rater_group_id' => null,
             ]);
 
-        RaterGroup::findOrFail($groupId)->delete();
+        $group->delete();
     }
 
     public function render()
