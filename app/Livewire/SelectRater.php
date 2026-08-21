@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Enums\RaterType;
 use App\Models\AssessmentRater;
 use App\Models\Rater;
-use App\Models\RaterGroup;
 use App\Traits\UserTrait;
 use App\Traits\AssessmentHelperTrait;
 use Illuminate\Validation\ValidationException;
