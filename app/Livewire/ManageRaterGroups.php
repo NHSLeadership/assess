@@ -50,13 +50,14 @@ class ManageRaterGroups extends Component
 
     public function saveGroup(): void
     {
+        $this->name = trim($this->name);
         $this->validate([
             'name' => [
                 'required',
                 'string',
                 'max:255',
                 Rule::unique('rater_groups', 'name')
-                    ->where('subject_id', auth()->user()->user_id)
+                    ->where('subject_id', $this->user()?->user_id)
                     ->ignore($this->editingGroupId),
             ],
         ]);

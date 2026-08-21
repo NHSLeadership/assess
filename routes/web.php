@@ -47,7 +47,7 @@ Route::group([
     Route::get('/assessment/{assessmentId}/add-rater', EditRater::class)->name('create-rater');
     Route::get('/assessment-rater/{assessmentRaterId}/edit', EditRater::class)->name('edit-rater');
     Route::get(
-        '/assessments/{assessmentId}/raters/groups', ManageRaterGroups::class
+        '/assessment/{assessmentId}/raters/groups', ManageRaterGroups::class
     )->name('manage-rater-groups');
 
 

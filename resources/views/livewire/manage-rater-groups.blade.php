@@ -10,9 +10,9 @@
         <table class="nhsuk-table">
             <thead>
             <tr>
-                <th>Group</th>
-                <th>Raters</th>
-                <th>Actions</th>
+                <th scope="col">Group</th>
+                <th scope="col">Raters</th>
+                <th scope="col">Actions</th>
             </tr>
             </thead>
 
