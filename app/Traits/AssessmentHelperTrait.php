@@ -13,11 +13,8 @@ use App\Models\Response;
 use App\Services\QuestionTextResolver;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Computed;
 use Livewire\Features\SupportRedirects\Redirector;
-use Throwable;
 
 trait AssessmentHelperTrait
 {
@@ -277,62 +274,6 @@ trait AssessmentHelperTrait
             ->first();
     }
 
-    public function addGroup(): void
-    {
-        try {
-            $this->newGroupName = trim((string) $this->newGroupName);
-
-            $this->validate($this->groupRules());
-
-            $group = RaterGroup::create([
-                'subject_id' => $this->user()?->user_id,
-                'name' => $this->newGroupName,
-            ]);
-
-            $this->refreshGroupList();
-
-            $this->groupId = $group->id;
-            $this->newGroupName = null;
-            $this->showNewGroup = false;
-
-        } catch (ValidationException $e) {
-            throw $e;
-
-        } catch (Throwable $e) {
-            report($e);
-
-            $this->addError(
-                'newGroupName',
-                'Unable to create the group. Please try again.'
-            );
-
-        }
-    }
-
-    public function cancelAddGroup(): void
-    {
-        $this->showNewGroup = false;
-        $this->newGroupName = null;
-
-        $this->resetErrorBag('newGroupName');
-    }
-
-    public function groupRules(): array
-    {
-        return [
-            'newGroupName' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('rater_groups', 'name')
-                    ->where(fn ($query) => $query->where(
-                        'subject_id',
-                        $this->user()?->user_id
-                    )),
-            ],
-        ];
-    }
-
     public function refreshGroupList(): void
     {
         $this->raterGroupList = RaterGroup::query()
@@ -346,11 +287,6 @@ trait AssessmentHelperTrait
         if (empty($raterId)) {
             return 0;
         }
-//        return Response::query()
-//            ->where('assessment_id', $assessmentId)
-//            ->where('rater_id', $raterId)
-//            ->whereHas('question', fn ($query) => $query->where('required', true))
-//            ->count();
 
         return Response::query()
             ->where('assessment_id', $assessmentId)
@@ -404,5 +340,4 @@ trait AssessmentHelperTrait
         }
         return $this->assessment()?->submitted_at;
     }
-
 }

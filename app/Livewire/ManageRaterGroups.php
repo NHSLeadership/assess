@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\AssessmentRater;
 use App\Models\RaterGroup;
 use App\Traits\UserTrait;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class ManageRaterGroups extends Component
@@ -42,7 +43,14 @@ class ManageRaterGroups extends Component
     public function saveGroup(): void
     {
         $this->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('rater_groups', 'name')
+                    ->where('subject_id', auth()->user()->user_id)
+                    ->ignore($this->editingGroupId),
+            ],
         ]);
 
         if ($this->editingGroupId) {
