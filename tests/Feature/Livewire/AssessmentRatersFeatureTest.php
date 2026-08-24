@@ -3,6 +3,7 @@
 use App\Enums\RaterType;
 use App\Livewire\AssessmentRaters;
 use App\Livewire\Assessments;
+use App\Mail\RaterInvitationMail;
 use App\Models\Assessment;
 use App\Models\AssessmentRater;
 use App\Models\Framework;
@@ -444,4 +445,37 @@ test('incomplete invited raters can be reinvited', function () {
             'assessmentId' => $assessment->id,
         ])
         ->assertSee('Invite again');
+});
+
+test('inviteRater does not send an invitation to a completed rater', function () {
+    Mail::fake();
+
+    $user = makeAuthUser([
+        'user_id' => '1000000000',
+    ]);
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+        'email' => 'completed-rater@example.com',
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'type' => RaterType::Peer,
+        'invited_at' => now()->subDay(),
+        'submitted_at' => now(),
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(AssessmentRaters::class, [
+            'assessmentId' => $assessment->id,
+        ])
+        ->call('inviteRater', $rater->id);
+
+    Mail::assertNotSent(RaterInvitationMail::class);
 });

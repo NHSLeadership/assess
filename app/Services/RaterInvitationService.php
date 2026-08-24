@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Rater;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use App\Mail\RaterInvitationMail;
+use InvalidArgumentException;
 
 class RaterInvitationService
 {
@@ -15,11 +17,22 @@ class RaterInvitationService
         if (blank($rater->email)) {
             throw new \InvalidArgumentException('Rater must have an email address to be invited.');
         }
-        $isAttached = $assessment->raters()
-            ->where('raters.id', $rater->id)
-            ->exists();
-        if (! $isAttached) {
-            throw new \InvalidArgumentException('Rater must be attached to the assessment before an invitation can be sent.');
+
+        $assessmentRater = AssessmentRater::query()
+            ->where('assessment_id', $assessment->id)
+            ->where('rater_id', $rater->id)
+            ->first();
+
+        if (! $assessmentRater) {
+            throw new InvalidArgumentException(
+            'Rater must be attached to the assessment before an invitation can be sent.'
+            );
+        }
+
+        if ($assessmentRater->submitted_at !== null) {
+            throw new InvalidArgumentException(
+            'A completed rater cannot be invited again.'
+            );
         }
 
         // Generate signed URL
@@ -30,11 +43,6 @@ class RaterInvitationService
                 'raterId' => $rater->id,
             ]
         );
-
-        // Send email
-        $assessmentRater = $assessment->raters()
-            ->where('raters.id', $rater->id)
-            ->firstOrFail();
 
         $selfRater = Rater::query()
             ->where('subject_id', $assessment->user_id)
@@ -48,13 +56,13 @@ class RaterInvitationService
                     rater: $rater,
                     url: $url,
                     subjectName: $selfRater?->name ?? 'Unknown',
-                    role: ucfirst($assessmentRater->pivot->type->value),
-                    groupName: $assessmentRater->pivot->group?->name,
+                    role: ucfirst($assessmentRater->type->value),
+                    groupName: $assessmentRater->group?->name,
                 )
             );
 
         // Set invited_at timestamp
-        $assessment->raters()->updateExistingPivot($rater->id, [
+        $assessmentRater->update([
             'invited_at' => now(),
         ]);
     }

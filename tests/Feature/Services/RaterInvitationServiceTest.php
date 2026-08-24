@@ -2,6 +2,7 @@
 
 use App\Enums\RaterType;
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Rater;
 use App\Services\RaterInvitationService;
 use Illuminate\Support\Facades\Mail;
@@ -76,4 +77,39 @@ test('status precedence is correct', function () {
     $pivot = $assessment->raters()->first()->pivot;
 
     expect($pivot->getStatus())->toBe('Completed');
+});
+
+test('does not send an invitation to a completed rater', function () {
+    Mail::fake();
+
+    $user = makeAuthUser([
+        'user_id' => '1000000000',
+    ]);
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+        'email' => 'completed-rater@example.com',
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'type' => RaterType::Peer,
+        'invited_at' => now()->subDay(),
+        'submitted_at' => now(),
+    ]);
+
+    expect(fn() => app(RaterInvitationService::class)->send(
+        $assessment,
+        $rater,
+    ))->toThrow(
+        InvalidArgumentException::class,
+        'A completed rater cannot be invited again.',
+    );
+
+    Mail::assertNotSent(RaterInvitationMail::class);
 });
