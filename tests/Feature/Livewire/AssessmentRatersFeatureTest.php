@@ -392,3 +392,56 @@ test('rater assessment route loads successfully when signature is valid', functi
         ->assertOk();
 });
 
+test('completed raters cannot be reinvited', function () {
+    $user = makeAuthUser([
+        'user_id' => '1000000000',
+    ]);
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'invited_at' => now()->subDay(),
+        'submitted_at' => now(),
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(AssessmentRaters::class, [
+            'assessmentId' => $assessment->id,
+        ])
+        ->assertDontSee('Invite again');
+});
+
+test('incomplete invited raters can be reinvited', function () {
+    $user = makeAuthUser([
+        'user_id' => '1000000000',
+    ]);
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'invited_at' => now()->subDay(),
+        'submitted_at' => null,
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(AssessmentRaters::class, [
+            'assessmentId' => $assessment->id,
+        ])
+        ->assertSee('Invite again');
+});
