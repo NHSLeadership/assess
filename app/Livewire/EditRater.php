@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Enums\RaterType;
 use App\Models\AssessmentRater;
 use App\Models\Rater;
+use App\Services\RaterInvitationService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
 use Illuminate\Validation\Rule;
@@ -223,10 +224,22 @@ class EditRater extends Component
                     'rater_group_id' => $this->groupId,
                 ]);
 
-                session()->flash('success', [
-                    'heading' => __('Rater added'),
-                    'message' => __('Rater added successfully.'),
-                ]);
+                if ($this->sendInvitation($rater)) {
+                    session()->flash('success', [
+                        'heading' => __('Rater invited'),
+                        'message' => __('messages.rater_invited', [
+                            'email' => $rater->email,
+                        ]),
+                    ]);
+                } else {
+                    session()->flash('error', [
+                        'heading' => __('Rater added but not invited'),
+                        'message' => __('messages.rater_added_no_invitation', [
+                            'email' => $rater->email,
+                        ]),
+                    ]);
+                }
+
             }
 
             $this->redirect(
@@ -245,10 +258,24 @@ class EditRater extends Component
             report($e);
 
             session()->flash(
-                'error',
-                'Unable to save the rater. Please try again.'
+                'Unable to save rater',
+                'The rater could not be saved. Please try again.'
             );
             $this->dispatch('scroll-to-top');
+        }
+    }
+
+    protected function sendInvitation(Rater $rater): bool
+    {
+        try {
+            app(RaterInvitationService::class)
+                ->send($this->assessment, $rater);
+
+            return true;
+        } catch (Throwable $e) {
+            report($e);
+
+            return false;
         }
     }
 

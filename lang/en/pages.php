@@ -62,9 +62,9 @@ return [
     'raters' => [
         'title' => 'Assessment raters',
         'select-rater' => 'Select existing rater',
-        'add-rater' => 'Add a rater',
+        'invite-rater' => 'Invite new rater',
         'edit-rater' => 'Edit rater',
         'edit-rater-button' => 'Update rater',
-        'add-rater-button' => 'Add rater',
+        'invite-rater-button' => 'Send invitation',
     ],
 ];

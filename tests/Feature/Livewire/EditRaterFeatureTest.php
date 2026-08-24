@@ -8,6 +8,7 @@ use App\Models\Framework;
 use App\Models\Rater;
 
 use App\Models\RaterGroup;
+use App\Services\RaterInvitationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -153,4 +154,82 @@ test('store allows manager without group', function () {
         ->set('type', RaterType::Manager->value)
         ->call('store')
         ->assertHasNoErrors();
+});
+
+test('creating a rater sends an invitation', function () {
+    $user = makeAuthUser([
+        'user_id' => '1000000000',
+        'permissions' => [
+            [
+                'permission_name' => 'assess:360',
+            ],
+        ],
+    ]);
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+    ]);
+
+    $service = Mockery::mock(RaterInvitationService::class);
+
+    $service
+        ->shouldReceive('send')
+        ->once()
+        ->withArgs(function ($passedAssessment, $passedRater) use ($assessment) {
+            return $passedAssessment->id === $assessment->id
+                && $passedRater->email === 'manager@example.com';
+        });
+
+    app()->instance(RaterInvitationService::class, $service);
+
+    Livewire::actingAs($user)
+        ->test(EditRater::class, [
+            'assessmentId' => $assessment->id,
+        ])
+        ->set('name', 'Test Manager')
+        ->set('email', 'manager@example.com')
+        ->set('type', RaterType::Manager->value)
+        ->call('store');
+});
+
+test('editing a rater does not send an invitation', function () {
+    $user = makeAuthUser([
+        'user_id' => '1000000000',
+        'permissions' => [
+            [
+                'permission_name' => 'assess:360',
+            ],
+        ],
+    ]);
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    $assessmentRater = AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'type' => RaterType::Manager,
+    ]);
+
+    $service = Mockery::mock(RaterInvitationService::class);
+
+    $service->shouldNotReceive('send');
+
+    app()->instance(RaterInvitationService::class, $service);
+
+    Livewire::actingAs($user)
+        ->test(EditRater::class, [
+            'assessmentRaterId' => $assessmentRater->id,
+        ])
+        ->set('type', RaterType::Peer->value)
+        ->call('store');
+
+    expect(
+        $assessmentRater->fresh()->type
+    )->toBe(RaterType::Peer);
 });
