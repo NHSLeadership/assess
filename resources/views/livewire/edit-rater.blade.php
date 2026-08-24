@@ -6,7 +6,7 @@
             {{
                 $this->isEditMode()
                     ? __('pages.raters.edit-rater')
-                    : __('pages.raters.add-rater')
+                    : __('pages.raters.invite-rater')
             }}
         </h1>
 
@@ -51,7 +51,7 @@
 
             <div class="nhsuk-form-group">
                 <button class="nhsuk-button" type="submit">
-                    {{ $this->isEditMode() ? __('pages.raters.edit-rater-button') : __('pages.raters.add-rater-button') }}
+                    {{ $this->isEditMode() ? __('pages.raters.edit-rater-button') : __('pages.raters.invite-rater-button') }}
                 </button>
             </div>
 

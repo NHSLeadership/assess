@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Enums\RaterType;
 use App\Models\AssessmentRater;
 use App\Models\Rater;
+use App\Services\RaterInvitationService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
 use Illuminate\Validation\Rule;
@@ -223,9 +224,13 @@ class EditRater extends Component
                     'rater_group_id' => $this->groupId,
                 ]);
 
+                app(RaterInvitationService::class)->send($this->assessment, $rater);
+
                 session()->flash('success', [
-                    'heading' => __('Rater added'),
-                    'message' => __('Rater added successfully.'),
+                    'heading' => __('Rater invited'),
+                    'message' => __('messages.rater_invited', [
+                        'email' => $rater->email,
+                    ]),
                 ]);
             }
 
