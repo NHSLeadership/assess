@@ -11,6 +11,7 @@
 3. Add feedback status column to assessment tables
 4. Allow rater group deletion
 5. Automatically invite new raters when added
+6. Prevent re-inviting raters who have already completed an assessment
 
 ---
 ### v2.1.5

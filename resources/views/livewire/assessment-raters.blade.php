@@ -94,21 +94,23 @@
                                         {{ __('Edit') }}
                                     </button>
                                     <br/>
-                                    @if($rater->pivot->invited_at)
-                                        <button
-                                                type="button"
-                                                class="nhsuk-link"
-                                                title="Last invited: {{ $rater->pivot->invited_at->format('d/m/Y H:i') }}"
-                                                wire:click.prevent="inviteRater({{ $rater->id }})">
-                                            {{ __('Invite again') }}
-                                        </button>
-                                    @else
-                                        <button
-                                                type="button"
-                                                class="nhsuk-link"
-                                                wire:click.prevent="inviteRater({{ $rater->id }})">
-                                            {{ __('Invite') }}
-                                        </button>
+                                    @if (! $rater->pivot->submitted_at)
+                                        @if($rater->pivot->invited_at)
+                                            <button
+                                                    type="button"
+                                                    class="nhsuk-link"
+                                                    title="Last invited: {{ $rater->pivot->invited_at->format('d/m/Y H:i') }}"
+                                                    wire:click.prevent="inviteRater({{ $rater->id }})">
+                                                {{ __('Invite again') }}
+                                            </button>
+                                        @else
+                                            <button
+                                                    type="button"
+                                                    class="nhsuk-link"
+                                                    wire:click.prevent="inviteRater({{ $rater->id }})">
+                                                {{ __('Invite') }}
+                                            </button>
+                                        @endif
                                     @endif
                                 @endif
                             </td>
