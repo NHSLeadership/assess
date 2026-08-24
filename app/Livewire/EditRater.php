@@ -224,7 +224,6 @@ class EditRater extends Component
                     'rater_group_id' => $this->groupId,
                 ]);
 
-//                app(RaterInvitationService::class)->send($this->assessment, $rater);
                 if ($this->sendInvitation($rater)) {
                     session()->flash('success', [
                         'heading' => __('Rater invited'),

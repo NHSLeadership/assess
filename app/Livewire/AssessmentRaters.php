@@ -122,8 +122,10 @@ class AssessmentRaters extends Component
                 ->send($this->assessment, $rater);
 
             session()->flash('success', [
-                'heading' => __('Invitation sent'),
-                'message' => __('Invitation sent successfully.'),
+                'heading' => __('New invitation sent'),
+                'message' => __('messages.rater_invited', [
+                    'email' => $rater->email,
+                ]),
             ]);
 
         } catch (Throwable $e) {
