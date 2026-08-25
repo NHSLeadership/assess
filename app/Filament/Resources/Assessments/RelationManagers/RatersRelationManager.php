@@ -9,8 +9,6 @@ use App\Models\RaterGroup;
 use App\Services\RaterInvitationService;
 use Filament\Actions\Action;
 use Filament\Actions\AttachAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\DetachAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
@@ -157,30 +155,53 @@ class RatersRelationManager extends RelationManager
                     ->schema(fn () => $this->getFormComponents())
             ])
             ->recordActions([
-                EditAction::make(),
-                DetachAction::make(),
+                EditAction::make()
+                    ->disabled(
+                        fn ($record) => filled($record->pivot->submitted_at)
+                    )
+                    ->tooltip(
+                        fn ($record) => filled($record->pivot->submitted_at)
+                            ? 'Raters with completed feedback cannot be edited.'
+                            : null
+                    ),
+                DetachAction::make()
+                    ->disabled(
+                        fn ($record) => filled($record->pivot->submitted_at)
+                    )
+                    ->tooltip(
+                        fn ($record) => filled($record->pivot->submitted_at)
+                            ? 'Completed feedback cannot be removed.'
+                            : null
+                    ),
                 Action::make('invite')
                     ->icon('heroicon-o-envelope')
-//                    ->disabled(fn ($record) => blank($record->email))
-                    ->disabled(fn ($record) =>
-                        blank($record->email)
-                        || filled($record->pivot->submitted_at)
+                    ->disabled(
+                        fn ($record) =>
+                            blank($record->email)
+                            || filled($record->pivot->submitted_at)
                     )
+                    ->tooltip(fn ($record) => match (true) {
+                        blank($record->email) =>
+                        'This rater does not have an email address.',
+
+                        filled($record->pivot->submitted_at) =>
+                        'This rater has completed their feedback.',
+
+                        default => null,
+                    })
                     ->action(function ($record) {
                         /** @var \App\Models\Assessment $assessment */
                         $assessment = $this->getOwnerRecord();
+
                         app(RaterInvitationService::class)
                             ->send($assessment, $record);
+
                         Notification::make()
                             ->title('Invitation sent')
                             ->success()
                             ->send();
                     }),
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->toolbarActions([]);
     }
 }
