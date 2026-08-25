@@ -14,6 +14,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Services\RaterInvitationService;
+use Illuminate\Support\Facades\Mail;
 
 uses(RefreshDatabase::class);
 
