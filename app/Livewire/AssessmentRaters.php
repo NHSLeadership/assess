@@ -49,34 +49,54 @@ class AssessmentRaters extends Component
     public function confirmDetach(): void
     {
         $id = $this->pendingDetachId;
+
         if (! $id) {
             return;
         }
 
         try {
             $assessmentRater = AssessmentRater::findOrFail($id);
-            if($assessmentRater?->assessment?->user_id === $this->user()?->user_id) {
-                $rater = $assessmentRater->rater;
 
-                $assessmentRater->delete();
-
-                if (
-                    $rater &&
-                    ! AssessmentRater::query()
-                        ->where('rater_id', $rater->id)
-                        ->exists()
-                ) {
-                    $rater->delete();
-                }
-
-                session()->flash('success', [
-                    'heading' => __('Rater removed'),
-                    'message' => __('Rater removed successfully.'),
+            if (
+                $assessmentRater->assessment?->user_id
+                !== $this->user()?->user_id
+            ) {
+                session()->flash('error', [
+                    'heading' => __('Unable to remove rater'),
+                    'message' => __('You cannot remove this rater.'),
                 ]);
-            } else {
-                session()->flash('error', __('Failed to detach rater. Please try again.'));
+
+                return;
             }
 
+            if ($assessmentRater->submitted_at !== null) {
+                session()->flash('error', [
+                    'heading' => __('Unable to remove rater'),
+                    'message' => __(
+                        'A rater cannot be removed after submitting their feedback.'
+                    ),
+                ]);
+
+                return;
+            }
+
+            $rater = $assessmentRater->rater;
+
+            $assessmentRater->delete();
+
+            if (
+                $rater
+                && ! AssessmentRater::query()
+                    ->where('rater_id', $rater->id)
+                    ->exists()
+            ) {
+                $rater->delete();
+            }
+
+            session()->flash('success', [
+                'heading' => __('Rater removed'),
+                'message' => __('Rater removed successfully.'),
+            ]);
         } catch (Throwable $e) {
             Log::error('Error removing rater', [
                 'assessment_id' => $this->assessmentId,
@@ -84,7 +104,11 @@ class AssessmentRaters extends Component
                 'message' => $e->getMessage(),
                 'exception' => $e,
             ]);
-            session()->flash('error', __('Failed to detach rater. Please try again.'));
+
+            session()->flash('error', [
+                'heading' => __('Unable to remove rater'),
+                'message' => __('Failed to remove the rater. Please try again.'),
+            ]);
         } finally {
             $this->pendingDetachId = null;
         }

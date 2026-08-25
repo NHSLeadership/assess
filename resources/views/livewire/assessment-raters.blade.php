@@ -80,13 +80,15 @@
                                 @if ($this->pendingDetachId === $rater->pivot->id)
                                     @include('livewire.partials.confirm-detach')
                                 @else
-                                    <button
-                                            type="button"
-                                            class="nhsuk-link"
-                                            wire:click.prevent="askDetach({{ $rater->pivot->id }})">
-                                        {{ __('Remove') }}
-                                    </button>
-                                    <br/>
+                                    @if (! $rater->pivot->submitted_at)
+                                        <button
+                                                type="button"
+                                                class="nhsuk-link"
+                                                wire:click.prevent="askDetach({{ $rater->pivot->id }})">
+                                            {{ __('Remove') }}
+                                        </button>
+                                        <br/>
+                                    @endif
                                     <button
                                             type="button"
                                             class="nhsuk-link"
