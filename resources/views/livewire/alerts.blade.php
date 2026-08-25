@@ -61,14 +61,34 @@
 
     @if (session()->has('error'))
 
-        <div class="nhsuk-error-summary" id="error" aria-labelledby="error-summary-title" role="alert" tabindex="-1">
-            <h2 class="nhsuk-error-summary__title" id="error-summary-title">
-                {{ session('error-heading', __('alerts.errors.title')) }}
+        @php
+            $error = session('error');
+
+            $heading = is_array($error)
+                ? ($error['heading'] ?? __('alerts.errors.title'))
+                : session('error-heading', __('alerts.errors.title'));
+
+            $message = is_array($error)
+                ? ($error['message'] ?? '')
+                : $error;
+        @endphp
+
+        <div class="nhsuk-error-summary"
+             id="error"
+             aria-labelledby="error-summary-title"
+             role="alert"
+             tabindex="-1">
+
+            <h2 class="nhsuk-error-summary__title"
+                id="error-summary-title">
+                {{ $heading }}
                 <span class="nhsuk-u-visually-hidden">:</span>
             </h2>
+
             <div class="nhsuk-error-summary__body">
-                <p>{!! session('error') !!}</p>
+                <p>{{ $message }}</p>
             </div>
+
         </div>
 
     @endif

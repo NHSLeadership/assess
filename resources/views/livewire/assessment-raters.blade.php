@@ -80,13 +80,15 @@
                                 @if ($this->pendingDetachId === $rater->pivot->id)
                                     @include('livewire.partials.confirm-detach')
                                 @else
-                                    <button
-                                            type="button"
-                                            class="nhsuk-link"
-                                            wire:click.prevent="askDetach({{ $rater->pivot->id }})">
-                                        {{ __('Remove') }}
-                                    </button>
-                                    <br/>
+                                    @if (! $rater->pivot->submitted_at)
+                                        <button
+                                                type="button"
+                                                class="nhsuk-link"
+                                                wire:click.prevent="askDetach({{ $rater->pivot->id }})">
+                                            {{ __('Remove') }}
+                                        </button>
+                                        <br/>
+                                    @endif
                                     <button
                                             type="button"
                                             class="nhsuk-link"
@@ -94,21 +96,23 @@
                                         {{ __('Edit') }}
                                     </button>
                                     <br/>
-                                    @if($rater->pivot->invited_at)
-                                        <button
-                                                type="button"
-                                                class="nhsuk-link"
-                                                title="Last invited: {{ $rater->pivot->invited_at->format('d/m/Y H:i') }}"
-                                                wire:click.prevent="inviteRater({{ $rater->id }})">
-                                            {{ __('Invite again') }}
-                                        </button>
-                                    @else
-                                        <button
-                                                type="button"
-                                                class="nhsuk-link"
-                                                wire:click.prevent="inviteRater({{ $rater->id }})">
-                                            {{ __('Invite') }}
-                                        </button>
+                                    @if (! $rater->pivot->submitted_at)
+                                        @if($rater->pivot->invited_at)
+                                            <button
+                                                    type="button"
+                                                    class="nhsuk-link"
+                                                    title="Last invited: {{ $rater->pivot->invited_at->format('d/m/Y H:i') }}"
+                                                    wire:click.prevent="inviteRater({{ $rater->id }})">
+                                                {{ __('Invite again') }}
+                                            </button>
+                                        @else
+                                            <button
+                                                    type="button"
+                                                    class="nhsuk-link"
+                                                    wire:click.prevent="inviteRater({{ $rater->id }})">
+                                                {{ __('Invite') }}
+                                            </button>
+                                        @endif
                                     @endif
                                 @endif
                             </td>
