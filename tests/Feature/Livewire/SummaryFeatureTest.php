@@ -627,8 +627,5 @@ test('rater feedback notification is not sent for a self assessment submission',
 
     expect($assessment->fresh()->submitted_at)->not->toBeNull();
 
-    Notification::assertNotSentTo(
-        $user,
-        RaterFeedbackSubmitted::class
-    );
+    Notification::assertNothingSent();
 });
