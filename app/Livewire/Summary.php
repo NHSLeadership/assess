@@ -318,7 +318,6 @@ class Summary extends Component
                 ->notify(
                     new RaterFeedbackSubmitted(
                         assessment: $assessment,
-                        firstName: $subject->first_name,
                     )
                 );
         } catch (\Throwable $e) {

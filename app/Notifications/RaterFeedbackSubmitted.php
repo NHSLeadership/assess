@@ -13,10 +13,8 @@ class RaterFeedbackSubmitted extends Notification
 
     public function __construct(
         public Assessment $assessment,
-        public ?string $firstName = null,
     ) {
     }
-
     public function via(object $notifiable): array
     {
         return ['mail'];
@@ -29,7 +27,6 @@ class RaterFeedbackSubmitted extends Notification
             ->markdown(
                 'mail.rater-feedback-submitted',
                 [
-                    'firstName' => $this->firstName,
                     'assessment' => $this->assessment,
                 ]
             );

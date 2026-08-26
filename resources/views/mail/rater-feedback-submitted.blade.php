@@ -1,8 +1,4 @@
 @component('mail::message')
-    @if($firstName)
-        Dear {{ $firstName }},
-    @endif
-    <br><br>
     A rater has submitted their feedback for your assessment.
     <br><br>
     You can view the progress of your assessment using the button below.
