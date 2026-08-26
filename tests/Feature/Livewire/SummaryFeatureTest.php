@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\RaterType;
 use App\Livewire\Summary;
 use App\Models\Assessment;
 use App\Models\AssessmentRater;
@@ -11,6 +12,7 @@ use App\Models\Rater;
 use App\Models\Response;
 use App\Models\Scale;
 use App\Models\ScaleOption;
+use App\Notifications\RaterFeedbackSubmitted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -521,9 +523,112 @@ it('submits rater assessment and redirects to signed completed route', function 
         ->call('confirmSubmit')
         ->assertRedirect($expectedUrl);
 
-    $this->assertDatabaseHas('assessment_rater', [
+    $assessmentRater = AssessmentRater::query()
+        ->where('assessment_id', $assessment->id)
+        ->where('rater_id', $rater->id)
+        ->firstOrFail();
+
+    expect($assessmentRater->submitted_at)->not->toBeNull();
+});
+
+test('subject is notified when a rater submits feedback', function () {
+    Notification::fake();
+
+    $subjectId = '1000000000';
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $subjectId,
+    ]);
+
+    Rater::factory()->create([
+        'subject_id' => $subjectId,
+        'name' => 'Andrew Blane',
+        'email' => 'subject@example.com',
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $subjectId,
+    ]);
+
+    $assessmentRater = AssessmentRater::factory()->create([
         'assessment_id' => $assessment->id,
         'rater_id' => $rater->id,
-        'submitted_at' => now(), // you can relax this if needed
+        'type' => RaterType::Peer,
+        'submitted_at' => null,
     ]);
+
+    Livewire::test(Summary::class, [
+        'frameworkId' => $assessment->framework_id,
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ])->call('confirmSubmit');
+
+    expect($assessmentRater->fresh()->submitted_at)->not->toBeNull();
+
+    Notification::assertSentOnDemand(
+        RaterFeedbackSubmitted::class
+    );
+});
+
+test('subject is not notified again when rater feedback is already submitted', function () {
+    Notification::fake();
+
+    $subjectId = '1000000000';
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $subjectId,
+    ]);
+
+    Rater::factory()->create([
+        'subject_id' => $subjectId,
+        'name' => 'Andrew Blane',
+        'email' => 'subject@example.com',
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $subjectId,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'type' => RaterType::Peer,
+        'submitted_at' => now(),
+    ]);
+
+    Livewire::test(Summary::class, [
+        'frameworkId' => $assessment->framework_id,
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ])->call('confirmSubmit');
+
+    Notification::assertNothingSent();
+});
+
+test('rater feedback notification is not sent for a self assessment submission', function () {
+    Notification::fake();
+
+    $user = makeAuthUser([
+        'user_id' => '1000000000',
+    ]);
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+        'submitted_at' => null,
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(Summary::class, [
+            'frameworkId' => $assessment->framework_id,
+            'assessmentId' => $assessment->id,
+            'raterId' => null,
+        ])
+        ->call('confirmSubmit');
+
+    expect($assessment->fresh()->submitted_at)->not->toBeNull();
+
+    Notification::assertNotSentTo(
+        $user,
+        RaterFeedbackSubmitted::class
+    );
 });
