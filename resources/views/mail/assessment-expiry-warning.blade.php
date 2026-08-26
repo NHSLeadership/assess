@@ -10,8 +10,7 @@ If no action is taken, the assessment will be deleted automatically.
 Sign in to Assessment System
 @endcomponent
 
-For further guidance and support, please visit our
-[support page](https://support.leadershipacademy.nhs.uk/).
+For further guidance and support visit our [support page](https://support.leadershipacademy.nhs.uk/).
 
 Best regards,
 Assessment System Team

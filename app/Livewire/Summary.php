@@ -6,18 +6,15 @@ use App\Models\Assessment;
 use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
-use App\Models\Question;
 use App\Models\Rater;
-use App\Models\Response;
-use App\Models\ScaleOption;
-use App\Notifications\AssessmentCompleted as AssessmentCompletedNotification;
+use App\Notifications\RaterFeedbackSubmitted;
 use App\Services\FrameworkTraversalService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\UserTrait;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
-use Livewire;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -195,6 +192,10 @@ class Summary extends Component
                 $assessment->raters()->updateExistingPivot($this->raterId, [
                     'submitted_at' => now(),
                 ]);
+
+                // Notify the subject that a rater has submitted their feedback
+                $this->notifySubjectOfRaterSubmission($assessment);
+
                 $url = URL::signedRoute('assessment-rater-completed', [
                     'assessmentId' => $assessment->id,
                     'raterId' => $this->raterId
@@ -298,6 +299,30 @@ class Summary extends Component
         return $this->responses
             ->filter(fn ($r) => $r->question?->required)
             ->count();
+    }
+
+    protected function notifySubjectOfRaterSubmission(
+        Assessment $assessment
+    ): void {
+        try {
+            $subject = Rater::query()
+                ->where('subject_id', $assessment->user_id)
+                ->orderBy('id')
+                ->first();
+
+            if (! $subject || blank($subject->email)) {
+                return;
+            }
+
+            Notification::route('mail', $subject->email)
+                ->notify(
+                    new RaterFeedbackSubmitted(
+                        assessment: $assessment,
+                    )
+                );
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 
     #[Title('Assessment summary')]
