@@ -15,6 +15,7 @@ use App\Models\ScaleOption;
 use App\Notifications\RaterFeedbackSubmitted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Illuminate\Support\Facades\Notification;
 
 uses(RefreshDatabase::class);
 
