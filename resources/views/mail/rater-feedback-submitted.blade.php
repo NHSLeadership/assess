@@ -7,11 +7,8 @@ You can view the progress of your assessment using the button below.
 View assessment
 @endcomponent
 
-For further guidance and support visit our [support page](https://support.leadershipacademy.nhs.uk/).
+For further guidance and support visit our
+[support page](https://support.leadershipacademy.nhs.uk/).
 
-Best regards,
-
-Assessment System Team
-
-W: [leadershipacademy.nhs.uk](https://leadershipacademy.nhs.uk) | Follow us: @NHSLeadership
+NHS Leadership Academy
 @endcomponent
