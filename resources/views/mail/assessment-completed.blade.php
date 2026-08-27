@@ -1,12 +1,17 @@
 @component('mail::message')
-    @if($user->first_name)
-        Dear {{ $user->first_name }},
-    @endif
-    <br><br>
-    Thank you for completing your assessment.<br><br>
-    We appreciate the time and effort you’ve invested in completing this.<br><br>
-    For further guidance and support visit our [support page](https://support.leadershipacademy.nhs.uk/).<br><br>
-    Best regards,<br><br>
-    Assessment System Team<br><br>
-    W: [leadershipacademy.nhs.uk](https://leadershipacademy.nhs.uk) | Follow us: @NHSLeadership
+@if($user->first_name)
+Dear {{ $user->first_name }},
+@endif
+
+Thank you for completing your assessment.
+
+We appreciate the time and effort you’ve invested in completing this.
+
+For further guidance and support visit our [support page](https://support.leadershipacademy.nhs.uk/).
+
+Best regards,
+
+Assessment System Team
+
+W: [leadershipacademy.nhs.uk](https://leadershipacademy.nhs.uk) | Follow us: @NHSLeadership
 @endcomponent
