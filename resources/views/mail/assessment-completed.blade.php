@@ -5,8 +5,8 @@
     <br><br>
     Thank you for completing your assessment.<br><br>
     We appreciate the time and effort you’ve invested in completing this.<br><br>
-    For further guidance and support visit our [support page](https://support.leadershipacademy.nhs.uk/).<br><br>
+    For further guidance and support visit our <a href="https://support.leadershipacademy.nhs.uk/">support page</a>.<br><br>
     Best regards,<br><br>
     Assessment System Team<br><br>
-    W: [leadershipacademy.nhs.uk](https://leadershipacademy.nhs.uk) | Follow us: @NHSLeadership
+    W: <a href="https://leadershipacademy.nhs.uk">leadershipacademy.nhs.uk</a> | Follow us: @NHSLeadership
 @endcomponent
