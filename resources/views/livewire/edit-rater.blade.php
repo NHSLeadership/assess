@@ -57,10 +57,10 @@
 
         </form>
         <a class="nhsuk-back-link" href="{{ route('assessment-raters', ['assessmentId' => $this->assessmentId]) }}">
-            {{ __('Back to raters') }}
+            {{ __('Raters') }}
         </a>
 
 
-
+gi
     </div>
 </div>

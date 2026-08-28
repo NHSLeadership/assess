@@ -114,7 +114,7 @@ class Frameworks extends Component
             $assessment = Assessment::findOrFail($id);
             $assessment->delete();
             session()->flash('success', [
-                'heading' => __('Assessment deleted.'),
+                'heading' => __('Assessment deleted'),
                 'message' => __('alerts.success.deleted'),
             ]);
         } catch (Throwable $e) {
