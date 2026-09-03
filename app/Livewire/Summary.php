@@ -234,29 +234,33 @@ class Summary extends Component
     protected function notifySubjectOfAssessmentSubmission(
         Assessment $assessment
     ): void {
-        $subject = Rater::query()
-            ->where('subject_id', $assessment->user_id)
-            ->orderBy('id')
-            ->first();
+        try {
+            $subject = Rater::query()
+                ->where('subject_id', $assessment->user_id)
+                ->orderBy('id')
+                ->first();
 
-        if (! $subject || blank($subject->email)) {
-            logger()->warning('Assessment completion email not sent', [
-                'assessment_id' => $assessment->id,
-                'subject_id' => $assessment->user_id,
-                'subject_found' => (bool) $subject,
-                'email_present' => filled($subject?->email),
-            ]);
+            if (! $subject || blank($subject->email)) {
+                logger()->warning('Assessment completion email not sent', [
+                    'assessment_id' => $assessment->id,
+                    'subject_id' => $assessment->user_id,
+                    'subject_found' => (bool) $subject,
+                    'email_present' => filled($subject?->email),
+                ]);
 
-            return;
+                return;
+            }
+
+            Notification::route('mail', $subject->email)
+                ->notify(
+                    new AssessmentCompleted(
+                        assessment: $assessment,
+                        subject: $subject,
+                    )
+                );
+        } catch (\Throwable $e) {
+            report($e);
         }
-
-        Notification::route('mail', $subject->email)
-            ->notify(
-                new AssessmentCompleted(
-                    assessment: $assessment,
-                    subject: $subject,
-                )
-            );
     }
 
     #[Computed]
@@ -336,23 +340,32 @@ class Summary extends Component
     protected function notifySubjectOfRaterSubmission(
         Assessment $assessment
     ): void {
-        $subject = Rater::query()
-            ->where('subject_id', $assessment->user_id)
-            ->whereNotNull('email')
-            ->where('email', '!=', '')
-            ->orderBy('id')
-            ->first();
+        try {
+            $subject = Rater::query()
+                ->where('subject_id', $assessment->user_id)
+                ->orderBy('id')
+                ->first();
 
-        if (! $subject) {
-            return;
+            if (! $subject || blank($subject->email)) {
+                logger()->warning('Rater feedback email not sent', [
+                    'assessment_id' => $assessment->id,
+                    'subject_id' => $assessment->user_id,
+                    'subject_found' => (bool) $subject,
+                    'email_present' => filled($subject?->email),
+                ]);
+
+                return;
+            }
+
+            Notification::route('mail', $subject->email)
+                ->notify(
+                    new RaterFeedbackSubmitted(
+                        assessment: $assessment,
+                    )
+                );
+        } catch (\Throwable $e) {
+            report($e);
         }
-
-        Notification::route('mail', $subject->email)
-            ->notify(
-                new RaterFeedbackSubmitted(
-                    assessment: $assessment,
-                )
-            );
     }
 
     #[Title('Assessment summary')]
