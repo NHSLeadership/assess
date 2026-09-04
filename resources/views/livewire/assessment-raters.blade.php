@@ -90,7 +90,7 @@
                                         <br/>
                                     @endif
                                     @if ($rater->pivot->submitted_at)
-                                        <span class="nhsuk-hint">Locked</span>
+                                            <span class="nhsuk-hint">{{ __('Locked') }}</span>
                                     @else
                                         <button
                                                 type="button"

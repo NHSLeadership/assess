@@ -64,6 +64,7 @@ class EditRater extends Component
 
                 $this->redirectRoute('assessment-raters', [
                     'assessmentId' => $assessmentRater->assessment_id,
+                    'source' => $this->source,
                 ]);
 
                 return;

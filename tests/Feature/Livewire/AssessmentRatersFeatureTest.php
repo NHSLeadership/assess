@@ -15,6 +15,7 @@ use Livewire\Livewire;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Services\RaterInvitationService;
 use Illuminate\Support\Facades\Mail;
+use App\Livewire\EditRater;
 
 uses(RefreshDatabase::class);
 
@@ -302,6 +303,34 @@ it('does not redirect to the edit page for a completed rater', function () {
         ->assertNoRedirect()
         ->assertDispatched('scroll-to-top')
         ->assertSee('Completed raters cannot be edited.');
+});
+
+it('redirects away when directly opening a completed rater', function () {
+    $user = makeAuthUser();
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    $assessmentRater = AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'submitted_at' => now(),
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(EditRater::class, [
+            'assessmentRaterId' => $assessmentRater->id,
+            'source' => 'variants',
+        ])
+        ->assertRedirect(route('assessment-raters', [
+            'assessmentId' => $assessment->id,
+            'source' => 'variants',
+        ]));
 });
 
 test('rater opening assessment for the first time is shown the first node', function () {
