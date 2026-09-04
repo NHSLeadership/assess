@@ -56,6 +56,19 @@ class EditRater extends Component
                 abort(404);
             }
 
+            if ($assessmentRater->submitted_at) {
+                session()->flash(
+                    'error',
+                    __('Completed raters cannot be edited.')
+                );
+
+                $this->redirectRoute('assessment-raters', [
+                    'assessmentId' => $assessmentRater->assessment_id,
+                ]);
+
+                return;
+            }
+
             $this->assessmentId = $assessmentRater->assessment_id;
             $this->raterId = $assessmentRater->rater_id;
 
