@@ -257,17 +257,52 @@ it('redirects to edit rater page', function () {
         'user_id' => $user->user_id,
     ]);
 
-    Livewire::actingAs($user);
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
 
-    Livewire::test(AssessmentRaters::class, [
-        'assessmentId' => $assessment->id,
-    ])
-        ->call('editAssessmentRater', 123)
+    $assessmentRater = AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'submitted_at' => null,
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(AssessmentRaters::class, [
+            'assessmentId' => $assessment->id,
+        ])
+        ->call('editAssessmentRater', $assessmentRater->id)
         ->assertRedirect(route('edit-rater', [
-            'assessmentRaterId' => 123,
+            'assessmentRaterId' => $assessmentRater->id,
         ]));
 });
 
+it('does not redirect to the edit page for a completed rater', function () {
+    $user = makeAuthUser();
+
+    $assessment = Assessment::factory()->create([
+        'user_id' => $user->user_id,
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    $assessmentRater = AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'submitted_at' => now(),
+    ]);
+
+    Livewire::actingAs($user)
+        ->test(AssessmentRaters::class, [
+            'assessmentId' => $assessment->id,
+        ])
+        ->call('editAssessmentRater', $assessmentRater->id)
+        ->assertNoRedirect()
+        ->assertDispatched('scroll-to-top')
+        ->assertSee('Completed raters cannot be edited.');
+});
 
 test('rater opening assessment for the first time is shown the first node', function () {
     $user = makeAuthUser(['user_id' => '1000000000']);
