@@ -322,15 +322,20 @@ it('redirects away when directly opening a completed rater', function () {
         'submitted_at' => now(),
     ]);
 
-    Livewire::actingAs($user)
-        ->test(EditRater::class, [
-            'assessmentRaterId' => $assessmentRater->id,
-            'source' => 'variants',
-        ])
+    Livewire::actingAs($user);
+
+    $this->get(route('edit-rater', [
+        'assessmentRaterId' => $assessmentRater->id,
+        'source' => 'variants',
+    ]))
         ->assertRedirect(route('assessment-raters', [
             'assessmentId' => $assessment->id,
             'source' => 'variants',
-        ]));
+        ]))
+        ->assertSessionHas(
+            'error',
+            'Completed raters cannot be edited.'
+        );
 });
 
 test('rater opening assessment for the first time is shown the first node', function () {

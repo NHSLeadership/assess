@@ -36,7 +36,7 @@ class EditRater extends Component
 
     public function mount(
         ?int $assessmentId = null,
-        ?int $assessmentRaterId = null
+        ?int $assessmentRaterId = null,
     ): void
     {
         //@TODO Remove abort statement once 360 is live
@@ -46,6 +46,7 @@ class EditRater extends Component
             404
         );
 
+        $this->source = request('source');
         $this->assessmentId = $assessmentId;
         $this->assessmentRaterId = $assessmentRaterId;
 
