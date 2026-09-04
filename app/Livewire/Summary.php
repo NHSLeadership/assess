@@ -7,6 +7,7 @@ use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
 use App\Models\Rater;
+use App\Notifications\AssessmentCompleted;
 use App\Notifications\RaterFeedbackSubmitted;
 use App\Services\FrameworkTraversalService;
 use App\Traits\AssessmentHelperTrait;
@@ -212,6 +213,9 @@ class Summary extends Component
                 $assessment->update([
                     'submitted_at' => now(),
                 ]);
+
+                // Notify the subject that they have completed their assessment
+                $this->notifySubjectOfAssessmentSubmission($assessment);
             }
 
             return redirect()->route('assessment-completed', [
@@ -224,6 +228,38 @@ class Summary extends Component
             $this->dispatch('scroll-to-top');
 
             return null;
+        }
+    }
+
+    protected function notifySubjectOfAssessmentSubmission(
+        Assessment $assessment
+    ): void {
+        try {
+            $subject = Rater::query()
+                ->where('subject_id', $assessment->user_id)
+                ->orderBy('id')
+                ->first();
+
+            if (! $subject || blank($subject->email)) {
+                logger()->warning('Assessment completion email not sent', [
+                    'assessment_id' => $assessment->id,
+                    'subject_id' => $assessment->user_id,
+                    'subject_found' => (bool) $subject,
+                    'email_present' => filled($subject?->email),
+                ]);
+
+                return;
+            }
+
+            Notification::route('mail', $subject->email)
+                ->notify(
+                    new AssessmentCompleted(
+                        assessment: $assessment,
+                        subject: $subject,
+                    )
+                );
+        } catch (\Throwable $e) {
+            report($e);
         }
     }
 
@@ -311,6 +347,13 @@ class Summary extends Component
                 ->first();
 
             if (! $subject || blank($subject->email)) {
+                logger()->warning('Rater feedback email not sent', [
+                    'assessment_id' => $assessment->id,
+                    'subject_id' => $assessment->user_id,
+                    'subject_found' => (bool) $subject,
+                    'email_present' => filled($subject?->email),
+                ]);
+
                 return;
             }
 

@@ -12,6 +12,7 @@ use App\Models\Rater;
 use App\Models\Response;
 use App\Models\Scale;
 use App\Models\ScaleOption;
+use App\Notifications\AssessmentCompleted;
 use App\Notifications\RaterFeedbackSubmitted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -567,7 +568,16 @@ test('subject is notified when a rater submits feedback', function () {
     expect($assessmentRater->fresh()->submitted_at)->not->toBeNull();
 
     Notification::assertSentOnDemand(
-        RaterFeedbackSubmitted::class
+        RaterFeedbackSubmitted::class,
+        function (
+            RaterFeedbackSubmitted $notification,
+            array $channels,
+            object $notifiable
+        ) use ($assessment): bool {
+            return $notification->assessment->is($assessment)
+                && $notifiable->routes['mail'] === 'subject@example.com'
+                && in_array('mail', $channels, true);
+        }
     );
 });
 
@@ -606,11 +616,17 @@ test('subject is not notified again when rater feedback is already submitted', f
     Notification::assertNothingSent();
 });
 
-test('rater feedback notification is not sent for a self assessment submission', function () {
+test('assessment completion notification is sent for a self assessment submission', function () {
     Notification::fake();
 
     $user = makeAuthUser([
         'user_id' => '1000000000',
+    ]);
+
+    $subject = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+        'name' => 'Andrew Blane',
+        'email' => 'subject@example.com',
     ]);
 
     $assessment = Assessment::factory()->create([
@@ -628,5 +644,22 @@ test('rater feedback notification is not sent for a self assessment submission',
 
     expect($assessment->fresh()->submitted_at)->not->toBeNull();
 
-    Notification::assertNothingSent();
+    Notification::assertSentOnDemand(
+        AssessmentCompleted::class,
+        function (
+            AssessmentCompleted $notification,
+            array $channels,
+            object $notifiable
+        ) use ($assessment, $subject): bool {
+            return $notification->assessment->is($assessment)
+                && $notification->subject->is($subject)
+                && $notifiable->routes['mail'] === $subject->email
+                && in_array('mail', $channels, true);
+        }
+    );
+
+    Notification::assertSentOnDemandTimes(
+        RaterFeedbackSubmitted::class,
+        0
+    );
 });
