@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "89d6c771e899f00a0691aa1ae9d9724b",
+    "content-hash": "1af3bc9a0ac1bad18c61b7eead876005",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -1683,7 +1683,7 @@
         },
         {
             "name": "filament/actions",
-            "version": "v5.7.7",
+            "version": "v5.7.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/actions.git",
@@ -1732,7 +1732,7 @@
         },
         {
             "name": "filament/filament",
-            "version": "v5.7.7",
+            "version": "v5.7.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/panels.git",
@@ -1789,7 +1789,7 @@
         },
         {
             "name": "filament/forms",
-            "version": "v5.7.7",
+            "version": "v5.7.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/forms.git",
@@ -1839,7 +1839,7 @@
         },
         {
             "name": "filament/infolists",
-            "version": "v5.7.7",
+            "version": "v5.7.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/infolists.git",
@@ -1884,7 +1884,7 @@
         },
         {
             "name": "filament/notifications",
-            "version": "v5.7.7",
+            "version": "v5.7.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/notifications.git",
@@ -1931,7 +1931,7 @@
         },
         {
             "name": "filament/query-builder",
-            "version": "v5.7.7",
+            "version": "v5.7.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/query-builder.git",
@@ -1977,7 +1977,7 @@
         },
         {
             "name": "filament/schemas",
-            "version": "v5.7.7",
+            "version": "v5.7.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/schemas.git",
@@ -2022,7 +2022,7 @@
         },
         {
             "name": "filament/spatie-laravel-settings-plugin",
-            "version": "v5.7.7",
+            "version": "v5.7.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-settings-plugin.git",
@@ -2066,16 +2066,16 @@
         },
         {
             "name": "filament/support",
-            "version": "v5.7.7",
+            "version": "v5.7.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/support.git",
-                "reference": "f472f41ac967333fd27163c9df5a520f2736edc6"
+                "reference": "db044fa876c998aa55b867f5774a4eb5b42c75ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/support/zipball/f472f41ac967333fd27163c9df5a520f2736edc6",
-                "reference": "f472f41ac967333fd27163c9df5a520f2736edc6",
+                "url": "https://api.github.com/repos/filamentphp/support/zipball/db044fa876c998aa55b867f5774a4eb5b42c75ea",
+                "reference": "db044fa876c998aa55b867f5774a4eb5b42c75ea",
                 "shasum": ""
             },
             "require": {
@@ -2120,11 +2120,11 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-08-31T17:10:20+00:00"
+            "time": "2026-09-01T08:40:00+00:00"
         },
         {
             "name": "filament/tables",
-            "version": "v5.7.7",
+            "version": "v5.7.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/tables.git",
@@ -2170,7 +2170,7 @@
         },
         {
             "name": "filament/widgets",
-            "version": "v5.7.7",
+            "version": "v5.7.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/widgets.git",
@@ -11594,16 +11594,16 @@
         },
         {
             "name": "fruitcake/laravel-debugbar",
-            "version": "v4.4.2",
+            "version": "v4.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fruitcake/laravel-debugbar.git",
-                "reference": "18d1c1c64cc5d7794a2c52a2165fe6121e28ed44"
+                "reference": "caa08515a2eef6d8137653d3a1f3c3387cadf184"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fruitcake/laravel-debugbar/zipball/18d1c1c64cc5d7794a2c52a2165fe6121e28ed44",
-                "reference": "18d1c1c64cc5d7794a2c52a2165fe6121e28ed44",
+                "url": "https://api.github.com/repos/fruitcake/laravel-debugbar/zipball/caa08515a2eef6d8137653d3a1f3c3387cadf184",
+                "reference": "caa08515a2eef6d8137653d3a1f3c3387cadf184",
                 "shasum": ""
             },
             "require": {
@@ -11681,7 +11681,7 @@
             ],
             "support": {
                 "issues": "https://github.com/fruitcake/laravel-debugbar/issues",
-                "source": "https://github.com/fruitcake/laravel-debugbar/tree/v4.4.2"
+                "source": "https://github.com/fruitcake/laravel-debugbar/tree/v4.4.3"
             },
             "funding": [
                 {
@@ -11693,7 +11693,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-08-20T12:02:04+00:00"
+            "time": "2026-09-01T13:46:43+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
