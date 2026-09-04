@@ -129,10 +129,26 @@ class AssessmentRaters extends Component
         ]));
     }
 
-    public function editAssessmentRater($id): void
+    public function editAssessmentRater(int $id): void
     {
+        $assessmentRater = AssessmentRater::query()
+            ->whereKey($id)
+            ->where('assessment_id', $this->assessmentId)
+            ->firstOrFail();
+
+        if ($assessmentRater->submitted_at) {
+            session()->flash(
+                'error',
+                __('Completed raters cannot be edited.')
+            );
+
+            $this->dispatch('scroll-to-top');
+
+            return;
+        }
+
         $this->redirect(route('edit-rater', [
-            'assessmentRaterId' => $id,
+            'assessmentRaterId' => $assessmentRater->id,
             'source' => $this->source,
         ]));
     }

@@ -36,7 +36,7 @@ class EditRater extends Component
 
     public function mount(
         ?int $assessmentId = null,
-        ?int $assessmentRaterId = null
+        ?int $assessmentRaterId = null,
     ): void
     {
         //@TODO Remove abort statement once 360 is live
@@ -46,6 +46,7 @@ class EditRater extends Component
             404
         );
 
+        $this->source = request('source');
         $this->assessmentId = $assessmentId;
         $this->assessmentRaterId = $assessmentRaterId;
 
@@ -54,6 +55,20 @@ class EditRater extends Component
 
             if ($assessmentRater->assessment?->user_id !== $this->user()?->user_id) {
                 abort(404);
+            }
+
+            if ($assessmentRater->submitted_at) {
+                session()->flash(
+                    'error',
+                    __('Completed raters cannot be edited.')
+                );
+
+                $this->redirectRoute('assessment-raters', [
+                    'assessmentId' => $assessmentRater->assessment_id,
+                    'source' => $this->source,
+                ]);
+
+                return;
             }
 
             $this->assessmentId = $assessmentRater->assessment_id;

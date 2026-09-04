@@ -5,7 +5,7 @@
 
 ---
 ### v2.1.6
-> Updated: 03.09.2026
+> Updated: 04.09.2026
 1. Remove "please" from rater invitation email
 2. Improve admin dashboard filtering
 3. Add feedback status column to assessment tables
@@ -14,6 +14,7 @@
 6. Prevent re-inviting raters who have already completed an assessment
 7. Send email to assessment subject when feedback submitted
 8. Notify assessment subject when assessment completed
+9. Prevent edit on raters who have completed feedback
 
 ---
 ### v2.1.5

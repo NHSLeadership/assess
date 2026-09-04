@@ -89,12 +89,16 @@
                                         </button>
                                         <br/>
                                     @endif
-                                    <button
-                                            type="button"
-                                            class="nhsuk-link"
-                                            wire:click.prevent="editAssessmentRater({{ $rater->pivot->id }})">
-                                        {{ __('Edit') }}
-                                    </button>
+                                    @if ($rater->pivot->submitted_at)
+                                            <span class="nhsuk-hint">{{ __('Locked') }}</span>
+                                    @else
+                                        <button
+                                                type="button"
+                                                class="nhsuk-link"
+                                                wire:click.prevent="editAssessmentRater({{ $rater->pivot->id }})">
+                                            {{ __('Edit') }}
+                                        </button>
+                                    @endif
                                     <br/>
                                     @if (! $rater->pivot->submitted_at)
                                         @if($rater->pivot->invited_at)
