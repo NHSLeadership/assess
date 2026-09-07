@@ -329,11 +329,11 @@
                     $nodeSignposts = data_get($this->signposts, $node->id, []);
                 @endphp
 
-                    @if (
-                        $node->children->isEmpty()
-                        && $nodeResponses
-                        && $nodeResponses->count()
-                    )
+                @if (
+                    $node->children->isEmpty()
+                    && $nodeResponses
+                    && $nodeResponses->count()
+                )
                     <ul class="nhsuk-task-list nhsuk-list--border">
 
                         @foreach ($nodeResponses as $response)
@@ -357,7 +357,6 @@
                                     @if ($type === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
                                         <div class="nhsuk-task-list__hint">
                                             {{ $response->textarea }}
-                                            <x-signpost-banner :signposts="$nodeSignposts" title="Development resources" :banner-id="$node->id"/>
                                         </div>
 
                                     @elseif ($type === \App\Enums\ResponseType::TYPE_SCALE->value)
@@ -372,14 +371,33 @@
                                                     {{ $response->textarea }}
                                                 </div>
                                             @endif
-                                            <x-signpost-banner :signposts="$nodeSignposts" title="Development resources" :banner-id="$node->id"/>
+
                                         </div>
+                                    @endif
+
+                                    {{-- Node signpost stays inside the question list item --}}
+                                    @if ($loop->first && !empty($nodeSignposts))
+                                        <x-signpost-banner
+                                                :signposts="$nodeSignposts"
+                                                title="Development resources"
+                                                :banner-id="$node->id"
+                                        />
                                     @endif
                                 </div>
                             </li>
                         @endforeach
                     </ul>
+                @elseif (
+                    !empty($nodeSignposts)
+                )
+                    {{-- Non-leaf node has no question LI, so render safely outside a UL --}}
+                    <x-signpost-banner
+                            :signposts="$nodeSignposts"
+                            title="Development resources"
+                            :banner-id="$node->id"
+                    />
                 @endif
+
             @endforeach
 
             <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">
