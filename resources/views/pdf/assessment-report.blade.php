@@ -333,19 +333,19 @@ if (!empty(Auth()?->user()?->user_id)) {
                             </div>
                         @endif
                     @endif
+                    <br>
+                    {{-- SIGNPOSTS ALWAYS SHOWN, AFTER RESPONSES IF THEY EXIST --}}
+                    <x-signpost-banner
+                            :signposts="$nodeSignposts"
+                            title="Development resources"
+                            :banner-id="$node->id"
+                            :pdf="true"
+                    />
+
                 </li>
             @endforeach
         </ul>
     @endif
-
-    {{-- SIGNPOSTS ALWAYS SHOWN, AFTER RESPONSES IF THEY EXIST --}}
-    <x-signpost-banner
-            :signposts="$nodeSignposts"
-            title="Development resources"
-            :banner-id="$node->id"
-            :pdf="true"
-    />
-
 @endforeach
 
 <section id="report-end-text">

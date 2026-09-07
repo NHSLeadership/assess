@@ -99,8 +99,8 @@ document.addEventListener('DOMContentLoaded', function () {
         ).length;
 
         ctx.height = Math.max(
-            220,
-            barCount * visibleDatasetCount * 30
+            280,
+            barCount * visibleDatasetCount * 70
         );
 
         const datasetOrder = {

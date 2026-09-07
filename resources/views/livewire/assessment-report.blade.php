@@ -325,6 +325,8 @@
                 @php
                     $nodeResponses = $this->responses
                         ?->filter(fn ($r) => $r->question?->node_id == $node->id);
+                    // SIGNPOSTS (always show if exist)
+                    $nodeSignposts = data_get($this->signposts, $node->id, []);
                 @endphp
 
                     @if (
@@ -355,6 +357,7 @@
                                     @if ($type === \App\Enums\ResponseType::TYPE_TEXTAREA->value)
                                         <div class="nhsuk-task-list__hint">
                                             {{ $response->textarea }}
+                                            <x-signpost-banner :signposts="$nodeSignposts" title="Development resources" :banner-id="$node->id"/>
                                         </div>
 
                                     @elseif ($type === \App\Enums\ResponseType::TYPE_SCALE->value)
@@ -369,21 +372,14 @@
                                                     {{ $response->textarea }}
                                                 </div>
                                             @endif
+                                            <x-signpost-banner :signposts="$nodeSignposts" title="Development resources" :banner-id="$node->id"/>
                                         </div>
                                     @endif
                                 </div>
                             </li>
                         @endforeach
-
                     </ul>
                 @endif
-
-                {{-- SIGNPOSTS (always show if exist) --}}
-                @php
-                    $nodeSignposts = data_get($this->signposts, $node->id, []);
-                @endphp
-
-                <x-signpost-banner :signposts="$nodeSignposts" title="Development resources" :banner-id="$node->id"/>
             @endforeach
 
             <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">

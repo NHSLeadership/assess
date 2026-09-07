@@ -4,11 +4,13 @@
 ])
 
 @if ($signposts->isNotEmpty())
-    <h4 class="signpost-title">{{ $title }}</h4>
+    <div class="nhsuk-u-display-block nhsuk-u-margin-top-4">
+    <strong class="signpost-title">{{ $title }}</strong>
 
     @foreach ($signposts as $sp)
         <div class="signpost-content">
             {!! $sp->guidance !!}
         </div>
     @endforeach
+    </div>
 @endif

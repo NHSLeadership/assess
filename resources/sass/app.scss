@@ -21,6 +21,11 @@ img {
   word-break: break-word;
   overflow-wrap: anywhere;
 }
+.nhsuk-list--border .signpost-content li {
+  border-bottom: none !important;
+  padding: 0 !important;
+}
+
 @media (max-width: 480px) {
 
   .chart-view {
