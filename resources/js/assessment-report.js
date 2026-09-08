@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Slightly increase the minimum score when rendering so that
     // bars with a value of 1 remain visible on charts that start at 1.
     // Tooltips continue to display the original score.
-    const MIN_VISIBLE_SCORE = 1.02;
+    const MIN_VISIBLE_SCORE = 1.03;
 
     /* -----------------------------
         1. RENDER RADAR CHART
