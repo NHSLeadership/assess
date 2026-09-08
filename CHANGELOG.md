@@ -7,6 +7,7 @@
 ### v2.1.7
 > Updated: 08.09.2026
 1. Improve wording on edit rater form
+2. Add home link across assessment views
 
 ### v2.1.6
 > Updated: 04.09.2026

@@ -141,8 +141,11 @@
                 @endif
             @endif
         @endif
-        <a class="nhsuk-back-link nhsuk-u-display-block" href="{{ route('frameworks') }}">
-            {{ __('Home') }}
-        </a>
+
+        <div class="nhsuk-u-display-block">
+            <a class="nhsuk-back-link" href="{{ route('frameworks') }}">
+                {{ __('Home') }}
+            </a>
+        </div>
     </div>
 </div>
