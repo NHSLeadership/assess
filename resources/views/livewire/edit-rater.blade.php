@@ -21,29 +21,20 @@
                 @slot('placeholder')
                     Name of the rater
                 @endslot
-                @slot('hint')
-                    The name of the rater you are adding to this assessment
-                @endslot
             @endcomponent
 
             @component('components.form.input', ['name' => 'email'])
                 @slot('label')
-                    Email
+                    Email address
                 @endslot
                 @slot('placeholder')
                     Email of the rater
-                @endslot
-                @slot('hint')
-                    The email of the rater you are adding to this assessment
                 @endslot
             @endcomponent
 
             @component('components.form.dropdown', ['name' => 'type', 'options_list' => $this->raterTypeList])
                 @slot('label')
                     Type
-                @endslot
-                @slot('hint')
-                    The type of rater you are adding to this assessment
                 @endslot
             @endcomponent
 

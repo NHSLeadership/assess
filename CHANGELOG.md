@@ -4,6 +4,10 @@
 # Assessment tool
 
 ---
+### v2.1.7
+> Updated: 08.09.2026
+1. Improve wording on edit rater form
+
 ### v2.1.6
 > Updated: 04.09.2026
 1. Remove "please" from rater invitation email
