@@ -16,7 +16,7 @@
     <a
         href="{{ route('manage-rater-groups', ['assessmentId' => $this->assessmentId,]) }}"
         class="nhsuk-link nhsuk-u-display-block nhsuk-u-margin-top-2">
-        Manage groups
+        {{ empty($this->raterGroupList) ? __('Add group') : __('Manage groups') }}
     </a>
 
 </div>
