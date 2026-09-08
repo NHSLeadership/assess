@@ -325,13 +325,15 @@
                 @php
                     $nodeResponses = $this->responses
                         ?->filter(fn ($r) => $r->question?->node_id == $node->id);
+                    // SIGNPOSTS (always show if exist)
+                    $nodeSignposts = data_get($this->signposts, $node->id, []);
                 @endphp
 
-                    @if (
-                        $node->children->isEmpty()
-                        && $nodeResponses
-                        && $nodeResponses->count()
-                    )
+                @if (
+                    $node->children->isEmpty()
+                    && $nodeResponses
+                    && $nodeResponses->count()
+                )
                     <ul class="nhsuk-task-list nhsuk-list--border">
 
                         @foreach ($nodeResponses as $response)
@@ -339,7 +341,7 @@
 
                                 <div class="nhsuk-task-list__name-and-hint nhsuk-u-width-three-quarters">
 
-                                    <strong>{{ $response->question->title }}</strong>
+                                    <strong>{{ $response->question?->node?->name }}</strong>
                                     <br>
 
                                     {!! \App\Services\QuestionTextResolver::textFor(
@@ -369,21 +371,33 @@
                                                     {{ $response->textarea }}
                                                 </div>
                                             @endif
+
                                         </div>
+                                    @endif
+
+                                    {{-- Node signpost stays inside the question list item --}}
+                                    @if ($loop->first && !empty($nodeSignposts))
+                                        <x-signpost-banner
+                                                :signposts="$nodeSignposts"
+                                                title="Development resources"
+                                                :banner-id="$node->id"
+                                        />
                                     @endif
                                 </div>
                             </li>
                         @endforeach
-
                     </ul>
+                @elseif (
+                    !empty($nodeSignposts)
+                )
+                    {{-- Non-leaf node has no question LI, so render safely outside a UL --}}
+                    <x-signpost-banner
+                            :signposts="$nodeSignposts"
+                            title="Development resources"
+                            :banner-id="$node->id"
+                    />
                 @endif
 
-                {{-- SIGNPOSTS (always show if exist) --}}
-                @php
-                    $nodeSignposts = data_get($this->signposts, $node->id, []);
-                @endphp
-
-                <x-signpost-banner :signposts="$nodeSignposts" title="Development resources" :banner-id="$node->id"/>
             @endforeach
 
             <div class="nhsuk-grid-row nhsuk-u-margin-bottom-5">

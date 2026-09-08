@@ -310,7 +310,7 @@ if (!empty(Auth()?->user()?->user_id)) {
         <ul class="task-list">
             @foreach ($nodeResponses as $response)
                 <li class="task-item">
-                    <strong>{{ data_get($response, 'question.title') }}</strong><br>
+                    <strong>{{ data_get($response, 'question.node.name') }}</strong><br>
 
                     {!! \App\Services\QuestionTextResolver::textFor(
                             $assessment,
@@ -333,19 +333,28 @@ if (!empty(Auth()?->user()?->user_id)) {
                             </div>
                         @endif
                     @endif
+                    <br>
+                    {{-- Show the node signpost once, inside the first question LI --}}
+                    @if ($loop->first && !empty($nodeSignposts))
+                        <x-signpost-banner
+                                :signposts="$nodeSignposts"
+                                title="Development resources"
+                                :banner-id="$node->id"
+                                :pdf="true"
+                        />
+                    @endif
                 </li>
             @endforeach
         </ul>
+    @elseif (!empty($nodeSignposts))
+        {{-- Non-leaf node has no question LI, so render outside a UL --}}
+        <x-signpost-banner
+                :signposts="$nodeSignposts"
+                title="Development resources"
+                :banner-id="$node->id"
+                :pdf="true"
+        />
     @endif
-
-    {{-- SIGNPOSTS ALWAYS SHOWN, AFTER RESPONSES IF THEY EXIST --}}
-    <x-signpost-banner
-            :signposts="$nodeSignposts"
-            title="Development resources"
-            :banner-id="$node->id"
-            :pdf="true"
-    />
-
 @endforeach
 
 <section id="report-end-text">

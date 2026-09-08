@@ -332,7 +332,7 @@
             <ul class="task-list">
                 @foreach ($nodeResponses as $response)
                     <li class="task-item">
-                        <strong>{{ data_get($response, 'question.title') }}</strong><br>
+                        <strong>{{ data_get($response, 'question.node.name') }}</strong><br>
 
                         {!! \App\Services\QuestionTextResolver::textFor(
                                 $assessment,
@@ -355,18 +355,30 @@
                                 </div>
                             @endif
                         @endif
+                        <br>
+                        {{-- Show the node signpost once, inside the question LI --}}
+                        @if ($loop->first && !empty($nodeSignposts))
+                            <x-signpost-banner
+                                    :signposts="$nodeSignposts"
+                                    title="Development resources"
+                                    :banner-id="$node->id"
+                                    :pdf="true"
+                            />
+                        @endif
                     </li>
                 @endforeach
             </ul>
+        @elseif (
+             !empty($nodeSignposts)
+        )
+            {{-- Non-leaf nodes have no question LI --}}
+            <x-signpost-banner
+                    :signposts="$nodeSignposts"
+                    title="Development resources"
+                    :banner-id="$node->id"
+                    :pdf="true"
+            />
         @endif
-
-        {{-- SIGNPOSTS ALWAYS SHOWN, AFTER RESPONSES IF THEY EXIST --}}
-        <x-signpost-banner
-                :signposts="$nodeSignposts"
-                title="Development resources"
-                :banner-id="$node->id"
-                :pdf="true"
-        />
 
     @endforeach
 

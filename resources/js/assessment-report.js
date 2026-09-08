@@ -1,5 +1,10 @@
 import pattern from 'patternomaly';
 document.addEventListener('DOMContentLoaded', function () {
+    // Slightly increase the minimum score when rendering so that
+    // bars with a value of 1 remain visible on charts that start at 1.
+    // Tooltips continue to display the original score.
+    const MIN_VISIBLE_SCORE = 1.03;
+
     /* -----------------------------
         1. RENDER RADAR CHART
     ------------------------------ */
@@ -99,8 +104,8 @@ document.addEventListener('DOMContentLoaded', function () {
         ).length;
 
         ctx.height = Math.max(
-            220,
-            barCount * visibleDatasetCount * 30
+            280,
+            barCount * visibleDatasetCount * 70
         );
 
         const datasetOrder = {
@@ -115,6 +120,12 @@ document.addEventListener('DOMContentLoaded', function () {
             return (
                 (datasetOrder[a.label] ?? 999) -
                 (datasetOrder[b.label] ?? 999)
+            );
+        });
+
+        chart.data.datasets.forEach(dataset => {
+            dataset.data = dataset.data.map(value =>
+            value === 1 ? MIN_VISIBLE_SCORE : value
             );
         });
 
@@ -163,6 +174,14 @@ document.addEventListener('DOMContentLoaded', function () {
                                 size: window.innerWidth < 600 ? 8 : 18
                             },
                             color: chart.options.legendLabelsColor
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.raw === MIN_VISIBLE_SCORE ? 1 : context.raw;
+                                return `${context.dataset.label}: ${value}`;
+                            }
                         }
                     }
                 },
