@@ -332,7 +332,7 @@
             <ul class="task-list">
                 @foreach ($nodeResponses as $response)
                     <li class="task-item">
-                        <strong>{{ data_get($response, 'question.title') }}</strong><br>
+                        <strong>{{ data_get($response, 'question.node.name') }}</strong><br>
 
                         {!! \App\Services\QuestionTextResolver::textFor(
                                 $assessment,

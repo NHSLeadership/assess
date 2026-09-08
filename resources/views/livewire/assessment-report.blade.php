@@ -341,7 +341,7 @@
 
                                 <div class="nhsuk-task-list__name-and-hint nhsuk-u-width-three-quarters">
 
-                                    <strong>{{ $response->question->title }}</strong>
+                                    <strong>{{ $response->question?->node?->name }}</strong>
                                     <br>
 
                                     {!! \App\Services\QuestionTextResolver::textFor(
