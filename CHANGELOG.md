@@ -4,6 +4,11 @@
 # Assessment tool
 
 ---
+### v2.1.8
+> Updated: 21.09.2026
+1. Add editable banner
+
+---
 ### v2.1.7
 > Updated: 08.09.2026
 1. Web and PDF report improvements
