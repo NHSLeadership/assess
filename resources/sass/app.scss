@@ -44,3 +44,6 @@ img {
     white-space: normal !important;
   }
 }
+.banner-content-full-width > * {
+  max-width: none;
+}
