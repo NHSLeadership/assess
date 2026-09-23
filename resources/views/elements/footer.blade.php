@@ -18,7 +18,7 @@
                 </li>
             </ul>
             <p class="nhsuk-body-s">
-                {{ config('app.footer_copyright_text') }} <span class="nhsuk-u-visually-hidden">v<?php echo config('app.version'); ?></span>
+                © {{ date('Y') }} {{ config('app.copyright_org') }}. All rights reserved
             </p>
         </div>
     </div>

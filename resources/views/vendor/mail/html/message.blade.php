@@ -21,7 +21,7 @@
 {{-- Footer --}}
 @slot('footer')
 @component('mail::footer')
-© {{ date('Y') }} NHS England
+© {{ date('Y') }} {{ config('app.copyright_org') }}. All rights reserved
 @endcomponent
 @endslot
 @endcomponent

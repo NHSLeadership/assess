@@ -11,7 +11,7 @@
         <span class="nhsuk-action-link__text">Profile system</span>
     </a>
     <p>
-        <a href="https://support.leadershipacademy.nhs.uk/">
+        <a href="{{ config('support_url') }}">
             Support
         </a>
     </p>

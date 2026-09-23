@@ -11,7 +11,7 @@ Sign in
 @endcomponent
 
 For further guidance and support visit our
-[support page](https://support.leadershipacademy.nhs.uk/).
+[support page]({{ config('support_url') }}).
 
-NHS Leadership Academy
+{{ config('app.organisation') }}
 @endcomponent

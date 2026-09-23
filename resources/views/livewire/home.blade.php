@@ -9,7 +9,7 @@
                 @if (Auth::check())
                     <p>Welcome back, {{ Auth::user()->name }}!</p>
                     <p>You are now logged in to the {{ config('app.name') }}.
-                        From here you can continue your assessments, review your progress.</p>
+                        From here you can continue your assessments and review your progress.</p>
                     <div class="nhsuk-action-link">
                         <a class="nhsuk-action-link__link" href="{{ route('frameworks') }}">
                             <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg"
@@ -20,10 +20,10 @@
                             <span class="nhsuk-action-link__text">Go to assessments</span>
                         </a>
                     </div>
-                    <p>If you need to update your profile please visit the <a href="https://profile.leadershipacademy.nhs.uk" target="_blank">Academy Profile System</a>,
+                    <p>If you need to update your profile please visit the <a href="{{ config('app.profile_url') }}" target="_blank">Profile System</a>,</p>
                 @else
                     {!! config('app.welcome') !!}
-                    <p>If you already have an NHS Leadership Academy Profile:</p>
+                    <p>If you already have an {{ config('app.organisation') }} profile:</p>
 
                     <div class="nhsuk-action-link">
                         <a class="nhsuk-action-link__link" href="{{ route('login') }}">
@@ -36,10 +36,10 @@
                         </a>
                     </div>
 
-                    <p>Or register to create a new NHS Leadership Academy Profile:</p>
+                    <p>Or register to create a new profile:</p>
 
                     <div class="nhsuk-action-link">
-                        <a class="nhsuk-action-link__link" href="https://profile.leadershipacademy.nhs.uk/register">
+                        <a class="nhsuk-action-link__link" href="{{ config('app.profile_url') }}/register">
                             <svg class="nhsuk-icon nhsuk-icon__arrow-right-circle" xmlns="http://www.w3.org/2000/svg"
                                  viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M0 0h24v24H0z" fill="none"></path>
