@@ -7,6 +7,9 @@ return new class extends SettingsMigration
     public function up(): void
     {
         $body = <<<'HTML'
+<h3 class="nhsuk-notification-banner__heading">
+    Organisation change
+</h3>
 <p>
     The NHS Leadership Academy will soon move to the NHS College of Leadership and Management.
     <br>
@@ -16,12 +19,18 @@ HTML;
 
         $this->migrator->add(
             'banner.title',
-            'Organisation change',
+            'Announcement',
         );
 
         $this->migrator->add(
             'banner.body',
             $body,
         );
+    }
+
+    public function down(): void
+    {
+        $this->migrator->deleteIfExists('banner.title');
+        $this->migrator->deleteIfExists('banner.body');
     }
 };

@@ -5,7 +5,7 @@
 
 ---
 ### v2.1.8
-> Updated: 21.09.2026
+> Updated: 23.09.2026
 1. Add editable banner
 
 ---
