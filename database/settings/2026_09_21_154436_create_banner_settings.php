@@ -7,14 +7,7 @@ return new class extends SettingsMigration
     public function up(): void
     {
         $body = <<<'HTML'
-<h3 class="nhsuk-notification-banner__heading">
-    Organisation change
-</h3>
-<p>
-    The NHS Leadership Academy will soon move to the NHS College of Leadership and Management.
-    <br>
-    During this transition you can continue to use this service as normal.
-</p>
+<p>The NHS Leadership Academy is now part of the NHS College of Leadership and Management. <a href="https://www.leadershipacademy.nhs.uk/launch-of-the-nhs-college-of-leadership-and-management/">Find out more about the transition</a></p>
 HTML;
 
         $this->migrator->add(
