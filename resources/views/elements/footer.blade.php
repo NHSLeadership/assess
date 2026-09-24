@@ -18,7 +18,7 @@
                 </li>
             </ul>
             <p class="nhsuk-body-s">
-                © {{ date('Y') }} {{ config('app.copyright_org') }}. All rights reserved
+                © {{ config('app.copyright_org') }}
             </p>
         </div>
     </div>
