@@ -7,7 +7,7 @@ return new class extends SettingsMigration
     public function up(): void
     {
         $body = <<<'HTML'
-<p>The NHS Leadership Academy is now part of the NHS College of Leadership and Management.<br> <a href="https://www.leadershipacademy.nhs.uk/launch-of-the-nhs-college-of-leadership-and-management/">Find out more about the transition</a></p>
+<p>The NHS Leadership Academy is now part of the NHS College of Leadership and Management.<br> <a href="https://www.leadershipacademy.nhs.uk/launch-of-the-nhs-college-of-leadership-and-management/">Find out more about this transition</a></p>
 HTML;
 
         $this->migrator->add(
