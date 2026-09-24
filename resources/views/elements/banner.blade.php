@@ -10,9 +10,7 @@
             </h2>
         </div>
         <div class="nhsuk-notification-banner__content banner-content-full-width">
-            <p class="nhsuk-notification-banner__heading">
-                {!! $banner->body !!}
-            </p>
+            {!! $banner->body !!}
         </div>
     </div>
 @endif

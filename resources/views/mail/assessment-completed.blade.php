@@ -12,7 +12,7 @@ Your invited raters may continue to submit their feedback over the coming weeks.
 @endif
 
 For further guidance and support visit our
-[support page]({{ config('support_url') }}).
+[support page]({{ config('app.support_url') }}).
 
 {{ config('app.organisation') }}
 @endcomponent

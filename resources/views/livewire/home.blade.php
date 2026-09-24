@@ -20,7 +20,7 @@
                             <span class="nhsuk-action-link__text">Go to assessments</span>
                         </a>
                     </div>
-                    <p>If you need to update your profile please visit the <a href="{{ config('app.profile_url') }}" target="_blank">Profile System</a>,</p>
+                    <p>If you need to update your profile please visit the <a href="{{ config('app.profile_url') }}" target="_blank">Profile System</a>.</p>
                 @else
                     {!! config('app.welcome') !!}
                     <p>If you already have an {{ config('app.organisation') }} profile:</p>

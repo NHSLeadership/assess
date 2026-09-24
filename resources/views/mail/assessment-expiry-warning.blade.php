@@ -11,7 +11,7 @@ Sign in
 @endcomponent
 
 For further guidance and support visit our
-[support page]({{ config('support_url') }}).
+[support page]({{ config('app.support_url') }}).
 
 {{ config('app.organisation') }}
 @endcomponent
