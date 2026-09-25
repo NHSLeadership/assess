@@ -1,5 +1,5 @@
 @php
-    use Illuminate\Support\Str
+    use Illuminate\Support\Str;
 @endphp
 <header class="nhsuk-header nhsuk-header--organisation" data-module="nhsuk-header" role="banner" data-nhsuk-header-init="">
     <div class="nhsuk-header__container nhsuk-width-container">
