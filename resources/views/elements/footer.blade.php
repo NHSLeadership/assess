@@ -18,7 +18,7 @@
                 </li>
             </ul>
             <p class="nhsuk-body-s">
-                © {{ config('app.copyright_org') }}
+                {{ config('app.footer_copyright_text') }}
             </p>
         </div>
     </div>

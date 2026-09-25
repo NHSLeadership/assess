@@ -137,15 +137,15 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'description' => env('APP_DESCRIPTION', 'NHS leadership and management assessment'),
-    'page_title_prefix' => env('PAGE_TITLE_PREFIX', 'NHS leadership and management assessment | '),
+    'description' => env('APP_DESCRIPTION', 'NHS College of Leadership and Management assess'),
     'welcome' => env('APP_WELCOME', "<p>Use this tool to assess yourself against the standards within the <a href='https://lmframework.leadershipacademy.nhs.uk/'>NHS Leadership and Management Framework</a></p><hr>"),
-    'organisation' => env('APP_ORGANISATION', 'NHS Leadership Academy'),
+    'organisation' => env('APP_ORGANISATION', 'NHS College of Leadership and Management'),
     'org_address' => env('APP_ORG_ADDRESS', '7 & 8 Wellington Place, Leeds, West Yorkshire, LS1 4AP, England.'),
     'org_domain' => env('APP_ORG_DOMAIN', 'leadershipacademy.nhs.uk'),
-    'copyright_org' => env('APP_COPYRIGHT_ORG', 'NHS England'),
     'profile_url' => env('APP_PROFILE_URL', 'https://profile.leadershipacademy.nhs.uk'),
     'support_url' => env('APP_SUPPORT_URL', 'https://support.leadershipacademy.nhs.uk/'),
+    'page_title_prefix' => env('PAGE_TITLE_PREFIX', 'NHS leadership and management assess | '),
+    'footer_copyright_text' => env('FOOTER_COPYRIGHT_TEXT', '© NHS England'),
     'show_node_type_prefix' => env('SHOW_NODE_TYPE_PREFIX', false),
     'auth0_admin_permission_cache_ttl' => env('AUTH0_ADMIN_PERMISSION_CACHE_TTL', 300),
     'assessment_min_interval_months' => env('ASSESSMENT_MIN_INTERVAL_MONTHS', 3),
