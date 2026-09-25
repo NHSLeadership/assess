@@ -29,14 +29,13 @@
 
     @include('elements.header')
 
-    @if (Config::get('app.alert_banner_on',false) && (Route::is('home') || Route::is('register')))
-        @include('elements.banner')
-    @endif
-
     <div class="nhsuk-width-container">
         {{ Breadcrumbs::render(Route::currentRouteName() ?? 'home') }}
 
         <main class="nhsuk-main-wrapper " id="maincontent" role="main">
+            @if (Config::get('app.alert_banner_on',false) && (Route::is('home') ))
+                @include('elements.banner')
+            @endif
             @yield('content', $slot ?? '')
         </main>
     </div>

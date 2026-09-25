@@ -7,6 +7,7 @@
 ### v2.1.8
 > Updated: 23.09.2026
 1. Add editable banner
+2. Use environment variables to control text and links
 
 ---
 ### v2.1.7
