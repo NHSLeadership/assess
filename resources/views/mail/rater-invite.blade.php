@@ -20,7 +20,7 @@ If the button above does not work copy and paste the following link into your br
 {{ $url }}
 
 For further guidance and support visit our
-[support page](https://support.leadershipacademy.nhs.uk/).
+[support page]({{ config('app.support_url') }}).
 
-NHS Leadership Academy
+{{ config('app.organisation') }}
 @endcomponent

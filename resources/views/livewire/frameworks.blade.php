@@ -13,7 +13,7 @@
                     || $this->user()?->can('assess:360');
             @endphp
 
-            <h1 class="nhsuk-heading-l">{{ config('app.name') }}</h1>
+            <h1 class="nhsuk-heading-xl">{{ config('app.description') }}</h1>
 
             <div class="nhsuk-body">
                 {!! \App\Support\RichTextRender::render($this->framework->description, $this->user, $this->framework) !!}

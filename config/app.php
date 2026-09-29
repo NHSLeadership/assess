@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Assess'),
 
     /*
     |--------------------------------------------------------------------------
@@ -137,13 +137,18 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'description' => env('APP_DESCRIPTION', 'NHS Leadership assessment'),
-    'page_title_prefix' => env('PAGE_TITLE_PREFIX', 'NHS Leadership assessment'),
-    'welcome' => env('APP_WELCOME', '<p>From here you can assess your leadership against the NHS Management and Leadership Framework</p><hr>'),
+    'description' => env('APP_DESCRIPTION', 'NHS College of Leadership and Management assess'),
+    'welcome' => env('APP_WELCOME', "<p>Use this tool to assess yourself against the standards within the <a href='https://lmframework.leadershipacademy.nhs.uk/'>NHS Leadership and Management Framework</a></p><hr>"),
+    'organisation' => env('APP_ORGANISATION', 'NHS College of Leadership and Management'),
+    'org_address' => env('APP_ORG_ADDRESS', '7 & 8 Wellington Place, Leeds, West Yorkshire, LS1 4AP, England.'),
+    'org_domain' => env('APP_ORG_DOMAIN', 'leadershipacademy.nhs.uk'),
+    'profile_url' => env('APP_PROFILE_URL', 'https://profile.leadershipacademy.nhs.uk'),
+    'support_url' => env('APP_SUPPORT_URL', 'https://support.leadershipacademy.nhs.uk/'),
+    'page_title_prefix' => env('PAGE_TITLE_PREFIX', 'NHS leadership and management assess | '),
+    'footer_copyright_text' => env('FOOTER_COPYRIGHT_TEXT', '© NHS England'),
     'show_node_type_prefix' => env('SHOW_NODE_TYPE_PREFIX', false),
     'auth0_admin_permission_cache_ttl' => env('AUTH0_ADMIN_PERMISSION_CACHE_TTL', 300),
     'assessment_min_interval_months' => env('ASSESSMENT_MIN_INTERVAL_MONTHS', 3),
-    'footer_copyright_text' => env('FOOTER_COPYRIGHT_TEXT', '© NHS England'),
     'pdf_engine' => env('PDF_ENGINE', 'dompdf'),
     'gotenberg_url' => env('GOTENBERG_URL', 'https://gotenberg.staging.nhsla.net'),
     'gotenberg_basic_auth_enabled' => env('GOTENBERG_BASIC_AUTH_ENABLED', false),
