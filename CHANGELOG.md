@@ -4,6 +4,11 @@
 # Assessment tool
 
 ---
+### v2.1.9
+> Updated: 01.10.2026
+1. Update email footer
+2. Add visually hidden app version for reference in the site footer
+
 ### v2.1.8
 > Updated: 23.09.2026
 1. Add editable banner

@@ -129,7 +129,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'version' => '2.1.8',
+    'version' => '2.1.9',
 
     /*
     |--------------------------------------------------------------------------
@@ -141,7 +141,7 @@ return [
     'welcome' => env('APP_WELCOME', "<p>Use this tool to assess yourself against the standards within the <a href='https://lmframework.leadershipacademy.nhs.uk/'>NHS Leadership and Management Framework</a></p><hr>"),
     'organisation' => env('APP_ORGANISATION', 'NHS College of Leadership and Management'),
     'org_address' => env('APP_ORG_ADDRESS', '7 & 8 Wellington Place, Leeds, West Yorkshire, LS1 4AP, England.'),
-    'org_domain' => env('APP_ORG_DOMAIN', 'leadershipacademy.nhs.uk'),
+    'org_url' => env('APP_ORG_URL', 'https://leadershipacademy.nhs.uk'),
     'profile_url' => env('APP_PROFILE_URL', 'https://profile.leadershipacademy.nhs.uk'),
     'support_url' => env('APP_SUPPORT_URL', 'https://support.leadershipacademy.nhs.uk/'),
     'page_title_prefix' => env('PAGE_TITLE_PREFIX', 'NHS leadership and management assess | '),
