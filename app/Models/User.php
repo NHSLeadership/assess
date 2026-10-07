@@ -81,7 +81,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         ) {
             return true;
         }
-        logger()->info('Unauthorised admin panel login attempt', [
+        logger()->info('Unauthorised admin panel sign in attempt', [
             'user_id' => auth()->user()?->user_id,
         ]);
 

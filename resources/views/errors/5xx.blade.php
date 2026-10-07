@@ -8,6 +8,6 @@
         Sorry for the inconvenience. An unexpected error has occurred.
     </p>
     <p>
-        Please visit our <a href="https://leadershipacademy.nhs.uk/contact-us/">contact us</a> page to find help and support information.
+        Please visit our <a href="{{ config('app.contact_us_url') }}">contact us</a> page to find help and support information.
     </p>
 @endsection
