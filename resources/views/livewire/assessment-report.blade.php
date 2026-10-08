@@ -15,7 +15,7 @@
                 <p>
                     <strong>For: {{ Auth()?->user()?->name ?? '' }}</strong>
                     <br>
-                    <strong>Academy Id: {{ Auth()?->user()?->user_id ?? '' }}</strong>
+                    <strong>{{ __('Profile ID') }}: {{ Auth()?->user()?->user_id ?? '' }}</strong>
                     <br>
                     <strong>
                         Self-assessment completed:
