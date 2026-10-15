@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\AssessmentReportDataBuilder;
 use App\Services\AssessmentReportService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -19,38 +20,18 @@ class AssessmentReportPdfController extends Controller
     }
 
 
-    protected function buildPdfData(
-        AssessmentReportService $service,
-        Request $request,
-        bool $forGotenberg
-    ): array {
+    protected function buildPdfData(AssessmentReportService $service, Request $request, string $engine): array
+    {
         $barImagesRaw = json_decode($request->barImages, true) ?? [];
 
         $barImages = collect($barImagesRaw)
             ->pluck('image', 'id')
             ->toArray();
 
-        $signposts = [];
-        foreach ($service->nodes() as $node) {
-            $sp = $service->signpostsForNode($node);
-            if ($sp !== []) {
-                $signposts[$node->id] = $sp;
-            }
-        }
+        $reportData = app(AssessmentReportDataBuilder::class)
+            ->build($service, respectAvailabilityGate: false);
 
         $framework = $service->framework();
-
-        $charts = [];
-        $hasRaters = $service->assessment()->raters()->exists();
-
-        foreach ($service->nodes() as $node) {
-
-            $chart = $service->barChart($node, hasRaters: $hasRaters);
-
-            if ($chart) {
-                $charts[] = $chart;
-            }
-        }
 
         return [
             'framework' => $framework,
@@ -60,18 +41,20 @@ class AssessmentReportPdfController extends Controller
             'rater' => $service->rater(),
             'radarImage' => $request->radarImage,
             'barImages' => $barImages,
-            'barCharts' => $charts,
-            'signposts' => $signposts,
+            'barCharts' => $reportData['barChartsList'],
+            'signposts' => $reportData['signpostsByNode'],
             'isMobile' => false,
-            'variantAttributeLabel' => $service->variantAttributeLabel(),
-            'raterFeedback' => $service->raterFeedbackByStandard(),
+            'variantAttributeLabel' => $reportData['variantAttributeLabel'],
+            'raterFeedback' => $reportData['raterFeedback'],
             'reportService' => $service,
-            'totalRaters' => $service->assessment()->raters()->count(),
+            'totalRaters' => $reportData['totalRaters'],
+            'pdfEngine' => $engine,
 
             // Engine‑specific HTML handling
-            'frameworkCustomHtml' => $forGotenberg
-                ? $this->prepareHtmlForGotenberg(data_get($framework, 'report_html'))
-                : $this->prepareHtmlForDompdf(data_get($framework, 'report_html')),
+            'frameworkCustomHtml' => $this->prepareHtmlForEngine(
+                data_get($framework, 'report_html'),
+                $engine
+            ),
         ];
     }
 
@@ -82,9 +65,9 @@ class AssessmentReportPdfController extends Controller
     ): Response {
         $service = new AssessmentReportService($frameworkId, $assessmentId);
 
-        $data = $this->buildPdfData($service, $request, false);
+        $data = $this->buildPdfData($service, $request, 'dompdf');
 
-        return Pdf::loadView('pdf.assessment-report', $data)
+        return Pdf::loadView('pdf.report', $data)
             ->download('assessment-report.pdf');
     }
 
@@ -95,9 +78,9 @@ class AssessmentReportPdfController extends Controller
     ): Response {
         $service = new AssessmentReportService($frameworkId, $assessmentId);
 
-        $data = $this->buildPdfData($service, $request, true);
+        $data = $this->buildPdfData($service, $request, 'gotenberg');
 
-        $html = view('pdf.gotenberg-assessment-report', $data)->render();
+        $html = view('pdf.report', $data)->render();
         $headerHtml = view('pdf.gotenberg-header')->render();
         $footerHtml = view('pdf.gotenberg-footer')->render();
 
@@ -198,5 +181,14 @@ class AssessmentReportPdfController extends Controller
             },
             (string) $content
         );
+    }
+
+    protected function prepareHtmlForEngine(?string $content, string $engine): string
+    {
+        if ($engine === 'gotenberg') {
+            return $this->prepareHtmlForGotenberg($content);
+        }
+
+        return $this->prepareHtmlForDompdf($content);
     }
 }
