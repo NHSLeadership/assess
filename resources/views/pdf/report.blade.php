@@ -10,6 +10,10 @@
         @endif
     </title>
 
+    @php
+        $isGotenberg = ($pdfEngine ?? 'dompdf') === 'gotenberg';
+    @endphp
+
     <style>
         html {
             background-color: #d8dde0;
@@ -19,6 +23,25 @@
                     sans-serif;
             overflow-y: scroll;
         }
+
+        @media print {
+            html, body {
+                background: white !important;
+            }
+        }
+
+        @if($isGotenberg)
+            @media print {
+                .image-adjust {
+                    max-width: 70%;
+                    max-height: 300px;
+                    height: auto;
+                    display: block;
+                    margin: 16px auto;
+                }
+            }
+        @endif
+
         h1 { margin: 0 0 10px 0 !important; }
         h2 { margin: 0 0 10px 0 !important; }
         h3 { margin: 0 0 10px 0 !important; }
@@ -33,22 +56,26 @@
         .tag { display: inline-block; padding: 3px 8px; color: white; border-radius: 3px; }
         .page-break { page-break-after: always; }
 
+        @if($isGotenberg)
+            @page {
+                margin-top: 120px;
+                margin-bottom: 50px;
+            }
+        @else
+            @page {
+                margin-top: 90px;
+                margin-bottom: 50px;
+            }
+        @endif
 
-        /* Reserve space for header + footer */
-        @page {
-            margin-top: 90px;
-            margin-bottom: 50px;
-        }
-
-        /* Header (repeats on every page) */
-        header {
-            position: fixed;
-            top: -70px;
-            height: 70px;
-            float: right;
-        }
-
-
+        @if(!$isGotenberg)
+            header {
+                position: fixed;
+                top: -70px;
+                height: 70px;
+                float: right;
+            }
+        @endif
 
         .padding-8 {
             padding: 8px;
@@ -70,14 +97,27 @@
             image-rendering: crisp-edges;
         }
 
-
         li p {
             margin: 0 !important;
             padding: 0 !important;
-            display: inline; /* critical for Dompdf */
+            display: inline;
         }
 
+        @media print {
+            .bar-chart-img {
+                max-width: 100%;
+                max-height: 700px;
+                height: auto;
+                display: block;
+                margin: 20px auto;
+                page-break-inside: avoid;
+                page-break-before: avoid;
+            }
 
+            h2, h3 {
+                page-break-after: avoid;
+            }
+        }
     </style>
 </head>
 
@@ -94,10 +134,11 @@
     $rater      = $rater ?? null;
 @endphp
 
-{{-- REPEATING HEADER --}}
-<header>
-    <img src="{{ public_path('media/nhs-logo.png') }}" style="height: 40px; width: 98px; float: right;">
-</header>
+@if(!$isGotenberg)
+    <header>
+        <img src="{{ public_path('media/nhs-logo.png') }}" style="height: 40px; width: 98px; float: right;">
+    </header>
+@endif
 
 @if (!empty($framework))
     <h1>{{ data_get($framework, 'name') }}</h1>
@@ -117,7 +158,7 @@ if (!empty(Auth()?->user()?->user_id)) {
     <br>
     <strong>Academy Id: {{ Auth()?->user()?->user_id ?? '' }}</strong>
 @php
-    }
+}
 @endphp
 <br>
 <strong>
@@ -138,7 +179,6 @@ if (!empty(Auth()?->user()?->user_id)) {
     <div>{!! $frameworkCustomHtml !!}</div>
 @endif
 
-
 @if (!empty($radarImage))
     <div class="page-break"></div>
     <h2>Results</h2>
@@ -146,17 +186,16 @@ if (!empty(Auth()?->user()?->user_id)) {
     <br>
     <div class="section align-center">
         <img
-                src="{{ $radarImage }}"
-                class="radar-img"
-                alt="Radar chart"
-                @if ($isMobile) style="width: 500px; height: auto; display: block; margin: 0 auto;" @else style="max-height: 600px;max-width: 900px;" @endif
+            src="{{ $radarImage }}"
+            class="radar-img"
+            alt="Radar chart"
+            @if ($isMobile) style="width: 500px; height: auto; display: block; margin: 0 auto;" @else style="max-height: 600px;max-width: 900px;" @endif
         >
     </div>
 @endif
 
 @foreach ($nodes as $node)
 
-    {{-- SECTION (top-level) --}}
     @if (empty($node->parent_id))
         <div class="page-break"></div>
 
@@ -168,7 +207,6 @@ if (!empty(Auth()?->user()?->user_id)) {
                 </h2>
             </div>
 
-            {{-- BAR CHART --}}
             @php
                 $chart = collect($barCharts)->firstWhere('node_id', $node->id);
             @endphp
@@ -179,21 +217,16 @@ if (!empty(Auth()?->user()?->user_id)) {
             @endif
 
             @php
-
                 $groupColumns = collect();
-
-                $standards = $nodes
-                    ->where('parent_id', $node->id);
+                $standards = $nodes->where('parent_id', $node->id);
 
                 foreach ($standards as $standard) {
-
                     $standardFeedback = $raterFeedback->get($standard->id);
 
                     foreach (data_get($standardFeedback, 'groups', []) as $groupName => $groupData) {
                         $groupColumns->put($groupName, true);
                     }
                 }
-
             @endphp
 
             @if($groupColumns->isNotEmpty())
@@ -253,8 +286,6 @@ if (!empty(Auth()?->user()?->user_id)) {
             @endif
 
         </div>
-
-        {{-- SUBSECTION (has children) --}}
     @elseif ($node->children && $node->children->count())
         <div style="margin-top: 12px; display: block">
             <h3 style="margin-bottom: 0px; text-align: left;">
@@ -294,14 +325,11 @@ if (!empty(Auth()?->user()?->user_id)) {
         @endif
     @endif
 
-
-    {{-- ALWAYS SHOW SIGNPOSTS OR RESPONSES BELOW --}}
     @php
         $nodeSignposts = data_get($signposts, $node->id, []);
         $nodeResponses = $responses->filter(fn($r) => data_get($r, 'question.node_id') == $node->id);
     @endphp
 
-    {{-- LEAF NODE RESPONSES --}}
     @if (
         $node->children->isEmpty()
         && $nodeResponses
@@ -334,7 +362,6 @@ if (!empty(Auth()?->user()?->user_id)) {
                         @endif
                     @endif
                     <br>
-                    {{-- Show the node signpost once, inside the first question LI --}}
                     @if ($loop->first && !empty($nodeSignposts))
                         <x-signpost-banner
                                 :signposts="$nodeSignposts"
@@ -347,7 +374,6 @@ if (!empty(Auth()?->user()?->user_id)) {
             @endforeach
         </ul>
     @elseif (!empty($nodeSignposts))
-        {{-- Non-leaf node has no question LI, so render outside a UL --}}
         <x-signpost-banner
                 :signposts="$nodeSignposts"
                 title="Development resources"
@@ -364,24 +390,24 @@ if (!empty(Auth()?->user()?->user_id)) {
     @endif
 </section>
 
-
-{{-- REPEATING FOOTER --}}
 <footer style="bottom: 0; left: 0; right: 0; height: 30px; text-align: center;">
-    <script type="text/php">
-        if (isset($pdf)) {
-            $text = "Page {PAGE_NUM} of {PAGE_COUNT}";
-            $font = $fontMetrics->get_font("Arial", "normal");
-            $size = 10;
-            // measure the sample so centering accounts for max width of the tokens
-            $sample = "Page 100 of 100";
-            $width = $fontMetrics->get_text_width($sample, $font, $size);
-            $x = ($pdf->get_width() - $width) / 2;
-            $y = $pdf->get_height() - 35;
-            $color = array(0, 0, 0);
-            $pdf->page_text($x, $y, $text, $font, $size, $color);
-        }
-    </script>
+    @if(!$isGotenberg)
+        <script type="text/php">
+            if (isset($pdf)) {
+                $text = "Page {PAGE_NUM} of {PAGE_COUNT}";
+                $font = $fontMetrics->get_font("Arial", "normal");
+                $size = 10;
+                $sample = "Page 100 of 100";
+                $width = $fontMetrics->get_text_width($sample, $font, $size);
+                $x = ($pdf->get_width() - $width) / 2;
+                $y = $pdf->get_height() - 35;
+                $color = array(0, 0, 0);
+                $pdf->page_text($x, $y, $text, $font, $size, $color);
+            }
+        </script>
+    @endif
 </footer>
 
 </body>
 </html>
+

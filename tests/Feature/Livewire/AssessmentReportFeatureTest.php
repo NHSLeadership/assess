@@ -16,6 +16,7 @@ use App\Models\Response;
 use App\Models\Scale;
 use App\Models\ScaleOption;
 use App\Models\User;
+use App\Services\AssessmentReportDataBuilder;
 use App\Services\AssessmentReportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -127,22 +128,32 @@ it('populates report data when framework and assessment are valid and submitted'
         'node_type_id' => $nodeType->id,
     ]);
 
-    // Mock the service that mount() instantiates
-    $service = Mockery::mock('overload:'.AssessmentReportService::class);
-    $service->shouldReceive('barChart')
-        ->with($node, false)
+    Mockery::mock('overload:'.AssessmentReportService::class);
+
+    $builder = Mockery::mock(AssessmentReportDataBuilder::class);
+    $builder->shouldReceive('build')
+        ->once()
         ->andReturn([
-            'node_id' => $node->id,
-            'id' => 'barChart_'.$node->id,
+            'totalRaters' => 0,
+            'completedRaters' => 0,
+            'reportAvailable' => true,
+            'variantAttributeLabel' => 'Variant Label',
+            'raterFeedback' => collect(),
+            'radarData' => ['radar-data'],
+            'radarOptions' => ['radar-options'],
+            'barChartsByNode' => [
+                $node->id => [
+                    'node_id' => $node->id,
+                    'id' => 'barChart_'.$node->id,
+                ],
+            ],
+            'barChartsList' => [],
+            'signpostsByNode' => [
+                $node->id => ['signpost'],
+            ],
         ]);
-    $service->shouldReceive('radarChart')->andReturn([
-        'data' => ['radar-data'],
-        'options' => ['radar-options'],
-    ]);
-    $service->shouldReceive('variantAttributeLabel')->andReturn('Variant Label');
-    $service->shouldReceive('nodes')->andReturn(collect([$node]));
-    $service->shouldReceive('signpostsForNode')->with($node)->andReturn(['signpost']);
-    $service->shouldReceive('raterFeedbackByStandard')->andReturn(collect());
+
+    $this->app->instance(AssessmentReportDataBuilder::class, $builder);
 
     $component = new AssessmentReport;
     $component->mount($framework->id, $assessment->id);
