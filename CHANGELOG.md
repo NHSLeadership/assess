@@ -4,6 +4,10 @@
 # Assessment tool
 
 ---
+### v2.1.10
+> Updated: 19.10.2026
+1. Show a clearer message to invited raters when no framework questions are available for their assessment
+
 ### v2.1.9
 > Updated: 01.10.2026
 1. Update email footer

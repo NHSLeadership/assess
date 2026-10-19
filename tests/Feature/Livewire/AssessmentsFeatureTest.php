@@ -2,9 +2,11 @@
 
 use App\Livewire\Assessments;
 use App\Models\Assessment;
+use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
 use App\Models\NodeType;
+use App\Models\Rater;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -53,6 +55,59 @@ it('loads paginated nodes when assessment has nodes with questions', function ()
         'assessmentId' => $assessment->id,
     ])
         ->assertViewHas('paginatedNodes');
+});
+
+it('shows no-questions message when framework has no questions', function () {
+    $noQuestionsMessage = __('pages.assessments.empty_state.no_questions');
+    $notFoundMessage = __('pages.assessments.empty_state.not_found');
+
+    $user = makeAuthUser();
+    $this->actingAs($user);
+
+    $framework = Framework::factory()->create();
+    $assessment = Assessment::factory()
+        ->for($framework)
+        ->for($user)
+        ->create();
+
+    Livewire::test(Assessments::class, [
+        'assessmentId' => $assessment->id,
+    ])
+        ->assertSee($noQuestionsMessage)
+        ->assertDontSee($notFoundMessage);
+});
+
+it('shows not-found message when framework context is missing', function () {
+    $noQuestionsMessage = __('pages.assessments.empty_state.no_questions');
+    $notFoundMessage = __('pages.assessments.empty_state.not_found');
+
+    $user = makeAuthUser();
+    $this->actingAs($user);
+
+    $framework = Framework::factory()->create();
+    $assessment = Assessment::factory()
+        ->for($framework)
+        ->for($user)
+        ->create();
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'submitted_at' => null,
+    ]);
+
+    $framework->delete();
+
+    Livewire::test(Assessments::class, [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ])
+        ->assertSee($notFoundMessage)
+        ->assertDontSee($noQuestionsMessage);
 });
 
 it('updates currentNode when questions-next-node event is dispatched', function () {

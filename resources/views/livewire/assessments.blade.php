@@ -70,17 +70,16 @@
             <hr class="nhsuk-u-margin-top-1">
 
         @else
-            <p>{{ __('Assessment not found or has been removed.') }}</p>
-
-            <div class="nhsuk-back-link">
-                <a class="nhsuk-back-link__link" wire:click.prevent="backPage()" href="{{ route('variants') }}">
-                    <svg class="nhsuk-icon nhsuk-icon__chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M8.5 12c0-.3.1-.5.3-.7l5-5c.4-.4 1-.4 1.4 0s.4 1 0 1.4L10.9 12l4.3 4.3c.4.4.4 1 0 1.4s-1 .4-1.4 0l-5-5c-.2-.2-.3-.4-.3-.7z"></path>
-                    </svg>{{ __('Step back') }}</a>
-            </div>
+            <p>
+                {{
+                    $this->assessment()?->framework
+                        ? __('pages.assessments.empty_state.no_questions')
+                        : __('pages.assessments.empty_state.not_found')
+                }}
+            </p>
         @endif
 
-        <a class="nhsuk-back-link" href="{{ route('frameworks') }}">
+        <a class="nhsuk-back-link" href="{{ route('home') }}">
             {{ __('Home') }}
         </a>
 

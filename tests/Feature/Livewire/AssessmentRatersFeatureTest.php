@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Audience;
 use App\Enums\RaterType;
 use App\Livewire\AssessmentRaters;
 use App\Livewire\Assessments;
@@ -9,12 +10,14 @@ use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
 use App\Models\Question;
+use App\Models\QuestionVariant;
 use App\Models\Rater;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Services\RaterInvitationService;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use App\Livewire\EditRater;
 
 uses(RefreshDatabase::class);
@@ -461,6 +464,58 @@ test('rater assessment route loads successfully when signature is valid', functi
 
     $this->get($url)
         ->assertOk();
+});
+
+test('rater sees no-questions message when all questions are filtered out', function () {
+    $noQuestionsMessage = __('pages.assessments.empty_state.no_questions');
+    $notFoundMessage = __('pages.assessments.empty_state.not_found');
+
+    $user = makeAuthUser(['user_id' => '1000000000']);
+
+    $framework = Framework::factory()->create();
+
+    $node = Node::factory()->create([
+        'framework_id' => $framework->id,
+        'order' => 1,
+    ]);
+
+    $question = Question::factory()->create([
+        'node_id' => $node->id,
+        'active' => true,
+        'required' => true,
+    ]);
+
+    QuestionVariant::factory()->create([
+        'question_id' => $question->id,
+        'text' => 'Self-only variant',
+        'audience' => Audience::Self,
+        'priority' => 1,
+    ]);
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+        'submitted_at' => null,
+    ]);
+
+    $url = URL::signedRoute('assessment-rater', [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    $this->get($url)
+        ->assertOk()
+        ->assertSeeText($noQuestionsMessage)
+        ->assertDontSeeText($notFoundMessage);
 });
 
 test('completed raters cannot be reinvited', function () {
