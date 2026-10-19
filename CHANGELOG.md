@@ -4,6 +4,11 @@
 # Assessment tool
 
 ---
+### v2.1.14
+> Updated: 22.10.2026
+1. Refactor assessment report rendering and PDF generation to use shared report data and templates
+
+---
 ### v2.1.13
 > Updated: 22.10.2026
 1. Replace Academy ID/Id wording with translatable Profile ID labels
@@ -15,25 +20,28 @@
 > Updated: 21.10.2026
 1. Rebuild image on patched PHP base image
 
+---
 ### v2.1.11
 > Updated: 19.10.2026
 1. Show a clearer message to invited raters when no framework questions are available for their assessment
 
+---
 ### v2.1.10
 > Updated: 15.10.2026
 1. Fix for the previous release deployment
 
+---
 ### v2.1.9
 > Updated: 14.10.2026
 1. Update email footer
 2. Add visually hidden app version for reference in the site footer
 
+---
 ### v2.1.8
 > Updated: 23.09.2026
 1. Add editable banner
 2. Use environment variables to control text and links
 
----
 ### v2.1.7
 > Updated: 08.09.2026
 1. Web and PDF report improvements
@@ -62,6 +70,7 @@
 4. Frameworks table tweaks
 5. Include rater responses in assessment report
 
+---
 ### v2.1.4
 > Updated: 27.07.2026
 1. Fix rater submission checks in 360 assessment flow
@@ -120,10 +129,12 @@
 3. Accessibility improvement in summary page for screen readers
 4. Heading improvement in assessment listing page
 
+---
 ### v1.0.15
 > Updated: 18.05.2026
 1. Stop incorrect description inheritance from previous node
 
+---
 ### v1.0.14
 > Updated: 18.05.2026
 1. Style competency statements as inset text
@@ -142,28 +153,33 @@
 6. Package updates
 7. Spelling and grammar corrections
 
+---
 ### v1.0.12
 > Updated: 17.04.2026
 1. Code refactoring and cleanup
 2. Add auto delete for data retention policy compliance
 3. Add auditing for user actions in admin panel
 
+---
 ### v1.0.11
 > Updated: 07.04.2026
 1. Gotenberg integration for pdf generation
 2. Upgrade to Laravel 13
 3. Add settings page to dashboard
 
+---
 ### v1.0.10
 > Updated: 31.03.2026
 1. Code refactoring and cleanup
 2. Improve rich text editor for frameworks
 3. Remove optional axios package
 
+---
 ### v1.0.9
 > Updated: 31.03.2026
 1. Add Prometheus monitoring
 
+---
 ### v1.0.8
 > Updated: 13.03.2026
 1. Add code analysis tooling (PHPStan, Pint, Rector)
@@ -171,6 +187,7 @@
 3. Normalize error views and handle Auth0 errors
 4. Add treeview for nodes in admin panel
 
+---
 ### v1.0.7
 > Updated: 11.03.2026
 1. Improve assessment navigation so “Save and continue” advances consistently on the first click.
@@ -179,6 +196,7 @@
 4. Change guidance title in PDF report
 5. Add header and footer to dashboard
 
+---
 ### v1.0.6
 > Updated: 17.02.2026
 1. Add Laravel DebugBar
@@ -188,21 +206,25 @@
 5. Fix career stage label in report
 6. Improve landing page
 
+---
 ### v1.0.5
 > Updated: 13.02.2026
 1. Adds automated tests around assessment report and questions navigation
 2. Package updates
 3. Signpost title changes in the report
 
+---
 ### v1.0.4
 > Updated: 09.02.2026
 1. Add signpost seeder
 
+---
 ### v1.0.3
 > Updated: 06.02.2026
 1. Improve radar chart scoring by using more precise average values for clearer insights
 2. Fix disappearing text in textareas
 
+---
 ### v1.0.2
 > Updated: 05.02.2026
 1. Display assessment type in frameworks list
@@ -212,12 +234,14 @@
 5. Disable seeding in production environments
 6. Fix payload is too deep error
 
+---
 ### v1.0.1
 > Updated: 02.02.2026
 1. Improve error handling and update labels and links
 2. Fix for php deprecated issue
 3. Security and package updates
 
+---
 ### v1.0.0
 > Updated: 23.09.2025
 1. Clean framework setup with home page
