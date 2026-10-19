@@ -7,7 +7,6 @@ use App\Models\Framework;
 use App\Models\Node;
 use App\Models\NodeType;
 use App\Models\Rater;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -101,12 +100,7 @@ it('shows not-found message when framework context is missing', function () {
         'submitted_at' => null,
     ]);
 
-    Schema::disableForeignKeyConstraints();
-    try {
-        $assessment->update(['framework_id' => 999999]);
-    } finally {
-        Schema::enableForeignKeyConstraints();
-    }
+    $framework->delete();
 
     Livewire::test(Assessments::class, [
         'assessmentId' => $assessment->id,
