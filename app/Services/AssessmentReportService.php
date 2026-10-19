@@ -276,7 +276,6 @@ class AssessmentReportService
                 'fill' => false,
             ];
         }
-
         return [
             'data' => [
                 'labels' => $labels,
@@ -526,11 +525,26 @@ class AssessmentReportService
 
     public function averageRaterScoreForStandard(Node $standard): ?float
     {
+        $nodeIds = $this->descendantNodesIncludingSelf($standard)
+            ->pluck('id')
+            ->map(fn ($id): int => (int) $id)
+            ->toArray();
+
+        $externalRaterIds = AssessmentRater::query()
+            ->where('assessment_id', $this->assessmentId)
+            ->pluck('rater_id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
+
+        if ($externalRaterIds === []) {
+            return null;
+        }
+
         $responses = $this->assessment()
             ->responses
-            ->whereNotNull('rater_id')
+            ->whereIn('rater_id', $externalRaterIds)
             ->filter(fn ($response) =>
-                $response->question?->node_id === $standard->id
+                in_array((int) ($response->question?->node_id), $nodeIds, true)
                 && $response->question?->response_type === ResponseType::TYPE_SCALE->value
                 && $response->scaleOption
             );

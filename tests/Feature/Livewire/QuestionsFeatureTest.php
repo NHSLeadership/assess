@@ -3,14 +3,19 @@
 use App\Enums\ResponseType;
 use App\Livewire\Questions;
 use App\Models\Assessment;
+use App\Models\AssessmentVariantSelection;
 use App\Models\AssessmentRater;
 use App\Models\Framework;
+use App\Models\FrameworkVariantAttribute;
+use App\Models\FrameworkVariantOption;
 use App\Models\Node;
 use App\Models\NodeType;
 use App\Models\Question;
 use App\Models\Rater;
 use App\Models\Scale;
 use App\Models\ScaleOption;
+use App\Models\ScaleOptionVariant;
+use App\Models\ScaleOptionVariantMatch;
 use App\Models\Response;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -211,6 +216,87 @@ it('shows validation errors when required questions are unanswered', function ()
             'data.question_'.$questions[0]->id,
             'data.question_'.$questions[1]->id,
         ]);
+});
+
+it('uses rater-specific stage-matched scale option text when variant conditions match', function () {
+    $user = makeAuthUser();
+    Livewire::actingAs($user);
+
+    $framework = Framework::factory()->create();
+    $nodeType = NodeType::factory()->create();
+    $node = Node::factory()->create([
+        'framework_id' => $framework->id,
+        'node_type_id' => $nodeType->id,
+    ]);
+
+    $scale = Scale::factory()->create();
+    $scaleOption = ScaleOption::factory()->create([
+        'scale_id' => $scale->id,
+        'label' => 'Insufficient',
+        'description' => 'Cannot do this without help.',
+    ]);
+
+    $question = Question::factory()->create([
+        'node_id' => $node->id,
+        'response_type' => ResponseType::TYPE_SCALE->value,
+        'scale_id' => $scale->id,
+        'required' => true,
+    ]);
+
+    $assessment = Assessment::factory()->create([
+        'framework_id' => $framework->id,
+        'user_id' => $user->user_id,
+    ]);
+
+    $attribute = FrameworkVariantAttribute::factory()->create([
+        'framework_id' => $framework->id,
+        'key' => 'stage',
+        'label' => 'Career stage',
+    ]);
+
+    $selectedOption = FrameworkVariantOption::factory()->create([
+        'framework_variant_attribute_id' => $attribute->id,
+        'value' => 'first-time-manager',
+        'label' => 'First time manager',
+    ]);
+
+    AssessmentVariantSelection::query()->create([
+        'assessment_id' => $assessment->id,
+        'framework_variant_attribute_id' => $attribute->id,
+        'framework_variant_option_id' => $selectedOption->id,
+    ]);
+
+    $variant = ScaleOptionVariant::factory()->create([
+        'scale_option_id' => $scaleOption->id,
+        'audience' => 'rater',
+        'text' => 'They cannot do this without help.',
+        'priority' => 10,
+    ]);
+
+    ScaleOptionVariantMatch::factory()->create([
+        'scale_option_variant_id' => $variant->id,
+        'framework_variant_attribute_id' => $attribute->id,
+        'framework_variant_option_id' => $selectedOption->id,
+    ]);
+
+    $rater = Rater::factory()->create([
+        'subject_id' => $user->user_id,
+    ]);
+
+    AssessmentRater::factory()->create([
+        'assessment_id' => $assessment->id,
+        'rater_id' => $rater->id,
+    ]);
+
+    $component = Livewire::test(Questions::class, [
+        'assessmentId' => $assessment->id,
+        'raterId' => $rater->id,
+    ]);
+
+    $scaleOptions = $component->instance()->buildScaleOptions($question->fresh(['scale']));
+
+    expect($scaleOptions[$scaleOption->id])
+        ->toBe('Insufficient - They cannot do this without help.');
 });
 
 it('clears validation errors when navigating to the previous question', function () {
