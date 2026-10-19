@@ -21,6 +21,10 @@ return [
     ],
     'assessments' => [
         'title' => 'Assessment questions',
+        'empty_state' => [
+            'no_questions' => 'Thank you for your interest. No questions have been set up for this assessment within the selected framework.',
+            'not_found' => 'Assessment not found or has been removed.',
+        ],
     ],
     'frameworks' => [
         'title' => 'Frameworks',

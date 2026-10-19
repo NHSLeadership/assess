@@ -73,8 +73,8 @@
             <p>
                 {{
                     $this->assessment()?->framework
-                        ? __('Thank you for your interest. No questions have been set up for this assessment within the selected framework.')
-                        : __('Assessment not found or has been removed.')
+                        ? __('pages.assessments.empty_state.no_questions')
+                        : __('pages.assessments.empty_state.not_found')
                 }}
             </p>
         @endif
