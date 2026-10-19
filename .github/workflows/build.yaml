@@ -47,11 +47,18 @@ jobs:
           echo "buildsha=$(echo $REF_TAG)" >> $GITHUB_OUTPUT
           echo "buildref="$(echo $GITHUB_REF | tr '[:upper:]' '[:lower:]' | awk '{split($0,a,"/"); print a[3]}') >> $GITHUB_OUTPUT
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4.4.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4.4.1
+
       - name: Build and Push Docker image
         uses: docker/build-push-action@v7.3.0
         with:
           context: .
           file: docker/Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             ${{ env.ECR_URI }}/${{ env.PROJECT}}:${{ steps.docker-tag.outputs.buildref }}-${{ steps.docker-tag.outputs.buildsha }}
