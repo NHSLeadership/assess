@@ -59,6 +59,10 @@ class OptionsRelationManager extends RelationManager
                                             ->toArray()
                                     )
                                     ->required()
+                                    ->distinct()
+                                    ->validationMessages([
+                                        'distinct' => 'Each condition must use a different attribute.',
+                                    ])
                                     ->searchable()
                                     ->native(false)
                                     ->live(),

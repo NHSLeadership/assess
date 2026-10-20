@@ -33,10 +33,25 @@ class ScaleOptionVariantSeeder extends Seeder
                 continue;
             }
 
-            $option->variants()->updateOrCreate(
-                ['audience' => 'rater'],
-                ['text' => $text, 'priority' => 0]
-            );
+            $fallbackVariant = $option->variants()
+                ->where('audience', 'rater')
+                ->whereDoesntHave('matches')
+                ->first();
+
+            if ($fallbackVariant) {
+                $fallbackVariant->update([
+                    'text' => $text,
+                    'priority' => 0,
+                ]);
+
+                continue;
+            }
+
+            $option->variants()->create([
+                'audience' => 'rater',
+                'text' => $text,
+                'priority' => 0,
+            ]);
         }
     }
 }

@@ -27,6 +27,7 @@ class ScaleOptionTextResolver
 
         $selectedOptionIds = $assessment->variantSelections()
             ->pluck('framework_variant_option_id')
+            ->map(static fn ($id) => (int) $id)
             ->all();
 
         $scaleOptions = ScaleOption::query()
@@ -71,10 +72,11 @@ class ScaleOptionTextResolver
                 return true;
             }
 
-            $variantOptionIds = $variant->matches->pluck('framework_variant_option_id');
+            $variantOptionIds = $variant->matches
+                ->pluck('framework_variant_option_id')
+                ->map(static fn ($id) => (int) $id);
 
-            return collect($selectedOptionIds)
-                ->every(fn ($id) => $variantOptionIds->contains($id));
+            return $variantOptionIds->diff($selectedOptionIds)->isEmpty();
         });
     }
 
@@ -85,4 +87,3 @@ class ScaleOptionTextResolver
             : Audience::Rater;
     }
 }
-
