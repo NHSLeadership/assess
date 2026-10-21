@@ -1,7 +1,7 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/National_Health_Service_%28England%29_logo.svg" width="200"></a>
 <br><span style="color:#fff;font-size:20px">Leadership Academy</span></p>
 
-# NHS Leadership Academy - Assessment Tool
+# Assessment Tool
 
 A web application for self-assessment and 360-degree feedback, built with [Laravel](https://laravel.com/) and [Filament](https://filamentphp.com/).
 
