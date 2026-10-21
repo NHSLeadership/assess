@@ -8,10 +8,8 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'login' => 'Login',
-    'logout' => 'Logout',
-    'signin' => 'Sign in',
-    'signout' => 'Sign out',
+    'login' => 'Sign in',
+    'logout' => 'Sign out',
     'admin' => 'Admin',
     'assessment-completed' => [
         'title' => 'Assessment completed',

@@ -4,6 +4,10 @@
 # Assessment tool
 
 ---
+### v2.1.12
+> Updated: 21.10.2026
+1. Replace Academy ID/Id wording with translatable Profile ID labels
+
 ### v2.1.11
 > Updated: 19.10.2026
 1. Show a clearer message to invited raters when no framework questions are available for their assessment
