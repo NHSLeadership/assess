@@ -136,7 +136,7 @@
         if (!empty(Auth()?->user()?->user_id)) {
     @endphp
     <br>
-    <strong>Academy Id: {{ Auth()?->user()?->user_id ?? '' }}</strong>
+    <strong>{{ __('Profile id') }}: {{ Auth()?->user()?->user_id ?? '' }}</strong>
     @php
         }
     @endphp
