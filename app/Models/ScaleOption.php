@@ -35,4 +35,9 @@ class ScaleOption extends Model implements Auditable
     {
         return $this->hasMany(Response::class);
     }
+
+    public function variants(): HasMany
+    {
+        return $this->hasMany(ScaleOptionVariant::class);
+    }
 }

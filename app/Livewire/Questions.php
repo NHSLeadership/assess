@@ -10,6 +10,7 @@ use App\Models\Rater;
 use App\Models\Response;
 use App\Services\FrameworkTraversalService;
 use App\Services\QuestionTextResolver;
+use App\Services\ScaleOptionTextResolver;
 use App\Services\UserResponseService;
 use App\Traits\AssessmentHelperTrait;
 use App\Traits\FormFieldValidationRulesTrait;
@@ -48,6 +49,7 @@ class Questions extends Component
 
     public ?string $action = null;
     public array $resolvedQuestionTexts = [];
+    public array $resolvedScaleOptionTexts = [];
     protected ?Assessment $cachedAssessment = null;
     protected ?Rater $cachedRater = null;
     protected ?AssessmentRater $cachedAssessmentRater = null;
@@ -633,14 +635,29 @@ class Questions extends Component
             return [];
         }
 
+        if (! $this->assessment() instanceof Assessment) {
+            return [];
+        }
+
+        if (! array_key_exists($question->scale_id, $this->resolvedScaleOptionTexts)) {
+            $this->resolvedScaleOptionTexts[$question->scale_id] = ScaleOptionTextResolver::optionsFor(
+                $this->assessment(),
+                $this->assessmentRater(),
+                $question->scale_id
+            );
+        }
+
+        $resolvedTexts = $this->resolvedScaleOptionTexts[$question->scale_id] ?? [];
+
         return $question->scale->options()
             ->orderBy('order')
             ->get()
-            ->mapWithKeys(function ($opt): array {
+            ->mapWithKeys(function ($opt) use ($resolvedTexts): array {
                 $label = $opt->label;
+                $description = $resolvedTexts[$opt->id] ?? $opt->description;
 
-                if (! empty($opt->description)) {
-                    $label .= ' - '.$opt->description;
+                if (! empty($description)) {
+                    $label .= ' - '.$description;
                 }
 
                 return [$opt->id => $label];
