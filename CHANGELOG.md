@@ -6,14 +6,14 @@
 ---
 ### v2.1.13
 > Updated: 22.10.2026
-1. Bump app version to 2.1.13 following the existing v2.1.12 release
+1. Replace Academy ID/Id wording with translatable Profile ID labels
+2. Apply npm and Composer security dependency updates
+3. Add PSR-17 request factory support for Auth0 compatibility after dependency upgrades
 
 ---
 ### v2.1.12
 > Updated: 21.10.2026
-1. Replace Academy ID/Id wording with translatable Profile ID labels
-2. Apply npm and Composer security dependency updates
-3. Add PSR-17 request factory support for Auth0 compatibility after dependency upgrades
+1. Rebuild image on patched PHP base image
 
 ### v2.1.11
 > Updated: 19.10.2026
