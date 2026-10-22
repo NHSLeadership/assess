@@ -5,7 +5,6 @@ use App\Models\Assessment;
 use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Rater;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -16,15 +15,14 @@ it('redirects when no assessment Id is provided', function () {
         ->assertRedirect(route('frameworks'));
 });
 
-it('throws ModelNotFoundException when assessment is missing', function () {
+it('returns 404 when assessment is missing', function () {
     $user = makeAuthUser();
     $this->actingAs($user);
 
-    $this->expectException(ModelNotFoundException::class);
-
-    Livewire::test(AssessmentCompleted::class, [
+    $this->get(route('assessment-completed', [
         'assessmentId' => 123,
-    ]);
+    ]))
+        ->assertNotFound();
 });
 
 

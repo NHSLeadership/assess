@@ -14,7 +14,6 @@ use App\Models\QuestionVariant;
 use App\Models\Rater;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Services\RaterInvitationService;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
@@ -110,11 +109,13 @@ test('mount fails when assessment is owned by another user', function () {
         'user_id' => '2000000000',
     ]);
 
-    Livewire::actingAs($user)
-        ->test(AssessmentRaters::class, [
-            'assessmentId' => $otherAssessment->id,
-        ]);
-})->throws(ModelNotFoundException::class);
+    Livewire::actingAs($user);
+
+    $this->get(route('assessment-raters', [
+        'assessmentId' => $otherAssessment->id,
+    ]))
+        ->assertNotFound();
+});
 
 test('askDetach sets pendingDetachId', function () {
     $user = makeAuthUser(['user_id' => '1000000000']);

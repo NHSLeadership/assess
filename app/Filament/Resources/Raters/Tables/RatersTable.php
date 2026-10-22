@@ -15,7 +15,7 @@ class RatersTable
     {
         return $table
             ->searchPlaceholder('Subject ID')
-            ->description('Search by Assessment Subject Academy ID only. Name and email searches are unavailable because rater details are encrypted.')
+            ->description('Search by Assessment Subject ' . __('Profile ID') . ' only. Name and email searches are unavailable because rater details are encrypted.')
             ->columns([
                 TextColumn::make('subject_id')
                     ->label('Subject ID')
