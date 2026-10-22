@@ -4,6 +4,11 @@
 # Assessment tool
 
 ---
+### v2.1.13
+> Updated: 22.10.2026
+1. Bump app version to 2.1.13 following the existing v2.1.12 release
+
+---
 ### v2.1.12
 > Updated: 21.10.2026
 1. Replace Academy ID/Id wording with translatable Profile ID labels
