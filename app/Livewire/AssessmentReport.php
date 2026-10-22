@@ -11,6 +11,7 @@ use App\Models\AssessmentRater;
 use App\Models\Framework;
 use App\Models\Node;
 use App\Models\Rater;
+use App\Services\AssessmentReportDataBuilder;
 use App\Services\AssessmentReportService;
 use App\Services\FrameworkTraversalService;
 use App\Traits\AssessmentHelperTrait;
@@ -116,59 +117,24 @@ class AssessmentReport extends Component
             }
         }
 
-        $ratersQuery = $this->assessment()->raters();
-
-        $this->totalRaters = $ratersQuery->count();
-
-        $this->completedRaters = (clone $ratersQuery)
-            ->wherePivotNotNull('submitted_at')
-            ->count();
-
-        $this->reportAvailable =
-            $this->totalRaters === 0 || $this->completedRaters === $this->totalRaters;
-
         $service = new AssessmentReportService(
             $frameworkId,
             $assessmentId,
             $this->raterId
         );
 
-        $this->variantAttributeLabel = $service->variantAttributeLabel();
+        $reportData = app(AssessmentReportDataBuilder::class)
+            ->build($service);
 
-        if (! $this->reportAvailable) {
-            return;
-        }
-
-        $this->raterFeedback = $service->raterFeedbackByStandard();
-
-        $radar = $service->radarChart(
-            hasRaters: $this->totalRaters > 0
-        );
-
-        $this->radarData = $radar['data'];
-        $this->radarOptions = $radar['options'];
-
-        $this->signposts = [];
-
-        $this->barCharts = [];
-
-        foreach ($service->nodes() as $node) {
-
-            $chart = $service->barChart(
-                $node,
-                hasRaters: $this->totalRaters > 0
-            );
-
-            if ($chart) {
-                $this->barCharts[$node->id] = $chart;
-            }
-
-            $signposts = $service->signpostsForNode($node);
-
-            if ($signposts !== []) {
-                $this->signposts[$node->id] = $signposts;
-            }
-        }
+        $this->totalRaters = $reportData['totalRaters'];
+        $this->completedRaters = $reportData['completedRaters'];
+        $this->reportAvailable = $reportData['reportAvailable'];
+        $this->variantAttributeLabel = $reportData['variantAttributeLabel'];
+        $this->raterFeedback = $reportData['raterFeedback'];
+        $this->radarData = $reportData['radarData'];
+        $this->radarOptions = $reportData['radarOptions'];
+        $this->barCharts = $reportData['barChartsByNode'];
+        $this->signposts = $reportData['signpostsByNode'];
     }
 
     #[Computed]
