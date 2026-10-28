@@ -30,6 +30,8 @@ class DatabaseSeeder extends Seeder
             FrameworkVariantOptionSeeder::class,
             QuestionVariantSeeder::class,
             QuestionVariantMatchSeeder::class,
+            ScaleOptionVariantSeeder::class,
+            ScaleOptionVariantMatchSeeder::class,
             SignpostSeeder::class,
             RetentionSettingsSeeder::class,
         ]);

@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Factories;
+
+use App\Models\ScaleOptionVariantMatch;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<ScaleOptionVariantMatch>
+ */
+class ScaleOptionVariantMatchFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'scale_option_variant_id' => $this->faker->numberBetween(1000, 999999),
+            'framework_variant_attribute_id' => $this->faker->numberBetween(1000, 999999),
+            'framework_variant_option_id' => $this->faker->numberBetween(1000, 999999),
+        ];
+    }
+}
+
