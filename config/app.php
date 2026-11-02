@@ -143,6 +143,7 @@ return [
     'org_address' => env('APP_ORG_ADDRESS', '7 & 8 Wellington Place, Leeds, West Yorkshire, LS1 4AP, England.'),
     'org_url' => env('APP_ORG_URL', 'https://leadershipacademy.nhs.uk'),
     'profile_url' => env('APP_PROFILE_URL', 'https://profile.leadershipacademy.nhs.uk'),
+    'rebrand_profile_id' => (bool) env('APP_REBRAND_PROFILE_ID', false),
     'support_url' => env('APP_SUPPORT_URL', 'https://support.leadershipacademy.nhs.uk/'),
     'page_title_prefix' => env('PAGE_TITLE_PREFIX', 'NHS leadership and management assess | '),
     'footer_copyright_text' => env('FOOTER_COPYRIGHT_TEXT', '© NHS England'),

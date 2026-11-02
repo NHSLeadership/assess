@@ -39,7 +39,8 @@ return [
     'home' => [
         'title' => 'Home',
         'content' => '',
-        'login' => 'If you already have a <b>:profileId</b> (previously known as Academy ID)',
+        'login' => 'If you already have a <b>:profileId</b>',
+        'login-rebranded' => 'If you already have a <b>:profileId</b> (previously known as Academy ID)',
     ],
     'instructions' => [
         'title' => 'Instructions',

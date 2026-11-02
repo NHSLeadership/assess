@@ -16,7 +16,7 @@
                 <p>
                     <strong>For: {{ Auth()?->user()?->name ?? '' }}</strong>
                     <br>
-                    <strong>{{ __('Profile id') }}: {{ Auth()?->user()?->user_id ?? '' }}</strong>
+                    <strong>{{ __('branding.profile_id_lower') }}: {{ Auth()?->user()?->user_id ?? '' }}</strong>
                     <br>
                     <strong>
                         Self-assessment completed:
