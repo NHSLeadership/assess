@@ -5,10 +5,12 @@
 
 ---
 ### v2.2.0
-> Updated: 22.10.2026
+> Updated: 02.11.2026
 1. Add audience-specific scale option variants for self and rater assessments
 2. Add conditional variant matching by framework variant selections, with fallback handling
 3. Add admin support for managing variant conditions and audience-specific text
+4. Show Academy ID or Profile ID based on the APP_REBRAND_PROFILE_ID env var (default: Academy ID)
+5. Update symfony/mime to 8.1.10 (CVE-2026-45070)
 
 ---
 ### v2.1.13

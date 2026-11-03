@@ -8,7 +8,7 @@
 
                 @if (Auth::check())
                     <p>Welcome back, {{ Auth::user()->name }}!</p>
-                    <p>You are now {{ __('signed in') }} to the {{ config('app.name') }}.
+                    <p>You are now signed in to the {{ config('app.name') }}.
                         From here you can continue your assessments and review your progress.</p>
                     <div class="nhsuk-action-link">
                         <a class="nhsuk-action-link__link" href="{{ route('frameworks') }}">
@@ -24,15 +24,15 @@
                 @else
                     {!! config('app.welcome') !!}
                     <p>
-                        {!! __('pages.home.login', [
-                             'profileId' => __('Profile ID'),
+                        {!! __(config('app.rebrand_profile_id') ? 'pages.home.login-rebranded' : 'pages.home.login', [
+                             'profileId' => __('branding.profile_id'),
                              ])
                         !!}
                     </p>
                     <p class="nhsuk-u-margin-bottom-0">
                         @component('components.form.button-link', [
                             'url' => Route::has('login') ? route('login') : '',
-                            'text' => __('Sign in') . ' with ' . __('Profile ID'),
+                            'text' => 'Sign in with ' . __('branding.profile_id'),
                         ])
                         @endcomponent
                     </p>
