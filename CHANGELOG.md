@@ -1,7 +1,12 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/d/d3/National_Health_Service_%28England%29_logo.svg" width="200"></a>
-<br><span style="color:#fff;font-size:20px">Leadership Academy</span></p>
+<br><span style="color:#fff;font-size:20px">College of Leadership and Management</span></p>
 
 # Assessment tool
+
+---
+### v2.2.1
+> Updated: 18.11.2026
+1. Update documentation to reflect the College of Leadership and Management rebrand
 
 ---
 ### v2.2.0
