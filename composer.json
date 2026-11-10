@@ -11,8 +11,8 @@
         "auth0/login": "^7.22",
         "barryvdh/laravel-dompdf": "^3.1.2",
         "diglactic/laravel-breadcrumbs": "^10.1",
-        "filament/filament": "^5.11.1",
-        "filament/spatie-laravel-settings-plugin": "^5.11.1",
+        "filament/filament": "^5.11.2",
+        "filament/spatie-laravel-settings-plugin": "^5.11.2",
         "flowframe/laravel-trend": "^0.5",
         "jeffersongoncalves/filament-umami": "3.x-dev",
         "laravel/framework": "^13.40.0",
@@ -23,7 +23,7 @@
         "openplain/filament-tree-view": "^0.5.6",
         "owen-it/laravel-auditing": "^14.0.7",
         "spatie/laravel-prometheus": "^1.7.1",
-        "symfony/yaml": "^8.1.10"
+        "symfony/yaml": "^8.1.11"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.7.3",
