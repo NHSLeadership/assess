@@ -28,4 +28,4 @@ We welcome contributions! Please follow these guidelines:
 
 See [SECURITY.md](SECURITY.md) for security issues, or open a discussion in Issues.
 
-Thank you for contributing to NHS Leadership Academy!
+Thank you for contributing to NHS College of Leadership and Management!
