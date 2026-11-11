@@ -299,6 +299,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const blob = await response.blob();
 
+                await assertCompletePdf(blob, response);
+
                 const filename = getSafeFilename(response, 'report.pdf');
 
                 //Trigger download.
@@ -331,6 +333,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 downloadBtn.disabled = false;
             }
         });
+    }
+
+    // Guards against saving a truncated PDF when the connection drops mid-download.
+    async function assertCompletePdf(blob, response) {
+        const expectedLength = parseInt(response.headers.get('Content-Length') || '', 10);
+        if (!response.headers.get('Content-Encoding') && Number.isFinite(expectedLength) && blob.size !== expectedLength) {
+            throw new Error(`Incomplete PDF download (${blob.size} of ${expectedLength} bytes).`);
+        }
+
+        const head = await blob.slice(0, 5).text();
+        const tail = await blob.slice(Math.max(0, blob.size - 1024)).text();
+        if (head !== '%PDF-' || !tail.includes('%%EOF')) {
+            throw new Error('Incomplete or invalid PDF download.');
+        }
     }
 
     function getSafeFilename(response, fallback = 'report.pdf') {

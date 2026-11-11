@@ -4,6 +4,11 @@
 # Assessment tool
 
 ---
+### v2.2.3
+> Updated: 11.11.2026
+1. Improves PDF download reliability with proper Content-Length handling and PDF validation before save.
+
+---
 ### v2.2.2
 > Updated: 11.11.2026
 1. Previous release deployment fix
@@ -13,6 +18,7 @@
 ### v2.2.1
 > Updated: 10.11.2026
 1. Update documentation to reflect the College of Leadership and Management rebrand
+2. Fix tests to reflect the College of Leadership and Management rebrand
 
 ---
 ### v2.2.0

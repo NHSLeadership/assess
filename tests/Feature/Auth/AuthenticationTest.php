@@ -8,7 +8,7 @@ test('login screen redirects to Auth0', function () {
 
     // Auth0 usually redirects to its hosted login page
     $response->assertStatus(302);
-    $response->assertRedirectContains('leadershipacademy.nhs.uk');
+    $response->assertRedirectContains('leadershipcollege.nhs.uk');
 });
 
 test('unauthenticated users cannot access admin panel', function () {
@@ -43,7 +43,7 @@ test('users can logout', function () {
 
     $response = $this->get('/logout');   // <-- GET instead of POST
 
-    $response->assertRedirectContains('leadershipacademy.nhs.uk/v2/logout');
+    $response->assertRedirectContains('leadershipcollege.nhs.uk/v2/logout');
 
     $this->assertGuest();
 });
