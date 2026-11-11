@@ -344,7 +344,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const head = await blob.slice(0, 5).text();
         const tail = await blob.slice(Math.max(0, blob.size - 1024)).text();
-        if (head !== '%PDF-' || !tail.includes('%%EOF')) {
+        if (head !== '%PDF-' || !/%%EOF\s*$/.test(tail)) {
             throw new Error('Incomplete or invalid PDF download.');
         }
     }
