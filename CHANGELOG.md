@@ -4,8 +4,14 @@
 # Assessment tool
 
 ---
+### v2.2.2
+> Updated: 11.11.2026
+1. Previous release deployment fix
+2. Date correction in changelog for v2.2.1
+
+---
 ### v2.2.1
-> Updated: 18.11.2026
+> Updated: 10.11.2026
 1. Update documentation to reflect the College of Leadership and Management rebrand
 
 ---
