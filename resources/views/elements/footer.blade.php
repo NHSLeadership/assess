@@ -5,16 +5,16 @@
 
             <ul class="nhsuk-footer__list">
                 <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
-                    <a class="nhsuk-footer__list-item-link" href="https://www.leadershipacademy.nhs.uk/accessibility/">Accessibility</a>
+                    <a class="nhsuk-footer__list-item-link" href="{{ config('app.corporate_accessibility_url') }}">Accessibility</a>
                 </li>
                 <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
-                    <a class="nhsuk-footer__list-item-link" href="https://www.leadershipacademy.nhs.uk/terms-and-conditions/">Terms and conditions</a>
+                    <a class="nhsuk-footer__list-item-link" href="{{ config('app.corporate_tac_url') }}">Terms and conditions</a>
                 </li>
                 <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
-                    <a class="nhsuk-footer__list-item-link" href="https://www.leadershipacademy.nhs.uk/privacy/">Privacy and cookies</a>
+                    <a class="nhsuk-footer__list-item-link" href="{{ config('app.corporate_privacy_url') }}">Privacy and cookies</a>
                 </li>
                 <li class="nhsuk-footer__list-item nhsuk-footer-default__list-item">
-                    <a class="nhsuk-footer__list-item-link" href="https://leadershipacademy.nhs.uk/contact-us/">Contact us</a>
+                    <a class="nhsuk-footer__list-item-link" href="{{ config('app.contact_us_url') }}">Contact us</a>
                 </li>
             </ul>
             <p class="nhsuk-body-s">

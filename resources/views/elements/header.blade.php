@@ -21,16 +21,16 @@
                         <svg class="nhsuk-icon nhsuk-icon--user" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false" aria-hidden="true">
                             <path d="M12 1a11 11 0 1 1 0 22 11 11 0 0 1 0-22Zm0 2a9 9 0 0 0-5 16.5V18a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v1.5A9 9 0 0 0 12 3Zm0 3a3.5 3.5 0 1 1-3.5 3.5A3.4 3.4 0 0 1 12 6Z" />
                         </svg>
-                        Logged in as: {{ Auth::user()->preferred_username ?? Auth::user()->id ?? '' }}
+                        {{ __('Signed in') }} as: {{ Auth::user()->preferred_username ?? Auth::user()->id ?? '' }}
                     </li>
                     <li class="nhsuk-header__account-item">
                         <a class="nhsuk-header__account-link" href="{{ url('/logout') }}">
-                            {{ __('pages.logout') }}</a>
+                            {{ __('Sign out') }}</a>
                     </li>
                 @else
                     <li class="nhsuk-header__account-item">
                         <a class="nhsuk-header__account-link" href="{{ url('/login') }}">
-                            {!! __('pages.login') !!}</a>
+                            {!! __('Sign in') !!}</a>
                     </li>
                 @endif
             </ul>

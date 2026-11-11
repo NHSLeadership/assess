@@ -44,6 +44,7 @@
 > Updated: 14.10.2026
 1. Update email footer
 2. Add visually hidden app version for reference in the site footer
+3. Add NHS login button
 
 ---
 ### v2.1.8

@@ -156,4 +156,12 @@ return [
     'gotenberg_basic_auth_username' => env('GOTENBERG_BASIC_AUTH_USERNAME', false),
     'gotenberg_basic_auth_password' => env('GOTENBERG_BASIC_AUTH_PASSWORD', false),
     'alert_banner_on' => env('ALERT_BANNER_ON', false),
+
+    'user_guide_url' => env('USER_GUIDE_URL', 'https://support.leadershipacademy.nhs.uk/article/74-certificant-user-guide'),
+    'contact_us_url' => env('CONTACT_US_URL', 'https://www.leadershipacademy.nhs.uk/contact-us/'),
+    'corporate_accessibility_url' => env('CORPORATE_ACCESSIBILITY_URL', 'https://www.leadershipacademy.nhs.uk/accessibility/'),
+    'corporate_tac_url' => env('CORPORATE_TAC_URL', 'https://www.leadershipacademy.nhs.uk/terms-and-conditions/'),
+    'corporate_privacy_url' => env('CORPORATE_PRIVACY_URL', 'https://www.leadershipacademy.nhs.uk/privacy/'),
+    'corporate_cookies_url' => env('CORPORATE_COOKIES_URL', 'https://www.leadershipacademy.nhs.uk/how-we-use-our-cookies/'),
+    'corporate_contact_url' => env('CORPORATE_CONTACT_URL', 'https://www.leadershipacademy.nhs.uk/contact-us/'),
 ];
