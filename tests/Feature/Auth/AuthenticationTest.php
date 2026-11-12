@@ -3,12 +3,17 @@
 use App\Models\User;
 use Livewire\Livewire;
 
+function auth0Host(): string
+{
+    return config('auth0.guards.default.customDomain') ?: config('auth0.guards.default.domain');
+}
+
 test('login screen redirects to Auth0', function () {
     $response = $this->get('/login');
 
     // Auth0 usually redirects to its hosted login page
     $response->assertStatus(302);
-    $response->assertRedirectContains('leadershipacademy.nhs.uk');
+    $response->assertRedirectContains(auth0Host());
 });
 
 test('unauthenticated users cannot access admin panel', function () {
@@ -43,7 +48,7 @@ test('users can logout', function () {
 
     $response = $this->get('/logout');   // <-- GET instead of POST
 
-    $response->assertRedirectContains('leadershipacademy.nhs.uk/v2/logout');
+    $response->assertRedirectContains(auth0Host() . '/v2/logout');
 
     $this->assertGuest();
 });

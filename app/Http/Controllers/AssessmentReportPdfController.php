@@ -84,8 +84,19 @@ class AssessmentReportPdfController extends Controller
 
         $data = $this->buildPdfData($service, $request, false);
 
-        return Pdf::loadView('pdf.assessment-report', $data)
-            ->download('assessment-report.pdf');
+        $pdf = Pdf::loadView('pdf.assessment-report', $data)->output();
+
+        return $this->pdfResponse($pdf);
+    }
+
+    protected function pdfResponse(string $pdf): Response
+    {
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="assessment-report.pdf"',
+            'Content-Length' => (string) strlen($pdf),
+            'Cache-Control' => 'no-store, no-transform',
+        ]);
     }
 
     protected function renderWithGotenberg(
@@ -130,10 +141,7 @@ class AssessmentReportPdfController extends Controller
                 );
             }
 
-            return response($response->body(), 200, [
-                'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="assessment-report.pdf"',
-            ]);
+            return $this->pdfResponse($response->body());
 
         } catch (\Throwable $e) {
             logger()->warning('Using Dompdf fallback', [
