@@ -9,6 +9,7 @@
 1. Improves PDF download reliability with proper Content-Length handling and PDF validation before save
 2. Make Auth0 login/logout tests use the configured Auth0 domain instead of a hardcoded branded host
 3. Update Composer minor dependencies (laravel/framework 13.42, pennant, tinker, larastan, pail, sail) and mikefarah/yq action to v4.54.3
+4. Update CI Node.js to 22.23.5
 
 ---
 ### v2.2.2
