@@ -7,7 +7,8 @@
 ### v2.2.3
 > Updated: 11.11.2026
 1. Improves PDF download reliability with proper Content-Length handling and PDF validation before save
-2. Fix tests to reflect the College of Leadership and Management rebrand
+2. Make Auth0 login/logout tests use the configured Auth0 domain instead of a hardcoded branded host
+3. Update Composer minor dependencies (laravel/framework 13.42, pennant, tinker, larastan, pail, sail) and mikefarah/yq action to v4.54.3
 
 ---
 ### v2.2.2
