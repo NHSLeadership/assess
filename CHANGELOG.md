@@ -6,7 +6,7 @@
 ---
 ### v2.2.4
 > Updated: 23.11.2026
-1. Remove unused `lang/en.json` translations and inline the sign-in/sign-out copy in views
+1. Remove unused `lang/en.json` translations
 2. Remove unused `button-link` Blade component
 
 ---
