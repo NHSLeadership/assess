@@ -4,6 +4,12 @@
 # Assessment tool
 
 ---
+### v2.2.4
+> Updated: 23.11.2026
+1. Remove unused `lang/en.json` translations and inline the sign-in/sign-out copy in views
+2. Remove unused `button-link` Blade component
+
+---
 ### v2.2.3
 > Updated: 11.11.2026
 1. Improves PDF download reliability with proper Content-Length handling and PDF validation before save
