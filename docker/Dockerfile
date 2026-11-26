@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-ARG PHP_IMAGE=ghcr.io/nhsleadership/nhsl-ubuntu-phpv2:8.4-master
+ARG PHP_IMAGE=ghcr.io/nhsleadership/nhsl-ubuntu-phpv2:8.5-master
 
 # -----------------------------------------------------------------------------
 # composer: PHP dependencies.
