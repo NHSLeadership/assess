@@ -1,0 +1,104 @@
+name: build-pr-image
+
+# Builds and pushes a PR image only when the PR has the `build` label:
+# on labelling, and again on each push/reopen while the label stays on.
+# workflow_dispatch rebuilds any PR by number.
+
+on:
+  pull_request:
+    types: [labeled, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull request number'
+        required: true
+        type: number
+
+concurrency:
+  group: pullrequest-${{ github.event.pull_request.number || inputs.pr_number }}
+  cancel-in-progress: true
+
+env:
+  PROJECT: assess
+  ECR_URI: ${{ secrets.AWS_ECR_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.action == 'labeled' && github.event.label.name == 'build') ||
+      (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'build'))
+    outputs:
+      buildsha: ${{ steps.docker-tag.outputs.buildsha }}
+      buildref: ${{ steps.docker-tag.outputs.buildref }}
+    permissions:
+      contents: read
+      packages: write
+      pull-requests: read
+      id-token: write
+
+    steps:
+      - name: Get PR details
+        id: pr-details
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr_number }}
+        run: |
+          PR_DATA=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json headRefName,headRefOid)
+          echo "head_sha=$(jq -r '.headRefOid' <<< "$PR_DATA")" >> "$GITHUB_OUTPUT"
+          echo "branch=$(jq -r '.headRefName' <<< "$PR_DATA")" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.pr-details.outputs.head_sha }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN_ECR }}
+          aws-region: eu-west-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2.1.7
+
+      # Must match ArgoCD's pull request generator image tag: '{{branch_slug}}-{{head_sha}}'.
+      # branch_slug mirrors gosimple/slug as configured by ArgoCD (MaxLength 50, '_' -> '-').
+      - name: set Docker tags
+        id: docker-tag
+        env:
+          BRANCH: ${{ steps.pr-details.outputs.branch }}
+          HEAD_SHA: ${{ steps.pr-details.outputs.head_sha }}
+        run: |
+          BRANCH_SLUG=$(python3 - <<'EOF'
+          import os, re
+          s = os.environ["BRANCH"].strip().replace("_", "-").replace("&", "and").replace("@", "at").lower()
+          s = re.sub(r"-+", "-", re.sub(r"[^a-z0-9_-]", "-", s)).strip("-_")
+          if len(s) > 50:
+              i = s.rfind("-", 0, 51)
+              s = s[:i] if i >= 0 else s[:50]
+          print(s)
+          EOF
+          )
+          echo "buildsha=$HEAD_SHA" >> "$GITHUB_OUTPUT"
+          echo "buildref=$BRANCH_SLUG" >> "$GITHUB_OUTPUT"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4.4.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4.4.1
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v7.4.0
+        with:
+          context: .
+          file: docker/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          push: true
+          tags: |
+            ${{ env.ECR_URI }}/${{ env.PROJECT }}:${{ steps.docker-tag.outputs.buildref }}-${{ steps.docker-tag.outputs.buildsha }}
