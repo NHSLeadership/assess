@@ -62,7 +62,7 @@ jobs:
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2.1.7
+        uses: aws-actions/amazon-ecr-login@v2.2.0
 
       # Must match ArgoCD's pull request generator image tag: '{{branch_slug}}-{{head_sha}}'.
       # branch_slug mirrors gosimple/slug as configured by ArgoCD (MaxLength 50, '_' -> '-').
