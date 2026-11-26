@@ -53,7 +53,7 @@ RUN mkdir -p storage/app/public \
 # -----------------------------------------------------------------------------
 # assets: Vite build. Also native platform; only static files leave this stage.
 # -----------------------------------------------------------------------------
-FROM --platform=$BUILDPLATFORM node:24-slim AS assets
+FROM --platform=$BUILDPLATFORM node:26.13.1-slim AS assets
 WORKDIR /app
 
 COPY package.json package-lock.json ./
