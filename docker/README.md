@@ -14,3 +14,16 @@ Assumptions made:
 6. A worker container is run seperately from PHP-FPM to handle things such as Laravel queues and schedules
 
 There is no reason why the containers shouldn't run with these caveats in mind, nor any reason why the Assess application couldn't run in a different container environment given the correct PHP version and dependencies are installed.
+
+## How the image is built
+
+`docker/Dockerfile` is a multi-stage build:
+
+1. **composer** installs `vendor/` from `composer.json`/`composer.lock` only, so the layer is reused until dependencies change.
+2. **app** copies the source, dumps an optimised autoloader and runs `package:discover`, `filament:assets` and `livewire:publish --assets`. The Filament, Livewire and openplain assets in `public/` are gitignored and generated here, so they always match the installed vendor packages.
+3. **assets** runs `npm ci && npm run build` in `node:24-slim`. The Filament theme imports `public/css/filament/filament/app.css`, which is copied in from the app stage.
+4. The **runtime** stage copies the results onto the base image. It has no Node.js and no `node_modules`.
+
+The composer, app and assets stages run on the build platform, so the arm64 image needs no QEMU emulation. At container start `rootfs/etc/cont-init.d/03-laravel.sh` runs `storage:link` and `optimize` in `/app-shared`.
+
+Locally, Composer's `post-autoload-dump` hook publishes the same assets, so they appear after `composer install`.

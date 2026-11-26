@@ -2,10 +2,11 @@ name: tests
 
 on:
   pull_request:
-    types: [opened,synchronize]
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
+  # dorny/test-reporter publishes a check run with the test results.
   actions: read
   checks: write
 
@@ -19,7 +20,7 @@ jobs:
 #    steps:
 #      - name: Checkout code
 #        uses: actions/checkout@v3
-#  
+#
 #      - name: Scan repository for vulnerabilities
 #        uses: aquasecurity/trivy-action@master
 #        with:
@@ -28,10 +29,71 @@ jobs:
 #          format: 'table'
 #          exit-code: '1'
 #          severity: 'CRITICAL,HIGH'
-      
+
+  static_analysis:
+    name: Lint & static analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      APP_ENV: testing
+      DB_CONNECTION: sqlite
+      DB_DATABASE: ":memory:"
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v7
+
+      - name: setup php
+        uses: shivammathur/setup-php@2.40.0
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: copy env file
+        run: cp .env.example .env
+
+      - name: setup cache folders
+        run: mkdir -p storage/framework/{sessions,views,cache}
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Composer packages
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: |
+          composer install --no-ansi --no-interaction --no-scripts --prefer-dist --no-progress
+          php artisan package:discover --ansi
+
+      - name: generate app key
+        run: php artisan key:generate
+
+      # Existing errors are recorded in phpstan-baseline.neon; new ones fail the build.
+      - name: Larastan (static analysis)
+        run: composer check:types -- --no-progress --error-format=github
+
+      # Non-blocking until the existing Rector findings are cleaned up.
+      # Once they are fixed, drop continue-on-error.
+      - name: Rector (dry run)
+        continue-on-error: true
+        run: composer check:refactor
+
+      # Non-blocking until the existing style violations are fixed with `vendor/bin/pint`.
+      - name: Pint (code style)
+        continue-on-error: true
+        run: composer check:style
+
   laravel_tests:
+    name: Tests
     runs-on: ubuntu-latest
     continue-on-error: true
+    timeout-minutes: 20
     env:
       XDEBUG_MODE: coverage
       APP_ENV: testing
@@ -43,17 +105,19 @@ jobs:
       DB_DATABASE: ":memory:"
 
     steps:
+      # Checkout first: setup-node's npm cache needs package-lock.json.
+      - name: checkout code
+        uses: actions/checkout@v7
+
       - name: setup php
         uses: shivammathur/setup-php@2.40.0
         with:
           php-version: '8.4'
-  
+
       - uses: actions/setup-node@v7.1.0
         with:
-          node-version: 22.23.5
-      
-      - name: checkout code
-        uses: actions/checkout@v7
+          node-version: '24'
+          cache: npm
 
       - name: copy env file
         run: cp .env.example .env
@@ -64,20 +128,40 @@ jobs:
       - name: Force git to use ssh
         run: git config --global url."git@github.com:".insteadOf git://github.com/
 
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Composer packages
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
       - name: Install dependencies
 #        env:
 #          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{secrets.COMPOSER_AUTH}}"} }'
-        run: composer install --no-ansi --no-interaction --no-scripts --prefer-dist
+        run: composer install --no-ansi --no-interaction --no-scripts --prefer-dist --no-progress
 
-      - name: npm install
-        run: npm install
+      # Filament/Livewire assets are no longer committed. The Filament theme
+      # (resources/css/filament/dashboard/theme.scss) imports
+      # public/css/filament/filament/app.css, so publish them before the Vite build.
+      - name: publish package assets
+        run: |
+          php artisan package:discover --ansi
+          php artisan filament:assets
+          php artisan livewire:publish --assets
+
+      - name: npm ci
+        run: npm ci --no-audit --no-fund
 
       - name: npm run build
         run: npm run build
 
       - name: generate app key
         run: php artisan key:generate
-      
+
       - name: run Laravel tests
         run: php artisan test --coverage --parallel --coverage-html=coverage
 
@@ -88,7 +172,7 @@ jobs:
           path: coverage
 
       - name: Report test results
-        uses: dorny/test-reporter@6efb86e1f884696e9a2bbd33e43da8777c8e469c
+        uses: dorny/test-reporter@a43b3a5f7366b97d083190328d2c652e1a8b6aa2 # v3.0.0
         if: success() || failure()
         with:
           name: Assess System Tests
@@ -96,8 +180,3 @@ jobs:
           reporter: 'phpunit-junit'
           only-summary: 'false'
           fail-on-error: 'false'
-      
-      - name: run Pint code style linting
-        continue-on-error: true
-        run: vendor/bin/pint --test
-

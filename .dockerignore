@@ -1,0 +1,66 @@
+# Keep the build context small and stop local/secret files leaking into the image.
+# The Dockerfile copies only what it needs, but `COPY . .` in the app stage
+# still sees everything not listed here.
+
+# VCS / editor / tooling
+.git
+.github
+.gitattributes
+.claude
+.idea
+.fleet
+.vscode
+.editorconfig
+**/.DS_Store
+
+# Dependencies and build output (rebuilt inside the image)
+node_modules
+vendor
+packages
+public/build
+public/hot
+public/storage
+public/css/filament
+public/css/openplain
+public/fonts/filament
+public/js/filament
+public/js/openplain
+public/vendor/livewire
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+auth.json
+storage/*.key
+
+# Runtime state
+storage/logs/*
+storage/debugbar
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/testing/*
+storage/framework/views/*
+bootstrap/cache/*
+!storage/**/.gitignore
+!bootstrap/cache/.gitignore
+
+# Dev-only files
+tests
+coverage
+reports
+phpunit.xml
+phpstan.neon
+phpstan-baseline.neon
+pint.json
+rector.php
+compose.yaml
+docker-compose.override.yml
+.phpunit.cache
+.phpunit.result.cache
+npm-debug.log
+yarn-error.log
+CHANGELOG.md
+CONTRIBUTING.md
+DISASTER_RECOVERY.md
+README.md

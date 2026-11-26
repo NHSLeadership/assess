@@ -59,6 +59,8 @@ jobs:
           context: .
           file: docker/Dockerfile
           platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           push: true
           tags: |
             ${{ env.ECR_URI }}/${{ env.PROJECT}}:${{ steps.docker-tag.outputs.buildref }}-${{ steps.docker-tag.outputs.buildsha }}

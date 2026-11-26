@@ -1,0 +1,1113 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Match arm comparison between \$this\(App\\Enums\\ResponseType\)&App\\Enums\\ResponseType\:\:TYPE_SINGLE_CHOICE and App\\Enums\\ResponseType\:\:TYPE_SINGLE_CHOICE is always true\.$#'
+			identifier: match.alwaysTrue
+			count: 2
+			path: app/Enums/ResponseType.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user_id\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Filament/Resources/Assessments/RelationManagers/RatersRelationManager.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:raters\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Filament/Resources/Assessments/RelationManagers/RatersRelationManager.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$assessment\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Resources/Assessments/Resources/Responses/Schemas/ResponseForm.php
+
+		-
+			message: '#^Cannot call method assessments\(\) on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Filament/Resources/Frameworks/Pages/EditFramework.php
+
+		-
+			message: '#^Cannot call method hasAssessments\(\) on Illuminate\\Database\\Eloquent\\Model\|int\|string\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Filament/Resources/Frameworks/Pages/EditFramework.php
+
+		-
+			message: '#^Cannot access property \$type on array\|Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Filament/Resources/Frameworks/Resources/Nodes/NodeResource.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$framework_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Resources/Frameworks/Resources/Nodes/Resources/Questions/Resources/QuestionVariants/QuestionVariantResource.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Resources/Frameworks/Resources/Nodes/Resources/Questions/Resources/QuestionVariants/QuestionVariantResource.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$node\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Filament/Resources/Frameworks/Resources/Nodes/Resources/Questions/Resources/QuestionVariants/QuestionVariantResource.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\AssessmentCompleted\:\:\$raterGroupList\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/AssessmentCompleted.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\AssessmentCompleted\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/AssessmentCompleted.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/AssessmentCompleted.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$preferred_username\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/AssessmentCompleted.php
+
+		-
+			message: '#^Method App\\Livewire\\AssessmentCompleted\:\:assessmentCompletedDate\(\) should return Illuminate\\Support\\Carbon\|null but returns Carbon\\Carbon\|null\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Livewire/AssessmentCompleted.php
+
+		-
+			message: '#^Method App\\Livewire\\AssessmentCompleted\:\:loggedInRater\(\) should return App\\Models\\Rater\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/AssessmentCompleted.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>submitted_at" in empty\(\) is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			path: app/Livewire/AssessmentCompleted.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Assessment\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			path: app/Livewire/AssessmentCompleted.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\User\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			path: app/Livewire/AssessmentCompleted.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\AssessmentRaters\:\:\$assessment\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/AssessmentRaters.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\AssessmentRaters\:\:\$cachedAssessmentRater\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/AssessmentRaters.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\AssessmentRaters\:\:\$raterGroupList\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/AssessmentRaters.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\AssessmentRaters\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/AssessmentRaters.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/AssessmentRaters.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$preferred_username\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/AssessmentRaters.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/AssessmentRaters.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/AssessmentRaters.php
+
+		-
+			message: '#^Method App\\Livewire\\AssessmentRaters\:\:assessmentCompletedDate\(\) should return Illuminate\\Support\\Carbon\|null but returns Carbon\\Carbon\|null\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Livewire/AssessmentRaters.php
+
+		-
+			message: '#^Method App\\Livewire\\AssessmentRaters\:\:loggedInRater\(\) should return App\\Models\\Rater\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/AssessmentRaters.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Assessment\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/AssessmentRaters.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\User\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/AssessmentRaters.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\AssessmentReport\:\:\$raterGroupList\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/AssessmentReport.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\AssessmentReport\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/AssessmentReport.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/AssessmentReport.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$preferred_username\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/AssessmentReport.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Relations\\Pivot\:\:\$submitted_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/AssessmentReport.php
+
+		-
+			message: '#^Method App\\Livewire\\AssessmentReport\:\:assessmentCompletedDate\(\) should return Illuminate\\Support\\Carbon\|null but returns Carbon\\Carbon\|null\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Livewire/AssessmentReport.php
+
+		-
+			message: '#^Method App\\Livewire\\AssessmentReport\:\:loggedInRater\(\) should return App\\Models\\Rater\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/AssessmentReport.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Assessment\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/AssessmentReport.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\User\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/AssessmentReport.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Assessments\:\:\$raterGroupList\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Assessments.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Assessments\:\:\$resolvedQuestionTexts\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Assessments.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Assessments\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Assessments.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Assessments.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$preferred_username\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Assessments.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Assessments.php
+
+		-
+			message: '#^Method App\\Livewire\\Assessments\:\:assessmentCompletedDate\(\) should return Illuminate\\Support\\Carbon\|null but returns Carbon\\Carbon\|null\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Livewire/Assessments.php
+
+		-
+			message: '#^Method App\\Livewire\\Assessments\:\:loggedInRater\(\) should return App\\Models\\Rater\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/Assessments.php
+
+		-
+			message: '#^Parameter \#1 \$callback of method Illuminate\\Support\\Collection\<int,App\\Models\\Node\>\:\:map\(\) contains unresolvable type\.$#'
+			identifier: argument.unresolvableType
+			count: 1
+			path: app/Livewire/Assessments.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>framework" in empty\(\) is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Assessments.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/Assessments.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Assessment\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/Assessments.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\User\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/Assessments.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\EditRater\:\:\$assessment\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/EditRater.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\EditRater\:\:\$cachedAssessmentRater\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/EditRater.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\EditRater\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/EditRater.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/EditRater.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$preferred_username\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/EditRater.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/EditRater.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/EditRater.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$user_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/EditRater.php
+
+		-
+			message: '#^Method App\\Livewire\\EditRater\:\:assessmentCompletedDate\(\) should return Illuminate\\Support\\Carbon\|null but returns Carbon\\Carbon\|null\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Livewire/EditRater.php
+
+		-
+			message: '#^Method App\\Livewire\\EditRater\:\:loggedInRater\(\) should return App\\Models\\Rater\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/EditRater.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Assessment\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/EditRater.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\User\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/EditRater.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\FrameworkInstructions\:\:\$cachedAssessmentRater\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/FrameworkInstructions.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\FrameworkInstructions\:\:\$raterGroupList\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/FrameworkInstructions.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\FrameworkInstructions\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/FrameworkInstructions.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/FrameworkInstructions.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$preferred_username\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/FrameworkInstructions.php
+
+		-
+			message: '#^Method App\\Livewire\\FrameworkInstructions\:\:assessmentCompletedDate\(\) should return Illuminate\\Support\\Carbon\|null but returns Carbon\\Carbon\|null\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Livewire/FrameworkInstructions.php
+
+		-
+			message: '#^Method App\\Livewire\\FrameworkInstructions\:\:loggedInRater\(\) should return App\\Models\\Rater\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/FrameworkInstructions.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Assessment\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/FrameworkInstructions.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\User\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/FrameworkInstructions.php
+
+		-
+			message: '#^Access to an undefined property \$this\(App\\Livewire\\Frameworks\)\:\:\$assessmentId\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Frameworks.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Frameworks\:\:\$cachedAssessmentRater\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Frameworks.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Frameworks\:\:\$framework\.$#'
+			identifier: property.notFound
+			count: 3
+			path: app/Livewire/Frameworks.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Frameworks\:\:\$raterGroupList\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Frameworks.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Frameworks\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Frameworks.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Frameworks.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$preferred_username\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Frameworks.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$option\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Frameworks.php
+
+		-
+			message: '#^Method App\\Livewire\\Frameworks\:\:assessmentCompletedDate\(\) should return Illuminate\\Support\\Carbon\|null but returns Carbon\\Carbon\|null\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Livewire/Frameworks.php
+
+		-
+			message: '#^Method App\\Livewire\\Frameworks\:\:loggedInRater\(\) should return App\\Models\\Rater\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/Frameworks.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Frameworks.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>label" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Frameworks.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Assessment\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/Frameworks.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\User\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/Frameworks.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/ManageRaterGroups.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$preferred_username\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/ManageRaterGroups.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\User\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/ManageRaterGroups.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Questions\:\:\$nodes\.$#'
+			identifier: property.notFound
+			count: 5
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Questions\:\:\$raterGroupList\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Questions\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$preferred_username\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$node_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$response_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Call to an undefined method Traversable\<int, mixed\>\:\:seek\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Method App\\Livewire\\Questions\:\:assessmentCompletedDate\(\) should return Illuminate\\Support\\Carbon\|null but returns Carbon\\Carbon\|null\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Method App\\Livewire\\Questions\:\:loggedInRater\(\) should return App\\Models\\Rater\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Method App\\Livewire\\Questions\:\:nodes\(\) should return ArrayIterator\|null but returns Traversable\<int, mixed\>\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Property App\\Livewire\\Questions\:\:\$cachedNodes \(ArrayIterator\|null\) does not accept Traversable\<int, mixed\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>framework" in empty\(\) is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>questions" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Assessment\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\User\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Variable \$rules on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.variable
+			count: 1
+			path: app/Livewire/Questions.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\SelectRater\:\:\$assessment\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/SelectRater.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\SelectRater\:\:\$cachedAssessmentRater\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/SelectRater.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\SelectRater\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/SelectRater.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/SelectRater.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/SelectRater.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$preferred_username\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/SelectRater.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/SelectRater.php
+
+		-
+			message: '#^Method App\\Livewire\\SelectRater\:\:assessmentCompletedDate\(\) should return Illuminate\\Support\\Carbon\|null but returns Carbon\\Carbon\|null\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Livewire/SelectRater.php
+
+		-
+			message: '#^Method App\\Livewire\\SelectRater\:\:loggedInRater\(\) should return App\\Models\\Rater\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/SelectRater.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Assessment\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/SelectRater.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\User\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/SelectRater.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Summary\:\:\$assessment\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Summary.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Summary\:\:\$cachedAssessmentRater\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Summary.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Summary\:\:\$raterGroupList\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Summary.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Summary\:\:\$resolvedQuestionTexts\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Summary.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Summary\:\:\$responses\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Summary.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Summary\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Summary.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Summary.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$preferred_username\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Summary.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Relations\\Pivot\:\:\$submitted_at\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Summary.php
+
+		-
+			message: '#^Method App\\Livewire\\Summary\:\:assessmentCompletedDate\(\) should return Illuminate\\Support\\Carbon\|null but returns Carbon\\Carbon\|null\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Livewire/Summary.php
+
+		-
+			message: '#^Method App\\Livewire\\Summary\:\:loggedInRater\(\) should return App\\Models\\Rater\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/Summary.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>user_id" in empty\(\) is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Summary.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Assessment\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/Summary.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\User\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 3
+			path: app/Livewire/Summary.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Variants\:\:\$raterGroupList\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Access to an undefined property App\\Livewire\\Variants\:\:\$user\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$preferred_username\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\|Illuminate\\Database\\Eloquent\\Model\:\:\$variantAttributes\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$variantSelections\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Method App\\Livewire\\Variants\:\:assessmentCompletedDate\(\) should return Illuminate\\Support\\Carbon\|null but returns Carbon\\Carbon\|null\.$#'
+			identifier: return.type
+			count: 2
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Method App\\Livewire\\Variants\:\:loggedInRater\(\) should return App\\Models\\Rater\|null but returns Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: return.type
+			count: 1
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Parameter \#1 \$assessmentId of method App\\Livewire\\Variants\:\:getAssessmentResumeNode\(\) expects int\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Parameter \#1 \$frameworkId of method App\\Livewire\\Variants\:\:redirectIfAssessmentNotPermitted\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Parameter \#2 \$assessmentId of method App\\Livewire\\Variants\:\:redirectIfAssessmentNotPermitted\(\) expects int\|null, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Parameter \#2 \$frameworkId of method App\\Livewire\\Variants\:\:redirectIfSubmittedOrFinished\(\) expects int\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Parameter \#3 \$assessmentId of static method App\\Services\\UserAssessmentVariantSelectionService\:\:updateOrCreate\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Property App\\Livewire\\Variants\:\:\$assessmentId \(string\|null\) does not accept int\<0, max\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Property App\\Livewire\\Variants\:\:\$frameworkId \(string\|null\) does not accept int\<0, max\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Using nullsafe method call on non\-nullable type Illuminate\\Database\\Eloquent\\Relations\\HasMany\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Assessment\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\Node\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Using nullsafe property access on non\-nullable type App\\Models\\User\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Livewire/Variants.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Framework\:\:\$rater_invitation_intro\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Mail/RaterInvitationMail.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Mail/RaterInvitationMail.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>rater_invitation_intro" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Mail/RaterInvitationMail.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$pivot\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/Assessment.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: app/Models/Question.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$attribute\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/QuestionVariant.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$option\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/QuestionVariant.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AssessmentReportService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$question\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/AssessmentReportService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$rater_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/AssessmentReportService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$scaleOption\.$#'
+			identifier: property.notFound
+			count: 6
+			path: app/Services/AssessmentReportService.php
+
+		-
+			message: '#^Method App\\Services\\AssessmentReportService\:\:childNodesHaveRaterQuestions\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: app/Services/AssessmentReportService.php
+
+		-
+			message: '#^Property App\\Services\\AssessmentReportService\:\:\$assessment \(App\\Models\\Assessment\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: app/Services/AssessmentReportService.php
+
+		-
+			message: '#^Property App\\Services\\AssessmentReportService\:\:\$nodes \(Illuminate\\Support\\Collection\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: app/Services/AssessmentReportService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/AssessmentReportService.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$matches\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/QuestionTextResolver.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$text\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/QuestionTextResolver.php
+
+		-
+			message: '#^Parameter \#1 \$variants of static method App\\Services\\QuestionTextResolver\:\:chooseVariant\(\) expects Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\QuestionVariant\>, Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/QuestionTextResolver.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>text" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: app/Services/QuestionTextResolver.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/RaterInvitationService.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>name" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/RaterInvitationService.php
+
+		-
+			message: '#^Parameter \#1 \$variants of static method App\\Services\\ScaleOptionTextResolver\:\:chooseVariant\(\) expects Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\ScaleOptionVariant\>, Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Services/ScaleOptionTextResolver.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>text" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: app/Services/ScaleOptionTextResolver.php
+
+		-
+			message: '#^Call to function is_numeric\(\) with int\<min, \-1\>\|int\<1, max\> will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: app/Traits/AssessmentHelperTrait.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>submitted_at" in empty\(\) is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			path: app/Traits/AssessmentHelperTrait.php
+
+		-
+			message: '#^Variable \$responseCount on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.variable
+			count: 1
+			path: app/Traits/AssessmentHelperTrait.php
+
+		-
+			message: '#^Trait App\\Traits\\Reviewable is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: app/Traits/Reviewable.php
+
+		-
+			message: '#^Offset ''colour'' on array\{framework_id\: 1, parent_id\: 1\|2\|6\|10\|14\|15\|19\|23\|27\|28\|32\|36\|null, node_type_id\: 1\|2\|3, name\: ''Allocate and…''\|''Be visible,…''\|''Build engagement''\|''Build relationships''\|''Building teams''\|''Commit to…''\|''Communicate with…''\|''Communicating Well''\|''Delivering across…''\|''Develop personal…''\|''Drive continuous…''\|''Efficiency and…''\|''Encourage open…''\|''Implement policies…''\|''Improving quality''\|''Influence,…''\|''Innovation and…''\|''Lead a…''\|''Make sure people…''\|''Manage and measure…''\|''Manage challenges''\|''Manage conflict and…''\|''Manage with…''\|''Managing people and…''\|''Maximise outputs…''\|''Performance and…''\|''Personal impact''\|''Personal…''\|''Personalise care''\|''Prioritise for…''\|''Provide clear…''\|''Respond to patient…''\|''Responsibility and…''\|''Share good practice''\|''Support others…''\|''Take accountability…''\|''Transform through…''\|''Use data, evidence…''\|''Working…'', description\: null, colour\: ''green''\|''purple''\|''red'', order\: 1\|2\|3\|4\|5\|6\|7\|8\|9\|10\|11\|12\|13\|14\|15\|16\|17\|18\|19\|20\|21\|22\|23\|24\|25\|26\|27\|28\|29\|30\|31\|32\|33\|34\|35\|36\|37\|38\|39\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: database/seeders/NodeSeeder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Model\:\:\$value\.$#'
+			identifier: property.notFound
+			count: 1
+			path: database/seeders/ScaleOptionVariantSeeder.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:variants\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: database/seeders/ScaleOptionVariantSeeder.php
+
+		-
+			message: '#^Anonymous function never returns Illuminate\\Routing\\Redirector so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 2
+			path: routes/web.php
