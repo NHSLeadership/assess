@@ -55,7 +55,7 @@ jobs:
           ref: ${{ steps.pr-details.outputs.head_sha }}
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6.3.0
+        uses: aws-actions/configure-aws-credentials@v6.3.1
         with:
           role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN_ECR }}
           aws-region: eu-west-2
